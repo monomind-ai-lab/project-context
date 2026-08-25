@@ -7,9 +7,9 @@ depending on a particular agent product or chat history.
 
 The system has two reusable skills:
 
-- **`project-context`** reads and maintains an existing context package.
 - **`project-context-init`** safely installs the package in an empty or existing
   repository and optionally helps configure complementary indexing tools.
+- **`project-context`** reads and maintains an existing context package.
 
 ## Why tracked Markdown is the authority
 
