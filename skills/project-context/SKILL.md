@@ -1,12 +1,12 @@
 ---
 name: project-context
-description: "Read and maintain a repository's durable, Git-tracked project context: current state, decisions, learnings, designs, incidents, and task evidence. Use when repository work needs prior context or a durable handoff; do not use generated indexes as authority."
+description: "Maintain the Git-native continuity layer for an AI-assisted repository: current state, accepted decisions, verified learnings, designs, incidents, and task evidence shared across coding agents."
 ---
 
 # Project Context
 
 Use this protocol when a repository contains `project-context/` and work needs
-prior decisions, current handoff state, or a durable update.
+project memory that survives the agent or chat session.
 
 ## Start
 
@@ -23,14 +23,15 @@ take precedence over summaries.
 
 ## Maintain
 
-- Keep plans, chronological progress, validation, and outcomes in `tasks/`.
+- Use `tasks/` for plans, progress, validation, and outcomes when the full
+  profile is present; otherwise link the repository's existing task system.
 - Keep `NOW.md` concise and actionable; remove stale state after linking its
   durable result.
 - Record decisions with stable IDs, status, date, statement, rationale,
   consequences, and evidence. Supersede instead of silently reversing meaning.
 - Record learnings only when evidence supports reuse beyond one task.
-- Create detailed designs or incident records when their evidence will help
-  future work.
+- In the full profile, create detailed designs or incident records when their
+  evidence will help future work.
 - Preserve completed historical records. Correct interpretation through status
   and supersession links instead of rewriting history.
 
@@ -40,3 +41,10 @@ Never store secrets, sensitive customer data, raw chat transcripts, private
 host paths, ambient user profiles, or unverified claims. Generated wikis and
 indexes are auxiliary discovery systems; they do not replace tracked Markdown
 authority.
+
+## Health
+
+When context appears stale, contradictory, or hard to navigate, use the sibling
+`project-context-init` skill's `doctor` workflow. It checks core files, scaffold
+version, review freshness, duplicate decision/learning IDs, and broken relative
+links without rewriting content.

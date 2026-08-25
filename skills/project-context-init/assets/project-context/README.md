@@ -19,10 +19,10 @@ work, reusable learnings, and typed supporting evidence.
 | `NOW.md` | Current snapshot and handoff | Replace stale state; keep concise |
 | `DECISIONS.md` | Accepted and superseded decisions | Append or supersede; never silently reverse |
 | `LEARNINGS.md` | Verified, reusable lessons | Promote only evidence-backed lessons |
-| `decisions/` | Detailed decision records | Link from the registry; preserve status |
-| `designs/` | Designs and alternatives | Keep decisions separate from proposals |
-| `incidents/` | Root cause, remediation, prevention | Preserve history; promote reusable lessons |
-| `tasks/` | Plans, progress, validation, outcomes | Keep completed records immutable |
+| `decisions/` | Detailed decision records (full profile) | Link from the registry; preserve status |
+| `designs/` | Designs and alternatives (full profile) | Keep decisions separate from proposals |
+| `incidents/` | Root cause, remediation, prevention (full profile) | Preserve history; promote reusable lessons |
+| `tasks/` | Plans, progress, validation, outcomes (full profile) | Keep completed records immutable |
 
 Source code, tests, and verified operational evidence remain authoritative for
 actual behavior. Generated indexes and wikis are auxiliary views.
@@ -40,4 +40,3 @@ At a meaningful milestone or handoff:
 
 Do not store raw chat transcripts, credentials, private host paths, sensitive
 customer data, ambient profiles, or unverified speculation here.
-

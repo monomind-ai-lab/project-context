@@ -11,6 +11,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
+INSTALLER = ROOT / "scripts" / "install.py"
 
 
 class InitializerTests(unittest.TestCase):
@@ -45,10 +46,110 @@ class InitializerTests(unittest.TestCase):
             ):
                 self.assertTrue((target / "project-context" / relative).is_file(), relative)
             self.assertIn("<!-- project-context:start -->", (target / "AGENTS.md").read_text())
+            doctor, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", doctor["status"])
 
             second, _ = self.run_script("init", "--target", directory, "--dry-run")
             for mutation in ("create", "append_managed_block", "update_managed_block"):
                 self.assertEqual(0, second["summary"].get(mutation, 0), mutation)
+
+    def test_core_profile_and_doctor(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script(
+                "init", "--target", directory, "--profile", "core", "--apply"
+            )
+            context = target / "project-context"
+            self.assertFalse((context / "tasks").exists())
+            metadata = json.loads((context / ".project-context.json").read_text())
+            self.assertEqual("core", metadata["profile"])
+            doctor, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", doctor["status"])
+
+    def test_one_command_installer_adds_skills_and_core_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            dry_run = subprocess.run(
+                [
+                    sys.executable,
+                    str(INSTALLER),
+                    "--target",
+                    directory,
+                    "--profile",
+                    "core",
+                    "--dry-run",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, dry_run.returncode, dry_run.stderr or dry_run.stdout)
+            self.assertFalse((Path(directory) / ".agents").exists())
+            self.assertFalse((Path(directory) / "project-context").exists())
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(INSTALLER),
+                    "--target",
+                    directory,
+                    "--profile",
+                    "core",
+                    "--apply",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+            target = Path(directory)
+            self.assertTrue((target / ".agents/skills/project-context/SKILL.md").is_file())
+            self.assertTrue((target / ".agents/skills/project-context-init/SKILL.md").is_file())
+            self.assertTrue((target / "project-context/NOW.md").is_file())
+
+    def test_consolidation_review_classifies_without_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            for relative in ("memory", "docs/decisions", "docs/solutions", "src/context"):
+                (target / relative).mkdir(parents=True, exist_ok=True)
+            (target / "STATUS.md").write_text("# Status\n", encoding="utf-8")
+            before = sorted(str(path.relative_to(target)) for path in target.rglob("*"))
+            review, _ = self.run_script("review", "--target", directory)
+            after = sorted(str(path.relative_to(target)) for path in target.rglob("*"))
+            candidates = {item["path"]: item for item in review["consolidation"]["candidates"]}
+            self.assertEqual(before, after)
+            self.assertEqual("general_memory", candidates["memory"]["role"])
+            self.assertEqual("decisions", candidates["docs/decisions"]["role"])
+            self.assertEqual("learnings", candidates["docs/solutions"]["role"])
+            self.assertEqual("current_state", candidates["STATUS.md"]["role"])
+            self.assertNotIn("src/context", candidates)
+
+    def test_doctor_reports_stale_state_duplicate_ids_broken_links_and_version(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script(
+                "init", "--target", directory, "--profile", "core", "--apply"
+            )
+            context = target / "project-context"
+            (context / "NOW.md").write_text(
+                "# Current Project State\n\nLast reviewed: 2020-01-01\n\n[Missing](missing.md)\n",
+                encoding="utf-8",
+            )
+            (context / "DECISIONS.md").write_text(
+                "# Decisions\n\n## D-001: First\n\n## D-001: Duplicate\n",
+                encoding="utf-8",
+            )
+            metadata = json.loads((context / ".project-context.json").read_text())
+            metadata["template_version"] = "0.1.0"
+            (context / ".project-context.json").write_text(
+                json.dumps(metadata), encoding="utf-8"
+            )
+            doctor, _ = self.run_script(
+                "doctor", "--target", directory, "--stale-days", "1", expected=1
+            )
+            codes = {issue["code"] for issue in doctor["issues"]}
+            self.assertIn("stale-current-state", codes)
+            self.assertIn("duplicate-record-id", codes)
+            self.assertIn("broken-relative-link", codes)
+            self.assertIn("template-update-available", codes)
 
     def test_existing_agents_preserves_surrounding_instructions(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -161,6 +262,25 @@ class InitializerTests(unittest.TestCase):
             self.assertTrue(report["has_conflicts"])
             self.assertEqual("conflict_symlink", report["project_context"]["state"])
             self.assertEqual([], report["project_context"]["files"])
+            self.assertEqual([], list(external_path.iterdir()))
+
+    def test_symlinked_skill_parent_aborts_before_any_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as external:
+            target = Path(directory)
+            external_path = Path(external)
+            (target / ".agents").symlink_to(external_path, target_is_directory=True)
+            report, _ = self.run_script(
+                "init",
+                "--target",
+                directory,
+                "--profile",
+                "core",
+                "--install-skills",
+                "--apply",
+                expected=2,
+            )
+            self.assertTrue(report["has_conflicts"])
+            self.assertFalse((target / "project-context").exists())
             self.assertEqual([], list(external_path.iterdir()))
 
     def test_tool_markers_are_detected_without_installing(self) -> None:

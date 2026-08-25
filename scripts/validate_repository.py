@@ -12,6 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
     "README.md",
     "LICENSE",
+    "VERSION",
+    "assets/project-context-cover.png",
+    "examples/sample-project-context/README.md",
+    "examples/sample-project-context/NOW.md",
+    "examples/sample-project-context/DECISIONS.md",
+    "examples/sample-project-context/LEARNINGS.md",
+    "scripts/install.py",
     "skills/project-context/SKILL.md",
     "skills/project-context/agents/openai.yaml",
     "skills/project-context-init/SKILL.md",
@@ -77,6 +84,33 @@ def main() -> int:
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8") if (ROOT / "LICENSE").exists() else ""
     if "MIT License" not in license_text or "Permission is hereby granted" not in license_text:
         errors.append("LICENSE is not the standard MIT grant")
+
+    cover = ROOT / "assets" / "project-context-cover.png"
+    if cover.is_file():
+        data = cover.read_bytes()
+        if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+            errors.append("cover asset is not a valid PNG")
+        elif len(data) < 24 or int.from_bytes(data[16:20], "big") != 1024 or int.from_bytes(data[20:24], "big") != 1024:
+            errors.append("cover asset must remain 1024 x 1024")
+        else:
+            offset = 8
+            chunk_types = []
+            while offset + 12 <= len(data):
+                length = int.from_bytes(data[offset : offset + 4], "big")
+                chunk_types.append(data[offset + 4 : offset + 8])
+                offset += 12 + length
+            if any(chunk in {b"eXIf", b"iTXt", b"tEXt", b"zTXt"} for chunk in chunk_types):
+                errors.append("cover asset contains removable text or author metadata")
+
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
+    initializer = ROOT / "skills/project-context-init/scripts/project_context_init.py"
+    if version and f'TEMPLATE_VERSION = "{version}"' not in initializer.read_text(encoding="utf-8"):
+        errors.append("VERSION and initializer template version do not match")
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
+    for expected in ("Project memory that survives the agent", "assets/project-context-cover.png"):
+        if expected not in readme:
+            errors.append(f"README missing expected positioning: {expected}")
 
     if errors:
         print("Repository validation failed:")

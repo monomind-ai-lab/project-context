@@ -23,11 +23,14 @@ instructions take precedence over summaries.
 
 ## Maintain
 
-- Keep plans, chronological progress, validation, and outcomes in `tasks/`.
+- Use `tasks/` for plans, progress, validation, and outcomes when the full
+  profile is present; otherwise link the repository's existing task system.
 - Keep `NOW.md` short and actionable.
 - Record decisions with stable IDs, status, date, statement, rationale,
   consequences, and evidence. Supersede instead of silently reversing meaning.
 - Record learnings with stable IDs, evidence, scope, and a concrete future action.
+- In the full profile, use `designs/` and `incidents/` for evidence that will
+  help future work.
 - Preserve completed evidence and correct its interpretation through status and
   supersession links rather than rewriting history.
 

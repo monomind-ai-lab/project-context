@@ -1,5 +1,4 @@
 interface:
   display_name: "Project Context"
-  short_description: "Maintain durable repository context"
-  default_prompt: "Use $project-context to load the relevant project state and leave a durable handoff."
-
+  short_description: "Project memory that survives the agent"
+  default_prompt: "Use $project-context to recover the repository's current truth and leave a durable Git-tracked handoff."
