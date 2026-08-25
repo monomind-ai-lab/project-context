@@ -1,0 +1,5 @@
+interface:
+  display_name: "Initialize Project Context"
+  short_description: "Safely add durable repository context"
+  default_prompt: "Use $project-context-init to inspect this repository and propose a safe project-context setup."
+

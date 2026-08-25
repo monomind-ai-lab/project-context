@@ -1,0 +1,5 @@
+interface:
+  display_name: "Project Context"
+  short_description: "Maintain durable repository context"
+  default_prompt: "Use $project-context to load the relevant project state and leave a durable handoff."
+
