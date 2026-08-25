@@ -1,6 +1,6 @@
 # Project Context
 
-<p align="center">
+<p align="left">
   <img src="assets/project-context-cover.png" alt="Project Context — Clarity Comes With Context" width="720">
 </p>
 
