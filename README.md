@@ -1,7 +1,7 @@
 # Project Context
 
 <p align="left">
-  <img src="assets/project-context-cover.jpg" alt="Project Context — Clarity Comes With Context" width="720">
+  <img src="assets/project-context-cover.jpg" alt="Project Context — Clarity Comes With Context" style="width: 100%; max-width: 100%;">
 </p>
 
 > **Shared project context that outlives any one person, agent, or chat.**
@@ -97,7 +97,7 @@ general work.
 Install Project Context into the current repository from
 https://github.com/monomind-ai-lab/project-context.
 
-Start by asking me exactly: “Is this a brand-new repository?” Wait for my
+Start by asking me exactly: "Is this a brand-new repository?" Wait for my
 answer. If yes, ask what it will primarily hold or support and classify it. If
 no, inspect the repository and infer whether it is code, document, research,
 writing, mixed, or general without asking its purpose. Report the inferred type
@@ -242,7 +242,7 @@ informed decision for every eligible, unconfigured tool.
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
-| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format nav[...]
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
 
 The initializer filters this list by repository type and observed contents. It
