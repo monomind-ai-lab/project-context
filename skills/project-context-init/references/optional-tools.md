@@ -4,8 +4,30 @@ Last reviewed against the official repositories: 2026-08-26.
 
 Project Context is authoritative tracked Markdown. GitNexus, Graphify, and
 OpenWiki are optional derived systems with different purposes. Always detect
-before proposing, ask about every missing tool independently, and install only
-after an explicit answer.
+both global availability and repository configuration before proposing a
+change. Ask independently only about unconfigured tools that fit the confirmed
+repository type and observed need, then install or configure only after an
+explicit answer.
+
+## Repository-type filter
+
+- **Code:** consider GitNexus when meaningful source code needs structural or
+  impact analysis. Consider OpenWiki only for stable, complex projects with a
+  real audience for derived navigation. Graphify becomes relevant when the
+  useful corpus extends beyond code.
+- **Documents:** consider Graphify for a substantial, interlinked corpus and
+  OpenWiki only when collaborators need a maintained generated browse layer.
+- **Research:** consider Graphify for cross-source, data, and evidence
+  relationships. Defer OpenWiki until claims and structure are stable.
+- **Writing:** suppress GitNexus and OpenWiki. Consider Graphify only for a
+  large multi-file manuscript, story world, or similarly relational corpus.
+- **Mixed:** scope GitNexus to a meaningful code subtree, consider Graphify
+  across artifact types, and offer OpenWiki only for a clear navigation use.
+- **General or uncertain:** do not offer an add-on until inspection identifies a
+  concrete need.
+
+A tool on `PATH` is available, not necessarily configured for the repository.
+Offer project configuration rather than reinstallation when appropriate.
 
 ## GitNexus
 

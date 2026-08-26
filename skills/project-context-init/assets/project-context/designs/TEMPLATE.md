@@ -7,7 +7,7 @@
 
 ## Problem
 
-Describe the user or system problem and current evidence.
+Describe the project problem, audience need, or opportunity and current evidence.
 
 ## Goals and non-goals
 
@@ -20,7 +20,8 @@ Describe the user or system problem and current evidence.
 
 ## Proposed design
 
-Explain the components, data flow, interfaces, and operational behavior.
+Explain the proposed structure, components, workflow, interfaces, or narrative
+approach that matter for this repository.
 
 ## Alternatives
 
@@ -36,5 +37,4 @@ Explain the components, data flow, interfaces, and operational behavior.
 
 ## Outcome
 
-Fill in after implementation; link evidence and any resulting decision.
-
+Fill in after execution or adoption; link evidence and any resulting decision.

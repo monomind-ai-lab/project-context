@@ -19,7 +19,7 @@ State the concrete outcome and boundaries.
 
 ## Validation
 
-- Command/check:
+- Check, review, or measurement:
 - Result:
 
 ## Decisions and learnings to promote
@@ -30,4 +30,3 @@ State the concrete outcome and boundaries.
 ## Handoff or outcome
 
 What is done, what remains, and where is the evidence?
-

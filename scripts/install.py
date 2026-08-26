@@ -17,6 +17,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", default=".", type=Path)
     parser.add_argument("--profile", choices=("core", "full"), default="core")
+    parser.add_argument(
+        "--repo-type",
+        choices=("auto", "code", "document", "research", "writing", "mixed", "general"),
+        default="auto",
+    )
+    parser.add_argument(
+        "--repository-stage",
+        choices=("brand-new", "existing"),
+        default="existing",
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
@@ -29,6 +39,10 @@ def main() -> int:
         str(args.target),
         "--profile",
         args.profile,
+        "--repo-type",
+        args.repo_type,
+        "--repository-stage",
+        args.repository_stage,
         "--install-skills",
         "--apply" if args.apply else "--dry-run",
     ]

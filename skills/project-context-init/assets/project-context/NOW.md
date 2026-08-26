@@ -6,7 +6,7 @@ Last reviewed: YYYY-MM-DD
 
 | Area | Current state | Evidence |
 | --- | --- | --- |
-| Project | Describe the current stable state. | Link to code, docs, tests, or a decision. |
+| Project | Describe the current stable state. | Link to a primary artifact, result, review, or decision. |
 
 ## Active work
 
@@ -25,4 +25,3 @@ Last reviewed: YYYY-MM-DD
 ## Superseded state
 
 - None recorded.
-

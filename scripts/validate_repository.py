@@ -13,12 +13,14 @@ REQUIRED = (
     "README.md",
     "LICENSE",
     "VERSION",
-    "assets/project-context-cover.png",
+    "assets/project-context-cover.jpg",
     "examples/sample-project-context/README.md",
     "examples/sample-project-context/NOW.md",
     "examples/sample-project-context/DECISIONS.md",
     "examples/sample-project-context/LEARNINGS.md",
     "scripts/install.py",
+    "prompts/install-project-context.md",
+    "prompts/maintain-project-context.md",
     "skills/project-context/SKILL.md",
     "skills/project-context/agents/openai.yaml",
     "skills/project-context-init/SKILL.md",
@@ -85,22 +87,35 @@ def main() -> int:
     if "MIT License" not in license_text or "Permission is hereby granted" not in license_text:
         errors.append("LICENSE is not the standard MIT grant")
 
-    cover = ROOT / "assets" / "project-context-cover.png"
+    cover = ROOT / "assets" / "project-context-cover.jpg"
     if cover.is_file():
         data = cover.read_bytes()
-        if not data.startswith(b"\x89PNG\r\n\x1a\n"):
-            errors.append("cover asset is not a valid PNG")
-        elif len(data) < 24 or int.from_bytes(data[16:20], "big") != 1024 or int.from_bytes(data[20:24], "big") != 1024:
-            errors.append("cover asset must remain 1024 x 1024")
+        if not data.startswith(b"\xff\xd8"):
+            errors.append("cover asset is not a valid JPEG")
         else:
-            offset = 8
-            chunk_types = []
-            while offset + 12 <= len(data):
-                length = int.from_bytes(data[offset : offset + 4], "big")
-                chunk_types.append(data[offset + 4 : offset + 8])
-                offset += 12 + length
-            if any(chunk in {b"eXIf", b"iTXt", b"tEXt", b"zTXt"} for chunk in chunk_types):
-                errors.append("cover asset contains removable text or author metadata")
+            dimensions = None
+            forbidden_markers: list[int] = []
+            offset = 2
+            while offset + 4 <= len(data) and data[offset] == 0xFF:
+                marker = data[offset + 1]
+                if marker in {0xD9, 0xDA}:
+                    break
+                length = int.from_bytes(data[offset + 2 : offset + 4], "big")
+                if length < 2 or offset + 2 + length > len(data):
+                    errors.append("cover asset has a malformed JPEG segment")
+                    break
+                if marker in {0xE1, 0xED, 0xFE}:
+                    forbidden_markers.append(marker)
+                if marker in {0xC0, 0xC1, 0xC2} and length >= 7:
+                    dimensions = (
+                        int.from_bytes(data[offset + 7 : offset + 9], "big"),
+                        int.from_bytes(data[offset + 5 : offset + 7], "big"),
+                    )
+                offset += 2 + length
+            if dimensions != (1200, 675):
+                errors.append("cover asset must remain 1200 x 675")
+            if forbidden_markers:
+                errors.append("cover asset contains removable author or comment metadata")
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
     initializer = ROOT / "skills/project-context-init/scripts/project_context_init.py"
@@ -108,9 +123,25 @@ def main() -> int:
         errors.append("VERSION and initializer template version do not match")
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
-    for expected in ("Project memory that survives the agent", "assets/project-context-cover.png"):
+    for expected in (
+        "Shared project context that outlives any one person, agent, or chat",
+        "simple way to build a context pipeline right into a",
+        "assets/project-context-cover.jpg",
+        "prompts/install-project-context.md",
+    ):
         if expected not in readme:
             errors.append(f"README missing expected positioning: {expected}")
+
+    init_skill_path = ROOT / "skills/project-context-init/SKILL.md"
+    init_skill = init_skill_path.read_text(encoding="utf-8") if init_skill_path.exists() else ""
+    for expected in (
+        "Is this a brand-new repository?",
+        "What will this repository primarily hold or support?",
+        "Eliminate add-ons that do not help",
+        "If Python is unavailable",
+    ):
+        if expected not in init_skill:
+            errors.append(f"initializer skill missing onboarding behavior: {expected}")
 
     if errors:
         print("Repository validation failed:")

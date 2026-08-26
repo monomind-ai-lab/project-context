@@ -1,15 +1,16 @@
 # Project Context
 
-This directory is the Git-tracked, harness-neutral entrypoint for durable
-project knowledge. It records current state, decisions that constrain future
-work, reusable learnings, and typed supporting evidence.
+This directory is the harness-neutral context pipeline for a repo-bound
+collaborative project or consistently shared project folder. It works for
+software, documents, research, writing, and mixed work by recording current state, decisions that
+constrain future work, reusable learnings, and linked supporting evidence.
 
 ## Read order
 
 1. Read [`SKILL.md`](SKILL.md) for the operating protocol.
 2. Read [`NOW.md`](NOW.md) for current state, active work, blockers, and next actions.
 3. Search [`DECISIONS.md`](DECISIONS.md) and [`LEARNINGS.md`](LEARNINGS.md) by topic.
-4. Open only the linked decision, design, incident, task, source, and test
+4. Open only the linked decision, design, incident, task, primary artifact, and
    evidence needed for the current work.
 
 ## Artifact roles
@@ -24,8 +25,9 @@ work, reusable learnings, and typed supporting evidence.
 | `incidents/` | Root cause, remediation, prevention (full profile) | Preserve history; promote reusable lessons |
 | `tasks/` | Plans, progress, validation, outcomes (full profile) | Keep completed records immutable |
 
-Source code, tests, and verified operational evidence remain authoritative for
-actual behavior. Generated indexes and wikis are auxiliary views.
+The repository's primary artifacts and verified evidence remain authoritative:
+for example source and tests, approved documents, citations and data, or the
+manuscript and editorial record. Generated indexes and wikis are auxiliary views.
 
 ## Promotion workflow
 
@@ -35,7 +37,8 @@ At a meaningful milestone or handoff:
 2. Update `NOW.md` when active state, blockers, or next actions changed.
 3. Add a decision only when it constrains future work.
 4. Add a learning only when verified and reusable beyond one task.
-5. Link promoted knowledge to its source task, code, test, incident, or commit.
+5. Link promoted knowledge to its source task, artifact, citation, review,
+   incident, result, or commit.
 6. Mark replaced knowledge `superseded` and link both directions.
 
 Do not store raw chat transcripts, credentials, private host paths, sensitive

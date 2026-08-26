@@ -23,10 +23,10 @@ What will the project do?
 
 ## Evidence
 
-- Links to source, tests, tasks, incidents, measurements, or official references.
+- Links to primary artifacts, reviews, tests, tasks, incidents, measurements,
+  citations, or official references.
 
 ## Supersession
 
 - Supersedes: none.
 - Superseded by: none.
-

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import stat
@@ -15,12 +16,18 @@ INSTALLER = ROOT / "scripts" / "install.py"
 
 
 class InitializerTests(unittest.TestCase):
-    def run_script(self, *args: str, expected: int = 0) -> tuple[dict, subprocess.CompletedProcess[str]]:
+    def run_script(
+        self,
+        *args: str,
+        expected: int = 0,
+        env: dict[str, str] | None = None,
+    ) -> tuple[dict, subprocess.CompletedProcess[str]]:
         result = subprocess.run(
             [sys.executable, str(SCRIPT), *args],
             check=False,
             capture_output=True,
             text=True,
+            env=env,
         )
         self.assertEqual(expected, result.returncode, result.stderr or result.stdout)
         return json.loads(result.stdout), result
@@ -309,6 +316,143 @@ class InitializerTests(unittest.TestCase):
                 if "harness" in signal.lower()
             ]
             self.assertEqual([], marker_signals)
+
+    def test_repository_type_classification_uses_aggregate_signals(self) -> None:
+        fixtures = {
+            "code": (("pyproject.toml", "[project]\nname='sample'\n"), ("src/app.py", "print('ok')\n")),
+            "document": (("docs/handbook.md", "# Handbook\n"), ("reports/annual.pdf", "%PDF placeholder\n")),
+            "research": (("research/sources.bib", "@article{x}\n"), ("data/results.csv", "x,y\n1,2\n")),
+            "writing": (("chapters/one.md", "# Chapter one\n"), ("drafts/outline.txt", "Act I\n")),
+        }
+        for expected_type, files in fixtures.items():
+            with self.subTest(expected_type=expected_type), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory)
+                for relative, content in files:
+                    path = target / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(content, encoding="utf-8")
+                report, _ = self.run_script("inspect", "--target", directory)
+                self.assertEqual(expected_type, report["repository"]["type"])
+                serialized = json.dumps(report["repository"])
+                for relative, _ in files:
+                    self.assertNotIn(relative, serialized)
+
+    def test_declared_type_and_brand_new_stage_are_recorded_without_purpose(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            report, _ = self.run_script(
+                "init",
+                "--target",
+                directory,
+                "--profile",
+                "core",
+                "--repo-type",
+                "writing",
+                "--repository-stage",
+                "brand-new",
+                "--apply",
+            )
+            self.assertEqual("writing", report["repository"]["type"])
+            metadata = json.loads((target / "project-context/.project-context.json").read_text())
+            self.assertEqual("writing", metadata["repository_type"])
+            self.assertEqual("brand-new", report["repository_stage"])
+            self.assertNotIn("purpose", metadata)
+            self.assertNotIn("repository_stage", metadata)
+
+    def test_repository_classifier_ignores_generated_and_installed_skill_trees(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            generated = target / "work/generated"
+            generated.mkdir(parents=True)
+            for index in range(20):
+                (generated / f"artifact-{index}.ts").write_text("export {}\n", encoding="utf-8")
+            installed = target / ".agents/skills/example/references"
+            installed.mkdir(parents=True)
+            (installed / "paper.md").write_text("# Reference\n", encoding="utf-8")
+            report, _ = self.run_script("inspect", "--target", directory)
+            self.assertEqual("general", report["repository"]["type"])
+            self.assertEqual(0.0, report["repository"]["scores"]["code"])
+            self.assertEqual({}, report["repository"]["signals"])
+
+    def test_mixed_repository_considers_cross_artifact_and_code_tools(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            (target / "src").mkdir()
+            (target / "docs").mkdir()
+            (target / "pyproject.toml").write_text("[project]\nname='mixed'\n", encoding="utf-8")
+            for index in range(4):
+                (target / f"src/module-{index}.py").write_text("pass\n", encoding="utf-8")
+            for index in range(6):
+                (target / f"docs/section-{index}.md").write_text("# Section\n", encoding="utf-8")
+            clean_env = dict(os.environ)
+            clean_env["PATH"] = ""
+            report, _ = self.run_script("inspect", "--target", directory, env=clean_env)
+            self.assertEqual("mixed", report["repository"]["type"])
+            self.assertEqual(
+                {"gitnexus", "graphify"},
+                set(report["optional_tool_guidance"]["proposal_order"]),
+            )
+            self.assertEqual(
+                "deferred",
+                report["optional_tool_guidance"]["tools"]["openwiki"]["status"],
+            )
+
+    def test_optional_tools_are_filtered_by_repository_type(self) -> None:
+        fixtures = {
+            "code": (["pyproject.toml", *[f"src/module-{index}.py" for index in range(4)]], {"gitnexus"}),
+            "document": ([f"docs/section-{index}.md" for index in range(6)], {"graphify"}),
+            "research": (["research/one.bib", "research/two.bib"], {"graphify"}),
+            "writing": ([f"chapters/chapter-{index}.md" for index in range(3)], {"graphify"}),
+            "general": ([], set()),
+        }
+        clean_env = dict(os.environ)
+        clean_env["PATH"] = ""
+        for repo_type, (files, proposed) in fixtures.items():
+            with self.subTest(repo_type=repo_type), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory)
+                for relative in files:
+                    path = target / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text("# fixture\n", encoding="utf-8")
+                report, _ = self.run_script(
+                    "inspect",
+                    "--target",
+                    directory,
+                    "--repo-type",
+                    repo_type,
+                    env=clean_env,
+                )
+                self.assertEqual(
+                    proposed,
+                    set(report["optional_tool_guidance"]["proposal_order"]),
+                )
+                self.assertNotIn("openwiki", report["optional_tool_guidance"]["proposal_order"])
+
+    def test_cli_availability_is_distinct_from_project_configuration(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as bin_directory:
+            target = Path(directory)
+            (target / "docs").mkdir()
+            for index in range(6):
+                (target / f"docs/section-{index}.md").write_text("# Section\n", encoding="utf-8")
+            executable = Path(bin_directory) / "graphify"
+            executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            executable.chmod(0o755)
+            env = dict(os.environ)
+            env["PATH"] = bin_directory
+            available, _ = self.run_script(
+                "inspect", "--target", directory, "--repo-type", "document", env=env
+            )
+            self.assertEqual("available-unconfigured", available["tools"]["graphify"]["state"])
+            guidance = available["optional_tool_guidance"]["tools"]["graphify"]
+            self.assertEqual("offer-project-configuration", guidance["action"])
+
+            (target / "graphify-out").mkdir()
+            (target / "graphify-out/graph.json").write_text("{}", encoding="utf-8")
+            configured, _ = self.run_script(
+                "inspect", "--target", directory, "--repo-type", "document", env=env
+            )
+            self.assertEqual("project-configured", configured["tools"]["graphify"]["state"])
+            self.assertNotIn("graphify", configured["optional_tool_guidance"]["proposal_order"])
 
 
 if __name__ == "__main__":

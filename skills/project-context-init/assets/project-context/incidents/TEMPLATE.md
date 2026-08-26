@@ -7,7 +7,8 @@
 
 ## Impact
 
-What users, data, or operations were affected, and for how long?
+What people, artifacts, data, quality, schedule, or operations were affected,
+and for how long?
 
 ## Detection
 
@@ -23,7 +24,7 @@ State the verified causal chain. Separate facts from hypotheses.
 
 ## Resolution and recovery
 
-What restored service or correct behavior?
+What restored correct, trusted, or usable project state?
 
 ## Corrective actions
 
@@ -37,4 +38,3 @@ What proves the fix and prevention measures work?
 
 - Decisions:
 - Learnings:
-

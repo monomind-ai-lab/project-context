@@ -9,5 +9,4 @@ stable IDs such as `L-001`.
 - Scope: Name the systems or workflows where this applies.
 - Learning: State the reusable lesson precisely.
 - Action: Describe what future contributors should do differently.
-- Evidence: Link to a task, test, incident, code change, or operational result.
-
+- Evidence: Link to a task, primary artifact, review, incident, citation, or observed result.

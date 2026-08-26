@@ -1,12 +1,14 @@
 ---
 name: project-context
-description: "Maintain the Git-native continuity layer for an AI-assisted repository: current state, accepted decisions, verified learnings, designs, incidents, and task evidence shared across coding agents."
+description: "Maintain the durable context pipeline for a collaborative repository or organized project folder of any type: current state, accepted decisions, verified learnings, and linked evidence shared across people and AI agents."
 ---
 
 # Project Context
 
-Use this protocol when a repository contains `project-context/` and work needs
-project memory that survives the agent or chat session.
+Use this protocol when a repository or organized project folder contains
+`project-context/` and collaborative work needs memory that survives any one
+person, agent, or chat session. It applies to software, document, research,
+writing, mixed, and folder-based projects.
 
 ## Start
 
@@ -14,12 +16,13 @@ project memory that survives the agent or chat session.
 2. Search `project-context/DECISIONS.md` and `project-context/LEARNINGS.md` for
    the current topic.
 3. Follow only relevant links into detailed decisions, designs, incidents,
-   tasks, source code, tests, and operational evidence.
+   tasks, primary artifacts, and evidence.
 4. Treat entries marked `superseded` as historical evidence only.
 
-Do not load every historical task or generated page. Current code, tests,
-verified operational state, explicit user direction, and repository instructions
-take precedence over summaries.
+Do not load every historical task or generated page. Current primary artifacts
+and evidence—such as source and tests, approved documents, citations and data,
+or the manuscript and editorial record—take precedence over summaries alongside
+explicit user direction and repository instructions.
 
 ## Maintain
 
@@ -37,10 +40,10 @@ take precedence over summaries.
 
 ## Safety
 
-Never store secrets, sensitive customer data, raw chat transcripts, private
-host paths, ambient user profiles, or unverified claims. Generated wikis and
-indexes are auxiliary discovery systems; they do not replace tracked Markdown
-authority.
+Never store secrets, sensitive personal or customer data, raw chat transcripts,
+private host paths, ambient user profiles, copyrighted source material copied
+without need, or unverified claims. Generated wikis and indexes are auxiliary
+discovery systems; they do not replace tracked Markdown authority.
 
 ## Health
 

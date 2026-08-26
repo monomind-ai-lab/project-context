@@ -16,7 +16,7 @@ import tempfile
 from typing import Any
 
 
-TEMPLATE_VERSION = "0.2.0"
+TEMPLATE_VERSION = "0.3.0"
 START = "<!-- project-context:start -->"
 END = "<!-- project-context:end -->"
 MANAGED_BLOCK = """<!-- project-context:start -->
@@ -25,7 +25,8 @@ MANAGED_BLOCK = """<!-- project-context:start -->
 Before substantial repository work, read `project-context/SKILL.md` and
 `project-context/NOW.md`, then search `project-context/DECISIONS.md` and
 `project-context/LEARNINGS.md` for relevant constraints and evidence. Update
-project context at meaningful milestones and handoffs. Treat generated indexes
+project context at meaningful milestones and handoffs. Confirm important claims
+against the repository's primary artifacts and evidence. Treat generated indexes
 and wikis as auxiliary views, not authority.
 <!-- project-context:end -->"""
 
@@ -33,8 +34,26 @@ INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
 EXCLUDED_SCAN_PARTS = {
     ".git", "node_modules", "vendor", "dist", "build", "coverage",
-    "graphify-out", "openwiki", "__pycache__",
+    "graphify-out", "openwiki", "__pycache__", ".venv", "venv", ".tox",
+    ".mypy_cache", ".pytest_cache", ".next", "target", "out", "work", "outputs",
 }
+REPOSITORY_TYPES = ("auto", "code", "document", "research", "writing", "mixed", "general")
+CODE_EXTENSIONS = {
+    ".c", ".cc", ".cpp", ".cs", ".css", ".ex", ".exs", ".go", ".h", ".hpp",
+    ".html", ".java", ".js", ".jsx", ".kt", ".kts", ".lua", ".php", ".py",
+    ".rb", ".rs", ".scala", ".sh", ".sql", ".swift", ".ts", ".tsx", ".vue",
+}
+CODE_MANIFESTS = {
+    "cargo.toml", "composer.json", "deno.json", "gemfile", "go.mod", "mix.exs",
+    "package.json", "pom.xml", "pyproject.toml", "requirements.txt", "setup.py",
+}
+DOCUMENT_EXTENSIONS = {".doc", ".docx", ".md", ".odt", ".pdf", ".ppt", ".pptx", ".rtf", ".txt", ".xls", ".xlsx"}
+RESEARCH_EXTENSIONS = {".bib", ".csv", ".ipynb", ".parquet", ".ris", ".sav", ".tsv"}
+WRITING_EXTENSIONS = {".fountain", ".scriv", ".tex"}
+DOCUMENT_DIRECTORIES = {"docs", "documentation", "handbook", "minutes", "policies", "reports"}
+RESEARCH_DIRECTORIES = {"datasets", "experiments", "literature", "papers", "research"}
+WEAK_RESEARCH_DIRECTORIES = {"analysis", "data", "references"}
+WRITING_DIRECTORIES = {"book", "chapters", "drafts", "essays", "manuscript", "screenplay", "stories"}
 DOCUMENT_ROOTS = {"docs", "documentation", ".claude", ".codex", ".agents"}
 DIRECTORY_ROLES = {
     "memory": ("general_memory", "strong"),
@@ -43,6 +62,10 @@ DIRECTORY_ROLES = {
     "context": ("general_memory", "possible"),
     "project-memory": ("general_memory", "strong"),
     "project_memory": ("general_memory", "strong"),
+    "project-notes": ("general_memory", "strong"),
+    "research-notes": ("general_memory", "possible"),
+    "editorial-notes": ("general_memory", "possible"),
+    "worldbuilding": ("general_memory", "possible"),
     "decisions": ("decisions", "strong"),
     "decision-records": ("decisions", "strong"),
     "adr": ("decisions", "strong"),
@@ -61,6 +84,8 @@ DIRECTORY_ROLES = {
     "specs": ("designs", "possible"),
     "specifications": ("designs", "possible"),
     "rfcs": ("designs", "possible"),
+    "outlines": ("designs", "possible"),
+    "briefs": ("designs", "possible"),
     "incidents": ("incidents", "strong"),
     "postmortems": ("incidents", "strong"),
     "post-mortems": ("incidents", "strong"),
@@ -72,6 +97,7 @@ FILE_ROLES = {
     "status.md": ("current_state", "possible"),
     "project-status.md": ("current_state", "strong"),
     "handoff.md": ("current_state", "strong"),
+    "editorial-status.md": ("current_state", "strong"),
     "decisions.md": ("decisions", "strong"),
     "decision-log.md": ("decisions", "strong"),
     "learnings.md": ("learnings", "strong"),
@@ -79,6 +105,10 @@ FILE_ROLES = {
     "tasks.md": ("tasks", "possible"),
     "plan.md": ("tasks", "possible"),
     "roadmap.md": ("tasks", "possible"),
+    "research-log.md": ("tasks", "possible"),
+    "editorial-plan.md": ("tasks", "possible"),
+    "outline.md": ("designs", "possible"),
+    "project-notes.md": ("general_memory", "strong"),
     "incidents.md": ("incidents", "strong"),
     "postmortems.md": ("incidents", "strong"),
 }
@@ -109,9 +139,179 @@ def template_files(profile: str) -> list[Path]:
     return files
 
 
-def metadata_content(profile: str) -> str:
+def classify_repository(target: Path, limit: int = 5000) -> dict[str, Any]:
+    scores = {kind: 0.0 for kind in ("code", "document", "research", "writing")}
+    signal_counts: dict[str, dict[str, int]] = {kind: {} for kind in scores}
+    scanned = 0
+
+    def add(kind: str, weight: float, signal: str) -> None:
+        scores[kind] += weight
+        signal_counts[kind][signal] = signal_counts[kind].get(signal, 0) + 1
+
+    for root_text, directory_names, file_names in os.walk(target, followlinks=False):
+        root = Path(root_text)
+        relative_root = root.relative_to(target)
+        root_parts = tuple(part.casefold() for part in relative_root.parts)
+        if root_parts and (
+            any(part in EXCLUDED_SCAN_PARTS or part == "project-context" for part in root_parts)
+            or ("skills" in root_parts and any(part in {".agents", ".codex", ".claude"} for part in root_parts))
+        ):
+            directory_names[:] = []
+            continue
+        directory_names[:] = [
+            name for name in directory_names
+            if name.casefold() not in EXCLUDED_SCAN_PARTS
+            and name.casefold() != "project-context"
+            and not (root / name).is_symlink()
+        ]
+        for name in directory_names:
+            folded = name.casefold()
+            if folded in DOCUMENT_DIRECTORIES:
+                add("document", 3.0, f"directory:{folded}")
+            if folded in RESEARCH_DIRECTORIES:
+                add("research", 4.0, f"directory:{folded}")
+            elif folded in WEAK_RESEARCH_DIRECTORIES:
+                add("research", 1.0, f"directory:{folded}")
+            if folded in WRITING_DIRECTORIES:
+                add("writing", 4.0, f"directory:{folded}")
+        for name in file_names:
+            scanned += 1
+            if scanned > limit:
+                break
+            path = root / name
+            if path.is_symlink():
+                continue
+            folded = name.casefold()
+            suffix = path.suffix.casefold()
+            if folded in CODE_MANIFESTS:
+                add("code", 4.0, "project-manifest")
+            if suffix in CODE_EXTENSIONS:
+                add("code", 1.0, f"extension:{suffix}")
+            if suffix in DOCUMENT_EXTENSIONS:
+                weight = 0.25 if suffix in {".md", ".txt"} else 2.0
+                if root_parts and root_parts[0] in DOCUMENT_DIRECTORIES:
+                    weight += 0.5
+                add("document", weight, f"extension:{suffix}")
+            if suffix in RESEARCH_EXTENSIONS:
+                add("research", 2.0, f"extension:{suffix}")
+            if suffix in WRITING_EXTENSIONS:
+                add("writing", 2.0, f"extension:{suffix}")
+            if any(part in WRITING_DIRECTORIES for part in root_parts) and suffix in DOCUMENT_EXTENSIONS:
+                add("writing", 1.5, "document-in-writing-tree")
+            if any(part in RESEARCH_DIRECTORIES for part in root_parts) and suffix in DOCUMENT_EXTENSIONS:
+                add("research", 1.0, "document-in-research-tree")
+        if scanned > limit:
+            break
+
+    ranked = sorted(scores, key=lambda kind: scores[kind], reverse=True)
+    highest, second = ranked[0], ranked[1]
+    if scores[highest] < 2.0:
+        selected = "general"
+    elif scores[second] >= 3.0 and scores[second] >= scores[highest] * 0.75:
+        selected = "mixed"
+    else:
+        selected = highest
+    confidence = "strong" if scores[highest] >= 6.0 and scores[highest] - scores[second] >= 2.0 else "possible"
+    return {
+        "type": selected,
+        "confidence": confidence if selected != "general" else "unknown",
+        "scores": {kind: round(value, 2) for kind, value in scores.items()},
+        "signals": {kind: values for kind, values in signal_counts.items() if values},
+        "scan_truncated": scanned > limit,
+    }
+
+
+def repository_classification(target: Path, requested: str = "auto") -> dict[str, Any]:
+    inferred = classify_repository(target)
+    if requested == "auto":
+        return inferred
+    return {
+        **inferred,
+        "type": requested,
+        "confidence": "declared",
+        "inferred_type": inferred["type"],
+    }
+
+
+def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    repo_type = repository["type"]
+    scores = repository.get("scores", {})
+    relevance: dict[str, tuple[str, str]] = {}
+    deferred: dict[str, str] = {}
+    if repo_type == "code" and scores.get("code", 0) >= 3:
+        relevance = {
+            "gitnexus": ("recommended", "The repository is code-centered, so symbol and impact analysis can add value."),
+        }
+        deferred["openwiki"] = "Consider only after a clear audience and stable need for generated navigation are established."
+    elif repo_type == "document" and scores.get("document", 0) >= 6:
+        relevance = {
+            "graphify": ("recommended", "Cross-file concept and evidence relationships fit this repository type."),
+        }
+        deferred["openwiki"] = "Consider only when the corpus has a clear audience for a maintained generated browse layer."
+    elif repo_type == "research" and scores.get("research", 0) >= 6:
+        relevance = {
+            "graphify": ("recommended", "Cross-source, data, and evidence relationships fit this repository type."),
+        }
+        deferred["openwiki"] = "Defer until claims and structure are stable and generated navigation has a clear audience."
+    elif repo_type == "writing" and scores.get("writing", 0) >= 8:
+        relevance = {
+            "graphify": ("optional", "A relationship graph may help a large multi-file manuscript or story corpus."),
+        }
+    elif repo_type == "mixed":
+        if sum(value > 0 for value in scores.values()) >= 2:
+            relevance["graphify"] = ("recommended", "The repository spans artifact types that benefit from cross-file relationships.")
+        if repository.get("scores", {}).get("code", 0) >= 3:
+            relevance["gitnexus"] = ("optional", "The mixed repository contains enough code for structural analysis to be useful.")
+        deferred["openwiki"] = "Consider only after collaborators demonstrate a need for maintained generated navigation."
+
+    entries: dict[str, dict[str, Any]] = {}
+    proposal_order: list[str] = []
+    for tool_name in ("gitnexus", "graphify", "openwiki"):
+        tool_state = tools[tool_name]["state"]
+        if tool_state == "project-configured":
+            entries[tool_name] = {
+                "status": "already-configured",
+                "relevance": relevance.get(tool_name, ("not-applicable", "No change should be proposed for this repository type."))[0],
+                "reason": "Existing configuration is reported for awareness; do not reinstall it.",
+            }
+        elif tool_name in relevance:
+            level, reason = relevance[tool_name]
+            action = "offer-project-configuration" if tool_state == "available-unconfigured" else "offer-installation"
+            entries[tool_name] = {
+                "status": "ask-independently",
+                "action": action,
+                "relevance": level,
+                "reason": reason,
+            }
+            proposal_order.append(tool_name)
+        elif tool_name in deferred:
+            entries[tool_name] = {
+                "status": "deferred",
+                "relevance": "conditional",
+                "reason": deferred[tool_name],
+            }
+        else:
+            entries[tool_name] = {
+                "status": "do-not-propose",
+                "relevance": "not-applicable",
+                "reason": "This add-on is unlikely to help the classified repository type.",
+            }
+    return {
+        "repository_type": repo_type,
+        "proposal_order": proposal_order,
+        "tools": entries,
+        "rule": "Ask only about tools in proposal_order, one at a time; never install or configure without authorization.",
+    }
+
+
+def metadata_content(profile: str, repo_type: str) -> str:
     return json.dumps(
-        {"authority": "tracked-markdown", "profile": profile, "template_version": TEMPLATE_VERSION},
+        {
+            "authority": "tracked-markdown",
+            "profile": profile,
+            "repository_type": repo_type,
+            "template_version": TEMPLATE_VERSION,
+        },
         indent=2,
         sort_keys=True,
     ) + "\n"
@@ -210,9 +410,8 @@ def detect_tools(target: Path) -> dict[str, dict[str, Any]]:
     harnesses = [path for path in instruction_paths(target) if path.is_file() and not path.is_symlink()]
     harness_text = "\n".join(path.read_text(encoding="utf-8", errors="replace") for path in harnesses)
     codex_config = target / ".codex" / "config.toml"
+    gitnexus_cli = bool(shutil.which("gitnexus"))
     gitnexus: list[str] = []
-    if shutil.which("gitnexus"):
-        gitnexus.append("gitnexus CLI on PATH")
     for relative in (".gitnexus/gitnexus.json", ".gitnexus/meta.json", ".gitnexus/run.cjs", ".gitnexusrc"):
         if (target / relative).exists():
             gitnexus.append(relative)
@@ -220,9 +419,8 @@ def detect_tools(target: Path) -> dict[str, dict[str, Any]]:
         gitnexus.append("GitNexus managed harness block")
     if codex_config.is_file() and "gitnexus" in codex_config.read_text(encoding="utf-8", errors="replace").lower():
         gitnexus.append("project Codex GitNexus configuration")
+    graphify_cli = bool(shutil.which("graphify"))
     graphify: list[str] = []
-    if shutil.which("graphify"):
-        graphify.append("graphify CLI on PATH")
     for relative in (
         "graphify-out/graph.json", "graphify-out/.graphify_root", "graphify-out/.graphify_python",
         ".graphifyignore", ".codex/skills/graphify/SKILL.md", ".agents/skills/graphify/SKILL.md",
@@ -232,9 +430,8 @@ def detect_tools(target: Path) -> dict[str, dict[str, Any]]:
     codex_hooks = target / ".codex" / "hooks.json"
     if codex_hooks.is_file() and "graphify" in codex_hooks.read_text(encoding="utf-8", errors="replace").lower():
         graphify.append("project Codex Graphify hook configuration")
+    openwiki_cli = bool(shutil.which("openwiki"))
     openwiki: list[str] = []
-    if shutil.which("openwiki"):
-        openwiki.append("openwiki CLI on PATH")
     for relative in (
         "openwiki/index.md", "openwiki/.last-update.json", "openwiki/.claims", "openwiki/.run.json",
         "openwiki/INSTRUCTIONS.md", ".openwikiignore", ".agents/skills/openwiki",
@@ -248,10 +445,26 @@ def detect_tools(target: Path) -> dict[str, dict[str, Any]]:
     workflows = target / ".github" / "workflows"
     if workflows.is_dir() and any("openwiki" in path.name.lower() for path in workflows.iterdir()):
         openwiki.append("OpenWiki GitHub workflow")
+    def result(cli_available: bool, project_signals: list[str]) -> dict[str, Any]:
+        if project_signals:
+            state = "project-configured"
+        elif cli_available:
+            state = "available-unconfigured"
+        else:
+            state = "not-detected"
+        signals = (["CLI on PATH"] if cli_available else []) + project_signals
+        return {
+            "detected": cli_available or bool(project_signals),
+            "state": state,
+            "cli_available": cli_available,
+            "project_configured": bool(project_signals),
+            "signals": signals,
+        }
+
     return {
-        "gitnexus": {"detected": bool(gitnexus), "signals": gitnexus},
-        "graphify": {"detected": bool(graphify), "signals": graphify},
-        "openwiki": {"detected": bool(openwiki), "signals": openwiki},
+        "gitnexus": result(gitnexus_cli, gitnexus),
+        "graphify": result(graphify_cli, graphify),
+        "openwiki": result(openwiki_cli, openwiki),
     }
 
 
@@ -334,7 +547,7 @@ def consolidation_candidates(target: Path, limit: int = 5000) -> tuple[list[dict
     return candidates, truncated
 
 
-def inspect(target: Path) -> dict[str, Any]:
+def inspect(target: Path, repo_type: str = "auto") -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
     files: list[str] = []
@@ -349,9 +562,12 @@ def inspect(target: Path) -> dict[str, Any]:
     else:
         state = "conflict_non_directory"
     candidates, truncated = consolidation_candidates(target)
+    repository = repository_classification(target, repo_type)
+    tools = detect_tools(target)
     return {
         "target": str(target),
         "git_repository": (target / ".git").exists(),
+        "repository": repository,
         "project_context": {"state": state, "files": files},
         "instruction_files": [path.name for path in instruction_paths(target)],
         "legacy_candidates": sorted({item["path"] for item in candidates if item["role"] == "general_memory"}),
@@ -361,7 +577,8 @@ def inspect(target: Path) -> dict[str, Any]:
             "scan_truncated": truncated,
             "rule": "suggest only; never move, merge, rewrite, or delete automatically",
         },
-        "tools": detect_tools(target),
+        "tools": tools,
+        "optional_tool_guidance": optional_tool_guidance(repository, tools),
     }
 
 
@@ -386,10 +603,17 @@ def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
             )
 
 
-def build_plan(target: Path, profile: str = "full", install_skills: bool = False) -> dict[str, Any]:
+def build_plan(
+    target: Path,
+    profile: str = "full",
+    install_skills: bool = False,
+    repo_type: str = "auto",
+    repository_stage: str = "existing",
+) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
     actions: list[dict[str, Any]] = []
+    repository = repository_classification(target, repo_type)
     if context.is_symlink():
         actions.append({"kind": "conflict", "path": str(context), "reason": "project-context is a symlink"})
     elif context.exists() and not context.is_dir():
@@ -401,7 +625,11 @@ def build_plan(target: Path, profile: str = "full", install_skills: bool = False
             if str(relative) == "NOW.md":
                 content = content.replace("YYYY-MM-DD", date.today().isoformat(), 1)
             add_file_action(actions, context / relative, content)
-        add_file_action(actions, context / ".project-context.json", metadata_content(profile))
+        add_file_action(
+            actions,
+            context / ".project-context.json",
+            metadata_content(profile, repository["type"]),
+        )
     harnesses = instruction_paths(target)
     if harnesses:
         actions.extend(instruction_plan(path) for path in harnesses)
@@ -409,8 +637,15 @@ def build_plan(target: Path, profile: str = "full", install_skills: bool = False
         actions.append({"kind": "create", "path": str(target / "AGENTS.md"), "content": MANAGED_BLOCK + "\n"})
     if install_skills:
         plan_skill_install(target, actions)
-    report = inspect(target)
-    report.update({"profile": profile, "install_skills": install_skills, "actions": actions})
+    report = inspect(target, repo_type)
+    report.update(
+        {
+            "profile": profile,
+            "install_skills": install_skills,
+            "repository_stage": repository_stage,
+            "actions": actions,
+        }
+    )
     report["summary"] = {
         kind: sum(action["kind"] == kind for action in actions)
         for kind in sorted({action["kind"] for action in actions})
@@ -434,7 +669,13 @@ def apply_plan(report: dict[str, Any]) -> int:
     for action in report["actions"]:
         if action["kind"] in {"create", "append_managed_block", "update_managed_block"}:
             atomic_write(Path(action["path"]), action["content"])
-    refreshed = build_plan(Path(report["target"]), report["profile"], report["install_skills"])
+    refreshed = build_plan(
+        Path(report["target"]),
+        report["profile"],
+        report["install_skills"],
+        report["repository"]["type"],
+        report["repository_stage"],
+    )
     print(json.dumps(public_report(refreshed), indent=2, sort_keys=True))
     return 0
 
@@ -513,12 +754,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     for name, help_text in (("inspect", "inspect without writing"), ("review", "find consolidation candidates")):
         subparser = subparsers.add_parser(name, help=help_text)
         subparser.add_argument("--target", default=".", type=Path)
+        subparser.add_argument("--repo-type", choices=REPOSITORY_TYPES, default="auto")
     doctor_parser = subparsers.add_parser("doctor", help="validate project-context health")
     doctor_parser.add_argument("--target", default=".", type=Path)
     doctor_parser.add_argument("--stale-days", default=30, type=int)
     init_parser = subparsers.add_parser("init", help="plan or apply initialization")
     init_parser.add_argument("--target", default=".", type=Path)
     init_parser.add_argument("--profile", choices=("core", "full"), default="full")
+    init_parser.add_argument("--repo-type", choices=REPOSITORY_TYPES, default="auto")
+    init_parser.add_argument(
+        "--repository-stage",
+        choices=("brand-new", "existing"),
+        default="existing",
+    )
     init_parser.add_argument("--install-skills", action="store_true")
     mode = init_parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
@@ -533,17 +781,33 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Target must be an existing directory: {target}", file=sys.stderr)
         return 2
     if args.command == "inspect":
-        print(json.dumps(inspect(target), indent=2, sort_keys=True))
+        print(json.dumps(inspect(target, args.repo_type), indent=2, sort_keys=True))
         return 0
     if args.command == "review":
-        report = inspect(target)
-        print(json.dumps({"target": report["target"], "consolidation": report["consolidation"]}, indent=2, sort_keys=True))
+        report = inspect(target, args.repo_type)
+        print(
+            json.dumps(
+                {
+                    "target": report["target"],
+                    "repository": report["repository"],
+                    "consolidation": report["consolidation"],
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
         return 0
     if args.command == "doctor":
         report = doctor(target, args.stale_days)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 1 if report["summary"]["errors"] else 0
-    report = build_plan(target, args.profile, args.install_skills)
+    report = build_plan(
+        target,
+        args.profile,
+        args.install_skills,
+        args.repo_type,
+        args.repository_stage,
+    )
     if args.dry_run:
         print(json.dumps(public_report(report), indent=2, sort_keys=True))
         return 2 if report["has_conflicts"] else 0

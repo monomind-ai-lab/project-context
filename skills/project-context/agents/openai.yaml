@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Context"
-  short_description: "Project memory that survives the agent"
-  default_prompt: "Use $project-context to recover the repository's current truth and leave a durable Git-tracked handoff."
+  short_description: "Shared context for repo-bound projects"
+  default_prompt: "Use $project-context to recover this repository-bound project's current truth and leave a durable Git-tracked handoff."

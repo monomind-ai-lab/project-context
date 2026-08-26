@@ -1,127 +1,146 @@
 ---
 name: project-context-init
-description: Safely review and initialize a repository's Git-native continuity layer, suggesting provenance-preserving consolidation of overlapping memory, status, decision, learning, task, design, and incident material without moving it automatically.
+description: Safely review and initialize a general-purpose context pipeline in a repository or organized project folder for software, documents, research, writing, or mixed collaborative work, including provenance-preserving consolidation and type-appropriate optional add-ons.
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
 # Initialize Project Context
 
-Create portable project memory that survives the agent without overwriting
-existing knowledge or harness instructions. Review, initialization, health
-checks, consolidation, and optional tool setup are distinct operations.
+Add durable project memory without overwriting existing knowledge or harness
+instructions. Project Context is a simple context pipeline inside a repository
+or organized project folder: work produces evidence, milestones promote current
+state and durable knowledge, and future collaborators read the same context.
+Git makes that history reviewable when available, but it is not required.
 
-## 1. Inspect before proposing changes
+## 1. Start with the repository conversation
 
-Run from the target repository:
+Before profiles, commands, or add-ons, ask exactly one question and wait:
+
+> Is this a brand-new repository?
+
+- If **yes**, ask: **What will this repository primarily hold or support?** Use
+  the answer only to classify it as `code`, `document`, `research`, `writing`,
+  `mixed`, or `general`. Do not persist the user's free-text purpose by default.
+- If **no**, do not ask what it is for. Inspect the repository and classify it
+  from its contents. Use aggregate signals such as manifests/source files,
+  documentation formats, bibliographies/data/notebooks, or manuscripts/drafts.
+  Report the proposed type and confidence; ask for correction only when the
+  result is ambiguous or `mixed` would change the setup.
+
+Repository type guides recommendations, not authority. A mixed repository may
+need different evidence paths for different artifact families.
+
+## 2. Inspect before proposing changes
+
+When Python 3 is available, use the deterministic read-only inspection:
 
 ```sh
-python3 PATH_TO_SKILL/scripts/project_context_init.py inspect --target .
-python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --dry-run
+python3 PATH_TO_SKILL/scripts/project_context_init.py inspect --target . --repo-type auto
+python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --repo-type TYPE --repository-stage STAGE --dry-run
 ```
 
-Review all classifications. The script reports existing core files, custom
-content, managed instruction blocks, consolidation candidates, scaffold version,
-and detection signals for GitNexus, Graphify, and OpenWiki.
+For a new repository, pass the type derived from the purpose and
+`--repository-stage brand-new`. For an existing repository, pass the confirmed
+or inferred type and `--repository-stage existing`.
 
-If a managed block is malformed or duplicated, stop and ask the user how to
-resolve it. Never repair unknown surrounding instructions automatically.
+If Python is unavailable, perform the same workflow manually: inventory only
+root instructions and likely context material, compare against
+`assets/project-context/`, propose exact create-only changes, and wait for
+approval. Do not claim deterministic scanning, idempotency, or doctor results
+when they were not run.
 
-## 2. Review possible consolidation
+If a managed block is malformed or duplicated, stop. Never repair unknown
+surrounding instructions automatically.
 
-Run the read-only review explicitly when candidates exist:
+## 3. Review possible consolidation
+
+For an existing repository, or a new repository where inspection found prior
+material, run:
 
 ```sh
-python3 PATH_TO_SKILL/scripts/project_context_init.py review --target .
+python3 PATH_TO_SKILL/scripts/project_context_init.py review --target . --repo-type TYPE
 ```
 
-The deterministic review finds likely overlaps such as `memory/`, `context/`,
-status or handoff files, ADR/decision folders, plans, agent logs, solutions or
-learnings, designs/specs, incidents, and postmortems. Treat names as discovery
-signals, not proof.
+Names are discovery signals, not proof. Read only the candidate material needed
+to assess overlap. For each candidate:
 
-Read only the candidate material needed to assess overlap. For each candidate:
+- summarize purpose, authority, freshness, and provenance;
+- map reusable material to current state, decisions, learnings, tasks, designs,
+  or incidents;
+- identify conflicts, duplicates, and material that should stay where it is;
+- propose keep-and-link, copy-with-provenance, or deliberate migration;
+- explain what would become canonical and what remains historical.
 
-- summarize its current purpose, authority, freshness, and provenance;
-- map reusable content to `NOW.md`, `DECISIONS.md`, `LEARNINGS.md`, `tasks/`,
-  `designs/`, or `incidents/`;
-- identify conflicts, duplicates, and material that should remain where it is;
-- propose link-only, copy-with-provenance, or deliberate migration options;
-- explain what would become canonical and what would remain historical.
+Source papers, datasets, manuscripts, drafts, and primary project artifacts are
+normally evidence to link, not context to migrate. Never move, merge, rewrite,
+archive, or delete without separate explicit authorization.
 
-Present suggestions before initialization. Never move, merge, rewrite, archive,
-or delete candidate material without separate, explicit authorization.
-
-## 3. Choose a profile and apply
+## 4. Choose a profile and apply
 
 - `core` creates `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, and
-  `LEARNINGS.md`. Recommend it for small repositories and first-time adoption.
-- `full` also creates task, design, and incident evidence folders and templates.
+  `LEARNINGS.md`. It is the universal default.
+- `full` also creates task, design, and incident evidence folders. Offer it when
+  the collaboration genuinely benefits from those record types; do not infer it
+  merely from repository type.
 
-After the user approves the dry-run plan:
+After approval of the exact plan:
 
 ```sh
-python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile core --apply
+python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile core --repo-type TYPE --repository-stage STAGE --apply
 ```
 
-The script creates only missing files, records the scaffold version and profile,
-preserves different existing files, and updates only its managed block in root
-`AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. Re-run dry-run after
-apply; it should report no writes.
+The script creates only missing files, records scaffold version and repository
+type, preserves differing files, and updates only its managed block in existing
+root `AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. `--install-skills`
+copies both skills into `.agents/skills/` with the same preserve-existing rules.
 
-When invoked from a checkout of this repository, `--install-skills` also copies
-both skills into `.agents/skills/` using the same preserve-existing rules.
+For manual installation, copy only missing template files and add a Project
+Context pointer only to root instruction files the user approves. Show the full
+diff. Do not silently create a product-specific harness convention.
 
-## 4. Ask about missing advanced tools independently
+## 5. Filter advanced add-ons before asking
 
 Read [references/optional-tools.md](references/optional-tools.md) before making
-tool claims or running install commands. For **each** missing tool, ask a
-separate non-leading question and wait for the user's answer before installing
-anything. Each prompt must state:
+claims or running commands. Inspect reports whether each tool is configured in
+the repository, merely available on `PATH`, or absent. Do not reinstall a
+configured tool.
 
-- the tool's distinct purpose and concrete benefit for this repository;
-- why it appears missing and what was inspected;
-- its main runtime, generated files, and likely dependencies;
-- whether it is optional or recommended for the observed repository;
-- local/offline behavior and any provider/API requirements;
-- that declining it does not affect Project Context.
+Eliminate add-ons that do not help the observed repository:
 
-An answer about one tool is not authorization for another. Record each result
-as `accepted`, `declined`, or `deferred`. Do not bundle the choices behind one
-yes/no prompt and do not install a declined or unanswered tool.
+| Repository type | Add-ons worth considering |
+| --- | --- |
+| Code | GitNexus for meaningful code; OpenWiki only for stable, complex projects needing derived navigation |
+| Document | Graphify for a substantial interlinked corpus; OpenWiki only when a generated browse layer has a clear audience |
+| Research | Graphify for cross-source/evidence relationships; defer OpenWiki until claims and structure are stable |
+| Writing | Usually none; Graphify only for a large multi-file manuscript or world-building corpus |
+| Mixed | Graphify across artifact types; GitNexus only for a meaningful code subtree; OpenWiki only with a clear navigation need |
+| General/uncertain | No add-on until a concrete need is identified |
 
-Keep this advanced-tool discussion after the core profile and consolidation
-recommendation so it does not obscure the primary value.
+The matrix is an eligibility ceiling, not a prompt checklist. Suppress options
+whose stated condition is not present. For each remaining unconfigured tool,
+ask separately and wait. Explain its purpose, concrete benefit here, detected
+state, footprint/dependencies, recommendation level, local/provider behavior,
+and that declining does not affect Project Context. Authorization for one tool
+never authorizes another.
 
-## 5. Install only selected missing tools
+## 6. Install or configure only selected tools
 
-Use the current official commands in
-[references/optional-tools.md](references/optional-tools.md). Re-check detection
-immediately before each install. Prefer repository-scoped and least-invasive
-modes. For GitNexus, default to `analyze --skip-agents-md --skip-skills` so it
-does not also edit harness files; configure MCP/hooks only if the user
-separately wants them.
+Use current official commands from the optional-tools reference and re-check
+state immediately before changing anything. Distinguish installing a CLI from
+configuring this repository. Prefer repository-scoped, least-invasive modes.
 
-OpenWiki initialization generates or replaces derived wiki output and consumes
-model inference. Ask again before the first generation run even after the CLI
-install was approved. Graphify semantic extraction and visualization options
-must follow its current official setup rather than assumed provider behavior.
+Keep later side effects separate: GitNexus MCP/hooks/wiki, Graphify graph builds
+and semantic/provider modes, and OpenWiki's first generation each need their
+own appropriate authorization. Never request secrets in chat or tracked files;
+use environment variables, secret managers, CI stores, or tool-owned user
+configuration and verify presence without printing values.
 
-## 6. Guide provider and secret setup
+## 7. Verify and hand off
 
-After an opted-in install, explain only the settings needed for the chosen
-mode. Describe local/offline options when upstream supports them. Do not request
-secret values in chat or place them in tracked files, task records, or agent
-instructions. Use environment variables, an OS secret manager, CI secret store,
-or a tool-owned user-level credential store; verify presence without printing
-values.
-
-## 7. Verify health and hand off
-
-- Re-run `inspect` and `init --dry-run`.
-- Run `doctor --target .`; explain stale state, duplicate IDs, broken links, and
-  available scaffold updates without auto-fixing custom content.
-- Confirm only selected tools were added.
-- Check `git diff --check` and inspect the complete diff for private paths,
-  credentials, customer data, or product-specific assumptions.
-- Tell the user which material was preserved and which legacy candidates still
-  need deliberate classification.
+- Re-run inspect and the same init dry-run; it should propose no writes.
+- Run `doctor --target .` when Python is available.
+- Confirm only approved add-ons or configurations changed.
+- Inspect the complete diff for private paths, credentials, sensitive data, and
+  type-specific assumptions presented as universal rules.
+- Summarize the repository classification, preserved material, context pipeline,
+  and any consolidation candidates still awaiting a decision.

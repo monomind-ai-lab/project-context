@@ -1,9 +1,9 @@
 # Learning Registry
 
-## L-001: Test time boundaries explicitly
+## L-001: Capture claim-level provenance
 
 - Status: `accepted`
-- Scope: expiring authentication tokens
-- Learning: Happy-path tests do not protect expiry, clock-skew, and replay boundaries.
-- Action: Cover just-before, exact-boundary, just-after, and replay cases.
-- Evidence: Regression reproduced at the expiry boundary and fixed by explicit comparison semantics.
+- Scope: evidence synthesis and collaborative editing
+- Learning: A bibliography entry alone does not show which source supports a specific claim.
+- Action: Record a page, section, table, or dataset locator for every material claim.
+- Evidence: Editorial review found three claims that could not be traced from the bibliography alone.

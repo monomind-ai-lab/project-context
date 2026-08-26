@@ -1,4 +1,4 @@
 interface:
   display_name: "Initialize Project Context"
-  short_description: "Add portable project memory safely"
-  default_prompt: "Use $project-context-init to review this repository, suggest safe consolidations, and initialize the right project-context profile."
+  short_description: "Build an in-repo context pipeline safely"
+  default_prompt: "Use $project-context-init to begin by asking whether this repository is brand-new, then review and initialize a type-appropriate context pipeline."
