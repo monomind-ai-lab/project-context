@@ -14,6 +14,7 @@ REQUIRED = (
     "LICENSE",
     "VERSION",
     "assets/project-context-cover.jpg",
+    "assets/project-context-tools.jpg",
     "examples/sample-project-context/README.md",
     "examples/sample-project-context/NOW.md",
     "examples/sample-project-context/DECISIONS.md",
@@ -62,6 +63,39 @@ def validate_skill(path: Path) -> list[str]:
     return errors
 
 
+def validate_jpeg(path: Path, expected_dimensions: tuple[int, int], label: str) -> list[str]:
+    errors: list[str] = []
+    data = path.read_bytes()
+    if not data.startswith(b"\xff\xd8"):
+        return [f"{label} asset is not a valid JPEG"]
+    dimensions = None
+    forbidden_markers: list[int] = []
+    offset = 2
+    while offset + 4 <= len(data) and data[offset] == 0xFF:
+        marker = data[offset + 1]
+        if marker in {0xD9, 0xDA}:
+            break
+        length = int.from_bytes(data[offset + 2 : offset + 4], "big")
+        if length < 2 or offset + 2 + length > len(data):
+            errors.append(f"{label} asset has a malformed JPEG segment")
+            break
+        if marker in {0xE1, 0xED, 0xFE}:
+            forbidden_markers.append(marker)
+        if marker in {0xC0, 0xC1, 0xC2} and length >= 7:
+            dimensions = (
+                int.from_bytes(data[offset + 7 : offset + 9], "big"),
+                int.from_bytes(data[offset + 5 : offset + 7], "big"),
+            )
+        offset += 2 + length
+    if dimensions != expected_dimensions:
+        errors.append(
+            f"{label} asset must remain {expected_dimensions[0]} x {expected_dimensions[1]}"
+        )
+    if forbidden_markers:
+        errors.append(f"{label} asset contains removable author or comment metadata")
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
     for relative in REQUIRED:
@@ -87,35 +121,13 @@ def main() -> int:
     if "MIT License" not in license_text or "Permission is hereby granted" not in license_text:
         errors.append("LICENSE is not the standard MIT grant")
 
-    cover = ROOT / "assets" / "project-context-cover.jpg"
-    if cover.is_file():
-        data = cover.read_bytes()
-        if not data.startswith(b"\xff\xd8"):
-            errors.append("cover asset is not a valid JPEG")
-        else:
-            dimensions = None
-            forbidden_markers: list[int] = []
-            offset = 2
-            while offset + 4 <= len(data) and data[offset] == 0xFF:
-                marker = data[offset + 1]
-                if marker in {0xD9, 0xDA}:
-                    break
-                length = int.from_bytes(data[offset + 2 : offset + 4], "big")
-                if length < 2 or offset + 2 + length > len(data):
-                    errors.append("cover asset has a malformed JPEG segment")
-                    break
-                if marker in {0xE1, 0xED, 0xFE}:
-                    forbidden_markers.append(marker)
-                if marker in {0xC0, 0xC1, 0xC2} and length >= 7:
-                    dimensions = (
-                        int.from_bytes(data[offset + 7 : offset + 9], "big"),
-                        int.from_bytes(data[offset + 5 : offset + 7], "big"),
-                    )
-                offset += 2 + length
-            if dimensions != (1200, 675):
-                errors.append("cover asset must remain 1200 x 675")
-            if forbidden_markers:
-                errors.append("cover asset contains removable author or comment metadata")
+    jpeg_assets = (
+        (ROOT / "assets/project-context-cover.jpg", (1200, 675), "cover"),
+        (ROOT / "assets/project-context-tools.jpg", (1920, 1080), "optional-tools"),
+    )
+    for path, dimensions, label in jpeg_assets:
+        if path.is_file():
+            errors.extend(validate_jpeg(path, dimensions, label))
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
     initializer = ROOT / "skills/project-context-init/scripts/project_context_init.py"
@@ -127,6 +139,9 @@ def main() -> int:
         "Shared project context that outlives any one person, agent, or chat",
         "simple way to build a context pipeline right into a",
         "assets/project-context-cover.jpg",
+        "assets/project-context-tools.jpg",
+        "Attribution and independence",
+        "affiliated with, sponsored by, or endorsed by",
         "prompts/install-project-context.md",
         "agent-operated and human-readable",
         "not expected to invoke skills or run Python commands themselves",

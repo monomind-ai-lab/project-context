@@ -258,6 +258,17 @@ pipeline also works in a consistently shared project folder.
 <details>
 <summary><strong>Advanced integrations: GitNexus, Graphify, and OpenWiki</strong></summary>
 
+<p align="left">
+  <img src="assets/project-context-tools.jpg" alt="Project Context optional additions — GitNexus, Graphify, and OpenWiki" style="width: 100%; max-width: 100%;">
+</p>
+
+> **Attribution and independence:** GitNexus, Graphify, and OpenWiki are
+> independent open-source projects, and their names and trademarks belong to
+> their respective owners. Project Context and MonoMind AI Lab are not
+> affiliated with, sponsored by, or endorsed by these projects or their
+> maintainers. We feature them because they are excellent open-source tools we
+> comfortably recommend when they fit a project's needs.
+
 Project Context works without any of these tools. The initializer detects each
 potentially relevant tool before proposing changes and requires a separate
 informed decision for every eligible, unconfigured tool. If the user opts in,
