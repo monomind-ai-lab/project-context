@@ -255,8 +255,7 @@ Project Context uses the standard Agent Skills shape (`SKILL.md`, `scripts/`,
 Markdown. Git provides reviewable history when available, but the context
 pipeline also works in a consistently shared project folder.
 
-<details>
-<summary><strong>Advanced integrations: GitNexus, Graphify, and OpenWiki</strong></summary>
+## Optional integrations: GitNexus, Graphify, and OpenWiki
 
 <p align="left">
   <img src="assets/project-context-tools.jpg" alt="Project Context optional additions — GitNexus, Graphify, and OpenWiki" style="width: 100%; max-width: 100%;">
@@ -292,8 +291,6 @@ default checklist.
 
 Current setup notes, footprints, provider boundaries, and official links live
 in [the optional-tools reference](skills/project-context-init/references/optional-tools.md).
-
-</details>
 
 ## Safety guarantees
 

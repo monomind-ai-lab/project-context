@@ -123,7 +123,7 @@ def main() -> int:
 
     jpeg_assets = (
         (ROOT / "assets/project-context-cover.jpg", (1200, 675), "cover"),
-        (ROOT / "assets/project-context-tools.jpg", (1920, 1080), "optional-tools"),
+        (ROOT / "assets/project-context-tools.jpg", (1200, 675), "optional-tools"),
     )
     for path, dimensions, label in jpeg_assets:
         if path.is_file():
