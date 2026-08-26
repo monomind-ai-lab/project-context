@@ -15,6 +15,8 @@ REQUIRED = (
     "VERSION",
     "assets/project-context-cover.jpg",
     "assets/project-context-tools.jpg",
+    "docs/project-context-complete-guide.html",
+    ".github/workflows/pages.yml",
     "examples/sample-project-context/README.md",
     "examples/sample-project-context/NOW.md",
     "examples/sample-project-context/DECISIONS.md",
@@ -39,7 +41,7 @@ REQUIRED = (
     "tests/test_project_context_init.py",
 )
 
-TEXT_SUFFIXES = {".md", ".py", ".yaml", ".yml", ".txt", ""}
+TEXT_SUFFIXES = {".md", ".py", ".yaml", ".yml", ".txt", ".html", ""}
 PRIVATE_PATTERNS = (
     re.compile(r"/Users/(?!example|your-name|username)[^/\s]+"),
     re.compile(r"sk-(?:proj-|or-v1-)?[A-Za-z0-9_-]{16,}"),
@@ -140,6 +142,7 @@ def main() -> int:
         "simple way to build a context pipeline right into a",
         "assets/project-context-cover.jpg",
         "assets/project-context-tools.jpg",
+        "https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html",
         "Attribution and independence",
         "affiliated with, sponsored by, or endorsed by",
         "prompts/install-project-context.md",
@@ -151,6 +154,27 @@ def main() -> int:
     ):
         if expected not in readme:
             errors.append(f"README missing expected positioning: {expected}")
+
+    guide = ROOT / "docs/project-context-complete-guide.html"
+    if guide.is_file():
+        guide_text = guide.read_text(encoding="utf-8")
+        for expected in ("<!doctype html>", "<title>Project Context · How It Works</title>"):
+            if expected not in guide_text:
+                errors.append(f"interactive guide missing expected content: {expected}")
+        if "file://" in guide_text:
+            errors.append("interactive guide contains a local file URL")
+
+    pages_workflow = ROOT / ".github/workflows/pages.yml"
+    if pages_workflow.is_file():
+        workflow_text = pages_workflow.read_text(encoding="utf-8")
+        for expected in (
+            "actions/configure-pages@v5",
+            "actions/upload-pages-artifact@v3",
+            "actions/deploy-pages@v4",
+            "path: ./docs",
+        ):
+            if expected not in workflow_text:
+                errors.append(f"Pages workflow missing expected configuration: {expected}")
 
     init_skill_path = ROOT / "skills/project-context-init/SKILL.md"
     init_skill = init_skill_path.read_text(encoding="utf-8") if init_skill_path.exists() else ""

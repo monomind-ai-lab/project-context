@@ -61,6 +61,61 @@ primary materials or existing instructions.
 
 ---
 
+### How agents find the instructions
+
+Installation creates two complementary trigger paths:
+
+1. Agent harnesses that support the Agent Skills convention can discover the
+   installed `project-context` and `project-context-init` skills directly.
+2. The initializer adds a managed Project Context block to existing root agent
+   instructions such as `AGENTS.md` or `CLAUDE.md`. That block tells any agent
+   to read the local `project-context/SKILL.md` and current-state files before
+   substantial work—even when the harness has no skill launcher.
+
+This makes the Markdown operational instructions for agents while keeping it
+plain and readable for people.
+
+The resulting directory acts as a routing and continuity layer:
+
+| File | What it answers |
+| --- | --- |
+| `NOW.md` | What is true now, what is active, and what happens next? |
+| `DECISIONS.md` | Which accepted choices constrain future work, and why? |
+| `LEARNINGS.md` | Which verified lessons should future collaborators reuse? |
+| Linked evidence | Which source, document, dataset, review, result, or record supports the context? |
+
+Project Context does not copy the whole project into a second knowledge base.
+Primary artifacts stay where they belong. The context files summarize only the
+durable state and point collaborators to the evidence they need.
+
+### How the context pipeline works
+
+1. **The user prompts the agent.** The short installation prompt points the
+   agent to the canonical initializer skill.
+2. **The agent reviews and classifies.** It asks the required onboarding
+   questions, identifies the project type, and finds overlapping context.
+3. **The user approves the plan.** The agent proposes the profile, exact file
+   changes, and any relevant optional tools before writing.
+4. **The agent installs the pipeline.** It creates only approved files, installs
+   any opted-in tools, preserves existing material, and verifies idempotency.
+5. **Agents read before later work.** The installed skill or managed instruction
+   block routes them through `NOW.md`, decisions, learnings, and linked evidence.
+6. **Agents promote at milestones.** They update changed current state and only
+   promote durable decisions and verified reusable learnings.
+7. **The next collaborator inherits the context.** Any later person or agent can
+   read the same plain Markdown and follow its evidence links.
+
+In short: **primary work produces evidence → milestones promote durable context
+→ the next collaborator starts from shared context instead of reconstructing it.**
+
+## ✅ Interactive guide
+
+Open the [Project Context complete guide](https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html)
+for a visual walkthrough of the system, installation flow, agent triggers,
+context records, and optional integrations. It is hosted from the repository's
+`docs/` folder by the GitHub Pages workflow; no download or local setup is
+required to view it.
+
 ## ✅ What is included
 
 - **`project-context-init`** — onboards a new or existing project, suggests safe
@@ -71,6 +126,8 @@ primary materials or existing instructions.
 - **Two profiles** — lightweight adoption or full evidence structure.
 - **Two ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
+- **Interactive complete guide** — a browser-viewable walkthrough published as
+  a GitHub Page.
 
 
 
@@ -253,7 +310,7 @@ step, and verifies readiness without reading or exposing the secret.
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
-| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format nav[...]
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
 
 The initializer filters this list by repository type and observed contents. It
