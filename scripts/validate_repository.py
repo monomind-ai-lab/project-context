@@ -132,6 +132,7 @@ def main() -> int:
         "not expected to invoke skills or run Python commands themselves",
         "How agents find the instructions",
         "automatically installs or configures that selected tool",
+        "the agent guides the user step by step",
     ):
         if expected not in readme:
             errors.append(f"README missing expected positioning: {expected}")
@@ -143,6 +144,7 @@ def main() -> int:
         "What will this repository primarily hold or support?",
         "Eliminate add-ons that do not help",
         "If Python is unavailable",
+        "Guide secure authentication step by step",
     ):
         if expected not in init_skill:
             errors.append(f"initializer skill missing onboarding behavior: {expected}")

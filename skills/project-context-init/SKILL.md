@@ -146,6 +146,25 @@ the environment requires secure authentication, secret entry, or another step
 the agent cannot safely perform. An opt-in does not authorize unrelated modes or
 later side effects.
 
+### Guide secure authentication step by step
+
+When a selected mode needs a provider account, API key, token, or other secret:
+
+1. Explain why it is needed and offer a verified local, offline, host-agent, or
+   no-key mode first when one satisfies the user's goal.
+2. Name the exact provider setting or environment variable and link the current
+   official setup page. Never ask the user to paste the secret into chat.
+3. Tell the user where to store it safely for the selected environment—such as
+   an OS secret manager, tool-owned user configuration, environment variable,
+   or CI secret—and explicitly warn against tracked files and shell history.
+4. Give the minimum exact user-only action, explain what success looks like, and
+   pause while the user completes it. Tell them how to signal that the agent can
+   continue.
+5. After the user confirms, verify only credential presence or a harmless
+   authenticated operation. Never print, echo, log, diff, or otherwise expose
+   the value. If verification fails, guide the user through diagnosis without
+   requesting the secret itself.
+
 Keep later side effects separate: GitNexus MCP/hooks/wiki, Graphify graph builds
 and semantic/provider modes, and OpenWiki's first generation each need their
 own appropriate authorization. Never request secrets in chat or tracked files;

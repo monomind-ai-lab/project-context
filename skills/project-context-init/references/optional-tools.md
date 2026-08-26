@@ -35,6 +35,24 @@ delegate routine commands to the user. Secure provider authentication or secret
 entry may still require user action, and later side effects remain separately
 authorized as described below.
 
+## Guided authentication handoff
+
+If the chosen mode needs credentials, the agent owns the setup conversation:
+
+- offer a suitable local, offline, host-agent, or no-key mode first;
+- explain which credential is needed, why, and where current official docs say
+  to create or configure it;
+- guide the user to a safe store appropriate to the environment and warn against
+  chat, tracked files, command arguments, and shell history;
+- pause for the minimum user-only authentication or secret-entry step;
+- resume after confirmation and verify presence or connectivity without reading,
+  printing, logging, or diffing the secret;
+- troubleshoot through status and redacted errors, never by asking for the value.
+
+Keep provider instructions specific to the selected tool and mode. Do not make
+the user configure credentials that the selected local or host-agent mode does
+not require.
+
 ## GitNexus
 
 Purpose: structural code intelligence for symbols, relationships, impact, and

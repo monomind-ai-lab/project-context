@@ -263,7 +263,11 @@ potentially relevant tool before proposing changes and requires a separate
 informed decision for every eligible, unconfigured tool. If the user opts in,
 the agent automatically installs or configures that selected tool and verifies
 it; the user does not need to run the installation commands. Provider
-authentication or secret entry may still require a secure user action.
+authentication or secret entry may still require a secure user action. In that
+case, the agent guides the user step by step: it explains why the credential is
+needed, offers a suitable local or no-key mode first, points to the official
+setup location, shows where to store the secret safely, pauses for the user-only
+step, and verifies readiness without reading or exposing the secret.
 
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
