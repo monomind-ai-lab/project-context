@@ -12,7 +12,7 @@ projects, where version control makes shared context easy to review and evolve.
 But it also works well for any project whose working materials are organized in
 one folder that people and AI agents can access consistently.
 
-It works with software, document, research, writing, and mixed repositories. As
+It works with software, document, research, writing, and mixed projects. As
 work produces evidence, milestones promote the current state, durable decisions,
 and verified learnings into small Markdown files—Git-tracked when version
 control is available. Unlike chat history, proprietary memory, or generated
