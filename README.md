@@ -35,6 +35,45 @@ harnesses.
 See the [filled example](examples/sample-project-context/) for the complete
 core-profile experience.
 
+## What this repository does
+
+This repository packages two reusable agent skills, a safe initializer,
+project-context templates, copy-paste prompts, and validation tests. Together,
+they add a small `project-context/` directory to another repository or project
+folder without replacing the project's primary materials or existing
+instructions.
+
+The resulting directory acts as a routing and continuity layer:
+
+| File | What it answers |
+| --- | --- |
+| `NOW.md` | What is true now, what is active, and what happens next? |
+| `DECISIONS.md` | Which accepted choices constrain future work, and why? |
+| `LEARNINGS.md` | Which verified lessons should future collaborators reuse? |
+| Linked evidence | Which source, document, dataset, review, result, or record supports the context? |
+
+Project Context does not copy the whole project into a second knowledge base.
+Primary artifacts stay where they belong. The context files summarize only the
+durable state and point collaborators to the evidence they need.
+
+### How the context pipeline works
+
+1. **Review and classify.** The initializer determines whether the project is
+   new or existing, identifies its type, and finds overlapping context material.
+2. **Propose before writing.** It recommends a `core` or `full` profile, shows
+   the exact changes, and preserves existing files and instructions.
+3. **Read before work.** A person or agent starts with `NOW.md`, then searches
+   decisions and learnings before following links to relevant evidence.
+4. **Work against primary artifacts.** Source files, documents, datasets,
+   manuscripts, reviews, tests, and other verified evidence remain authoritative.
+5. **Promote at milestones.** Changed current state goes to `NOW.md`; only
+   durable decisions and evidence-backed reusable learnings are promoted.
+6. **Hand off through the folder.** The next collaborator repeats the same read
+   path, regardless of which person, agent, or chat handled the previous work.
+
+In short: **primary work produces evidence → milestones promote durable context
+→ the next collaborator starts from shared context instead of reconstructing it.**
+
 ## What is included
 
 - **`project-context-init`** — reviews an existing repository, suggests safe
