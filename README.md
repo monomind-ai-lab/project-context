@@ -94,29 +94,15 @@ then adapts the pipeline to software, documents, research, writing, mixed, or
 general work.
 
 ```text
-Install Project Context into the current repository from
-https://github.com/monomind-ai-lab/project-context.
-
-Start by asking me exactly: "Is this a brand-new repository?" Wait for my
-answer. If yes, ask what it will primarily hold or support and classify it. If
-no, inspect the repository and infer whether it is code, document, research,
-writing, mixed, or general without asking its purpose. Report the inferred type
-and confidence; ask for correction only if ambiguity would change the plan.
-
-Then read `skills/project-context-init/SKILL.md` and its templates directly from
-the source repository; no skill launcher is required. If the source is
-unavailable, ask me for a local copy rather than recreating it from memory.
-Perform a read-only adoption and consolidation review. Recommend core or full,
-list every proposed change, and wait for approval before writing. Preserve
-existing context and primary artifacts. Consider GitNexus, Graphify, and
-OpenWiki only after classification; offer an add-on only when an observed need
-justifies it, and ask independently about each remaining option. Use Python
-automation when available, but follow the templates manually when it is not.
-Finish with the complete diff and validation results.
+Install Project Context in the current repository or project folder using
+https://github.com/monomind-ai-lab/project-context. Read and follow
+`skills/project-context-init/SKILL.md`, starting with its required onboarding
+question. Show me the proposed plan and wait for my approval before making changes.
 ```
 
-Use the [full installation prompt](prompts/install-project-context.md) when you
-want every safety and add-on instruction included. After installation, the
+Use the [standalone installation prompt](prompts/install-project-context.md) for
+an easy-to-copy version. The full behavior stays in the skill so the prompt does
+not drift or duplicate instructions. After installation, the
 [maintenance prompt](prompts/maintain-project-context.md) works with agents that
 do not support installed skills.
 
@@ -242,7 +228,7 @@ informed decision for every eligible, unconfigured tool.
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
-| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format nav[...]
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
 
 The initializer filters this list by repository type and observed contents. It

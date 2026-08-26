@@ -12,6 +12,13 @@ or organized project folder: work produces evidence, milestones promote current
 state and durable knowledge, and future collaborators read the same context.
 Git makes that history reviewable when available, but it is not required.
 
+## Source-link invocation
+
+When a copy-paste prompt points to this repository, read this file and
+`assets/project-context/` directly from that source before planning the install.
+If the source cannot be accessed, stop and ask for a local path or copy; never
+recreate the templates or workflow from memory.
+
 ## 1. Start with the repository conversation
 
 Before profiles, commands, or add-ons, ask exactly one question and wait:
@@ -48,6 +55,9 @@ root instructions and likely context material, compare against
 `assets/project-context/`, propose exact create-only changes, and wait for
 approval. Do not claim deterministic scanning, idempotency, or doctor results
 when they were not run.
+
+The proposed plan must enumerate every root instruction file it would create or
+modify. Do not touch an instruction file unless it appears in the approved plan.
 
 If a managed block is malformed or duplicated, stop. Never repair unknown
 surrounding instructions automatically.
