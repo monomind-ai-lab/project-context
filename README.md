@@ -25,7 +25,8 @@ read the skills and Markdown instructions, run the tooling, maintain the context
 files, and verify the result. Humans can review or edit the Markdown at any time,
 but they are not expected to invoke skills or run Python commands themselves.
 
-## Why it matters
+
+## ✅ Why it matters
 
 A collaborator returning after three weeks should not reconstruct the project
 from stale chats and scattered plans. They should be able to answer four questions:
@@ -41,13 +42,15 @@ harnesses.
 See the [filled example](examples/sample-project-context/) for the complete
 core-profile experience.
 
-## What this repository does
+
+## ✅ What this repository does
 
 This repository is an agent-facing installation and operating package. It
 contains two reusable skills, a safe initializer, project-context templates,
 copy-paste prompts, and validation tests. An AI agent uses them to add and
 maintain a small `project-context/` directory without replacing the project's
 primary materials or existing instructions.
+
 
 ### Who does what
 
@@ -57,6 +60,7 @@ primary materials or existing instructions.
 | Answers whether the project is new and, when needed, what it is for | Classifies the project and reviews overlapping context |
 | Approves the proposed plan and each eligible optional tool | Creates only approved files, installs opted-in tools, and verifies the result |
 | Optionally reads, reviews, or edits the Markdown | Uses and maintains the context automatically during later work |
+
 
 ### How agents find the instructions
 
@@ -85,6 +89,7 @@ Project Context does not copy the whole project into a second knowledge base.
 Primary artifacts stay where they belong. The context files summarize only the
 durable state and point collaborators to the evidence they need.
 
+
 ### How the context pipeline works
 
 1. **The user prompts the agent.** The short installation prompt points the
@@ -105,7 +110,8 @@ durable state and point collaborators to the evidence they need.
 In short: **primary work produces evidence → milestones promote durable context
 → the next collaborator starts from shared context instead of reconstructing it.**
 
-## What is included
+
+## ✅ What is included
 
 - **`project-context-init`** — onboards a new or existing project, suggests safe
   consolidation, initializes the right profile, and validates context health.
@@ -116,7 +122,8 @@ In short: **primary work produces evidence → milestones promote durable contex
 - **Two ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
 
-## Install with any AI agent
+
+## ✅ Install with any AI agent
 
 No skill launcher or Python runtime is required for the agent-guided path. Copy
 the prompt below into an AI agent that can access the target repository or
@@ -137,7 +144,8 @@ not drift or duplicate instructions. After installation, the
 [maintenance prompt](prompts/maintain-project-context.md) works with agents that
 do not support installed skills.
 
-## Agent implementation reference: deterministic CLI
+
+## ✅ Agent implementation reference: deterministic CLI
 
 The installing agent normally runs these commands after the user approves its
 plan. They are documented for transparency, debugging, and contributors; most
@@ -176,7 +184,8 @@ stored automatically. Existing custom context is never
 silently upgraded or overwritten; the doctor reports available scaffold updates
 for deliberate review.
 
-## Repository review and consolidation
+
+## ✅ Repository review and consolidation
 
 For existing repositories, the skill first classifies the project from aggregate
 content signals and looks for material that may already serve the same purpose:
@@ -206,7 +215,8 @@ before suggesting one of three approaches:
 
 The review **never moves, merges, rewrites, archives, or deletes automatically**.
 
-## Agent health checks
+
+## ✅ Agent health checks
 
 When context may be stale or inconsistent, the agent runs:
 
@@ -224,7 +234,8 @@ The doctor checks:
 
 It reports issues without rewriting custom knowledge.
 
-## What agents do during project work
+
+## ✅ What agents do during project work
 
 At the start of meaningful work, the active agent:
 
@@ -241,7 +252,8 @@ At a milestone or handoff, the active agent:
 4. Promotes only evidence-backed, reusable learnings.
 5. Supersedes stale knowledge instead of silently rewriting history.
 
-## Authority model
+
+## ✅ Authority model
 
 | Layer | Role | Authority |
 | --- | --- | --- |
@@ -292,7 +304,8 @@ default checklist.
 Current setup notes, footprints, provider boundaries, and official links live
 in [the optional-tools reference](skills/project-context-init/references/optional-tools.md).
 
-## Safety guarantees
+
+## ✅ Safety guarantees
 
 - Existing context files are preserved byte-for-byte.
 - Existing `AGENTS.md`, `agents.md`, `CLAUDE.md`, and `claude.md` content is
@@ -304,7 +317,8 @@ in [the optional-tools reference](skills/project-context-init/references/optiona
   after an independent informed opt-in.
 - Secrets never belong in tracked context, prompts, logs, or commits.
 
-## Harness-maintainer fallback
+
+## ✅ Harness-maintainer fallback
 
 If an agent harness cannot copy skills automatically, a harness maintainer can
 install only the skills without the scaffold:
@@ -317,7 +331,8 @@ cp -R /path/to/project-context/skills/project-context-init .agents/skills/
 
 Then invoke `$project-context-init` in the target repository.
 
-## Development and validation
+
+## ✅ Development and validation
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -329,6 +344,7 @@ classification, add-on filtering, both profiles, skill installation,
 dry-run/apply/idempotency, consolidation discovery, doctor checks, custom
 context, instruction preservation, malformed markers, and path hazards.
 
-## License
+
+## ✅ License
 
 [MIT](LICENSE)
