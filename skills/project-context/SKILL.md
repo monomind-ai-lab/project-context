@@ -1,6 +1,6 @@
 ---
 name: project-context
-description: "Maintain the durable context pipeline for a collaborative repository or organized project folder of any type: current state, accepted decisions, verified learnings, and linked evidence shared across people and AI agents."
+description: "Use when a repository or project folder contains project-context/, especially before meaningful work, when resuming or handing off, or when current state, decisions, learnings, and linked evidence need to be read or maintained."
 ---
 
 # Project Context

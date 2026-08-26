@@ -29,6 +29,12 @@ explicit answer.
 A tool on `PATH` is available, not necessarily configured for the repository.
 Offer project configuration rather than reinstallation when appropriate.
 
+Once the user opts in to the disclosed tool and scope, the agent performs and
+verifies the installation or repository configuration automatically. Do not
+delegate routine commands to the user. Secure provider authentication or secret
+entry may still require user action, and later side effects remain separately
+authorized as described below.
+
 ## GitNexus
 
 Purpose: structural code intelligence for symbols, relationships, impact, and

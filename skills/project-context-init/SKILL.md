@@ -1,6 +1,6 @@
 ---
 name: project-context-init
-description: Safely review and initialize a general-purpose context pipeline in a repository or organized project folder for software, documents, research, writing, or mixed collaborative work, including provenance-preserving consolidation and type-appropriate optional add-ons.
+description: Use when asked to install, initialize, adopt, review, repair, or health-check Project Context in a repository or project folder, including classifying the project, consolidating overlapping context safely, or installing eligible optional add-ons after opt-in.
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
@@ -138,6 +138,13 @@ never authorizes another.
 Use current official commands from the optional-tools reference and re-check
 state immediately before changing anything. Distinguish installing a CLI from
 configuring this repository. Prefer repository-scoped, least-invasive modes.
+
+After the user explicitly opts in to a described tool and scope, perform the
+approved installation or configuration automatically and verify it. Do not hand
+ordinary installation commands back to the user. Ask for user action only when
+the environment requires secure authentication, secret entry, or another step
+the agent cannot safely perform. An opt-in does not authorize unrelated modes or
+later side effects.
 
 Keep later side effects separate: GitNexus MCP/hooks/wiki, Graphify graph builds
 and semantic/provider modes, and OpenWiki's first generation each need their

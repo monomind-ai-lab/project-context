@@ -1,6 +1,6 @@
 ---
 name: project-context
-description: "Read and maintain this repository's durable, Git-tracked context pipeline: current state, decisions, learnings, and linked evidence for repo-bound collaboration."
+description: "Use before meaningful work, when resuming or handing off, or when this project folder's current state, decisions, learnings, and linked evidence need to be read or maintained."
 ---
 
 # Project Context

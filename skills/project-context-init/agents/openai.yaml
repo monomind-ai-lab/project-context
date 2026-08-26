@@ -2,3 +2,5 @@ interface:
   display_name: "Initialize Project Context"
   short_description: "Build an in-repo context pipeline safely"
   default_prompt: "Use $project-context-init to begin by asking whether this repository is brand-new, then review and initialize a type-appropriate context pipeline."
+policy:
+  allow_implicit_invocation: true

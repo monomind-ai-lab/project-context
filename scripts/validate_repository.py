@@ -128,6 +128,10 @@ def main() -> int:
         "simple way to build a context pipeline right into a",
         "assets/project-context-cover.jpg",
         "prompts/install-project-context.md",
+        "agent-operated and human-readable",
+        "not expected to invoke skills or run Python commands themselves",
+        "How agents find the instructions",
+        "automatically installs or configures that selected tool",
     ):
         if expected not in readme:
             errors.append(f"README missing expected positioning: {expected}")
@@ -142,6 +146,23 @@ def main() -> int:
     ):
         if expected not in init_skill:
             errors.append(f"initializer skill missing onboarding behavior: {expected}")
+
+    trigger_expectations = {
+        "skills/project-context/SKILL.md": ("description: \"Use when", "contains project-context/"),
+        "skills/project-context-init/SKILL.md": ("description: Use when", "install, initialize, adopt"),
+    }
+    for relative, expected_values in trigger_expectations.items():
+        content = (ROOT / relative).read_text(encoding="utf-8") if (ROOT / relative).exists() else ""
+        for expected in expected_values:
+            if expected not in content:
+                errors.append(f"{relative}: missing discovery trigger: {expected}")
+    for relative in (
+        "skills/project-context/agents/openai.yaml",
+        "skills/project-context-init/agents/openai.yaml",
+    ):
+        content = (ROOT / relative).read_text(encoding="utf-8") if (ROOT / relative).exists() else ""
+        if "allow_implicit_invocation: true" not in content:
+            errors.append(f"{relative}: implicit skill discovery is not enabled")
 
     if errors:
         print("Repository validation failed:")

@@ -19,6 +19,12 @@ control is available. Unlike chat history, proprietary memory, or generated
 documentation, that context stays portable across collaborators and tools—and
 remains owned by the project.
 
+Project Context is **agent-operated and human-readable**. People provide intent,
+answer onboarding and opt-in questions, and approve proposed changes. Agents
+read the skills and Markdown instructions, run the tooling, maintain the context
+files, and verify the result. Humans can review or edit the Markdown at any time,
+but they are not expected to invoke skills or run Python commands themselves.
+
 ## Why it matters
 
 A collaborator returning after three weeks should not reconstruct the project
@@ -37,11 +43,34 @@ core-profile experience.
 
 ## What this repository does
 
-This repository packages two reusable agent skills, a safe initializer,
-project-context templates, copy-paste prompts, and validation tests. Together,
-they add a small `project-context/` directory to another repository or project
-folder without replacing the project's primary materials or existing
-instructions.
+This repository is an agent-facing installation and operating package. It
+contains two reusable skills, a safe initializer, project-context templates,
+copy-paste prompts, and validation tests. An AI agent uses them to add and
+maintain a small `project-context/` directory without replacing the project's
+primary materials or existing instructions.
+
+### Who does what
+
+| Person | AI agent |
+| --- | --- |
+| Pastes the short installation prompt | Loads and follows `project-context-init/SKILL.md` |
+| Answers whether the project is new and, when needed, what it is for | Classifies the project and reviews overlapping context |
+| Approves the proposed plan and each eligible optional tool | Creates only approved files, installs opted-in tools, and verifies the result |
+| Optionally reads, reviews, or edits the Markdown | Uses and maintains the context automatically during later work |
+
+### How agents find the instructions
+
+Installation creates two complementary trigger paths:
+
+1. Agent harnesses that support the Agent Skills convention can discover the
+   installed `project-context` and `project-context-init` skills directly.
+2. The initializer adds a managed Project Context block to existing root agent
+   instructions such as `AGENTS.md` or `CLAUDE.md`. That block tells any agent
+   to read the local `project-context/SKILL.md` and current-state files before
+   substantial work—even when the harness has no skill launcher.
+
+This makes the Markdown operational instructions for agents while keeping it
+plain and readable for people.
 
 The resulting directory acts as a routing and continuity layer:
 
@@ -58,25 +87,27 @@ durable state and point collaborators to the evidence they need.
 
 ### How the context pipeline works
 
-1. **Review and classify.** The initializer determines whether the project is
-   new or existing, identifies its type, and finds overlapping context material.
-2. **Propose before writing.** It recommends a `core` or `full` profile, shows
-   the exact changes, and preserves existing files and instructions.
-3. **Read before work.** A person or agent starts with `NOW.md`, then searches
-   decisions and learnings before following links to relevant evidence.
-4. **Work against primary artifacts.** Source files, documents, datasets,
-   manuscripts, reviews, tests, and other verified evidence remain authoritative.
-5. **Promote at milestones.** Changed current state goes to `NOW.md`; only
-   durable decisions and evidence-backed reusable learnings are promoted.
-6. **Hand off through the folder.** The next collaborator repeats the same read
-   path, regardless of which person, agent, or chat handled the previous work.
+1. **The user prompts the agent.** The short installation prompt points the
+   agent to the canonical initializer skill.
+2. **The agent reviews and classifies.** It asks the required onboarding
+   questions, identifies the project type, and finds overlapping context.
+3. **The user approves the plan.** The agent proposes the profile, exact file
+   changes, and any relevant optional tools before writing.
+4. **The agent installs the pipeline.** It creates only approved files, installs
+   any opted-in tools, preserves existing material, and verifies idempotency.
+5. **Agents read before later work.** The installed skill or managed instruction
+   block routes them through `NOW.md`, decisions, learnings, and linked evidence.
+6. **Agents promote at milestones.** They update changed current state and only
+   promote durable decisions and verified reusable learnings.
+7. **The next collaborator inherits the context.** Any later person or agent can
+   read the same plain Markdown and follow its evidence links.
 
 In short: **primary work produces evidence → milestones promote durable context
 → the next collaborator starts from shared context instead of reconstructing it.**
 
 ## What is included
 
-- **`project-context-init`** — reviews an existing repository, suggests safe
+- **`project-context-init`** — onboards a new or existing project, suggests safe
   consolidation, initializes the right profile, and validates context health.
 - **`project-context`** — reads and maintains durable project-folder context.
 - **Deterministic tooling** — dry-run/apply initialization, idempotency,
@@ -106,15 +137,19 @@ not drift or duplicate instructions. After installation, the
 [maintenance prompt](prompts/maintain-project-context.md) works with agents that
 do not support installed skills.
 
-## Deterministic CLI setup (optional)
+## Agent implementation reference: deterministic CLI
 
-From a checkout of this repository, inspect the exact changes first:
+The installing agent normally runs these commands after the user approves its
+plan. They are documented for transparency, debugging, and contributors; most
+users do not need to run them manually.
+
+The agent first inspects the exact changes:
 
 ```sh
 python3 scripts/install.py --target /path/to/repository --profile core --repo-type auto --repository-stage existing --dry-run
 ```
 
-Then apply the approved plan:
+It then applies the approved plan:
 
 ```sh
 python3 scripts/install.py --target /path/to/repository --profile core --repo-type auto --repository-stage existing --apply
@@ -124,8 +159,8 @@ This installs both skills under `.agents/skills/`, creates the selected
 `project-context/` profile, preserves custom files, and adds or refreshes only
 the managed Project Context block in existing root agent instructions.
 
-For a brand-new repository, first decide its primary type from its intended
-purpose, then use `--repository-stage brand-new --repo-type TYPE`. The CLI never
+For a brand-new repository, the agent derives the primary type from the user's
+purpose and uses `--repository-stage brand-new --repo-type TYPE`. The CLI never
 stores the free-text purpose.
 
 ### Profiles
@@ -155,7 +190,7 @@ content signals and looks for material that may already serve the same purpose:
 - research plans, references, datasets, manuscripts, chapters, and drafts that
   should usually remain primary evidence and be linked rather than migrated.
 
-Run the read-only review directly:
+The agent can run the deterministic read-only review with:
 
 ```sh
 python3 skills/project-context-init/scripts/project_context_init.py review --target /path/to/repository --repo-type auto
@@ -171,7 +206,9 @@ before suggesting one of three approaches:
 
 The review **never moves, merges, rewrites, archives, or deletes automatically**.
 
-## Health checks
+## Agent health checks
+
+When context may be stale or inconsistent, the agent runs:
 
 ```sh
 python3 skills/project-context-init/scripts/project_context_init.py doctor --target /path/to/repository
@@ -187,22 +224,22 @@ The doctor checks:
 
 It reports issues without rewriting custom knowledge.
 
-## Daily workflow
+## What agents do during project work
 
-At the start of meaningful work:
+At the start of meaningful work, the active agent:
 
-1. Read `project-context/NOW.md`.
-2. Search `DECISIONS.md` and `LEARNINGS.md` for the task topic.
-3. Follow only relevant links into detailed evidence.
-4. Confirm important claims against current primary artifacts and evidence.
+1. Reads `project-context/NOW.md`.
+2. Searches `DECISIONS.md` and `LEARNINGS.md` for the task topic.
+3. Follows only relevant links into detailed evidence.
+4. Confirms important claims against current primary artifacts and evidence.
 
-At a milestone or handoff:
+At a milestone or handoff, the active agent:
 
-1. Update the active task evidence.
-2. Promote changed current state into `NOW.md`.
-3. Record only decisions that constrain future work.
-4. Promote only evidence-backed, reusable learnings.
-5. Supersede stale knowledge instead of silently rewriting history.
+1. Updates the active task evidence.
+2. Promotes changed current state into `NOW.md`.
+3. Records only decisions that constrain future work.
+4. Promotes only evidence-backed, reusable learnings.
+5. Supersedes stale knowledge instead of silently rewriting history.
 
 ## Authority model
 
@@ -223,7 +260,10 @@ pipeline also works in a consistently shared project folder.
 
 Project Context works without any of these tools. The initializer detects each
 potentially relevant tool before proposing changes and requires a separate
-informed decision for every eligible, unconfigured tool.
+informed decision for every eligible, unconfigured tool. If the user opts in,
+the agent automatically installs or configures that selected tool and verifies
+it; the user does not need to run the installation commands. Provider
+authentication or secret entry may still require a secure user action.
 
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
@@ -252,9 +292,10 @@ in [the optional-tools reference](skills/project-context-init/references/optiona
   after an independent informed opt-in.
 - Secrets never belong in tracked context, prompts, logs, or commits.
 
-## Manual skill installation
+## Harness-maintainer fallback
 
-If you only want the skills and not the scaffold:
+If an agent harness cannot copy skills automatically, a harness maintainer can
+install only the skills without the scaffold:
 
 ```sh
 mkdir -p .agents/skills
