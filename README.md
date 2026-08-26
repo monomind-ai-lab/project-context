@@ -26,6 +26,9 @@ files, and verify the result. Humans can review or edit the Markdown at any time
 but they are not expected to invoke skills or run Python commands themselves.
 
 
+
+---
+
 ## ✅ Why it matters
 
 A collaborator returning after three weeks should not reconstruct the project
@@ -43,6 +46,9 @@ See the [filled example](examples/sample-project-context/) for the complete
 core-profile experience.
 
 
+
+---
+
 ## ✅ What this repository does
 
 This repository is an agent-facing installation and operating package. It
@@ -52,64 +58,8 @@ maintain a small `project-context/` directory without replacing the project's
 primary materials or existing instructions.
 
 
-### Who does what
 
-| Person | AI agent |
-| --- | --- |
-| Pastes the short installation prompt | Loads and follows `project-context-init/SKILL.md` |
-| Answers whether the project is new and, when needed, what it is for | Classifies the project and reviews overlapping context |
-| Approves the proposed plan and each eligible optional tool | Creates only approved files, installs opted-in tools, and verifies the result |
-| Optionally reads, reviews, or edits the Markdown | Uses and maintains the context automatically during later work |
-
-
-### How agents find the instructions
-
-Installation creates two complementary trigger paths:
-
-1. Agent harnesses that support the Agent Skills convention can discover the
-   installed `project-context` and `project-context-init` skills directly.
-2. The initializer adds a managed Project Context block to existing root agent
-   instructions such as `AGENTS.md` or `CLAUDE.md`. That block tells any agent
-   to read the local `project-context/SKILL.md` and current-state files before
-   substantial work—even when the harness has no skill launcher.
-
-This makes the Markdown operational instructions for agents while keeping it
-plain and readable for people.
-
-The resulting directory acts as a routing and continuity layer:
-
-| File | What it answers |
-| --- | --- |
-| `NOW.md` | What is true now, what is active, and what happens next? |
-| `DECISIONS.md` | Which accepted choices constrain future work, and why? |
-| `LEARNINGS.md` | Which verified lessons should future collaborators reuse? |
-| Linked evidence | Which source, document, dataset, review, result, or record supports the context? |
-
-Project Context does not copy the whole project into a second knowledge base.
-Primary artifacts stay where they belong. The context files summarize only the
-durable state and point collaborators to the evidence they need.
-
-
-### How the context pipeline works
-
-1. **The user prompts the agent.** The short installation prompt points the
-   agent to the canonical initializer skill.
-2. **The agent reviews and classifies.** It asks the required onboarding
-   questions, identifies the project type, and finds overlapping context.
-3. **The user approves the plan.** The agent proposes the profile, exact file
-   changes, and any relevant optional tools before writing.
-4. **The agent installs the pipeline.** It creates only approved files, installs
-   any opted-in tools, preserves existing material, and verifies idempotency.
-5. **Agents read before later work.** The installed skill or managed instruction
-   block routes them through `NOW.md`, decisions, learnings, and linked evidence.
-6. **Agents promote at milestones.** They update changed current state and only
-   promote durable decisions and verified reusable learnings.
-7. **The next collaborator inherits the context.** Any later person or agent can
-   read the same plain Markdown and follow its evidence links.
-
-In short: **primary work produces evidence → milestones promote durable context
-→ the next collaborator starts from shared context instead of reconstructing it.**
-
+---
 
 ## ✅ What is included
 
@@ -122,6 +72,9 @@ In short: **primary work produces evidence → milestones promote durable contex
 - **Two ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
 
+
+
+---
 
 ## ✅ Install with any AI agent
 
@@ -144,6 +97,9 @@ not drift or duplicate instructions. After installation, the
 [maintenance prompt](prompts/maintain-project-context.md) works with agents that
 do not support installed skills.
 
+
+
+---
 
 ## ✅ Agent implementation reference: deterministic CLI
 
@@ -171,19 +127,9 @@ For a brand-new repository, the agent derives the primary type from the user's
 purpose and uses `--repository-stage brand-new --repo-type TYPE`. The CLI never
 stores the free-text purpose.
 
-### Profiles
 
-| Profile | Creates | Best for |
-| --- | --- | --- |
-| `core` | `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, `LEARNINGS.md` | Small repositories, evaluation, and first-time adoption |
-| `full` | Core plus `tasks/`, `designs/`, and `incidents/` templates | Long-lived projects, teams, and evidence-rich workflows |
 
-Every installation records its profile, repository type, and template version
-in `project-context/.project-context.json`. The user's free-text purpose is not
-stored automatically. Existing custom context is never
-silently upgraded or overwritten; the doctor reports available scaffold updates
-for deliberate review.
-
+---
 
 ## ✅ Repository review and consolidation
 
@@ -216,6 +162,9 @@ before suggesting one of three approaches:
 The review **never moves, merges, rewrites, archives, or deletes automatically**.
 
 
+
+---
+
 ## ✅ Agent health checks
 
 When context may be stale or inconsistent, the agent runs:
@@ -235,6 +184,9 @@ The doctor checks:
 It reports issues without rewriting custom knowledge.
 
 
+
+---
+
 ## ✅ What agents do during project work
 
 At the start of meaningful work, the active agent:
@@ -253,6 +205,9 @@ At a milestone or handoff, the active agent:
 5. Supersedes stale knowledge instead of silently rewriting history.
 
 
+
+---
+
 ## ✅ Authority model
 
 | Layer | Role | Authority |
@@ -266,6 +221,10 @@ Project Context uses the standard Agent Skills shape (`SKILL.md`, `scripts/`,
 `references/`, and `assets/`) while keeping project knowledge in ordinary
 Markdown. Git provides reviewable history when available, but the context
 pipeline also works in a consistently shared project folder.
+
+
+
+---
 
 ## Optional integrations: GitNexus, Graphify, and OpenWiki
 
@@ -294,7 +253,7 @@ step, and verifies readiness without reading or exposing the secret.
 | Tool | Primary purpose | Choose it when |
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
-| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format nav[...]
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
 
 The initializer filters this list by repository type and observed contents. It
@@ -304,6 +263,9 @@ default checklist.
 Current setup notes, footprints, provider boundaries, and official links live
 in [the optional-tools reference](skills/project-context-init/references/optional-tools.md).
 
+
+
+---
 
 ## ✅ Safety guarantees
 
@@ -317,6 +279,9 @@ in [the optional-tools reference](skills/project-context-init/references/optiona
   after an independent informed opt-in.
 - Secrets never belong in tracked context, prompts, logs, or commits.
 
+
+
+---
 
 ## ✅ Harness-maintainer fallback
 
@@ -332,6 +297,9 @@ cp -R /path/to/project-context/skills/project-context-init .agents/skills/
 Then invoke `$project-context-init` in the target repository.
 
 
+
+---
+
 ## ✅ Development and validation
 
 ```sh
@@ -344,6 +312,9 @@ classification, add-on filtering, both profiles, skill installation,
 dry-run/apply/idempotency, consolidation discovery, doctor checks, custom
 context, instruction preservation, malformed markers, and path hazards.
 
+
+
+---
 
 ## ✅ License
 
