@@ -997,6 +997,60 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
   .lang-switch { left: max(16px, env(safe-area-inset-left)); transform: none;
     bottom: max(16px, env(safe-area-inset-bottom)); }
 }
+
+/* ─── deck menu (beside the brand mark) ──────────────────────────── */
+.deck-menu { position: fixed; z-index: 12;
+  top: clamp(22px, 2.6vw, 34px);
+  right: calc(clamp(26px, 3.2vw, 44px) + 46px + 10px);
+}
+.deck-menu-btn {
+  width: 46px; height: 46px; padding: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-hair);
+  background: var(--glass-hi);
+  cursor: pointer;
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  transition: background var(--motion-fast) var(--ease-standard);
+}
+.deck-menu-btn:hover { background: var(--glass-hi-2); }
+.deck-menu-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.deck-menu-btn span { display: block; width: 18px; height: 1.5px; border-radius: 2px;
+  background: var(--fg-inv); transition: transform var(--motion-fast) var(--ease-standard),
+  opacity var(--motion-fast) var(--ease-standard); }
+.deck-menu-btn span + span { margin-top: 4px; }
+.deck-menu[data-open="true"] .deck-menu-btn span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.deck-menu[data-open="true"] .deck-menu-btn span:nth-child(2) { opacity: 0; }
+.deck-menu[data-open="true"] .deck-menu-btn span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+.deck-menu-panel {
+  position: absolute; top: calc(100% + 10px); right: 0; min-width: 248px;
+  display: none; flex-direction: column; padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-hair);
+  background: color-mix(in srgb, var(--fg) 92%, transparent);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+}
+.deck-menu[data-open="true"] .deck-menu-panel { display: flex; }
+.deck-menu-panel a, .deck-menu-panel button {
+  display: flex; align-items: center; gap: var(--space-3);
+  width: 100%; padding: 11px var(--space-3); border: 0; border-radius: 12px;
+  background: none; cursor: pointer; text-align: left; text-decoration: none;
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 500;
+  color: var(--fg-inv);
+  transition: background var(--motion-fast) var(--ease-standard);
+}
+.deck-menu-panel a:hover, .deck-menu-panel button:hover { background: var(--glass-hi); }
+.deck-menu-panel a:focus-visible, .deck-menu-panel button:focus-visible {
+  outline: none; background: var(--glass-hi); box-shadow: var(--focus-ring); }
+.deck-menu-panel svg { flex: 0 0 auto; }
+.deck-menu-sep { height: 1px; margin: var(--space-2) var(--space-3);
+  background: var(--glass-hair); }
+@media (max-width: 760px) {
+  .deck-menu { top: max(16px, env(safe-area-inset-top));
+    right: calc(max(16px, env(safe-area-inset-right)) + 46px + 8px); }
+}
 </style>
 </head>
 <body>
@@ -1520,6 +1574,42 @@ question. Show me the proposed plan and wait for my approval before making chang
   <div class="deck-progress" id="deck-progress" aria-hidden=""></div>
   <div class="deck-counter" id="deck-counter" role="status" aria-live="polite" aria-atomic="true">1 / 18</div>
   <div class="deck-hint">← / → · scroll · swipe</div>
+  <nav class="deck-menu" id="deck-menu" data-open="false">
+    <button class="deck-menu-btn" type="button" id="deck-menu-btn"
+            aria-expanded="false" aria-controls="deck-menu-panel" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="deck-menu-panel" id="deck-menu-panel" role="menu" aria-labelledby="deck-menu-btn">
+      <button type="button" role="menuitem" id="deck-menu-start">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 17.5 11 12l7-5.5v11Z" fill="currentColor"/>
+          <path d="M6.5 6v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Back to the start
+      </button>
+      <a role="menuitem" href="https://projectcontext.monomind.one/">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 10.6 12 4l8 6.6V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1v-8.4Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+        Project Context home
+      </a>
+      <div class="deck-menu-sep" role="none"></div>
+      <a role="menuitem" href="https://github.com/monomind-ai-lab/project-context"
+         target="_blank" rel="noopener noreferrer">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+          1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+          0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0
+          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0
+          3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01
+          8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+  </nav>
   <div class="lang-switch notranslate" translate="no" role="group" aria-label="Language">
     <button type="button" data-lang="en">EN</button>
     <button type="button" data-lang="ko">KR</button>
@@ -1632,6 +1722,7 @@ question. Show me the proposed plan and wait for my approval before making chang
       }
 
       // listen on both surfaces, capture phase
+      window.__deckGo = go;
       window.addEventListener('keydown', onKey, true);
       document.addEventListener('keydown', onKey, true);
       document.addEventListener('scroll', syncFromScroll, { passive: true, capture: true });
@@ -1813,6 +1904,47 @@ question. Show me the proposed plan and wait for my approval before making chang
     } else {
       init();
     }
+  })();
+  </script>
+
+  <script>
+  (function () {
+    var wrap  = document.getElementById('deck-menu');
+    var btn   = document.getElementById('deck-menu-btn');
+    var panel = document.getElementById('deck-menu-panel');
+    var start = document.getElementById('deck-menu-start');
+    if (!wrap || !btn || !panel) return;
+
+    function setOpen(open) {
+      wrap.setAttribute('data-open', open ? 'true' : 'false');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    function isOpen() { return wrap.getAttribute('data-open') === 'true'; }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!isOpen());
+    });
+    document.addEventListener('click', function (e) {
+      if (isOpen() && !wrap.contains(e.target)) setOpen(false);
+    });
+    // the deck listens for keys on window/document in the capture phase —
+    // keep menu keystrokes from also driving slide navigation
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { setOpen(false); btn.focus(); }
+      e.stopPropagation();
+    }, true);
+
+    start.addEventListener('click', function () {
+      setOpen(false);
+      if (typeof window.__deckGo === 'function') { window.__deckGo(0); return; }
+      try {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+      } catch (_) {}
+    });
+    panel.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setOpen(false);
+    });
   })();
   </script>
 </body></html>
