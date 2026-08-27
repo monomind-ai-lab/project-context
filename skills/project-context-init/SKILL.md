@@ -102,7 +102,8 @@ python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile 
 The script creates only missing files, records scaffold version and repository
 type, preserves differing files, and updates only its managed block in existing
 root `AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. `--install-skills`
-copies both skills into `.agents/skills/` with the same preserve-existing rules.
+copies the `project-context`, `project-context-init`, and `project-context-update`
+skills into `.agents/skills/` with the same preserve-existing rules.
 
 For manual installation, copy only missing template files and add a Project
 Context pointer only to root instruction files the user approves. Show the full

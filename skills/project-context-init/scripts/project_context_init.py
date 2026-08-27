@@ -584,7 +584,7 @@ def inspect(target: Path, repo_type: str = "auto") -> dict[str, Any]:
 
 def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
     source_parent = skill_root().parent
-    for skill_name in ("project-context", "project-context-init"):
+    for skill_name in ("project-context", "project-context-init", "project-context-update"):
         source = source_parent / skill_name
         destination_root = target / ".agents" / "skills" / skill_name
         destination_chain = (target / ".agents", target / ".agents" / "skills", destination_root)

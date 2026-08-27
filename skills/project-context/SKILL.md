@@ -51,3 +51,9 @@ When context appears stale, contradictory, or hard to navigate, use the sibling
 `project-context-init` skill's `doctor` workflow. It checks core files, scaffold
 version, review freshness, duplicate decision/learning IDs, and broken relative
 links without rewriting content.
+
+When `doctor` reports that the scaffold version is behind, or the user asks
+whether Project Context has moved on, use the sibling `project-context-update`
+skill. It compares this install against a published release and only replaces
+files the project has not adapted; it never edits `NOW.md`, `DECISIONS.md`, or
+`LEARNINGS.md`.
