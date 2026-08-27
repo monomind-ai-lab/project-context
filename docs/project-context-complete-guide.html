@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Context · How It Works</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -842,6 +842,132 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 }
 .close-links a:hover { background: var(--glass-hi-2); }
 .close-links a.is-accent { border-color: var(--accent-hair); }
+
+/* ── Responsive deck hardening ─────────────────────────────────────
+   These overrides intentionally live after the guide layer. The deck's
+   component rules are shared with the desktop composition, so placing the
+   narrow-viewport rules last keeps the mobile layout from being re-expanded
+   by a later grid declaration. Mobile users can read a tall slide vertically
+   and still swipe horizontally between slides; desktop remains a one-screen
+   presentation surface. */
+@media (max-width: 1100px) {
+  html, body { height: auto; min-height: 100%; }
+  body {
+    overflow-x: auto;
+    overflow-y: auto;
+    align-items: flex-start;
+    background-attachment: scroll, scroll, scroll;
+  }
+  .slide {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    align-self: flex-start;
+    overflow: visible;
+    padding: max(68px, calc(env(safe-area-inset-top) + 52px)) var(--container-gutter-tablet) max(44px, calc(env(safe-area-inset-bottom) + 32px));
+  }
+  .slide.hero {
+    padding-block: max(72px, calc(env(safe-area-inset-top) + 56px)) max(44px, calc(env(safe-area-inset-bottom) + 32px));
+  }
+  .slide.dg-slide {
+    justify-content: flex-start;
+    padding-block: max(68px, calc(env(safe-area-inset-top) + 52px)) max(44px, calc(env(safe-area-inset-bottom) + 32px));
+  }
+  .slide.dg-center .dg-canvas {
+    flex: none;
+    min-height: auto;
+    justify-content: flex-start;
+  }
+
+  /* Reflow every multi-column composition before it reaches phone widths. */
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-2, .grid-img, .dg-workflow-cols { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dg-flow-h { grid-template-columns: 1fr; }
+  .dg-flow-h > .dg-frame { width: 100%; min-width: 0; }
+  .dg-flow-h .dg-arrow {
+    width: 100%;
+    max-width: none;
+    padding: var(--space-2) 0;
+  }
+  .dg-flow-h .dg-arrow .ln {
+    width: 1px;
+    height: 24px;
+    margin: 0 auto;
+    min-width: 0;
+  }
+  .dg-flow-h .dg-arrow .ln::after {
+    right: -3px;
+    top: auto;
+    bottom: 0;
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-top: 6px solid var(--hair);
+    border-bottom: none;
+  }
+  .dg-flow-h .dg-chip-row { flex-direction: column; flex-wrap: nowrap; }
+  .dg-flow-h .dg-chip { flex: 0 0 auto; }
+
+  .wf-row { grid-template-columns: 1fr; gap: var(--space-2); }
+  .wf-phase { padding-top: 0; }
+  .wf-track { grid-template-columns: 1fr; gap: var(--space-2); }
+  .wf-link { display: none; }
+
+  .tbl {
+    table-layout: fixed;
+    font-size: 12.5px;
+  }
+  .tbl th, .tbl td {
+    padding-right: var(--space-3);
+    overflow-wrap: anywhere;
+  }
+  .tbl td.k { white-space: normal; }
+  .copy-btn { min-height: 44px; }
+  .copy-btn::after { inset: 0; }
+}
+
+@media (max-width: 680px) {
+  .slide { padding-inline: var(--container-gutter-phone); }
+  .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .dg-map {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-2);
+  }
+  .dg-map-arrow, .dg-map-h, .dg-map > div:empty { display: none; }
+  .dg-leader-row { flex-direction: column; gap: 2px; }
+  .dg-leader-name { white-space: normal; overflow-wrap: anywhere; }
+  .dg-leader-desc { margin-left: 0; text-align: left; }
+  .dg-flag-row { flex-direction: column; }
+  .dg-flag { flex: 0 0 auto; min-width: 0; }
+
+  /* The cover's non-breaking title space needs an escape hatch on a phone. */
+  .cover-title { min-width: 0; }
+  .cover-kicker { gap: var(--space-3); align-items: flex-start; }
+  .cover-kicker::after { flex: 1 1 32px; min-width: 32px; margin-top: 6px; }
+  .cover-hero .h-hero {
+    font-size: clamp(38px, 10vw, 52px);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .dg-frame { padding: var(--space-4) 18px 18px; }
+  .frame-head { align-items: flex-start; flex-wrap: wrap; gap: var(--space-3); }
+  .frame-head .dg-frame-label { flex: 1 1 140px; }
+
+  .dg-treeview, .dg-treeview ul { font-size: 11px; padding-left: 14px; }
+  .dg-treeview { padding-left: 0; }
+  .dg-treeview li { padding-left: 16px; overflow-wrap: anywhere; }
+  .dg-treeview .dsc { margin-left: 4px; }
+  .close-links a { min-height: 44px; display: inline-flex; align-items: center; }
+  .deck-counter { right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); }
+  .brand-mark { top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
+  .s-no { right: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { scroll-behavior: auto; }
+  * { transition-duration: 1ms !important; }
+}
 </style>
 </head>
 <body>
@@ -1399,6 +1525,12 @@ question. Show me the proposed plan and wait for my approval before making chang
         if (!el) return 0;
         try { return Number(el.scrollLeft) || 0; } catch (_) { return 0; }
       }
+      // `documentElement.clientWidth` is the CSS layout viewport. On some
+      // mobile previews `window.innerWidth` reflects the emulated device
+      // scale instead, which would skip several slides at once.
+      function viewportWidth() {
+        return Number(document.documentElement && document.documentElement.clientWidth) || Number(window.innerWidth) || 1;
+      }
       function activeScrollLeft() {
         var candidates = scrollContainers();
         var best = 0;
@@ -1429,6 +1561,12 @@ question. Show me the proposed plan and wait for my approval before making chang
           try { candidates[i].scrollTo({ left: left, behavior: behavior || 'smooth' }); } catch (_) {}
         }
       }
+      function resetVerticalScroll() {
+        var candidates = scrollContainers();
+        for (var i = 0; i < candidates.length; i++) {
+          try { candidates[i].scrollTop = 0; } catch (_) {}
+        }
+      }
       function setActive(i) {
         active = i;
         if (counter)  counter.textContent  = (i + 1) + ' / ' + slides.length;
@@ -1438,11 +1576,15 @@ question. Show me the proposed plan and wait for my approval before making chang
       function go(i) {
         var next = Math.max(0, Math.min(slides.length - 1, i));
         setActive(next);
-        scrollToLeft(next * window.innerWidth, 'smooth');
+        resetVerticalScroll();
+        scrollToLeft(next * viewportWidth(), 'smooth');
       }
       function syncFromScroll() {
-        var i = Math.round(activeScrollLeft() / window.innerWidth);
-        if (i !== active && i >= 0 && i < slides.length) setActive(i);
+        var i = Math.round(activeScrollLeft() / viewportWidth());
+        if (i !== active && i >= 0 && i < slides.length) {
+          setActive(i);
+          resetVerticalScroll();
+        }
       }
       function onKey(e) {
         if (e.defaultPrevented) return;
@@ -1473,7 +1615,8 @@ question. Show me the proposed plan and wait for my approval before making chang
         var saved = parseInt(localStorage.getItem(KEY) || '0', 10);
         if (!isNaN(saved) && saved >= 0 && saved < slides.length) {
           setActive(saved);
-          scrollToLeft(saved * window.innerWidth, 'instant');
+          resetVerticalScroll();
+          scrollToLeft(saved * viewportWidth(), 'instant');
         } else {
           setActive(0);
         }

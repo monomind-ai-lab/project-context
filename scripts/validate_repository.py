@@ -163,6 +163,23 @@ def main() -> int:
                 errors.append(f"interactive guide missing expected content: {expected}")
         if "file://" in guide_text:
             errors.append("interactive guide contains a local file URL")
+        responsive_marker = "/* ── Responsive deck hardening"
+        guide_layer_marker = "/* ═══════════════════════════════════════════════════════════════════\n   Guide layer"
+        if responsive_marker not in guide_text:
+            errors.append("interactive guide is missing responsive deck hardening")
+        elif guide_layer_marker in guide_text and guide_text.rfind(responsive_marker) < guide_text.find(guide_layer_marker):
+            errors.append("interactive guide responsive overrides must follow the guide layer")
+        for expected in (
+            "viewport-fit=cover",
+            "overflow-y: auto",
+            "min-height: 100svh",
+            ".wf-track { grid-template-columns: 1fr;",
+            "table-layout: fixed",
+            "function viewportWidth()",
+            "function resetVerticalScroll()",
+        ):
+            if expected not in guide_text:
+                errors.append(f"interactive guide missing responsive behavior: {expected}")
 
     pages_workflow = ROOT / ".github/workflows/pages.yml"
     if pages_workflow.is_file():
