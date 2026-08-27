@@ -121,6 +121,8 @@ required to view it.
 - **`project-context-init`** — onboards a new or existing project, suggests safe
   consolidation, initializes the right profile, and validates context health.
 - **`project-context`** — reads and maintains durable project-folder context.
+- **`project-context-update`** — checks for a newer release and pulls it in
+  without overwriting what the project has adapted.
 - **Deterministic tooling** — dry-run/apply initialization, idempotency,
   scaffold version checks, and a read-only doctor.
 - **Two profiles** — lightweight adoption or full evidence structure.
@@ -129,6 +131,40 @@ required to view it.
 - **Interactive complete guide** — a browser-viewable walkthrough published as
   a GitHub Page.
 
+
+---
+
+## ✅ The skills
+
+Project Context ships three skills. One is loaded by agents on their own; the
+other two exist for you to ask for.
+
+| Skill | What it does | When it runs |
+| --- | --- | --- |
+| **`project-context`** | The operating protocol. What to read before work, and how to keep current state, decisions, learnings, and evidence links maintained. | **On its own.** An agent loads it before substantial work in a project that has `project-context/`, and maintains the files as milestones and handoffs happen. You never invoke it. |
+| **`project-context-init`** | Installs, adopts, reviews, repairs, and health-checks the pipeline. Classifies the project, proposes a create-only plan, and waits for approval. | **When you ask.** Setting it up in a new project, adopting it in an existing one, or checking health when context looks stale or contradictory. |
+| **`project-context-update`** | Checks whether a newer release exists and, once you approve, pulls it in — replacing only files this project has not adapted. | **When you ask.** After a release lands, or any time you want to know whether the scaffold has moved on. |
+
+### How agents reach them
+
+Harnesses that support the Agent Skills convention discover the installed skills
+directly. Everything else follows the managed block that installation adds to
+`AGENTS.md` or `CLAUDE.md`, which points at `project-context/SKILL.md`. Both
+paths lead to the same instructions, so no harness is a special case.
+
+### What you actually type
+
+You do not run Python or memorize command names. Ask in plain language:
+
+- *"Install Project Context here"* — or paste the installation prompt below.
+- *"Check whether Project Context has a newer release"* — runs
+  `project-context-update`, which reports before it proposes anything.
+- *"Run the Project Context doctor"* — runs the read-only health check in
+  `project-context-init`.
+
+The third skill is the one you will never need to ask for: maintaining the
+context files is part of how an agent works in the project, not a separate
+request.
 
 
 ---

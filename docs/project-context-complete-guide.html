@@ -600,7 +600,7 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* Cover: photographic title page. Kicker top, title in the optical middle,
    meta anchored to the foot — the full-height rhythm of a title page, which
-   distinguishes it from slide 18's single centred block while sharing the
+   distinguishes it from slide 19's single centred block while sharing the
    same artwork and scrim. */
 .slide.cover-hero { justify-content: space-between; }
 .cover-kicker { display: flex; align-items: center; gap: var(--space-4); }
@@ -822,7 +822,7 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
    measures ~3.6:1 at 12px — under the 4.5:1 floor. Lifting it toward white
    brings it to ~5.6:1 while keeping it recognisably the accent. */
 .slide.is-photo .eyebrow { color: color-mix(in oklab, var(--accent), white 24%); }
-/* meta chips follow slide 18's link pills rather than the light-slide surface */
+/* meta chips follow slide 19's link pills rather than the light-slide surface */
 .slide.is-photo .cover-meta span {
   background: var(--glass-hi);
   border-color: var(--glass-hair);
@@ -1068,7 +1068,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
     </div>
 
     <div class="cover-meta" data-od-id="cover-meta">
-      <span>18 pages</span>
+      <span>19 pages</span>
       <span>Install · Operate · Extend</span>
       <span>github.com/monomind-ai-lab</span>
     </div>
@@ -1198,8 +1198,42 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
     </div>
   </section>
 
-  <!-- 06 Install -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="06 Install" data-od-id="slide-install" role="group" aria-label="Slide 06 Install">
+  <!-- 06 The skills -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="06 The skills" data-od-id="slide-skills" role="group" aria-label="Slide 06 The skills">
+    <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
+    <p class="eyebrow">Part 2 · How it works</p>
+    <h2 class="h-md">Three skills, two of them yours</h2>
+    <p class="lead">Two skills exist for you to ask for, in plain language. The third is never something you request — maintaining the context is part of how an agent works in the project.</p>
+
+    <div class="dg-canvas">
+      <div class="dg-frame is-accent" data-od-id="node-skills-table">
+        <table class="tbl">
+          <thead><tr>
+            <th style="width:26%"><span class="th-lbl"><svg class="th-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.2l1.5 3.5L13 7.2l-3.5 1.5L8 12.2 6.5 8.7 3 7.2l3.5-1.5L8 2.2Z"/></svg>Skill</span></th>
+            <th style="width:40%"><span class="th-lbl"><svg class="th-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2.3"/><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6"/></svg>What it does</span></th>
+            <th><span class="th-lbl"><svg class="th-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.8"/><path d="M8 4.8V8l2.2 1.6"/></svg>When it runs</span></th>
+          </tr></thead>
+          <tbody>
+            <tr><td><b class="notranslate" translate="no">project-context</b></td><td>The operating protocol: what to read before work, and how to keep current state, decisions, learnings, and evidence links maintained.</td><td><b>On its own.</b> An agent loads it before substantial work and maintains the files as milestones and handoffs happen.</td></tr>
+            <tr><td><b class="notranslate" translate="no">project-context-init</b></td><td>Installs, adopts, reviews, repairs, and health-checks the pipeline. Proposes a create-only plan and waits for approval.</td><td><b>When you ask.</b> Setting it up, adopting it in an existing project, or checking health.</td></tr>
+            <tr><td><b class="notranslate" translate="no">project-context-update</b></td><td>Checks whether a newer release exists and, once approved, pulls it in — replacing only files this project has not adapted.</td><td><b>When you ask.</b> After a release lands, or to find out whether the scaffold has moved on.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dg-frame" data-od-id="node-skills-asks">
+        <div class="dg-frame-label">What you actually type</div>
+        <div class="dg-chip-row">
+          <div class="dg-chip" data-od-id="ask-install"><div class="nm">“Install Project Context here”</div><p class="ds">The agent asks whether the project is new, classifies it, and shows a plan before writing anything.</p></div>
+          <div class="dg-chip" data-od-id="ask-update"><div class="nm">“Check for a newer release”</div><p class="ds">Reports what would change, and never replaces a file this project has adapted.</p></div>
+          <div class="dg-chip" data-od-id="ask-doctor"><div class="nm">“Run the doctor”</div><p class="ds">A read-only health check: core files, scaffold version, review freshness, duplicate IDs, broken links.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 Install -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="07 Install" data-od-id="slide-install" role="group" aria-label="Slide 07 Install">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 3 · Install</p>
     <h2 class="h-md">Install with any AI agent</h2>
@@ -1233,8 +1267,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 07 Initialization protocol -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="07 Initialization protocol" data-od-id="slide-init" role="group" aria-label="Slide 07 Initialization protocol">
+  <!-- 08 Initialization protocol -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="08 Initialization protocol" data-od-id="slide-init" role="group" aria-label="Slide 08 Initialization protocol">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 3 · Install</p>
     <h2 class="h-md">What the initializer does</h2>
@@ -1268,8 +1302,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 08 Profiles -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="08 Profiles" data-od-id="slide-profiles" role="group" aria-label="Slide 08 Profiles">
+  <!-- 09 Profiles -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="09 Profiles" data-od-id="slide-profiles" role="group" aria-label="Slide 09 Profiles">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 4 · What you get</p>
     <h2 class="h-md">Two profiles</h2>
@@ -1299,8 +1333,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 09 The context files -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="09 The context files" data-od-id="slide-files" role="group" aria-label="Slide 09 The context files">
+  <!-- 10 The context files -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="10 The context files" data-od-id="slide-files" role="group" aria-label="Slide 10 The context files">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 4 · What you get</p>
     <h2 class="h-md">A routing and continuity layer</h2>
@@ -1321,8 +1355,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 10 Agent workflow -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="10 Agent workflow" data-od-id="slide-workflow" role="group" aria-label="Slide 10 Agent workflow">
+  <!-- 11 Agent workflow -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="11 Agent workflow" data-od-id="slide-workflow" role="group" aria-label="Slide 11 Agent workflow">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 5 · Operate</p>
     <h2 class="h-md">What agents do during project work</h2>
@@ -1351,8 +1385,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 11 Review & consolidation -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="11 Review &amp; consolidation" data-od-id="slide-consolidation" role="group" aria-label="Slide 11 Review &amp; consolidation">
+  <!-- 12 Review & consolidation -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="12 Review &amp; consolidation" data-od-id="slide-consolidation" role="group" aria-label="Slide 12 Review &amp; consolidation">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 5 · Operate</p>
     <h2 class="h-md">Existing context is reviewed, never migrated behind your back</h2>
@@ -1387,8 +1421,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 12 Health checks -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="12 Health checks" data-od-id="slide-doctor" role="group" aria-label="Slide 12 Health checks">
+  <!-- 13 Health checks -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="13 Health checks" data-od-id="slide-doctor" role="group" aria-label="Slide 13 Health checks">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 5 · Operate</p>
     <h2 class="h-md">When context may be stale, the agent runs the doctor</h2>
@@ -1415,8 +1449,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 13 Authority model -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="13 Authority model" data-od-id="slide-authority" role="group" aria-label="Slide 13 Authority model">
+  <!-- 14 Authority model -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="14 Authority model" data-od-id="slide-authority" role="group" aria-label="Slide 14 Authority model">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 5 · Operate</p>
     <h2 class="h-md">Authority model</h2>
@@ -1437,8 +1471,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 14 Optional tools -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="14 Optional tools" data-od-id="slide-tools" role="group" aria-label="Slide 14 Optional tools">
+  <!-- 15 Optional tools -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="15 Optional tools" data-od-id="slide-tools" role="group" aria-label="Slide 15 Optional tools">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · Extend</p>
     <h2 class="h-md">Advanced integrations</h2>
@@ -1465,8 +1499,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 15 Safety guarantees -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="15 Safety guarantees" data-od-id="slide-safety" role="group" aria-label="Slide 15 Safety guarantees">
+  <!-- 16 Safety guarantees -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="16 Safety guarantees" data-od-id="slide-safety" role="group" aria-label="Slide 16 Safety guarantees">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · Extend</p>
     <h2 class="h-md">Safety guarantees</h2>
@@ -1486,8 +1520,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 16 Repository structure -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="16 Repository structure" data-od-id="slide-repo" role="group" aria-label="Slide 16 Repository structure">
+  <!-- 17 Repository structure -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="17 Repository structure" data-od-id="slide-repo" role="group" aria-label="Slide 17 Repository structure">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 7 · Reference</p>
     <h2 class="h-md">Repository structure</h2>
@@ -1529,8 +1563,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 17 Data flow -->
-  <section class="slide dark dg-slide dg-center" data-screen-label="17 Data flow" data-od-id="slide-dataflow" role="group" aria-label="Slide 17 Data flow">
+  <!-- 18 Data flow -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="18 Data flow" data-od-id="slide-dataflow" role="group" aria-label="Slide 18 Data flow">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 7 · Reference</p>
     <h2 class="h-md">From work to durable context</h2>
@@ -1553,8 +1587,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
-  <!-- 18 Closing -->
-  <section class="slide hero dark is-photo" data-screen-label="18 Get started" data-od-id="slide-closing" role="group" aria-label="Slide 18 Get started">
+  <!-- 19 Closing -->
+  <section class="slide hero dark is-photo" data-screen-label="19 Get started" data-od-id="slide-closing" role="group" aria-label="Slide 19 Get started">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <div class="close-grid">
       <div>
@@ -1572,7 +1606,7 @@ question. Show me the proposed plan and wait for my approval before making chang
   </section>
   <!-- chrome -->
   <div class="deck-progress" id="deck-progress" aria-hidden=""></div>
-  <div class="deck-counter" id="deck-counter" role="status" aria-live="polite" aria-atomic="true">1 / 18</div>
+  <div class="deck-counter" id="deck-counter" role="status" aria-live="polite" aria-atomic="true">1 / 19</div>
   <div class="deck-hint">← / → · scroll · swipe</div>
   <nav class="deck-menu" id="deck-menu" data-open="false">
     <button class="deck-menu-btn" type="button" id="deck-menu-btn"
