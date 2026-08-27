@@ -968,6 +968,35 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   body { scroll-behavior: auto; }
   * { transition-duration: 1ms !important; }
 }
+
+/* ─── language switch ────────────────────────────────────────────── */
+.lang-switch {
+  position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%);
+  display: flex; z-index: 10;
+  background: var(--glass-hi); border: 1px solid var(--glass-hair);
+  border-radius: var(--radius-pill); overflow: hidden;
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+}
+.lang-switch button {
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+  color: var(--muted-inv); padding: 7px var(--space-3); min-height: 32px;
+}
+.lang-switch button:hover { color: var(--fg-inv); }
+.lang-switch button.active { background: var(--glass-hi-2); color: var(--fg-inv); }
+/* Google Translate chrome stays out of the deck */
+#google_translate_element { display: none; }
+iframe.skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf, .VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important; visibility: hidden !important;
+}
+body { top: 0 !important; }
+/* translated text sits flush against protected terms without a little air */
+html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15em; }
+@media (max-width: 760px) {
+  .lang-switch { left: max(16px, env(safe-area-inset-left)); transform: none;
+    bottom: max(16px, env(safe-area-inset-bottom)); }
+}
 </style>
 </head>
 <body>
@@ -1491,6 +1520,12 @@ question. Show me the proposed plan and wait for my approval before making chang
   <div class="deck-progress" id="deck-progress" aria-hidden=""></div>
   <div class="deck-counter" id="deck-counter" role="status" aria-live="polite" aria-atomic="true">1 / 18</div>
   <div class="deck-hint">← / → · scroll · swipe</div>
+  <div class="lang-switch notranslate" translate="no" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="ko">KR</button>
+    <button type="button" data-lang="zh-TW">ZH-TW</button>
+  </div>
+  <div id="google_translate_element" class="notranslate" aria-hidden="true"></div>
 
   <script>
     /*
@@ -1683,4 +1718,101 @@ question. Show me the proposed plan and wait for my approval before making chang
     });
   })();
 </script>
+
+  <script>
+  /*
+    Language switch (Google Translate, cookie-driven).
+    Everything that is a file name, folder path, command, or product name is
+    marked translate="no" BEFORE the translator loads, so code stays code.
+  */
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      { pageLanguage: 'en', includedLanguages: 'en,ko,zh-TW', autoDisplay: false },
+      'google_translate_element'
+    );
+  }
+  (function () {
+    // Blocks that are entirely code / paths / file trees.
+    var LITERAL_BLOCKS = '.code, .dg-treeview, .dg-chip .nm, .dg-leader-name, .lang-switch';
+    // Inline terms: product names, *.ext file names, and anything path-shaped.
+    var TERMS = /(GitNexus|Graphify|OpenWiki|MonoMind(?: AI Lab)?|MONOMIND(?: AI LAB)?|\bMIT\b|[A-Za-z0-9_.-]+\.(?:md|py|json|ya?ml|txt|html|lock)\b|[A-Za-z0-9_.-]*\/[A-Za-z0-9_./-]+)/g;
+    var SKIP = /^(SCRIPT|STYLE|CODE|TEXTAREA|NOSCRIPT)$/;
+
+    function protect() {
+      document.querySelectorAll(LITERAL_BLOCKS).forEach(function (el) {
+        el.setAttribute('translate', 'no');
+        el.classList.add('notranslate');
+      });
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          if (!node.nodeValue || node.nodeValue.length < 3) return NodeFilter.FILTER_REJECT;
+          var p = node.parentNode;
+          if (!p || SKIP.test(p.nodeName)) return NodeFilter.FILTER_REJECT;
+          if (p.closest && p.closest('[translate="no"]')) return NodeFilter.FILTER_REJECT;
+          TERMS.lastIndex = 0;
+          return TERMS.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      var targets = [], n;
+      while ((n = walker.nextNode())) targets.push(n);
+      targets.forEach(function (node) {
+        var frag = document.createDocumentFragment();
+        var text = node.nodeValue, last = 0, m;
+        TERMS.lastIndex = 0;
+        while ((m = TERMS.exec(text))) {
+          if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          var span = document.createElement('span');
+          span.className = 'notranslate nt-term';
+          span.setAttribute('translate', 'no');
+          span.textContent = m[0];
+          frag.appendChild(span);
+          last = m.index + m[0].length;
+        }
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+
+    function currentLang() {
+      var m = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([^;]+)/);
+      return m ? decodeURIComponent(m[1]) : 'en';
+    }
+    function setLang(code) {
+      var host = location.hostname;
+      var kill = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+      document.cookie = kill;
+      if (host) {
+        document.cookie = kill + '; domain=' + host;
+        document.cookie = kill + '; domain=.' + host;
+      }
+      if (code !== 'en') {
+        document.cookie = 'googtrans=/en/' + code + '; path=/';
+        if (host) document.cookie = 'googtrans=/en/' + code + '; path=/; domain=.' + host;
+      }
+      location.reload();
+    }
+
+    function init() {
+      var cur = currentLang();
+      document.querySelectorAll('.lang-switch button').forEach(function (btn) {
+        if (btn.getAttribute('data-lang') === cur) btn.classList.add('active');
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (btn.getAttribute('data-lang') !== cur) setLang(btn.getAttribute('data-lang'));
+        });
+      });
+      if (cur !== 'en') {
+        protect();
+        var sc = document.createElement('script');
+        sc.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.head.appendChild(sc);
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+  </script>
 </body></html>
