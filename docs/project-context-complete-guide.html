@@ -1868,17 +1868,31 @@ question. Show me the proposed plan and wait for my approval before making chang
       var m = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([^;]+)/);
       return m ? decodeURIComponent(m[1]) : 'en';
     }
-    function setLang(code) {
+    function cookieDomains() {
+      // Google's element.js rewrites the googtrans cookie at the registrable
+      // domain (e.g. .monomind.one), so a kill that only covers the full host
+      // leaves that copy alive — and it sorts first, overriding every later
+      // choice. Clear every parent-domain scope, set the new value at one.
       var host = location.hostname;
-      var kill = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-      document.cookie = kill;
-      if (host) {
-        document.cookie = kill + '; domain=' + host;
-        document.cookie = kill + '; domain=.' + host;
+      var domains = [''];
+      if (host && !/^\d+\.\d+\.\d+\.\d+$/.test(host)) {
+        var parts = host.split('.');
+        for (var i = 0; i < parts.length - 1; i++) {
+          var d = parts.slice(i).join('.');
+          domains.push(d, '.' + d);
+        }
+      } else if (host) {
+        domains.push(host);
       }
+      return domains;
+    }
+    function setLang(code) {
+      var kill = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+      cookieDomains().forEach(function (domain) {
+        document.cookie = kill + (domain ? '; domain=' + domain : '');
+      });
       if (code !== 'en') {
         document.cookie = 'googtrans=/en/' + code + '; path=/';
-        if (host) document.cookie = 'googtrans=/en/' + code + '; path=/; domain=.' + host;
       }
       location.reload();
     }
