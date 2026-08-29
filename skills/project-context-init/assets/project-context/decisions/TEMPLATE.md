@@ -24,7 +24,8 @@ What will the project do?
 ## Evidence
 
 - Links to primary artifacts, reviews, tests, tasks, incidents, measurements,
-  citations, or official references.
+  citations, or official references. Pin a repository path to the state it
+  cites: `path/to/file@<commit>`.
 
 ## Supersession
 

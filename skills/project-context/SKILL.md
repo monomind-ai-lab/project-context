@@ -77,6 +77,11 @@ become a standing way to skip one.
 - Record decisions with stable IDs, status, date, statement, rationale,
   consequences, and evidence. Supersede instead of silently reversing meaning.
 - Record learnings only when evidence supports reuse beyond one task.
+- Pin evidence that can move: cite a repository path as `path/to/file@<commit>`,
+  either plainly on an `- Evidence:` line or as a link target. The doctor then
+  reports `evidence-drift` when that path changed after the commit it was cited
+  at — the entry's justification may no longer hold. Re-read the evidence, then
+  either re-anchor the entry to the current commit or supersede it.
 - After adding an entry or changing a status, regenerate the registry indexes
   with `context_index.py` (see Automation). They are derived tables that let an
   agent find the entries that constrain a task without reading either registry
@@ -123,8 +128,8 @@ stale, so CI can hold the line.
 
 When context appears stale, contradictory, or hard to navigate, run the
 read-only doctor. It checks core files, scaffold version, review freshness,
-duplicate decision and learning IDs, and broken relative links without
-rewriting content.
+duplicate decision and learning IDs, broken relative links, and pinned evidence
+that has drifted, without rewriting content.
 
     python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 
