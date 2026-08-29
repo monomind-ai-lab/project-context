@@ -773,7 +773,9 @@ def plan_hooks(target: Path, actions: list[dict[str, Any]]) -> None:
         groups.append(hook_group(hook_command(command), status_message))
         hooks[event] = groups
     payload["hooks"] = hooks
-    content = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    # Insertion order, not sorted: dicts preserve the document's own key order,
+    # so re-serialising leaves the rest of the user's settings where they were.
+    content = json.dumps(payload, indent=2) + "\n"
     if not settings.exists():
         actions.append({"kind": "create", "path": str(settings), "content": content})
         return
