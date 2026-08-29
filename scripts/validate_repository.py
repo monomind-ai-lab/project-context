@@ -13,6 +13,8 @@ REQUIRED = (
     "README.md",
     "LICENSE",
     "VERSION",
+    "pyproject.toml",
+    "src/project_context_cli/__init__.py",
     "assets/project-context-cover.jpg",
     "assets/project-context-tools.jpg",
     "docs/project-context-complete-guide.html",
@@ -146,6 +148,13 @@ def main() -> int:
         content = source.read_text(encoding="utf-8") if source.is_file() else ""
         if version and f'TEMPLATE_VERSION = "{version}"' not in content:
             errors.append(f"VERSION and {label} template version do not match")
+
+    # Also check pyproject.toml has the same version
+    pyproject_path = ROOT / "pyproject.toml"
+    if pyproject_path.is_file():
+        pyproject_content = pyproject_path.read_text(encoding="utf-8")
+        if version and f'version = "{version}"' not in pyproject_content:
+            errors.append(f"VERSION and pyproject.toml version do not match")
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
     for expected in (
