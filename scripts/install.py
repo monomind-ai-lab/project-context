@@ -27,6 +27,11 @@ def main() -> int:
         choices=("brand-new", "existing"),
         default="existing",
     )
+    parser.add_argument(
+        "--install-hooks",
+        action="store_true",
+        help="also wire the session trigger hooks into .claude/settings.json",
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
@@ -44,6 +49,7 @@ def main() -> int:
         "--repository-stage",
         args.repository_stage,
         "--install-skills",
+        *(["--install-hooks"] if args.install_hooks else []),
         "--apply" if args.apply else "--dry-run",
     ]
     return subprocess.run(command, check=False).returncode

@@ -41,6 +41,11 @@ HOOK_SETTINGS_PATHS = (
 HOOK_PATH_PATTERN = re.compile(
     r"(?:\.agents|\.claude|scripts|bin|tools)/[A-Za-z0-9._/-]+\.[A-Za-z0-9]+"
 )
+TRIGGER_SCRIPT_RELATIVE = ".agents/skills/project-context/scripts/context_triggers.py"
+HOOK_EVENTS = (
+    ("SessionStart", "report", "Checking project context"),
+    ("Stop", "gate", "Checking project context triggers"),
+)
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
 EXCLUDED_SCAN_PARTS = {
     ".git", "node_modules", "vendor", "dist", "build", "coverage",
@@ -697,12 +702,94 @@ def plan_harness_pointer(
         )
 
 
+
+def hook_command(command: str) -> str:
+    """The shell for one hook event.
+
+    Guarded with a file test so a repository that has not installed the skills,
+    or a harness opened elsewhere, degrades to a no-op instead of erroring at
+    session start.
+    """
+    script = '"${CLAUDE_PROJECT_DIR:-$PWD}/' + TRIGGER_SCRIPT_RELATIVE + '"'
+    return f's={script}; [ -f "$s" ] && python3 "$s" {command} || true'
+
+
+def hook_group(command: str, status_message: str) -> dict[str, Any]:
+    return {
+        "hooks": [
+            {
+                "type": "command",
+                "command": command,
+                "timeout": 15,
+                "statusMessage": status_message,
+            }
+        ]
+    }
+
+
+def owned_hook(group: Any) -> bool:
+    """Is this matcher group one we wrote, rather than the repository's own?"""
+    entries = group.get("hooks") if isinstance(group, dict) else None
+    return isinstance(entries, list) and any(
+        isinstance(entry, dict)
+        and isinstance(entry.get("command"), str)
+        and "context_triggers.py" in entry["command"]
+        for entry in entries
+    )
+
+
+def plan_hooks(target: Path, actions: list[dict[str, Any]]) -> None:
+    """Wire the session hooks that carry the protocol into a live session.
+
+    Opt-in: this writes to the harness's own settings file, so it happens only
+    when asked for. Existing hooks are preserved — ours are identified by the
+    script they call, dropped, and re-added, which keeps repeated runs
+    byte-identical and self-healing after a partial edit.
+    """
+    settings = target / ".claude" / "settings.json"
+    chain = (target / ".claude", settings)
+    if any(path.is_symlink() for path in chain) or (settings.exists() and not settings.is_file()):
+        actions.append({"kind": "conflict", "path": str(settings), "reason": "hook settings destination is unsafe"})
+        return
+    payload: dict[str, Any] = {"$schema": "https://json.schemastore.org/claude-code-settings.json"}
+    if settings.is_file():
+        try:
+            loaded = json.loads(settings.read_text(encoding="utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            actions.append({"kind": "conflict", "path": str(settings), "reason": "hook settings are not valid JSON"})
+            return
+        if not isinstance(loaded, dict):
+            actions.append({"kind": "conflict", "path": str(settings), "reason": "hook settings are not a JSON object"})
+            return
+        payload = loaded
+    hooks = payload.get("hooks", {})
+    if not isinstance(hooks, dict):
+        actions.append({"kind": "conflict", "path": str(settings), "reason": "hook settings 'hooks' is not an object"})
+        return
+    hooks = dict(hooks)
+    for event, command, status_message in HOOK_EVENTS:
+        existing = hooks.get(event)
+        groups = [group for group in existing if not owned_hook(group)] if isinstance(existing, list) else []
+        groups.append(hook_group(hook_command(command), status_message))
+        hooks[event] = groups
+    payload["hooks"] = hooks
+    content = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    if not settings.exists():
+        actions.append({"kind": "create", "path": str(settings), "content": content})
+        return
+    if settings.read_text(encoding="utf-8") == content:
+        actions.append({"kind": "unchanged", "path": str(settings), "reason": "hooks are current"})
+        return
+    actions.append({"kind": "update_hooks", "path": str(settings), "content": content})
+
+
 def build_plan(
     target: Path,
     profile: str = "full",
     install_skills: bool = False,
     repo_type: str = "auto",
     repository_stage: str = "existing",
+    install_hooks: bool = False,
 ) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
@@ -731,11 +818,14 @@ def build_plan(
         actions.append({"kind": "create", "path": str(target / "AGENTS.md"), "content": MANAGED_BLOCK + "\n"})
     if install_skills:
         plan_skill_install(target, actions)
+    if install_hooks:
+        plan_hooks(target, actions)
     report = inspect(target, repo_type)
     report.update(
         {
             "profile": profile,
             "install_skills": install_skills,
+            "install_hooks": install_hooks,
             "repository_stage": repository_stage,
             "actions": actions,
         }
@@ -761,7 +851,7 @@ def apply_plan(report: dict[str, Any]) -> int:
         print("Refusing to write because the plan contains conflicts.", file=sys.stderr)
         return 2
     for action in report["actions"]:
-        if action["kind"] in {"create", "append_managed_block", "update_managed_block"}:
+        if action["kind"] in {"create", "append_managed_block", "update_managed_block", "update_hooks"}:
             atomic_write(Path(action["path"]), action["content"])
     refreshed = build_plan(
         Path(report["target"]),
@@ -769,6 +859,7 @@ def apply_plan(report: dict[str, Any]) -> int:
         report["install_skills"],
         report["repository"]["type"],
         report["repository_stage"],
+        report["install_hooks"],
     )
     print(json.dumps(public_report(refreshed), indent=2, sort_keys=True))
     return 0
@@ -987,6 +1078,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default="existing",
     )
     init_parser.add_argument("--install-skills", action="store_true")
+    init_parser.add_argument(
+        "--install-hooks",
+        action="store_true",
+        help="wire the session hooks into .claude/settings.json; implies --install-skills",
+    )
     mode = init_parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
@@ -1023,9 +1119,12 @@ def main(argv: list[str] | None = None) -> int:
     report = build_plan(
         target,
         args.profile,
-        args.install_skills,
+        # Hooks call the installed trigger script, so wiring them without
+        # installing the skills would plan a hook that cannot resolve.
+        args.install_skills or args.install_hooks,
         args.repo_type,
         args.repository_stage,
+        args.install_hooks,
     )
     if args.dry_run:
         print(json.dumps(public_report(report), indent=2, sort_keys=True))

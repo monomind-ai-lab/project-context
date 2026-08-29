@@ -26,6 +26,8 @@ REQUIRED = (
     "prompts/maintain-project-context.md",
     "skills/project-context/SKILL.md",
     "skills/project-context/agents/openai.yaml",
+    "skills/project-context/scripts/context_triggers.py",
+    "skills/project-context/scripts/context_index.py",
     "skills/project-context-init/SKILL.md",
     "skills/project-context-init/agents/openai.yaml",
     "skills/project-context-init/scripts/project_context_init.py",

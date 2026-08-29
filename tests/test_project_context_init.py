@@ -212,6 +212,11 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             self.run_script("init", "--target", directory, "--install-skills", "--apply")
             shutil.rmtree(target / ".agents" / "skills" / "project-context-init")
+            # The reported case: the hook is declared but the script it calls
+            # is gone, so the hook silently never runs.
+            (
+                target / ".agents/skills/project-context/scripts/context_triggers.py"
+            ).unlink()
             (target / ".claude" / "settings.json").write_text(
                 json.dumps(
                     {
@@ -261,6 +266,77 @@ class InitializerTests(unittest.TestCase):
             )
             report, _ = self.run_script("doctor", "--target", directory)
             self.assertEqual("healthy", report["status"])
+
+    def test_install_hooks_merges_without_disturbing_existing_settings(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            (target / ".claude").mkdir()
+            (target / ".claude" / "settings.json").write_text(
+                json.dumps(
+                    {
+                        "permissions": {"allow": ["Bash(npm test)"]},
+                        "hooks": {
+                            "SessionStart": [
+                                {"hooks": [{"type": "command", "command": "echo mine"}]}
+                            ]
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            settings = json.loads((target / ".claude" / "settings.json").read_text(encoding="utf-8"))
+            self.assertEqual(["Bash(npm test)"], settings["permissions"]["allow"])
+            commands = [
+                entry["command"]
+                for event in settings["hooks"].values()
+                for group in event
+                for entry in group["hooks"]
+            ]
+            self.assertIn("echo mine", commands)
+            self.assertTrue(any("context_triggers.py" in c and " report " in c for c in commands))
+            self.assertTrue(any("context_triggers.py" in c and " gate " in c for c in commands))
+            # --install-hooks implies --install-skills: a hook whose script is
+            # missing is a hook that silently never runs.
+            self.assertTrue(
+                (target / ".agents/skills/project-context/scripts/context_triggers.py").is_file()
+            )
+            doctor, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", doctor["status"])
+            self.assertIn(".claude/settings.json", doctor["reachability"]["hooks"])
+
+    def test_install_hooks_is_idempotent_and_self_heals(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            settings = target / ".claude" / "settings.json"
+            first = settings.read_text(encoding="utf-8")
+            second, _ = self.run_script(
+                "init", "--target", directory, "--install-hooks", "--dry-run"
+            )
+            self.assertEqual(0, second["summary"].get("create", 0))
+            self.assertEqual(0, second["summary"].get("update_hooks", 0))
+
+            # A hand-edited duplicate is replaced, not compounded.
+            payload = json.loads(first)
+            payload["hooks"]["SessionStart"].append(
+                {"hooks": [{"type": "command", "command": "python3 context_triggers.py report"}]}
+            )
+            settings.write_text(json.dumps(payload), encoding="utf-8")
+            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            self.assertEqual(first, settings.read_text(encoding="utf-8"))
+
+    def test_unparseable_hook_settings_abort_before_any_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            (target / ".claude").mkdir()
+            (target / ".claude" / "settings.json").write_text("{ not json", encoding="utf-8")
+            report, _ = self.run_script(
+                "init", "--target", directory, "--install-hooks", "--apply", expected=2
+            )
+            self.assertTrue(report["has_conflicts"])
+            self.assertFalse((target / "project-context").exists())
+            self.assertEqual("{ not json", (target / ".claude" / "settings.json").read_text())
 
     def test_consolidation_review_classifies_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

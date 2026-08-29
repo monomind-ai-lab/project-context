@@ -168,7 +168,14 @@ primary materials or existing instructions.
   consolidation, initializes the right profile, and validates context health.
 - **`project-context`** — reads and maintains durable project-folder context.
 - **Deterministic tooling** — dry-run/apply initialization, idempotency,
-  scaffold version checks, and a read-only doctor.
+  scaffold version checks, and a read-only doctor that also verifies the
+  protocol can still reach an agent.
+- **Trigger detection** — `context_triggers.py` reports when work has landed
+  since project context was last updated, and records an honest "nothing fired"
+  so the check never has to be silenced with a cosmetic edit.
+- **Generated registry indexes** — `context_index.py` keeps a derived table at
+  the top of `DECISIONS.md` and `LEARNINGS.md` so an agent can find what
+  constrains a task without reading either registry end to end.
 - **Two profiles** — lightweight adoption or full evidence structure.
 - **Two ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
@@ -406,6 +413,54 @@ A `no-delivery-path` error means the context files are intact but nothing will
 ever load them into a session. Without this check that repository reports
 `healthy`, which is how a protocol can go completely inert while every health
 signal says it is fine.
+
+### Session hooks (opt-in)
+
+The trigger check runs on its own once wired into the harness:
+
+```sh
+python3 skills/project-context-init/scripts/project_context_init.py init --target /path/to/repository --install-hooks --apply
+```
+
+`--install-hooks` implies `--install-skills`, because the hooks call the
+installed trigger script. It merges a `SessionStart` and a `Stop` hook into
+`.claude/settings.json`, preserving every other hook and setting; ours are
+identified by the script they call, so repeated runs are byte-identical and a
+partial hand-edit self-heals. The commands are guarded with a file test, so a
+repository without the script degrades to a no-op rather than erroring.
+
+Hooks are opt-in because they write to the harness's own settings file. Without
+them the protocol still reaches an agent through the managed instruction block
+and the harness skill pointers; `doctor` reports which routes are live.
+
+The `Stop` hook blocks at most once per session and always offers the honest
+way out:
+
+```sh
+python3 .agents/skills/project-context/scripts/context_triggers.py ack --note "what you evaluated"
+```
+
+An `ack` records *what* was acknowledged against the current commit. The window
+reopens on the next commit, and as soon as uncommitted work the acknowledgement
+never saw appears — so it can express "triggers evaluated, none fired" without
+becoming a standing way to skip the evaluation.
+
+### Registry indexes
+
+`DECISIONS.md` and `LEARNINGS.md` are read end to end by every agent asking
+"does anything here constrain what I am about to do?". A generated index answers
+that first:
+
+```sh
+python3 .agents/skills/project-context/scripts/context_index.py --context project-context
+python3 .agents/skills/project-context/scripts/context_index.py --context project-context --check
+```
+
+The index is derived, never hand-maintained — a hand-written one drifts within a
+few commits, and a stale index is worse than none because it is trusted. The
+generator replaces everything between its markers, discards any earlier index
+(marked or not) before rebuilding, and `--check` exits non-zero when stale so CI
+can hold the line.
 
 ### Harness-maintainer fallback
 
