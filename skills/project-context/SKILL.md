@@ -5,10 +5,15 @@ description: "Use when a repository or project folder contains project-context/,
 
 # Project Context
 
-Use this protocol when a repository or organized project folder contains
+Use this protocol when this repository or project folder contains
 `project-context/` and collaborative work needs memory that survives any one
 person, agent, or chat session. It applies to software, document, research,
 writing, mixed, and folder-based projects.
+
+This is the only copy of the protocol. It is installed twice — as the harness
+skill at `.agents/skills/project-context/SKILL.md`, and as this repository's own
+instance at `project-context/SKILL.md` — so the two can never say different
+things. Read whichever one you found; they are the same text.
 
 ## Start
 
@@ -73,9 +78,9 @@ become a standing way to skip one.
   consequences, and evidence. Supersede instead of silently reversing meaning.
 - Record learnings only when evidence supports reuse beyond one task.
 - After adding an entry or changing a status, regenerate the registry indexes
-  with `scripts/context_index.py`. They are derived tables that let an agent
-  find the entries that constrain a task without reading either registry end
-  to end; a stale index is worse than none, because it is trusted.
+  with `context_index.py` (see Automation). They are derived tables that let an
+  agent find the entries that constrain a task without reading either registry
+  end to end; a stale index is worse than none, because it is trusted.
 - In the full profile, create detailed designs or incident records when their
   evidence will help future work.
 - Preserve completed historical records. Correct interpretation through status
@@ -90,29 +95,45 @@ discovery systems; they do not replace tracked Markdown authority.
 
 ## Automation
 
-`scripts/context_triggers.py` detects the trigger *window* — work has landed
-since project context was last updated — and reports it at session start and
-again before a session ends. It cannot judge whether a decision or a learning
-fired; that judgment stays with the agent reading this file. Run `status` to see
-the window without waiting for a hook, and `ack` to record an honest "nothing
-fired".
+Three scripts support this protocol. Where the skill is installed here they live
+under `.agents/skills/project-context/scripts/`; if the skills are not installed
+in this repository, run the same commands from the Project Context checkout,
+passing this project folder wherever a target is required.
 
-If it reports that it resolved the repository from its own install root, or that
-it could not find one at all, treat that as a wiring problem rather than a quiet
-session: nothing was evaluated.
+`context_triggers.py` detects the trigger *window* — work has landed since
+project context was last updated — and reports it at session start and again
+before a session ends. It cannot judge whether a decision or a learning fired;
+that judgment stays with the agent reading this file.
 
-`scripts/context_index.py` regenerates the registry indexes. They are derived
-tables — a hand-edited one is overwritten, and `--check` exits non-zero when
-they are stale, so CI can hold the line.
+    python3 .agents/skills/project-context/scripts/context_triggers.py status
+
+Run `status` to see the window without waiting for a hook, and `ack` to record
+an honest "nothing fired". If it reports that it resolved the repository from
+its own install root, or that it could not find one at all, treat that as a
+wiring problem rather than a quiet session: nothing was evaluated. Its state is
+per-clone bookkeeping and is kept out of the work tree.
+
+`context_index.py` regenerates the registry indexes. They are derived tables —
+a hand-edited one is overwritten, and `--check` exits non-zero when they are
+stale, so CI can hold the line.
+
+    python3 .agents/skills/project-context/scripts/context_index.py --check
 
 ## Health
 
-When context appears stale, contradictory, or hard to navigate, use the sibling
-`project-context-init` skill's `doctor` workflow. It checks core files, scaffold
-version, review freshness, duplicate decision/learning IDs, and broken relative
-links without rewriting content.
+When context appears stale, contradictory, or hard to navigate, run the
+read-only doctor. It checks core files, scaffold version, review freshness,
+duplicate decision and learning IDs, and broken relative links without
+rewriting content.
+
+    python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 
 It also checks reachability: whether the managed instruction block, the harness
-skill pointers, or a declared session hook will still deliver this protocol to
-an agent. A `no-delivery-path` error means the context files are intact but
-nothing loads them into a session — fix that before trusting the rest.
+skill pointer, or a declared session hook will still deliver this protocol to an
+agent. A `no-delivery-path` error means the context files are intact but nothing
+loads them into a session — fix that before trusting the rest.
+
+The `project-context-init` skill, which stays in the Project Context checkout
+rather than being installed here, exposes the same check as
+`project_context_init.py doctor --target .` and additionally handles installs,
+upgrades, and consolidation review.

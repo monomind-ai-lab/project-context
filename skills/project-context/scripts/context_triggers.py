@@ -30,7 +30,10 @@ import subprocess
 import sys
 
 CONTEXT_DIR = "project-context"
-STATE_RELATIVE = Path(".claude") / "project-context-state.json"
+STATE_FILE_NAME = "project-context-state.json"
+# Fallback location for a project folder that is not a git clone. Inside a git
+# repository the state lives in .git/ instead — see state_path().
+STATE_RELATIVE = Path(".claude") / STATE_FILE_NAME
 STATE_POSIX = STATE_RELATIVE.as_posix()
 EXCLUDED = {
     ".git", "node_modules", "vendor", "dist", "build", "coverage", ".venv",
@@ -221,10 +224,36 @@ def detail(state: dict) -> str:
     return "\n".join(lines)
 
 
+def state_path(target: Path) -> Path:
+    """Where this script keeps its own bookkeeping.
+
+    Inside a git repository that is `.git/project-context-state.json`. Session
+    entries and acknowledgements are per-clone, not project content: in the work
+    tree they showed up in `git status`, were swept into `git add -A` commits,
+    and made every honest `ack` a tracked file change — the exact noise the
+    trigger check exists to keep out of the record. Outside git there is no
+    equivalent private directory, so the legacy `.claude/` path remains the
+    fallback, which is why STATE_POSIX is still excluded from dirty paths.
+    """
+    git_dir = run(["git", "rev-parse", "--git-dir"], target)
+    if git_dir:
+        root = Path(git_dir)
+        if not root.is_absolute():
+            root = target / root
+        return root / STATE_FILE_NAME
+    return target / STATE_RELATIVE
+
+
 def load_state(target: Path) -> dict:
-    path = target / STATE_RELATIVE
+    path = state_path(target)
     if not path.is_file():
-        return {}
+        # An install that predates the move keeps its acknowledgement rather
+        # than reopening a window someone already evaluated. The legacy file is
+        # only read: save_state always writes the current location.
+        legacy = target / STATE_RELATIVE
+        if not legacy.is_file():
+            return {}
+        path = legacy
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
@@ -232,7 +261,7 @@ def load_state(target: Path) -> dict:
 
 
 def save_state(target: Path, sessions: dict) -> None:
-    path = target / STATE_RELATIVE
+    path = state_path(target)
     reserved = {key: value for key, value in sessions.items() if key.startswith("_")}
     entries = {key: value for key, value in sessions.items() if not key.startswith("_")}
     trimmed = dict(list(entries.items())[-20:])

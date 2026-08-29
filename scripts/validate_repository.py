@@ -28,6 +28,7 @@ REQUIRED = (
     "skills/project-context/agents/openai.yaml",
     "skills/project-context/scripts/context_triggers.py",
     "skills/project-context/scripts/context_index.py",
+    "skills/project-context/scripts/context_doctor.py",
     "skills/project-context-init/SKILL.md",
     "skills/project-context-init/agents/openai.yaml",
     "skills/project-context-init/scripts/project_context_init.py",
@@ -134,9 +135,17 @@ def main() -> int:
             errors.extend(validate_jpeg(path, dimensions, label))
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
-    initializer = ROOT / "skills/project-context-init/scripts/project_context_init.py"
-    if version and f'TEMPLATE_VERSION = "{version}"' not in initializer.read_text(encoding="utf-8"):
-        errors.append("VERSION and initializer template version do not match")
+    # Both the installer and the installed doctor stamp and compare the template
+    # version, so a release that moves one and not the other would make the
+    # doctor report a phantom upgrade in every repository it checks.
+    versioned = {
+        "initializer": ROOT / "skills/project-context-init/scripts/project_context_init.py",
+        "doctor": ROOT / "skills/project-context/scripts/context_doctor.py",
+    }
+    for label, source in versioned.items():
+        content = source.read_text(encoding="utf-8") if source.is_file() else ""
+        if version and f'TEMPLATE_VERSION = "{version}"' not in content:
+            errors.append(f"VERSION and {label} template version do not match")
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
     for expected in (

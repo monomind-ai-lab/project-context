@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 import argparse
-from datetime import date, datetime
+from datetime import date
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -34,18 +35,17 @@ INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
 # Harness-specific skill locations. These hold pointers, never copies: the
 # skill itself is installed once, harness-neutral, under .agents/skills/.
 HARNESS_POINTER_ROOTS = ((".claude", "skills"),)
-HOOK_SETTINGS_PATHS = (
-    Path(".claude") / "settings.json",
-    Path(".claude") / "settings.local.json",
-)
-HOOK_PATH_PATTERN = re.compile(
-    r"(?:\.agents|\.claude|scripts|bin|tools)/[A-Za-z0-9._/-]+\.[A-Za-z0-9]+"
-)
+# Only the protocol skill is installed into a repository. The initializer stays
+# in this checkout: a consuming repository never needs to carry its own copy of
+# the installer, and shipping one duplicated the whole template tree.
+INSTALLED_SKILL_NAMES = ("project-context",)
 TRIGGER_SCRIPT_RELATIVE = ".agents/skills/project-context/scripts/context_triggers.py"
 HOOK_EVENTS = (
     ("SessionStart", "report", "Checking project context"),
     ("Stop", "gate", "Checking project context triggers"),
 )
+# The core profile's files. SKILL.md is listed here but has no template under
+# assets/: build_plan writes it from the project-context skill's own SKILL.md.
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
 EXCLUDED_SCAN_PARTS = {
     ".git", "node_modules", "vendor", "dist", "build", "coverage",
@@ -144,6 +144,45 @@ def skill_root() -> Path:
 
 def template_root() -> Path:
     return skill_root() / "assets" / "project-context"
+
+
+def protocol_source() -> Path:
+    """The single copy of the protocol text, installed in two places.
+
+    `.agents/skills/project-context/SKILL.md` and the instance at
+    `project-context/SKILL.md` are the same bytes. Keeping a second copy under
+    `assets/` meant two hand-maintained texts that drifted apart, so the skill's
+    own file is now the source for both.
+    """
+    return skill_root().parent / "project-context" / "SKILL.md"
+
+
+def doctor_script() -> Path:
+    """The health check, which ships with the installed skill rather than here.
+
+    A consuming repository installs only `project-context`, so `doctor` has to
+    live there to be reachable from the repository it diagnoses.
+    """
+    return skill_root().parent / "project-context" / "scripts" / "context_doctor.py"
+
+
+def load_doctor() -> Any:
+    """Import the doctor from its file, or return None if it cannot be loaded.
+
+    Delegation rather than a second implementation: one report shape, one set
+    of issue codes. Fail-soft so a missing or broken sibling is reported as a
+    wiring problem instead of a traceback.
+    """
+    path = doctor_script()
+    try:
+        spec = importlib.util.spec_from_file_location("context_doctor", path)
+        if spec is None or spec.loader is None:
+            return None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    except (OSError, SyntaxError, ImportError):
+        return None
+    return module
 
 
 def template_files(profile: str) -> list[Path]:
@@ -643,16 +682,16 @@ def pointer_content(skill_name: str, description: str) -> str:
     if skill_name == "project-context":
         body += [
             "",
-            "`project-context/SKILL.md` is this repository's own instance of the",
-            "protocol. Read it too when the two differ — it records the local",
-            "profile and wiring.",
+            "`project-context/SKILL.md` is this repository's installed instance of",
+            "the same text. Either copy is authoritative; read whichever one you",
+            "reach first.",
         ]
     return "\n".join(front + [""] + body) + "\n"
 
 
 def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
     source_parent = skill_root().parent
-    for skill_name in ("project-context", "project-context-init"):
+    for skill_name in INSTALLED_SKILL_NAMES:
         source = source_parent / skill_name
         destination_root = target / ".agents" / "skills" / skill_name
         destination_chain = (target / ".agents", target / ".agents" / "skills", destination_root)
@@ -808,6 +847,13 @@ def build_plan(
             if str(relative) == "NOW.md":
                 content = content.replace("YYYY-MM-DD", date.today().isoformat(), 1)
             add_file_action(actions, context / relative, content)
+        # Not a template file: the instance protocol is the skill's own text, so
+        # the two installed copies can never say different things.
+        add_file_action(
+            actions,
+            context / "SKILL.md",
+            protocol_source().read_text(encoding="utf-8"),
+        )
         add_file_action(
             actions,
             context / ".project-context.json",
@@ -867,199 +913,6 @@ def apply_plan(report: dict[str, Any]) -> int:
     return 0
 
 
-def hook_commands(target: Path) -> list[tuple[str, str]]:
-    """(settings file, command) for declared hooks that name project context.
-
-    Hooks belonging to anything else are ignored: this validates the protocol's
-    own wiring, not the repository's unrelated automation.
-    """
-    found: list[tuple[str, str]] = []
-    for relative in HOOK_SETTINGS_PATHS:
-        settings = target / relative
-        if not settings.is_file():
-            continue
-        try:
-            payload = json.loads(settings.read_text(encoding="utf-8"))
-        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-            continue
-        events = payload.get("hooks") if isinstance(payload, dict) else None
-        if not isinstance(events, dict):
-            continue
-        for matchers in events.values():
-            for matcher in matchers if isinstance(matchers, list) else []:
-                entries = matcher.get("hooks") if isinstance(matcher, dict) else None
-                for entry in entries if isinstance(entries, list) else []:
-                    command = entry.get("command") if isinstance(entry, dict) else None
-                    if isinstance(command, str) and (
-                        "project-context" in command or "context_triggers" in command
-                    ):
-                        found.append((str(relative), command))
-    return found
-
-
-def reachability(target: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
-    """Can this protocol still reach an agent, and by which route?
-
-    Every other doctor check inspects the protocol's own documents. This one
-    asks the question those checks cannot: will anything ever load them into a
-    session? A repository whose managed block was dropped, whose harness
-    pointer was never written, and whose hooks reference a script that is not
-    there is silently inert — and inert looks exactly like healthy.
-    """
-    issues: list[dict[str, str]] = []
-    blocks: list[str] = []
-    for path in instruction_paths(target):
-        if not path.is_file() or path.is_symlink():
-            continue
-        text = path.read_text(encoding="utf-8", errors="replace")
-        if START in text and END in text:
-            blocks.append(path.name)
-    if not blocks:
-        issues.append(
-            {
-                "severity": "warning",
-                "code": "missing-instruction-block",
-                "path": str(target),
-                "detail": "no root AGENTS.md or CLAUDE.md carries the managed project-context block",
-            }
-        )
-
-    pointers: list[str] = []
-    for harness_root, subdirectory in HARNESS_POINTER_ROOTS:
-        for skill_name in ("project-context", "project-context-init"):
-            installed = target / ".agents" / "skills" / skill_name / "SKILL.md"
-            pointer = target / harness_root / subdirectory / skill_name / "SKILL.md"
-            if pointer.is_file():
-                if installed.is_file():
-                    pointers.append(str(pointer.relative_to(target)))
-                else:
-                    issues.append(
-                        {
-                            "severity": "error",
-                            "code": "harness-pointer-dangling",
-                            "path": str(pointer.relative_to(target)),
-                            "detail": f"points at missing {installed.relative_to(target)}",
-                        }
-                    )
-            elif installed.is_file():
-                issues.append(
-                    {
-                        "severity": "warning",
-                        "code": "missing-harness-pointer",
-                        "path": str(pointer.relative_to(target)),
-                        "detail": f"{skill_name} is installed but undiscoverable by this harness",
-                    }
-                )
-
-    hooks: list[str] = []
-    for settings_name, command in hook_commands(target):
-        referenced = HOOK_PATH_PATTERN.findall(command)
-        missing = [fragment for fragment in referenced if not (target / fragment).exists()]
-        if missing:
-            issues.append(
-                {
-                    "severity": "error",
-                    "code": "hook-command-unresolved",
-                    "path": settings_name,
-                    "detail": "hook command references missing " + ", ".join(sorted(set(missing))),
-                }
-            )
-        elif referenced:
-            hooks.append(settings_name)
-
-    paths = len(blocks) + len(pointers) + len(hooks)
-    if not paths:
-        issues.append(
-            {
-                "severity": "error",
-                "code": "no-delivery-path",
-                "path": str(target),
-                "detail": "nothing loads this protocol into a session: no managed instruction block, no harness pointer, no working hook",
-            }
-        )
-    return (
-        {
-            "delivers": bool(paths),
-            "paths": paths,
-            "instruction_blocks": sorted(blocks),
-            "harness_pointers": sorted(pointers),
-            "hooks": sorted(set(hooks)),
-        },
-        issues,
-    )
-
-
-def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
-    target = target.resolve()
-    context = target / "project-context"
-    issues: list[dict[str, str]] = []
-    for relative in sorted(CORE_TEMPLATE_PATHS):
-        if not (context / relative).is_file():
-            issues.append({"severity": "error", "code": "missing-core-file", "path": relative})
-    metadata = context / ".project-context.json"
-    if not metadata.is_file():
-        issues.append({"severity": "warning", "code": "missing-version-metadata", "path": str(metadata)})
-    else:
-        try:
-            installed = str(json.loads(metadata.read_text(encoding="utf-8")).get("template_version", "unknown"))
-            if installed != TEMPLATE_VERSION:
-                issues.append(
-                    {
-                        "severity": "warning", "code": "template-update-available", "path": str(metadata),
-                        "detail": f"installed {installed}; available {TEMPLATE_VERSION}",
-                    }
-                )
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            issues.append({"severity": "error", "code": "invalid-version-metadata", "path": str(metadata)})
-    now_path = context / "NOW.md"
-    if now_path.is_file():
-        now_text = now_path.read_text(encoding="utf-8", errors="replace")
-        match = re.search(r"^Last reviewed:\s*(\d{4}-\d{2}-\d{2})", now_text, re.MULTILINE)
-        if match:
-            try:
-                age = (date.today() - datetime.strptime(match.group(1), "%Y-%m-%d").date()).days
-                if age > stale_days:
-                    issues.append(
-                        {"severity": "warning", "code": "stale-current-state", "path": str(now_path), "detail": f"last reviewed {age} days ago"}
-                    )
-            except ValueError:
-                issues.append({"severity": "warning", "code": "invalid-review-date", "path": str(now_path)})
-        else:
-            issues.append({"severity": "warning", "code": "missing-review-date", "path": str(now_path)})
-    ids: dict[str, list[str]] = {}
-    link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
-    if context.is_dir() and not context.is_symlink():
-        for markdown in context.rglob("*.md"):
-            text = markdown.read_text(encoding="utf-8", errors="replace")
-            for record_id in re.findall(r"^##\s+([DL]-\d{3,})\b", text, re.MULTILINE):
-                ids.setdefault(record_id, []).append(str(markdown.relative_to(context)))
-            for target_text in link_pattern.findall(text):
-                if target_text.startswith(("http://", "https://", "mailto:", "#")):
-                    continue
-                link_path = target_text.split("#", 1)[0]
-                if link_path and not (markdown.parent / link_path).resolve().exists():
-                    issues.append(
-                        {"severity": "warning", "code": "broken-relative-link", "path": str(markdown.relative_to(context)), "detail": target_text}
-                    )
-    for record_id, locations in ids.items():
-        if len(locations) > 1:
-            issues.append(
-                {"severity": "error", "code": "duplicate-record-id", "path": ", ".join(locations), "detail": record_id}
-            )
-    delivery, delivery_issues = reachability(target)
-    issues.extend(delivery_issues)
-    errors = sum(issue["severity"] == "error" for issue in issues)
-    warnings = sum(issue["severity"] == "warning" for issue in issues)
-    return {
-        "target": str(target),
-        "template_version": TEMPLATE_VERSION,
-        "status": "error" if errors else ("warning" if warnings else "healthy"),
-        "summary": {"errors": errors, "warnings": warnings},
-        "reachability": delivery,
-        "issues": issues,
-    }
-
-
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -1072,7 +925,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     doctor_parser.add_argument("--stale-days", default=30, type=int)
     init_parser = subparsers.add_parser("init", help="plan or apply initialization")
     init_parser.add_argument("--target", default=".", type=Path)
-    init_parser.add_argument("--profile", choices=("core", "full"), default="full")
+    init_parser.add_argument("--profile", choices=("core", "full"), default="core")
     init_parser.add_argument("--repo-type", choices=REPOSITORY_TYPES, default="auto")
     init_parser.add_argument(
         "--repository-stage",
@@ -1115,7 +968,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     if args.command == "doctor":
-        report = doctor(target, args.stale_days)
+        module = load_doctor()
+        if module is None:
+            print(f"Cannot load the doctor from {doctor_script()}", file=sys.stderr)
+            return 2
+        report = module.doctor(target, args.stale_days)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 1 if report["summary"]["errors"] else 0
     report = build_plan(

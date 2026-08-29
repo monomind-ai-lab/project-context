@@ -88,7 +88,7 @@ archive, or delete without separate explicit authorization.
 ## 4. Choose a profile and apply
 
 - `core` creates `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, and
-  `LEARNINGS.md`. It is the universal default.
+  `LEARNINGS.md`. It is the universal default, and the default of `--profile`.
 - `full` also creates task, design, and incident evidence folders. Offer it when
   the collaboration genuinely benefits from those record types; do not infer it
   merely from repository type.
@@ -102,10 +102,16 @@ python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile 
 The script creates only missing files, records scaffold version and repository
 type, preserves differing files, and updates only its managed block in existing
 root `AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. `--install-skills`
-copies both skills into `.agents/skills/` with the same preserve-existing rules,
-and writes a thin pointer for each under `.claude/skills/` so Claude Code can
-discover them — without it the skills are installed but invisible, and the
-managed block is the only route left.
+copies the `project-context` skill alone into `.agents/skills/` with the same
+preserve-existing rules, and writes a thin pointer for it under `.claude/skills/`
+so Claude Code can discover it — without that pointer the skill is installed but
+invisible, and the managed block is the only route left. This initializer skill
+is not installed: it stays in the Project Context checkout, so a consuming
+repository never carries the installer or a second copy of the templates.
+
+`project-context/SKILL.md` is written from the `project-context` skill's own
+`SKILL.md` rather than from `assets/`, so the installed instance and the harness
+skill are one text that cannot drift.
 
 `--install-hooks` additionally wires the `SessionStart` and `Stop` trigger hooks
 into `.claude/settings.json`, merging with any hooks already there. It implies
@@ -183,7 +189,9 @@ configuration and verify presence without printing values.
 ## 7. Verify and hand off
 
 - Re-run inspect and the same init dry-run; it should propose no writes.
-- Run `doctor --target .` when Python is available. Confirm `reachability`
+- Run `doctor --target .` when Python is available; it delegates to the
+  `project-context` skill's `scripts/context_doctor.py`, which the target
+  repository can also run directly once the skill is installed. Confirm `reachability`
   reports at least one delivery path; a `no-delivery-path` error means the
   context files are intact but nothing will load them into a session.
 - Confirm only approved add-ons or configurations changed.

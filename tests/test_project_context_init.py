@@ -13,6 +13,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
+DOCTOR = ROOT / "skills" / "project-context" / "scripts" / "context_doctor.py"
 INSTALLER = ROOT / "scripts" / "install.py"
 
 
@@ -34,6 +35,7 @@ class InitializerTests(unittest.TestCase):
         return json.loads(result.stdout), result
 
     def test_empty_directory_dry_run_apply_and_idempotency(self) -> None:
+        """The default install: core files only, nothing left to propose after."""
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             dry, _ = self.run_script("init", "--target", directory, "--dry-run")
@@ -47,19 +49,50 @@ class InitializerTests(unittest.TestCase):
                 "NOW.md",
                 "DECISIONS.md",
                 "LEARNINGS.md",
+            ):
+                self.assertTrue((target / "project-context" / relative).is_file(), relative)
+            # core is the default: the evidence folders are opt-in, not scaffolded
+            # into every repository that will never file a design or an incident.
+            for absent in ("tasks", "decisions", "designs", "incidents"):
+                self.assertFalse((target / "project-context" / absent).exists(), absent)
+            metadata = json.loads(
+                (target / "project-context" / ".project-context.json").read_text()
+            )
+            self.assertEqual("core", metadata["profile"])
+            self.assertIn("<!-- project-context:start -->", (target / "AGENTS.md").read_text())
+            doctor, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", doctor["status"])
+
+            second, _ = self.run_script("init", "--target", directory, "--dry-run")
+            self.assertEqual({"unchanged"}, set(second["summary"]))
+
+    def test_full_profile_adds_the_evidence_folders(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--profile", "full", "--apply")
+            for relative in (
+                "README.md",
+                "SKILL.md",
+                "NOW.md",
+                "DECISIONS.md",
+                "LEARNINGS.md",
                 "decisions/TEMPLATE.md",
                 "designs/TEMPLATE.md",
                 "incidents/TEMPLATE.md",
                 "tasks/TEMPLATE.md",
             ):
                 self.assertTrue((target / "project-context" / relative).is_file(), relative)
-            self.assertIn("<!-- project-context:start -->", (target / "AGENTS.md").read_text())
+            metadata = json.loads(
+                (target / "project-context" / ".project-context.json").read_text()
+            )
+            self.assertEqual("full", metadata["profile"])
             doctor, _ = self.run_script("doctor", "--target", directory)
             self.assertEqual("healthy", doctor["status"])
 
-            second, _ = self.run_script("init", "--target", directory, "--dry-run")
-            for mutation in ("create", "append_managed_block", "update_managed_block"):
-                self.assertEqual(0, second["summary"].get(mutation, 0), mutation)
+            second, _ = self.run_script(
+                "init", "--target", directory, "--profile", "full", "--dry-run"
+            )
+            self.assertEqual({"unchanged"}, set(second["summary"]))
 
     def test_core_profile_and_doctor(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -110,8 +143,12 @@ class InitializerTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stderr or result.stdout)
             target = Path(directory)
             self.assertTrue((target / ".agents/skills/project-context/SKILL.md").is_file())
-            self.assertTrue((target / ".agents/skills/project-context-init/SKILL.md").is_file())
             self.assertTrue((target / "project-context/NOW.md").is_file())
+            # The installer stays upstream. Shipping it into every consuming
+            # repository dragged a second copy of the whole template tree with
+            # it, and gave the protocol two texts to drift apart.
+            self.assertFalse((target / ".agents/skills/project-context-init").exists())
+            self.assertFalse((target / ".claude/skills/project-context-init").exists())
 
     def test_skill_install_writes_discoverable_harness_pointers(self) -> None:
         """A skill only under .agents/ is invisible to Claude Code.
@@ -123,21 +160,29 @@ class InitializerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.run_script("init", "--target", directory, "--install-skills", "--apply")
-            for skill_name in ("project-context", "project-context-init"):
-                pointer = target / ".claude" / "skills" / skill_name / "SKILL.md"
-                self.assertTrue(pointer.is_file(), skill_name)
-                text = pointer.read_text(encoding="utf-8")
-                self.assertIn(f"name: {skill_name}", text)
-                self.assertIn(f".agents/skills/{skill_name}/SKILL.md", text)
-                source = (
-                    ROOT / "skills" / skill_name / "SKILL.md"
-                ).read_text(encoding="utf-8")
-                description = source.split("description:", 1)[1].splitlines()[0].strip()
-                self.assertIn(description.strip('"'), text)
-                # A quoted source description must not become a doubled scalar.
-                self.assertNotIn('description: ""', text)
-                # The pointer redirects; it never copies the protocol body.
-                self.assertNotIn("## Start", text)
+            pointer = target / ".claude" / "skills" / "project-context" / "SKILL.md"
+            self.assertTrue(pointer.is_file())
+            text = pointer.read_text(encoding="utf-8")
+            self.assertIn("name: project-context", text)
+            self.assertIn(".agents/skills/project-context/SKILL.md", text)
+            source = (
+                ROOT / "skills" / "project-context" / "SKILL.md"
+            ).read_text(encoding="utf-8")
+            description = source.split("description:", 1)[1].splitlines()[0].strip()
+            self.assertIn(description.strip('"'), text)
+            # A quoted source description must not become a doubled scalar.
+            self.assertNotIn('description: ""', text)
+            # The pointer redirects; it never copies the protocol body.
+            self.assertNotIn("## Start", text)
+            # Nothing points at an installer that was never installed.
+            self.assertEqual(
+                ["project-context"],
+                sorted(path.name for path in (target / ".claude" / "skills").iterdir()),
+            )
+            self.assertEqual(
+                ["project-context"],
+                sorted(path.name for path in (target / ".agents" / "skills").iterdir()),
+            )
 
     def test_harness_pointer_is_idempotent_and_symlink_safe(self) -> None:
         with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as external:
@@ -176,6 +221,40 @@ class InitializerTests(unittest.TestCase):
             self.assertIn("## Health", text)
             self.assertIn("doctor", text)
 
+    def test_installed_instance_is_the_same_text_as_the_skill(self) -> None:
+        """Two positions, one protocol.
+
+        The instance and the harness skill used to be hand-maintained
+        near-copies, so a change to one silently contradicted the other.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            instance = (target / "project-context" / "SKILL.md").read_text(encoding="utf-8")
+            installed = (
+                target / ".agents/skills/project-context/SKILL.md"
+            ).read_text(encoding="utf-8")
+            self.assertEqual(installed, instance)
+            self.assertEqual(
+                (ROOT / "skills/project-context/SKILL.md").read_text(encoding="utf-8"),
+                instance,
+            )
+
+    def test_doctor_runs_standalone_from_the_installed_skill(self) -> None:
+        """The doctor has to work in a repository that never had the installer."""
+        with tempfile.TemporaryDirectory() as directory:
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            direct = subprocess.run(
+                [sys.executable, str(DOCTOR), "--target", directory],
+                check=False, capture_output=True, text=True,
+            )
+            self.assertEqual(0, direct.returncode, direct.stderr or direct.stdout)
+            standalone = json.loads(direct.stdout)
+            self.assertEqual("healthy", standalone["status"])
+            # The delegating subcommand must report exactly what the file does.
+            delegated, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual(delegated, standalone)
+
     def test_doctor_reports_the_routes_that_deliver_the_protocol(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             self.run_script("init", "--target", directory, "--install-skills", "--apply")
@@ -183,8 +262,8 @@ class InitializerTests(unittest.TestCase):
             self.assertEqual("healthy", report["status"])
             self.assertTrue(report["reachability"]["delivers"])
             self.assertIn("AGENTS.md", report["reachability"]["instruction_blocks"])
-            self.assertIn(
-                ".claude/skills/project-context/SKILL.md",
+            self.assertEqual(
+                [".claude/skills/project-context/SKILL.md"],
                 report["reachability"]["harness_pointers"],
             )
 
@@ -211,12 +290,10 @@ class InitializerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.run_script("init", "--target", directory, "--install-skills", "--apply")
-            shutil.rmtree(target / ".agents" / "skills" / "project-context-init")
-            # The reported case: the hook is declared but the script it calls
-            # is gone, so the hook silently never runs.
-            (
-                target / ".agents/skills/project-context/scripts/context_triggers.py"
-            ).unlink()
+            # The pointer under .claude/ survives while the skill it redirects
+            # to is gone, and with it the hook script — the reported case, where
+            # the hook is declared but silently never runs.
+            shutil.rmtree(target / ".agents" / "skills" / "project-context")
             (target / ".claude" / "settings.json").write_text(
                 json.dumps(
                     {

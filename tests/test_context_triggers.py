@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 INIT = ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
 
 
-def git(target: Path, *args: str) -> None:
-    subprocess.run(
+def git(target: Path, *args: str) -> str:
+    return subprocess.run(
         ["git", *args],
         cwd=target,
         check=True,
@@ -25,7 +25,7 @@ def git(target: Path, *args: str) -> None:
             "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
             "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid",
         },
-    )
+    ).stdout
 
 
 class TriggerTests(unittest.TestCase):
@@ -153,16 +153,52 @@ class TriggerTests(unittest.TestCase):
             self.assertIn("brand_new.txt", reopened.stdout)
 
     def test_state_file_is_bookkeeping_not_work(self) -> None:
-        """Writing an ack must not immediately invalidate that ack."""
+        """Writing an ack must not immediately invalidate that ack.
+
+        Per-clone state also has no business in the work tree: under .claude/ it
+        appeared in `git status` and rode along in `git add -A` commits, so an
+        honest acknowledgement produced a tracked file change.
+        """
         import contextlib
 
         with contextlib.ExitStack() as stack:
             target, script = self.repository(stack)
             self.run_script(script, "ack", "--note", "evaluated", cwd=target)
-            self.assertTrue((target / ".claude/project-context-state.json").is_file())
+            self.assertTrue((target / ".git/project-context-state.json").is_file())
+            self.assertFalse((target / ".claude/project-context-state.json").exists())
+            self.assertEqual("", git(target, "status", "--porcelain").strip())
             result = self.run_script(script, "status", cwd=target)
             self.assertIn("status: current", result.stdout)
             self.assertNotIn("project-context-state.json", result.stdout)
+
+    def test_state_falls_back_into_the_project_folder_without_git(self) -> None:
+        """A plain project folder has no .git/ to hide bookkeeping in."""
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory).resolve()
+            script = self.install(target)
+            self.assertFalse((target / ".git").exists())
+            acked = self.run_script(script, "ack", "--note", "evaluated", cwd=target)
+            self.assertIn("acknowledged", acked.stdout)
+            self.assertTrue((target / ".claude/project-context-state.json").is_file())
+            self.assertIn(
+                "status: current", self.run_script(script, "status", cwd=target).stdout
+            )
+
+    def test_legacy_state_in_the_work_tree_is_still_honoured(self) -> None:
+        """An ack recorded before the move must not silently reopen."""
+        import contextlib
+
+        with contextlib.ExitStack() as stack:
+            target, script = self.repository(stack)
+            self.run_script(script, "ack", "--note", "evaluated", cwd=target)
+            moved = target / ".git/project-context-state.json"
+            legacy = target / ".claude/project-context-state.json"
+            legacy.parent.mkdir(parents=True, exist_ok=True)
+            legacy.write_text(moved.read_text(encoding="utf-8"), encoding="utf-8")
+            moved.unlink()
+            self.assertIn(
+                "status: current", self.run_script(script, "status", cwd=target).stdout
+            )
 
     def test_gate_blocks_once_then_stops(self) -> None:
         import contextlib
