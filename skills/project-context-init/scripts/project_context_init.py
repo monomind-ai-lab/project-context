@@ -16,7 +16,7 @@ import tempfile
 from typing import Any
 
 
-TEMPLATE_VERSION = "0.4.0"
+TEMPLATE_VERSION = "0.5.0"
 START = "<!-- project-context:start -->"
 END = "<!-- project-context:end -->"
 MANAGED_BLOCK = """<!-- project-context:start -->
