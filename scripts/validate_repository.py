@@ -125,8 +125,15 @@ def main() -> int:
                 errors.append(f"{path.relative_to(ROOT)}: possible private path or credential")
 
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8") if (ROOT / "LICENSE").exists() else ""
-    if "MIT License" not in license_text or "Permission is hereby granted" not in license_text:
-        errors.append("LICENSE is not the standard MIT grant")
+    for required_clause in (
+        "MIT + Commons Clause License Condition v1.0",
+        "Permission is hereby granted",
+        "Commons Clause Restriction",
+        "do not sell, sublicense, or redistribute the components themselves",
+    ):
+        if required_clause not in license_text:
+            errors.append("LICENSE is not the MIT + Commons Clause grant")
+            break
 
     jpeg_assets = (
         (ROOT / "assets/project-context-cover.jpg", (1200, 675), "cover"),

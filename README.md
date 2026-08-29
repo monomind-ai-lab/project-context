@@ -557,4 +557,6 @@ context, instruction preservation, malformed markers, and path hazards.
 
 ### License
 
-[MIT](LICENSE)
+[MIT + Commons Clause](LICENSE) — free to use, modify, and ship as part of
+your applications and products, including commercially; the components
+themselves may not be sold, sublicensed, or redistributed standalone.
