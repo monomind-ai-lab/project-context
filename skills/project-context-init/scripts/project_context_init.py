@@ -16,7 +16,7 @@ import tempfile
 from typing import Any
 
 
-TEMPLATE_VERSION = "0.3.0"
+TEMPLATE_VERSION = "0.4.0"
 START = "<!-- project-context:start -->"
 END = "<!-- project-context:end -->"
 MANAGED_BLOCK = """<!-- project-context:start -->
@@ -31,6 +31,16 @@ and wikis as auxiliary views, not authority.
 <!-- project-context:end -->"""
 
 INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
+# Harness-specific skill locations. These hold pointers, never copies: the
+# skill itself is installed once, harness-neutral, under .agents/skills/.
+HARNESS_POINTER_ROOTS = ((".claude", "skills"),)
+HOOK_SETTINGS_PATHS = (
+    Path(".claude") / "settings.json",
+    Path(".claude") / "settings.local.json",
+)
+HOOK_PATH_PATTERN = re.compile(
+    r"(?:\.agents|\.claude|scripts|bin|tools)/[A-Za-z0-9._/-]+\.[A-Za-z0-9]+"
+)
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
 EXCLUDED_SCAN_PARTS = {
     ".git", "node_modules", "vendor", "dist", "build", "coverage",
@@ -582,6 +592,59 @@ def inspect(target: Path, repo_type: str = "auto") -> dict[str, Any]:
     }
 
 
+def skill_description(source_skill: Path) -> str:
+    """The `description:` line from a skill's frontmatter, or "" when absent.
+
+    Harness pointers reuse the source description verbatim so the text a
+    harness matches on cannot drift away from the skill it points at.
+    """
+    try:
+        text = source_skill.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return ""
+    match = re.search(r"^description:\s*(.+?)\s*$", text, re.MULTILINE)
+    if not match:
+        return ""
+    value = match.group(1).strip()
+    # Source frontmatter may or may not already be quoted; carry the text, not
+    # the quoting, so the pointer never emits a doubled-quote scalar.
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        value = value[1:-1]
+    return value
+
+
+def pointer_content(skill_name: str, description: str) -> str:
+    """A thin harness file that redirects to the harness-neutral skill.
+
+    Harness-specific locations hold pointers, not copies: the protocol has one
+    source of truth under `.agents/skills/`, and this file exists so a harness
+    that only discovers skills from its own directory can still find it.
+    """
+    heading = skill_name.replace("-", " ").title()
+    front = ["---", f"name: {skill_name}"]
+    if description:
+        # json.dumps yields a valid YAML double-quoted scalar for arbitrary text.
+        front.append(f"description: {json.dumps(description)}")
+    front.append("---")
+    body = [
+        f"# {heading}",
+        "",
+        "This repository keeps its skills harness-neutral under `.agents/skills/`.",
+        "",
+        f"Read `.agents/skills/{skill_name}/SKILL.md` and follow it exactly. It is",
+        f"the protocol; this file only makes it reachable as `/{skill_name}`",
+        "and discoverable by description when no other path has loaded it.",
+    ]
+    if skill_name == "project-context":
+        body += [
+            "",
+            "`project-context/SKILL.md` is this repository's own instance of the",
+            "protocol. Read it too when the two differ — it records the local",
+            "profile and wiring.",
+        ]
+    return "\n".join(front + [""] + body) + "\n"
+
+
 def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
     source_parent = skill_root().parent
     for skill_name in ("project-context", "project-context-init"):
@@ -601,6 +664,37 @@ def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
                 destination_root / source_file.relative_to(source),
                 source_file.read_text(encoding="utf-8"),
             )
+        plan_harness_pointer(target, skill_name, source / "SKILL.md", actions)
+
+
+def plan_harness_pointer(
+    target: Path, skill_name: str, source_skill: Path, actions: list[dict[str, Any]]
+) -> None:
+    """Write the Claude Code pointer that makes an installed skill discoverable.
+
+    Without this the skill lands under `.agents/skills/` only, where Claude Code
+    never looks: its `description:` cannot match, there is no slash command, and
+    discovery falls back entirely to the managed instruction block.
+    """
+    for harness_root, subdirectory in HARNESS_POINTER_ROOTS:
+        pointer_root = target / harness_root / subdirectory / skill_name
+        pointer_chain = (
+            target / harness_root,
+            target / harness_root / subdirectory,
+            pointer_root,
+        )
+        if any(path.is_symlink() for path in pointer_chain) or (
+            pointer_root.exists() and not pointer_root.is_dir()
+        ):
+            actions.append(
+                {"kind": "conflict", "path": str(pointer_root), "reason": "harness pointer destination is unsafe"}
+            )
+            continue
+        add_file_action(
+            actions,
+            pointer_root / "SKILL.md",
+            pointer_content(skill_name, skill_description(source_skill)),
+        )
 
 
 def build_plan(
@@ -680,6 +774,128 @@ def apply_plan(report: dict[str, Any]) -> int:
     return 0
 
 
+def hook_commands(target: Path) -> list[tuple[str, str]]:
+    """(settings file, command) for declared hooks that name project context.
+
+    Hooks belonging to anything else are ignored: this validates the protocol's
+    own wiring, not the repository's unrelated automation.
+    """
+    found: list[tuple[str, str]] = []
+    for relative in HOOK_SETTINGS_PATHS:
+        settings = target / relative
+        if not settings.is_file():
+            continue
+        try:
+            payload = json.loads(settings.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        events = payload.get("hooks") if isinstance(payload, dict) else None
+        if not isinstance(events, dict):
+            continue
+        for matchers in events.values():
+            for matcher in matchers if isinstance(matchers, list) else []:
+                entries = matcher.get("hooks") if isinstance(matcher, dict) else None
+                for entry in entries if isinstance(entries, list) else []:
+                    command = entry.get("command") if isinstance(entry, dict) else None
+                    if isinstance(command, str) and (
+                        "project-context" in command or "context_triggers" in command
+                    ):
+                        found.append((str(relative), command))
+    return found
+
+
+def reachability(target: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Can this protocol still reach an agent, and by which route?
+
+    Every other doctor check inspects the protocol's own documents. This one
+    asks the question those checks cannot: will anything ever load them into a
+    session? A repository whose managed block was dropped, whose harness
+    pointer was never written, and whose hooks reference a script that is not
+    there is silently inert — and inert looks exactly like healthy.
+    """
+    issues: list[dict[str, str]] = []
+    blocks: list[str] = []
+    for path in instruction_paths(target):
+        if not path.is_file() or path.is_symlink():
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if START in text and END in text:
+            blocks.append(path.name)
+    if not blocks:
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "missing-instruction-block",
+                "path": str(target),
+                "detail": "no root AGENTS.md or CLAUDE.md carries the managed project-context block",
+            }
+        )
+
+    pointers: list[str] = []
+    for harness_root, subdirectory in HARNESS_POINTER_ROOTS:
+        for skill_name in ("project-context", "project-context-init"):
+            installed = target / ".agents" / "skills" / skill_name / "SKILL.md"
+            pointer = target / harness_root / subdirectory / skill_name / "SKILL.md"
+            if pointer.is_file():
+                if installed.is_file():
+                    pointers.append(str(pointer.relative_to(target)))
+                else:
+                    issues.append(
+                        {
+                            "severity": "error",
+                            "code": "harness-pointer-dangling",
+                            "path": str(pointer.relative_to(target)),
+                            "detail": f"points at missing {installed.relative_to(target)}",
+                        }
+                    )
+            elif installed.is_file():
+                issues.append(
+                    {
+                        "severity": "warning",
+                        "code": "missing-harness-pointer",
+                        "path": str(pointer.relative_to(target)),
+                        "detail": f"{skill_name} is installed but undiscoverable by this harness",
+                    }
+                )
+
+    hooks: list[str] = []
+    for settings_name, command in hook_commands(target):
+        referenced = HOOK_PATH_PATTERN.findall(command)
+        missing = [fragment for fragment in referenced if not (target / fragment).exists()]
+        if missing:
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "hook-command-unresolved",
+                    "path": settings_name,
+                    "detail": "hook command references missing " + ", ".join(sorted(set(missing))),
+                }
+            )
+        elif referenced:
+            hooks.append(settings_name)
+
+    paths = len(blocks) + len(pointers) + len(hooks)
+    if not paths:
+        issues.append(
+            {
+                "severity": "error",
+                "code": "no-delivery-path",
+                "path": str(target),
+                "detail": "nothing loads this protocol into a session: no managed instruction block, no harness pointer, no working hook",
+            }
+        )
+    return (
+        {
+            "delivers": bool(paths),
+            "paths": paths,
+            "instruction_blocks": sorted(blocks),
+            "harness_pointers": sorted(pointers),
+            "hooks": sorted(set(hooks)),
+        },
+        issues,
+    )
+
+
 def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
@@ -737,6 +953,8 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
             issues.append(
                 {"severity": "error", "code": "duplicate-record-id", "path": ", ".join(locations), "detail": record_id}
             )
+    delivery, delivery_issues = reachability(target)
+    issues.extend(delivery_issues)
     errors = sum(issue["severity"] == "error" for issue in issues)
     warnings = sum(issue["severity"] == "warning" for issue in issues)
     return {
@@ -744,6 +962,7 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
         "template_version": TEMPLATE_VERSION,
         "status": "error" if errors else ("warning" if warnings else "healthy"),
         "summary": {"errors": errors, "warnings": warnings},
+        "reachability": delivery,
         "issues": issues,
     }
 

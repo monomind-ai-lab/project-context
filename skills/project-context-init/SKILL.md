@@ -174,7 +174,9 @@ configuration and verify presence without printing values.
 ## 7. Verify and hand off
 
 - Re-run inspect and the same init dry-run; it should propose no writes.
-- Run `doctor --target .` when Python is available.
+- Run `doctor --target .` when Python is available. Confirm `reachability`
+  reports at least one delivery path; a `no-delivery-path` error means the
+  context files are intact but nothing will load them into a session.
 - Confirm only approved add-ons or configurations changed.
 - Inspect the complete diff for private paths, credentials, sensitive data, and
   type-specific assumptions presented as universal rules.

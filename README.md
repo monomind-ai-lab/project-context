@@ -124,8 +124,9 @@ Alongside those records, the **core profile** also writes
 people can read the operating protocol in place. The **full profile** adds
 `decisions/`, `designs/`, `incidents/`, and `tasks/` subfolders with templates
 for projects that need the complete evidence structure. Installation also places
-both skills under `.agents/skills/` and adds or refreshes only the managed
-Project Context block in existing root agent instructions.
+both skills under `.agents/skills/`, writes a thin pointer for each under
+`.claude/skills/` so Claude Code can discover them, and adds or refreshes only
+the managed Project Context block in existing root agent instructions.
 
 Project Context does not copy the whole project into a second knowledge base.
 Primary artifacts stay where they belong. The context files summarize only the
@@ -328,9 +329,10 @@ It then applies the approved plan:
 python3 scripts/install.py --target /path/to/repository --profile core --repo-type auto --repository-stage existing --apply
 ```
 
-This installs both skills under `.agents/skills/`, creates the selected
-`project-context/` profile, preserves custom files, and adds or refreshes only
-the managed Project Context block in existing root agent instructions.
+This installs both skills under `.agents/skills/` with harness pointers under
+`.claude/skills/`, creates the selected `project-context/` profile, preserves
+custom files, and adds or refreshes only the managed Project Context block in
+existing root agent instructions.
 
 For a brand-new repository, the agent derives the primary type from the user's
 purpose and uses `--repository-stage brand-new --repo-type TYPE`. The CLI never
@@ -380,9 +382,30 @@ The doctor checks:
 - installed scaffold version;
 - freshness of `NOW.md`;
 - duplicate decision and learning IDs;
-- broken relative Markdown links.
+- broken relative Markdown links;
+- **reachability** — whether anything still delivers this protocol to an agent:
+  the managed instruction block, the harness skill pointers, and any declared
+  session hooks whose commands must resolve to files that exist.
 
 It reports issues without rewriting custom knowledge.
+
+Reachability is reported explicitly, so a healthy result names the routes that
+carry the protocol rather than only vouching for the documents:
+
+```json
+"reachability": {
+  "delivers": true,
+  "paths": 3,
+  "instruction_blocks": ["AGENTS.md"],
+  "harness_pointers": [".claude/skills/project-context/SKILL.md"],
+  "hooks": []
+}
+```
+
+A `no-delivery-path` error means the context files are intact but nothing will
+ever load them into a session. Without this check that repository reports
+`healthy`, which is how a protocol can go completely inert while every health
+signal says it is fine.
 
 ### Harness-maintainer fallback
 
@@ -395,7 +418,11 @@ cp -R /path/to/project-context/skills/project-context .agents/skills/
 cp -R /path/to/project-context/skills/project-context-init .agents/skills/
 ```
 
-Then invoke `$project-context-init` in the target repository.
+Then invoke `$project-context-init` in the target repository. A skill copied
+this way is not yet discoverable in Claude Code, which reads skills from
+`.claude/skills/`; running `init --install-skills` writes the pointers that
+make it so, and `doctor` reports a `missing-harness-pointer` warning until
+something does.
 
 
 

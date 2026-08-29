@@ -51,3 +51,8 @@ When context appears stale, contradictory, or hard to navigate, use the sibling
 `project-context-init` skill's `doctor` workflow. It checks core files, scaffold
 version, review freshness, duplicate decision/learning IDs, and broken relative
 links without rewriting content.
+
+It also checks reachability: whether the managed instruction block, the harness
+skill pointers, or a declared session hook will still deliver this protocol to
+an agent. A `no-delivery-path` error means the context files are intact but
+nothing loads them into a session — fix that before trusting the rest.

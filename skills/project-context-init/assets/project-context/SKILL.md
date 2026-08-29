@@ -37,3 +37,22 @@ explicit user direction and repository instructions.
 
 Never store secrets, sensitive customer data, raw transcripts, private host
 paths, ambient profiles, or unverified claims.
+
+## Health
+
+When context looks stale, contradictory, or hard to navigate, run the
+`project-context-init` skill's read-only doctor. It checks core files, scaffold
+version, review freshness, duplicate decision and learning IDs, broken relative
+links, and whether anything still delivers this protocol to an agent. It never
+rewrites content.
+
+If the skills were installed into this repository:
+
+    python3 .agents/skills/project-context-init/scripts/project_context_init.py doctor --target .
+
+Otherwise run the same `doctor` command from wherever the `project-context-init`
+skill is available, passing `--target` this project folder.
+
+A `no-delivery-path` error means nothing will load this protocol into a session:
+the managed instruction block is gone and no harness pointer survives. Fix that
+before trusting anything else the doctor reports.

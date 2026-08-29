@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import stat
 import sys
@@ -111,6 +112,155 @@ class InitializerTests(unittest.TestCase):
             self.assertTrue((target / ".agents/skills/project-context/SKILL.md").is_file())
             self.assertTrue((target / ".agents/skills/project-context-init/SKILL.md").is_file())
             self.assertTrue((target / "project-context/NOW.md").is_file())
+
+    def test_skill_install_writes_discoverable_harness_pointers(self) -> None:
+        """A skill only under .agents/ is invisible to Claude Code.
+
+        Without a pointer the description that is supposed to trigger the
+        protocol can never match, and discovery falls back entirely to the
+        managed instruction block.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            for skill_name in ("project-context", "project-context-init"):
+                pointer = target / ".claude" / "skills" / skill_name / "SKILL.md"
+                self.assertTrue(pointer.is_file(), skill_name)
+                text = pointer.read_text(encoding="utf-8")
+                self.assertIn(f"name: {skill_name}", text)
+                self.assertIn(f".agents/skills/{skill_name}/SKILL.md", text)
+                source = (
+                    ROOT / "skills" / skill_name / "SKILL.md"
+                ).read_text(encoding="utf-8")
+                description = source.split("description:", 1)[1].splitlines()[0].strip()
+                self.assertIn(description.strip('"'), text)
+                # A quoted source description must not become a doubled scalar.
+                self.assertNotIn('description: ""', text)
+                # The pointer redirects; it never copies the protocol body.
+                self.assertNotIn("## Start", text)
+
+    def test_harness_pointer_is_idempotent_and_symlink_safe(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as external:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            second, _ = self.run_script(
+                "init", "--target", directory, "--install-skills", "--dry-run"
+            )
+            for mutation in ("create", "append_managed_block", "update_managed_block"):
+                self.assertEqual(0, second["summary"].get(mutation, 0), mutation)
+
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as external:
+            target = Path(directory)
+            external_path = Path(external)
+            (target / ".claude").symlink_to(external_path, target_is_directory=True)
+            report, _ = self.run_script(
+                "init",
+                "--target",
+                directory,
+                "--install-skills",
+                "--apply",
+                expected=2,
+            )
+            self.assertTrue(report["has_conflicts"])
+            self.assertEqual([], list(external_path.iterdir()))
+
+    def test_installed_instance_skill_documents_the_doctor(self) -> None:
+        """The instance copy is the one the managed block points an agent at.
+
+        If the diagnostic is documented only in the skill copy, stale or
+        contradictory context has no advertised route to being checked.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            self.run_script("init", "--target", directory, "--apply")
+            text = (Path(directory) / "project-context" / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn("## Health", text)
+            self.assertIn("doctor", text)
+
+    def test_doctor_reports_the_routes_that_deliver_the_protocol(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            report, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", report["status"])
+            self.assertTrue(report["reachability"]["delivers"])
+            self.assertIn("AGENTS.md", report["reachability"]["instruction_blocks"])
+            self.assertIn(
+                ".claude/skills/project-context/SKILL.md",
+                report["reachability"]["harness_pointers"],
+            )
+
+    def test_doctor_errors_when_nothing_delivers_the_protocol(self) -> None:
+        """The reported failure: healthy documents, zero reachability.
+
+        The doctor certified a repository whose hooks were unloaded, whose
+        skill was undiscoverable, and whose managed block was gone.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            shutil.rmtree(target / ".claude")
+            (target / "AGENTS.md").write_text("# Repo\n", encoding="utf-8")
+            report, _ = self.run_script("doctor", "--target", directory, expected=1)
+            self.assertEqual("error", report["status"])
+            self.assertFalse(report["reachability"]["delivers"])
+            codes = {issue["code"] for issue in report["issues"]}
+            self.assertIn("no-delivery-path", codes)
+            self.assertIn("missing-instruction-block", codes)
+            self.assertIn("missing-harness-pointer", codes)
+
+    def test_doctor_flags_dangling_pointer_and_unresolved_hook(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            shutil.rmtree(target / ".agents" / "skills" / "project-context-init")
+            (target / ".claude" / "settings.json").write_text(
+                json.dumps(
+                    {
+                        "hooks": {
+                            "SessionStart": [
+                                {
+                                    "hooks": [
+                                        {
+                                            "type": "command",
+                                            "command": "python3 .agents/skills/project-context/scripts/context_triggers.py report",
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            report, _ = self.run_script("doctor", "--target", directory, expected=1)
+            codes = {issue["code"] for issue in report["issues"]}
+            self.assertIn("harness-pointer-dangling", codes)
+            self.assertIn("hook-command-unresolved", codes)
+
+    def test_doctor_ignores_hooks_belonging_to_other_tooling(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            (target / ".claude" / "settings.json").write_text(
+                json.dumps(
+                    {
+                        "hooks": {
+                            "SessionStart": [
+                                {
+                                    "hooks": [
+                                        {
+                                            "type": "command",
+                                            "command": "python3 scripts/unrelated_tool.py run",
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            report, _ = self.run_script("doctor", "--target", directory)
+            self.assertEqual("healthy", report["status"])
 
     def test_consolidation_review_classifies_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

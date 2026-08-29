@@ -139,7 +139,7 @@ def main() -> int:
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
     for expected in (
         "Shared project context that outlives any one person, agent, or chat",
-        "simple way to build a context pipeline right into a",
+        "context pipeline right into a repository or project",
         "assets/project-context-cover.jpg",
         "assets/project-context-tools.jpg",
         "https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html",
