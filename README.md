@@ -31,13 +31,34 @@ but they are not expected to invoke skills or run Python commands themselves.
 
 ## 🚀 Quick Start (30 Seconds)
 
-**No skill launcher, Python runtime, or manual setup is required for the
-agent-guided path.** You do not install Project Context yourself—your AI agent
-does. Paste one prompt, answer a short onboarding question, and approve the plan
-the agent proposes.
+Two ways in — one command if you have Python tooling, one pasted prompt if you
+have nothing but an AI agent. Both preview the exact plan before writing.
 
-Copy this prompt into any AI agent that can read and edit your target repository
-or project folder:
+### Single-command install (recommended)
+
+With `uvx` or `pipx`:
+
+```sh
+uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply
+```
+
+Or install once and reuse:
+
+```sh
+pipx install git+https://github.com/monomind-ai-lab/project-context
+project-context init --target . --install-skills --apply
+```
+
+The CLI is deterministic: swap `--apply` for `--dry-run` to preview the exact
+file plan first. Zero runtime dependencies — stdlib Python 3.10+. Available
+subcommands: `init`, `inspect`, `review`, `doctor`.
+
+### Agent-guided install
+
+**No skill launcher, Python tooling, or manual setup required** — your AI agent
+does the work, asks the onboarding question, and shows you the plan for
+approval. Paste this prompt into any AI agent that can read and edit your
+target repository or project folder:
 
 ```text
 Install Project Context in the current repository or project folder using
@@ -85,7 +106,7 @@ Installation creates two complementary trigger paths, so no single harness is
 required:
 
 1. Agent harnesses that support the Agent Skills convention can discover the
-   installed `project-context` and `project-context-init` skills directly.
+   installed `project-context` skill directly.
 2. The initializer adds a managed Project Context block to existing root agent
    instructions such as `AGENTS.md` or `CLAUDE.md`. That block tells any agent
    to read the local `project-context/SKILL.md` and current-state files before
@@ -124,9 +145,10 @@ Alongside those records, the **core profile** also writes
 people can read the operating protocol in place. The **full profile** adds
 `decisions/`, `designs/`, `incidents/`, and `tasks/` subfolders with templates
 for projects that need the complete evidence structure. Installation also places
-both skills under `.agents/skills/`, writes a thin pointer for each under
-`.claude/skills/` so Claude Code can discover them, and adds or refreshes only
-the managed Project Context block in existing root agent instructions.
+the `project-context` skill under `.agents/skills/project-context/`, writes a
+pointer under `.claude/skills/project-context/SKILL.md` so Claude Code can
+discover it, and adds or refreshes only the managed Project Context block in
+existing root agent instructions.
 
 Project Context does not copy the whole project into a second knowledge base.
 Primary artifacts stay where they belong. The context files summarize only the
@@ -164,21 +186,24 @@ primary materials or existing instructions.
 
 ### What is included
 
-- **`project-context-init`** — onboards a new or existing project, suggests safe
-  consolidation, initializes the right profile, and validates context health.
-- **`project-context`** — reads and maintains durable project-folder context.
+- **`project-context` skill** — installed at `.agents/skills/project-context/`,
+  reads and maintains durable project-folder context, runs verification checks,
+  and travels with installed repositories. Includes context triggers (`context_triggers.py`),
+  registry indexes (`context_index.py`), and a standalone doctor (`context_doctor.py`).
+- **`project-context-init` installer** — stays upstream (in the scaffold checkout
+  or pip package); onboards new or existing projects, suggests safe consolidation,
+  initializes the right profile, and validates context health. The `init`
+  subcommand delegates to it.
 - **Deterministic tooling** — dry-run/apply initialization, idempotency,
-  scaffold version checks, and a read-only doctor that also verifies the
-  protocol can still reach an agent.
-- **Trigger detection** — `context_triggers.py` reports when work has landed
-  since project context was last updated, and records an honest "nothing fired"
-  so the check never has to be silenced with a cosmetic edit.
-- **Generated registry indexes** — `context_index.py` keeps a derived table at
-  the top of `DECISIONS.md` and `LEARNINGS.md` so an agent can find what
-  constrains a task without reading either registry end to end.
-- **Two profiles** — lightweight adoption or full evidence structure.
-- **Two ready-to-copy prompts** — install or maintain the pipeline with any AI
+  scaffold version checks, and health verification that also checks whether
+  the protocol can still reach an agent.
+- **Two profiles** — lightweight core (NOW, DECISIONS, LEARNINGS) or full with
+  decisions/, designs/, incidents/, and tasks/ subfolders for projects needing
+  complete evidence structure.
+- **Ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
+- **CLI and agent-guided paths** — single-command `project-context init`, or
+  paste a prompt into any AI agent.
 - **Interactive complete guide** — a browser-viewable walkthrough published as
   a GitHub Page.
 
@@ -272,12 +297,39 @@ step, and verifies readiness without reading or exposing the secret.
 | [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
 
+**Positioning vs. OpenWiki:** Project Context records what the code cannot say—decisions,
+learnings, and the current handoff. OpenWiki regenerates what the code does say—derived
+documentation of its state. They compose: Project Context is the authority layer, a
+generated wiki is an optional derived view.
+
 The initializer filters this list by repository type and observed contents. It
 does not ask writing projects about code analysis or present every add-on as a
 default checklist.
 
 Current setup notes, footprints, provider boundaries, and official links live
 in [the optional-tools reference](skills/project-context-init/references/optional-tools.md).
+
+
+
+---
+
+## 📌 Evidence Anchors
+
+Evidence cited in decisions and learnings may be pinned to a specific point in
+the repository's history to detect drift. An anchor uses the form
+`path/to/file@<commit>`, where the path is repository-root-relative and the
+commit identifies the state being cited. The doctor verifies these anchors:
+
+- **`evidence-drift`** — warns when the cited path changed since the pinned
+  commit ("the justification may no longer hold — re-verify, then re-anchor or
+  supersede").
+- **`evidence-unverifiable`** — warns when the commit is unknown.
+
+Anchors are optional and Git-gated; the doctor reports warnings only, never
+errors. Use them when evidence is critical or evolving—a design trade-off, a
+performance baseline, a bug reproduction case, or a research finding the project
+depends on. The doctor's JSON gains an `"evidence"` key reporting anchor count,
+drift warnings, and unverifiable references.
 
 
 
@@ -336,10 +388,11 @@ It then applies the approved plan:
 python3 scripts/install.py --target /path/to/repository --profile core --repo-type auto --repository-stage existing --apply
 ```
 
-This installs both skills under `.agents/skills/` with harness pointers under
-`.claude/skills/`, creates the selected `project-context/` profile, preserves
-custom files, and adds or refreshes only the managed Project Context block in
-existing root agent instructions.
+This installs the `project-context` skill under `.agents/skills/project-context/`
+with a harness pointer under `.claude/skills/project-context/SKILL.md`, creates
+the selected `project-context/` profile, preserves custom files, and adds or
+refreshes only the managed Project Context block in existing root agent
+instructions.
 
 For a brand-new repository, the agent derives the primary type from the user's
 purpose and uses `--repository-stage brand-new --repo-type TYPE`. The CLI never
@@ -377,10 +430,15 @@ The review **never moves, merges, rewrites, archives, or deletes automatically**
 
 ### Agent health checks (doctor)
 
-When context may be stale or inconsistent, the agent runs:
+When context may be stale or inconsistent, run the doctor from the installed
+repository or via the upstream CLI:
 
 ```sh
-python3 skills/project-context-init/scripts/project_context_init.py doctor --target /path/to/repository
+# In an installed repository:
+python3 .agents/skills/project-context/scripts/context_doctor.py --target .
+
+# From the scaffold checkout or pip install:
+project-context doctor --target /path/to/repository
 ```
 
 The doctor checks:
@@ -465,19 +523,19 @@ can hold the line.
 ### Harness-maintainer fallback
 
 If an agent harness cannot copy skills automatically, a harness maintainer can
-install only the skills without the scaffold:
+install the `project-context` skill without the full scaffold:
 
 ```sh
 mkdir -p .agents/skills
 cp -R /path/to/project-context/skills/project-context .agents/skills/
-cp -R /path/to/project-context/skills/project-context-init .agents/skills/
 ```
 
-Then invoke `$project-context-init` in the target repository. A skill copied
-this way is not yet discoverable in Claude Code, which reads skills from
-`.claude/skills/`; running `init --install-skills` writes the pointers that
-make it so, and `doctor` reports a `missing-harness-pointer` warning until
-something does.
+This is sufficient for the protocol to work: the installed skill carries the
+triggers and the doctor. The initializer (`project-context-init`) stays
+upstream; `project-context init` delegates to it. A skill copied this way is
+not yet discoverable in Claude Code, which reads skills from `.claude/skills/`;
+running `init --install-skills` writes the pointers that make it so, and
+`doctor` reports a `missing-harness-pointer` warning until something does.
 
 
 

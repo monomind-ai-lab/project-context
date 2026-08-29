@@ -7,4 +7,4 @@
 - Decision: Include public studies published on or before 2025-12-31.
 - Rationale: Keep the review reproducible while the first report is drafted.
 - Consequences: Newer evidence is logged for the next review rather than silently added.
-- Evidence: Approved research protocol and dated bibliography export.
+- Evidence: Approved research protocol (`docs/research-protocol.md@<commit>`) and dated bibliography export.

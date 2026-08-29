@@ -1226,7 +1226,7 @@ question. Show me the proposed plan and wait for my approval before making chang
       <div class="dg-frame" data-od-id="node-trigger-paths">
         <div class="dg-frame-label">Installation creates two trigger paths</div>
         <div class="dg-chip-row">
-          <div class="dg-chip" data-od-id="trigger-skills"><div class="nm">Agent Skills discovery</div><p class="ds">Harnesses that support the convention find the installed project-context and project-context-init skills directly.</p></div>
+          <div class="dg-chip" data-od-id="trigger-skills"><div class="nm">Agent Skills discovery</div><p class="ds">Harnesses that support the convention find the installed project-context skill directly.</p></div>
           <div class="dg-chip" data-od-id="trigger-block"><div class="nm">Managed instruction block</div><p class="ds">A block added to AGENTS.md or CLAUDE.md routes any agent to project-context/SKILL.md — even with no skill launcher.</p></div>
         </div>
       </div>
@@ -1263,7 +1263,7 @@ question. Show me the proposed plan and wait for my approval before making chang
           <div class="dg-flag"><div class="fl">--apply</div><div class="fd">Write the approved plan</div></div>
           <div class="dg-flag"><div class="fl">--repository-stage</div><div class="fd">brand-new · existing</div></div>
         </div>
-        <p class="dg-frame-note">Installs both skills under <b>.agents/skills/</b>, creates the selected profile, preserves custom files, and refreshes only the managed instruction block. The CLI never stores the free-text purpose.</p>
+        <p class="dg-frame-note">Installs the project-context skill under <b>.agents/skills/project-context/</b>, creates the selected profile, preserves custom files, and refreshes only the managed instruction block. The CLI never stores the free-text purpose.</p>
       </div>
     </div>
   </section>
