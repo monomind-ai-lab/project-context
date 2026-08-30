@@ -10,3 +10,4 @@ dist/
 .venv/
 site/guide/
 site/og-image.jpg
+.wrangler/

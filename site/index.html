@@ -1,449 +1,1980 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Project Context — Clarity Comes With Context</title>
-<meta name="description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo: small Markdown records maintained by agents, readable by everyone.">
-<link rel="canonical" href="https://projectcontext.monomind.one/">
+<title>Project Context — MonoMind</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="description" content="Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.">
+<meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Project Context">
-<meta property="og:title" content="Project Context — Clarity Comes With Context">
-<meta property="og:description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo: small Markdown records maintained by agents, readable by everyone.">
-<meta property="og:url" content="https://projectcontext.monomind.one/">
-<meta property="og:image" content="https://projectcontext.monomind.one/og-image.jpg">
+<meta property="og:site_name" content="MonoMind AI Lab">
+<meta property="og:title" content="Project Context — MonoMind">
+<meta property="og:description" content="Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.">
+<meta property="og:image" content="/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="675">
-<meta property="og:image:alt" content="Project Context — a sharp white square over a blurred forest. Clarity comes with context.">
+<meta property="og:image:alt" content="Project Context — MonoMind AI Lab">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Project Context — Clarity Comes With Context">
-<meta name="twitter:description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo.">
-<meta name="twitter:image" content="https://projectcontext.monomind.one/og-image.jpg">
-<meta name="theme-color" content="#102033">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="twitter:title" content="Project Context — MonoMind">
+<meta name="twitter:description" content="Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.">
+<meta name="twitter:image" content="/og-image.jpg">
+
+<!-- Blocking theme application: runs before first paint so a stored light
+     theme never flashes black. Falls back to the OS preference. -->
+<script>
+(function(){
+  var r = document.documentElement, t = null;
+  try { t = localStorage.getItem('pc-theme'); } catch(e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  }
+  r.setAttribute('data-theme', t);
+})();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Geist / Geist Mono carry the look. Noto Sans KR and Noto Sans TC are here
+     only so the Korean and Traditional-Chinese dictionaries have a face. -->
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #102033;
-    --accent: #4f8cff;
-    --accent-soft: #7fa9ff;
-    --accent-eyebrow: #85acff;
-    --hair: rgba(255,255,255,0.22);
-    --glass: rgba(255,255,255,0.1);
-    --muted: rgba(255,255,255,0.72);
-    --muted-2: rgba(255,255,255,0.6);
-    --font-body: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+/* ========================== DESIGN TOKENS ==========================
+   Adopted verbatim from the `project-website` house template, with three
+   measured contrast repairs noted inline. Change values here; do not
+   hardcode a colour anywhere below. */
+:root{
+  --black:#000000; --bg:#000000; --bg-subtle:#0a0a0a;
+  --surface:#0e0e0e; --surface-2:#141414; --surface-3:#1a1a1a;
+  --border:#1f1f1f; --border-strong:#2e2e2e; --border-hover:#3a3a3a;
+  --fg:#ededed; --fg-bright:#ffffff;
+  /* REPAIR (dark dim ramp). The template ships --fg-muted:#a1a1a1,
+     --fg-dim:#7d7d7d, --fg-faint:#565656 and documents in its own comment
+     that --fg-faint fails AA (2.86:1 on --bg). #7d7d7d also lands at 4.23:1
+     on --surface-3. The ramp is re-tiered, not re-invented: same three
+     steps, each now >= 4.5:1 on --bg, --bg-subtle, --surface, --surface-2
+     and --surface-3. Measured: 8.1 / 6.5 / 6.1 on --bg. */
+  --fg-muted:#a8a8a8; --fg-dim:#949494; --fg-faint:#8a8a8a;
+  --accent:#52a8ff; --accent-strong:#0072f5; --accent-contrast:#ffffff;
+  --success:#46d160; --warn:#f5a623; --danger:#ff8080;
+  --success-wash:rgba(70,209,96,.12);  --success-line:rgba(70,209,96,.32);
+  --warn-wash:rgba(245,166,35,.12);    --warn-line:rgba(245,166,35,.30);
+  --danger-wash:rgba(255,128,128,.12); --danger-line:rgba(255,128,128,.30);
+  --accent-wash:rgba(82,168,255,.10);  --accent-line:rgba(82,168,255,.28);
+  --title-grad:linear-gradient(180deg,#fff 30%,#b9b9b9);
+  --title-grad-em:linear-gradient(180deg,#8ec5ff 18%,#4f9bf0);
+  --glow:rgba(82,168,255,.14);
+  /* The MonoMind mark is inlined with fill:currentColor, so it takes this
+     one token. White on dark. (The source file monomind-mark.svg ships its
+     own #0000FF — a pure blue that clashes with this palette; to go back to
+     the raw brand file, change --brand-mark in the light block below.) */
+  --brand-mark:#ffffff;
+  /* Fallback ground for the sticky nav, used where color-mix() is not
+     supported; the color-mix value on .nav overrides it. */
+  --nav-bg:rgba(0,0,0,.70);
+  --grid-line:rgba(255,255,255,.03);
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px;
+  --font-sans:"Geist","Noto Sans KR","Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:"Geist Mono",ui-monospace,"SF Mono","Menlo","Consolas",monospace;
+  --maxw:1120px; --maxw-prose:760px; --nav-h:60px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --shadow-pop:0 12px 32px rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+/* ---------------------------- LIGHT THEME ---------------------------
+   Only the palette changes; every rule below consumes the variables.
+   The token values are re-pointed, not re-invented, so the contrast
+   relationships of the dark palette survive the flip. */
+html[data-theme="light"]{
+  --bg:#ffffff; --bg-subtle:#f7f8fa;
+  --surface:#f6f7f9; --surface-2:#eef0f4; --surface-3:#e6e9ee;
+  --border:#e4e7ec; --border-strong:#d2d7df; --border-hover:#b9c0cb;
+  --fg:#1b1f27; --fg-bright:#0b0d12; --fg-muted:#4e5563; --fg-dim:#5c6371;
+  /* REPAIR (light --fg-faint). The template's #656c7a measures 4.34:1 on
+     --surface-3, which the record panels use. #5f6675 keeps the tier and
+     clears AA on every ground here: 5.8 white / 5.4 surface / 4.7 s3. */
+  --fg-faint:#5f6675;
+  --accent:#0064d2; --accent-strong:#0050a8;
+  --success:#12662b; --warn:#8a5200; --danger:#c02626;
+  /* REPAIR (light semantic hues). The template's #1a8f3c / #a86500 measure
+     4.17 / 4.64 on white and drop below AA once they sit on their own 10%
+     tint inside a status pill. Darkened; the hues are unchanged. Measured
+     as rendered, on the composited pill ground: accepted 5.7, in-progress
+     5.3. #157a33 was tried first and still landed at 4.43 — hence #12662b. */
+  --success-wash:rgba(18,102,43,.10);  --success-line:rgba(18,102,43,.30);
+  --warn-wash:rgba(138,82,0,.10);      --warn-line:rgba(138,82,0,.28);
+  --danger-wash:rgba(192,38,38,.09);   --danger-line:rgba(192,38,38,.26);
+  --accent-wash:rgba(0,100,210,.07);   --accent-line:rgba(0,100,210,.26);
+  --title-grad:linear-gradient(180deg,#0b0d12 30%,#454b57);
+  --title-grad-em:linear-gradient(180deg,#0064d2 18%,#00458f);
+  --glow:rgba(0,100,210,.10);
+  /* MonoMind mark in light mode: the template's accent-strong blue as it is
+     carried in the base :root palette (#0072f5). Measured 4.44:1 on white —
+     past the 3:1 that WCAG AA asks of a non-text graphic. The source file's
+     own colour is #0000FF; reverting is this one line. */
+  --brand-mark:#0072f5;
+  --nav-bg:rgba(255,255,255,.82);
+  --grid-line:rgba(0,0,0,.04);
+  --shadow-pop:0 12px 32px rgba(11,13,18,.12);
+  color-scheme:light;
+}
+html[data-theme="light"] .btn-primary{background:#0b0d12;border-color:#0b0d12;color:#fff}
+html[data-theme="light"] .btn-primary:hover{background:#2a2f3a;border-color:#2a2f3a}
+html[data-theme="light"] ::selection{background:rgba(0,100,210,.22);color:#0b0d12}
+
+*,*:before,*:after{box-sizing:border-box}
+/* overflow-x:clip (not hidden) — `clip` does not create a scroll container,
+   so the sticky nav keeps the viewport as its scrollport. It is here as
+   well as on <body> because in RTL Chrome reports a phantom scrollWidth on
+   <html> when only <body> is clipped. */
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 24px);-webkit-text-size-adjust:100%;overflow-x:clip}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-feature-settings:"cv11","ss01";text-rendering:optimizeLegibility;overflow-x:hidden}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.02em;line-height:1.1;color:var(--fg-bright)}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;color:inherit}
+input{font-family:inherit}
+::selection{background:rgba(82,168,255,.28);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---- Google Translate chrome suppression -------------------------------
+   element.js injects a banner iframe and then pushes <body> down with an
+   inline `top`. Both are killed here so the machine-translated page keeps
+   the same layout as the hand-translated one. */
+.skiptranslate,iframe.skiptranslate,.goog-te-banner-frame,#goog-gt-tt,.goog-te-balloon-frame{display:none!important}
+body{top:0!important;position:static!important}
+body>.skiptranslate{display:none!important}
+.goog-text-highlight{background:none!important;box-shadow:none!important}
+#googleTranslateHost{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+.container{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:24px}
+@media(max-width:420px){.container{padding-inline:16px}}
+/* Anchor clearance under the sticky header is owned by ONE declaration:
+   scroll-padding-top on <html>, above. Measured: an in-page jump lands the
+   target 84px down, clear of the 60px header. A scroll-margin-top of the
+   same size on the targets was tried and removed — the two do not override
+   each other, they add, and every anchor landed 168px down. */
+.section{padding-block:clamp(56px,9vw,112px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim)}
+.eyebrow-num{color:var(--fg-faint)}
+.section-title{font-size:clamp(1.75rem,3.6vw,2.6rem);letter-spacing:-.03em}
+.section-lede{margin-top:16px;max-width:620px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+.hairline{border:0;height:1px;background:linear-gradient(to right,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:0}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Logical inset, not `left`. A machine-translated RTL page flips the
+   overflow side: `left:-999px` parks the link on the side RTL treats as
+   scrollable, adding 999px of phantom horizontal scroll to the whole page. */
+.skip-link{position:absolute;inset-inline-start:-999px;top:8px;z-index:200;background:var(--fg-bright);color:var(--bg);padding:8px 14px;border-radius:var(--r-sm);font-size:.85rem}
+.skip-link:focus{inset-inline-start:12px}
+code,kbd{font-family:var(--font-mono);font-size:.9em}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 40%,transparent 100%);mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 40%,transparent 100%);pointer-events:none}
+
+@media(prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+}
+
+/* ============================= BUTTONS ============================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding-inline:20px;border-radius:var(--r-md);font-size:.94rem;font-weight:500;letter-spacing:-.01em;border:1px solid transparent;transition:transform .15s var(--ease),background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease);white-space:nowrap;max-width:100%}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--fg-bright);color:#000;border-color:var(--fg-bright)}
+.btn-primary:hover{background:#d9d9d9;border-color:#d9d9d9}
+.btn-secondary{background:transparent;color:var(--fg);border-color:var(--border-strong)}
+.btn-secondary:hover{background:var(--surface-2);border-color:var(--border-hover);color:var(--fg-bright)}
+.btn svg{width:16px;height:16px;flex:none}
+.btn>span{overflow:hidden;text-overflow:ellipsis}
+
+.card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);transition:border-color .2s var(--ease),background .2s var(--ease)}
+.card:hover{border-color:var(--border-hover)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding-inline:9px;border-radius:999px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.01em;color:var(--fg-muted);background:var(--surface-2);border:1px solid var(--border);white-space:nowrap}
+.chip-open{color:var(--accent);background:var(--accent-wash);border-color:var(--accent-line)}
+
+/* ============================== NAV ==============================
+   THE HEADER OVERLAP FIX. Production shipped a header whose wordmark
+   wrapped into the language buttons. Three rules prevent that here and
+   they are load-bearing:
+     1. .nav-actions is `flex:none` + `margin-inline-start:auto`, so the
+        control cluster never shrinks and never gets pushed off-edge.
+     2. .brand is `min-width:0` and its name is nowrap + ellipsis, so the
+        brand is the thing that gives way — it truncates, never wraps.
+     3. Everything secondary (nav links, the brand's suffix tag) is hidden
+        by media query well before the row runs out of room.
+   Measured at 320px: brand 96 + gap 12 + theme 36 + lang 78 + burger 34
+   + padding 32 = 288 of 320. */
+/* Sticky header, matching html.monomind.one: a translucent wash of the
+   page's own --bg, blurred, on the hairline token. The plain rgba() line
+   is the fallback for engines without color-mix(); the line after it wins
+   everywhere else, and both flip with the theme. */
+.nav{position:sticky;top:0;z-index:50;background:var(--nav-bg);background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;gap:16px;height:var(--nav-h)}
+.brand{display:inline-flex;align-items:center;gap:9px;min-width:0;flex:0 1 auto}
+/* The mark and the wordmark are one link; the tag beside them is not, so it
+   sits outside the anchor. .brand-link keeps min-width:0 so the truncation
+   chain from .brand down to .brand-name is unbroken. */
+.brand-link{display:inline-flex;align-items:center;gap:9px;min-width:0;font-weight:600;letter-spacing:-.02em;font-size:.98rem;color:var(--fg-bright)}
+.brand-link:hover .brand-name{color:var(--fg-bright)}
+.brand-mark{color:var(--brand-mark);display:inline-flex;flex:none}
+.brand-mark svg{width:26px;height:26px}
+.brand-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand-tag{flex:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0;color:var(--fg-dim);padding:2px 7px;border:1px solid var(--border);border-radius:999px;white-space:nowrap}
+.nav-links{display:flex;gap:2px;margin-inline-start:6px;min-width:0}
+.nav-link{padding:7px 11px;font-size:.9rem;color:var(--fg-muted);border-radius:var(--r-sm);white-space:nowrap;transition:color .15s,background .15s}
+.nav-link:hover{color:var(--fg-bright);background:var(--surface-2)}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto;flex:none}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-md);background:transparent;border:1px solid var(--border-strong);color:var(--fg-dim);transition:color .15s,background .15s,border-color .15s}
+.iconbtn:hover{color:var(--fg-bright);background:var(--surface-2);border-color:var(--border-hover)}
+.iconbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.i-moon{display:none}
+html[data-theme="light"] .i-sun{display:none}
+html[data-theme="light"] .i-moon{display:block}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:transparent;border:1px solid var(--border-strong);border-radius:var(--r-md);padding:0;align-items:center}
+.nav-toggle span{width:16px;height:1.5px;background:var(--fg);transition:transform .2s,opacity .2s}
+.nav-toggle[aria-expanded="true"] span:first-child{transform:translateY(3.25px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:last-child{transform:translateY(-3.25px) rotate(-45deg)}
+.nav-mobile{display:none;flex-direction:column;padding:6px 24px 14px;border-bottom:1px solid var(--border);background:var(--bg)}
+.nav-mobile.open{display:flex}
+.nav-mobile a{padding:12px 4px;color:var(--fg-muted);border-bottom:1px solid var(--border);font-size:.98rem}
+.nav-mobile a:last-child{border-bottom:0}
+.nav-mobile a:hover{color:var(--fg-bright)}
+@media(max-width:900px){.nav-links{display:none}.nav-toggle{display:inline-flex}}
+@media(max-width:560px){.brand-tag{display:none}}
+@media(max-width:400px){.nav-inner{gap:10px}.nav-actions{gap:6px}}
+
+/* ---------------------------- LANGUAGE ---------------------------- */
+.langwrap{position:relative;flex:none}
+.langbtn{display:inline-flex;align-items:center;gap:6px;height:36px;padding-inline:10px;border-radius:var(--r-md);background:transparent;border:1px solid var(--border-strong);color:var(--fg-dim);font-family:var(--font-mono);font-size:.76rem;letter-spacing:.02em;white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
+.langbtn:hover,.langwrap.open .langbtn{color:var(--fg-bright);background:var(--surface-2);border-color:var(--border-hover)}
+.langbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;flex:none}
+.langbtn .caret{width:5px;height:5px;border-right:1.2px solid currentColor;border-bottom:1.2px solid currentColor;transform:translateY(-2px) rotate(45deg);flex:none}
+.langpanel{position:absolute;top:calc(100% + 8px);inset-inline-end:0;z-index:150;width:min(304px,calc(100vw - 24px));display:flex;flex-direction:column;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:var(--r-lg);box-shadow:var(--shadow-pop);overflow:hidden}
+.langpanel[hidden]{display:none}
+.langsearch{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.langsearch svg{width:15px;height:15px;fill:none;stroke:var(--fg-dim);stroke-width:1.6;flex:none}
+.langsearch input{flex:1;min-width:0;background:transparent;border:0;outline:none;color:var(--fg-bright);font-size:.88rem;padding:2px 0}
+.langsearch input::placeholder{color:var(--fg-faint)}
+.langsearch input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* position:relative makes .langlist the offsetParent of every option, so
+   the scroll-into-view maths in setActive() measures against the list it
+   is scrolling — otherwise the search bar's height is counted in and the
+   panel opens already scrolled past its first group header. */
+.langlist{position:relative;max-height:min(58vh,364px);overflow-y:auto;overscroll-behavior:contain;padding:6px}
+.langgroup+.langgroup{margin-top:6px;padding-top:8px;border-top:1px solid var(--border)}
+.langgroup[hidden]{display:none}
+.langgrouphd{padding:6px 10px 2px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-faint)}
+.langgroupnote{padding:0 10px 6px;font-size:.76rem;line-height:1.45;color:var(--fg-dim)}
+.langopt{display:flex;align-items:baseline;gap:8px;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;color:var(--fg-muted);font-size:.88rem;transition:color .12s,background .12s}
+.langopt[hidden]{display:none}
+.langopt .lo-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.langopt .lo-native{color:var(--fg-dim);font-size:.8rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.langopt .lo-code{margin-inline-start:auto;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-faint);flex:none}
+.langopt.active{background:var(--surface-3);color:var(--fg-bright)}
+.langopt[aria-selected="true"]{color:var(--fg-bright)}
+.langopt[aria-selected="true"] .lo-name:after{content:"\00a0\2713";color:var(--accent)}
+.langempty{padding:14px 10px;text-align:center;color:var(--fg-faint);font-family:var(--font-mono);font-size:.9rem}
+.langempty[hidden]{display:none}
+
+/* ============================ COMMAND ============================
+   min-width:0 on the flex chain is what lets .cmd-text's own overflow-x
+   work. A flex item defaults to min-width:auto, so a long nowrap command
+   refuses to shrink and widens its column instead of scrolling inside
+   itself — which at 320px pushes the whole page sideways. */
+.cmd{display:flex;flex-direction:column;gap:8px;width:100%;max-width:100%;min-width:0}
+.cmd-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.cmd-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmd-hint{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--fg-dim);border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cmd-hint[hidden]{display:none}
+.cmd-body{display:flex;align-items:center;gap:10px;min-width:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-md);padding-inline:14px 8px;font-family:var(--font-mono);transition:border-color .2s var(--ease);overflow:hidden}
+.cmd-body:hover{border-color:var(--border-hover)}
+.cmd-prompt{color:var(--accent);user-select:none;flex:none;font-size:.9rem}
+.cmd-text{color:var(--fg);white-space:nowrap;overflow-x:auto;scrollbar-width:thin;flex:1;min-width:0;padding-block:14px;text-align:start;font-size:.84rem}
+.cmd-text::-webkit-scrollbar{height:5px}
+.cmd-text::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:99px}
+.cmd-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r-sm);background:transparent;border:1px solid transparent;color:var(--fg-dim);transition:color .15s,background .15s,border-color .15s}
+.cmd-btn:hover{color:var(--fg-bright);background:var(--surface-3);border-color:var(--border)}
+.cmd-btn svg{width:15px;height:15px;fill:none;stroke:currentColor}
+.i-check{display:none;color:var(--success)}
+.cmd-btn.copied .i-copy{display:none}
+.cmd-btn.copied .i-check{display:block}
+.cmd-sm .cmd-body{padding-inline:12px 6px;font-size:.78rem}
+.cmd-sm .cmd-text{padding-block:11px;font-size:.78rem}
+/* The prompt card holds a comment, not a command: nothing to copy and
+   nothing to scroll, so it wraps instead of clipping mid-word. */
+.cmd-note .cmd-body{align-items:flex-start}
+.cmd-note .cmd-text{white-space:normal;overflow-x:visible;line-height:1.55}
+.cmd-note .cmd-prompt{padding-block:11px}
+.t-cmd{color:var(--fg-bright)}
+.t-sub{color:var(--fg-bright)}
+.t-flag{color:var(--accent)}
+.t-url{color:var(--fg-muted)}
+.t-arg{color:var(--fg)}
+.t-comment{color:var(--fg-faint)}
+
+/* ============================== HERO ============================== */
+.hero{position:relative;padding-top:clamp(56px,10vw,116px);padding-bottom:clamp(48px,8vw,88px);overflow:hidden}
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+/* Product lockup. The name is set at the existing .section-title step of the
+   scale and the kicker at the existing .eyebrow step — one rung under the
+   headline, so the visitor reads the product's name before the claim. */
+.hero-lockup{margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero-product{font-size:clamp(1.75rem,3.6vw,2.6rem);font-weight:600;letter-spacing:-.03em;line-height:1.1;color:var(--fg-bright)}
+.hero-kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim);max-width:66ch}
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> from the dictionary gets its
+   own gradient instead of a colour. */
+.hero-title{margin-top:24px;max-width:15ch;font-size:clamp(2.05rem,6.2vw,4.2rem);letter-spacing:-.04em;line-height:1.04;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:700px){.hero-title{max-width:100%}}
+.hero-sub{margin-top:20px;max-width:600px;font-size:clamp(1rem,1.9vw,1.2rem);line-height:1.55;color:var(--fg-muted)}
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.hero-cmd{margin-top:32px;width:100%;max-width:560px;text-align:start}
+.hero-cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%}
+.copy-status{font-family:var(--font-mono);font-size:.78rem;color:var(--success);min-height:1em}
+@media(max-width:420px){.hero-cta .btn{width:100%}}
+
+/* ============================ THE RECORD ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+.sec-head .section-title{margin-top:14px}
+.flow{margin-bottom:34px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.01em;color:var(--fg-dim)}
+.flow li{display:inline-flex;align-items:center;gap:14px;max-width:100%}
+.flow li+li:before{content:"\2192";color:var(--fg-faint);flex:none}
+.flow .flow-label{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:5px 12px}
+.flow li.is-on .flow-label{color:var(--fg-bright);border-color:var(--accent-line);background:var(--accent-wash)}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+/* Two panels carry tables and need the width; the third is prose and reads
+   better full-bleed under them than squeezed into a 3-up column that would
+   trip its own table container query. Below 900px all three stack. */
+.panel-wide{grid-column:1 / -1}
+@media(max-width:900px){.panels{grid-template-columns:1fr}}
+.panel{container-type:inline-size;display:flex;flex-direction:column;overflow:hidden}
+.panel-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+.panel-body{padding:18px 16px;font-family:var(--font-mono);font-size:12.5px;line-height:1.6;color:var(--fg-muted);flex:1;min-width:0}
+.panel-foot{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint)}
+.md .hash{color:var(--fg-faint);user-select:none}
+.md .h1{color:var(--fg-bright);font-size:14px;font-weight:500;margin-bottom:4px}
+.md .h2{color:var(--fg);font-size:13px;font-weight:500;margin-top:18px;margin-bottom:8px}
+.md .h2:first-child{margin-top:0}
+.md .meta{color:var(--fg-dim);font-size:11.5px;margin-bottom:2px}
+.md .val{color:var(--fg-muted)}
+.md .key{color:var(--fg-dim);margin-inline-end:5px}
+/* Key and value share one text flow so a long value wraps under itself
+   instead of being pushed onto its own line by a flex break. */
+.md .kv{margin-top:6px;padding-inline-start:14px;text-indent:-14px}
+.md .kv .anchor,.md .kv .pill{text-indent:0;vertical-align:middle}
+.md .bullet{position:relative;padding-inline-start:16px;color:var(--fg-muted)}
+.md .bullet:before{content:"-";position:absolute;inset-inline-start:0;color:var(--fg-faint)}
+.md .rid{color:var(--accent)}
+.mdtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:2px}
+.mdtable th{text-align:start;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);padding:0 12px 7px 0;border-bottom:1px solid var(--border);white-space:nowrap}
+.mdtable td{padding:9px 12px 9px 0;border-bottom:1px solid var(--border);vertical-align:top;color:var(--fg-muted);line-height:1.5}
+.mdtable tr:last-child td{border-bottom:0;padding-bottom:0}
+.mdtable td:first-child{color:var(--fg);font-weight:500}
+.mdtable th:last-child,.mdtable td:last-child{padding-inline-end:0}
+/* Stacked label/value rows once the panel itself is narrow. Container
+   query first (the panel is half-width on desktop, full-width below 900px,
+   so a viewport media query alone measures the wrong box); the media
+   query is the fallback where container queries are unavailable. */
+@container (max-width:440px){
+  .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+  .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+  .mdtable tr+tr{margin-top:8px}
+  .mdtable td{border-bottom:0;padding:4px 0}
+  .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+  .mdtable tr:last-child td{padding-bottom:4px}
+}
+@supports not (container-type:inline-size){
+  @media(max-width:640px){
+    .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+    .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+    .mdtable tr+tr{margin-top:8px}
+    .mdtable td{border-bottom:0;padding:4px 0}
+    .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+    .mdtable tr:last-child td{padding-bottom:4px}
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--ink); color: #ffffff; font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
-  a { color: #ffffff; text-decoration: none; }
-  a:hover { color: var(--accent-soft); }
-  .wrap { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 4vw, 56px); padding-right: clamp(20px, 4vw, 56px); }
-  .mono { font-family: var(--font-mono); }
-  .eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-eyebrow); }
+}
 
-  /* header */
-  .top { border-bottom: 1px solid var(--hair); background: var(--ink); position: relative; z-index: 2; }
-  .top-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
-  .brand { display: flex; align-items: center; gap: 14px; font-family: var(--font-mono); font-size: 14px; min-width: 0; }
-  .brand-logo { display: inline-flex; align-items: center; }
-  .brand-text { display: inline-flex; align-items: baseline; gap: 6px; min-width: 0; }
-  .brand .org { color: var(--muted-2); }
-  .brand .repo { font-weight: 600; }
-  .top-links { display: flex; align-items: center; gap: 24px; font-family: var(--font-mono); font-size: 13px; color: var(--muted-2); flex-shrink: 0; }
-  .top-links .meta { color: var(--muted-2); }
-  .chip { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 22px; border: 1px solid rgba(79,140,255,0.46); border-radius: 999px; background: var(--glass); color: var(--accent-soft); }
-  .chip:hover { background: rgba(255,255,255,0.16); color: var(--accent-soft); }
-  .lang { display: flex; border: 1px solid var(--hair); border-radius: 999px; overflow: hidden; }
-  .lang-btn { background: none; border: 0; color: var(--muted-2); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px; padding: 0 14px; min-height: 40px; cursor: pointer; }
-  .lang-btn:hover { color: #ffffff; }
-  .lang-btn.active { background: var(--glass); color: #ffffff; }
-  /* When translated, protected terms sit flush against translated text */
-  html.translated-ltr .term-body span[translate="no"],
-  html.translated-ltr .card p span[translate="no"],
-  html.translated-rtl .term-body span[translate="no"],
-  html.translated-rtl .card p span[translate="no"] { margin-inline: 0.3em; }
-  /* Google Translate chrome: keep the page clean */
-  #google_translate_element { display: none; }
-  iframe.skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame,
-  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf, .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; visibility: hidden !important; }
-  body { top: 0 !important; position: static !important; }
+/* text-indent:0 is the bug fix, not decoration. .md .kv hangs its first
+   line by -14px, that indent is inherited into this inline-flex box, and it
+   pulled the label 14px left — straight across its own leading dot. The
+   evidence anchor already carried the same repair. */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;border:1px solid;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:nowrap;text-indent:0}
+.pill:before{content:"";width:5px;height:5px;border-radius:999px;background:currentColor;flex:none}
+.pill-ok{color:var(--success);background:var(--success-wash);border-color:var(--success-line)}
+.pill-work{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
 
-  /* hero */
-  .hero { position: relative; overflow: hidden; }
-  .hero-bg, .hero-shade { position: absolute; inset: 0; }
-  .hero-bg { background-image: url('hero.jpg'); background-size: cover; background-position: center; }
-  .hero-shade { background: linear-gradient(95deg, rgba(16,32,51,0.92) 0%, rgba(16,32,51,0.78) 40%, rgba(16,32,51,0.46) 66%, rgba(16,32,51,0.28) 100%); }
-  .hero-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 620px); gap: clamp(32px, 4vw, 48px); align-items: center; padding-top: clamp(56px, 7vw, 92px); padding-bottom: clamp(56px, 7vw, 92px); }
-  .kicker { display: flex; align-items: center; gap: 24px; margin-bottom: 26px; }
-  .kicker-rule { height: 1px; width: 110px; background: var(--hair); }
-  h1 { margin: 0 0 26px; font-size: clamp(38px, 5vw, 70px); font-weight: 700; line-height: 1.06; letter-spacing: -0.025em; max-width: 14ch; }
-  .lead { margin: 0 0 30px; font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; color: var(--muted); max-width: 52ch; }
-  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 12px 30px; border-radius: 999px; font-size: 15px; font-weight: 700; border: 0; cursor: pointer; font-family: var(--font-body); }
-  .btn-primary { background: var(--accent); color: #ffffff; }
-  .btn-primary:hover { background: #4680ec; color: #ffffff; }
-  .btn-ghost { background: var(--glass); color: #ffffff; border: 1px solid var(--hair); font-weight: 600; }
-  .btn-ghost:hover { background: rgba(255,255,255,0.16); color: #ffffff; }
+/* The evidence anchor is a first-class token: three tinted parts, one box. */
+.anchor{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:2px 8px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--border-strong);font-family:var(--font-mono);font-size:11.5px;line-height:1.7;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.anchor::-webkit-scrollbar{display:none}
+.anchor svg{width:12px;height:12px;color:var(--accent);flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.a-path{color:var(--fg-bright)}
+.a-at{color:var(--accent)}
+.a-sha{color:var(--fg-dim)}
+.anchor-lg{font-size:13px;padding:5px 11px;gap:7px}
+.anchor-lg svg{width:13px;height:13px}
+.anchor-note{margin-top:20px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:18px 20px;border:1px solid var(--border);border-inline-start:2px solid var(--accent);border-radius:var(--r-md);background:var(--surface)}
+.anchor-note p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.6}
 
-  .hero-visual { position: relative; min-height: 520px; }
-  .sq-label { position: absolute; top: 0; right: 60px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 2px; color: rgba(255,255,255,0.85); }
-  .square { position: absolute; top: 26px; right: 56px; width: min(336px, 70%); aspect-ratio: 1 / 1; border: 6px solid #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding-bottom: 30px; }
-  .square .f { font-family: var(--font-mono); font-size: 15px; font-weight: 600; }
-  .term { position: absolute; left: 0; bottom: 0; width: min(560px, 100%); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; background: rgba(16,32,51,0.85); box-shadow: 0 24px 80px rgba(79,140,255,0.22); }
-  .term-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; border-bottom: 1px solid var(--hair); font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); }
-  .term-copy { display: inline-flex; align-items: center; color: var(--accent-soft); background: none; border: 0; cursor: pointer; font-family: var(--font-mono); font-size: 12px; padding: 12px 14px; margin: -12px -14px; }
-  .term-body { padding: 22px 24px 26px; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.8; color: rgba(255,255,255,0.82); }
-  .term-body .hl, .term-body .p { color: var(--accent-soft); }
-  .vlabel { position: absolute; color: rgba(255,255,255,0.5); top: 96px; right: 14px; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+/* ============================== THESIS ============================== */
+.thesis{max-width:var(--maxw-prose)}
+.thesis-eyebrow{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim)}
+.thesis-lines{margin-top:20px;display:flex;flex-direction:column;gap:14px;font-size:clamp(1.05rem,2.1vw,1.34rem);line-height:1.5;letter-spacing:-.015em;color:var(--fg)}
+.thesis-lines b{font-weight:500;color:var(--fg-bright)}
+.thesis-lines .dim{color:var(--fg-dim)}
+.thesis-lines .dim b{color:var(--fg-muted)}
+.compose{margin-top:36px;display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;max-width:none}
+@media(max-width:760px){.compose{grid-template-columns:1fr}}
+.compose-cell{padding:22px;border-radius:var(--r-lg);border:1px solid var(--border);background:var(--surface)}
+.compose-cell.is-primary{border-color:var(--accent-line);background:var(--accent-wash)}
+.compose-role{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+.compose-cell.is-primary .compose-role{color:var(--accent)}
+.compose-name{display:block;margin-top:9px;font-size:1.12rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+.compose-note{margin-top:10px;color:var(--fg-muted);font-size:.9rem;line-height:1.6}
+.compose-link{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-faint);text-align:center}
 
-  /* sections */
-  .section { position: relative; overflow: hidden; border-top: 1px solid var(--hair); }
-  .section-wash { position: absolute; inset: 0; background: radial-gradient(900px 620px at 80% 0%, rgba(79,140,255,0.28) 0%, rgba(79,140,255,0) 60%), radial-gradient(760px 540px at 6% 100%, rgba(79,140,255,0.13) 0%, rgba(79,140,255,0) 62%); }
-  .section-in { position: relative; padding-top: clamp(56px, 6vw, 84px); padding-bottom: clamp(56px, 6vw, 84px); display: flex; flex-direction: column; gap: clamp(32px, 4vw, 44px); }
-  .sec-head { display: flex; align-items: baseline; gap: 20px; }
-  .sec-head h2 { margin: 0; font-size: clamp(26px, 3vw, 34px); font-weight: 700; letter-spacing: -0.025em; }
+/* ============================== INSTALL ============================== */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.cards-grid{grid-template-columns:1fr}}
+.icard{display:flex;flex-direction:column;gap:14px;padding:20px;min-width:0}
+.card-tag{align-self:flex-start;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--accent);background:var(--accent-wash);border:1px solid var(--accent-line);border-radius:999px;padding:2px 10px}
+.icard h3{font-size:1rem;letter-spacing:-.01em}
+.icard p.body{color:var(--fg-muted);font-size:.92rem;line-height:1.6;flex:1}
+.icard p.body code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+.proof{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px 10px}
+.proof li{font-family:var(--font-mono);font-size:11.5px;color:var(--fg-dim);border:1px solid var(--border);border-radius:999px;padding:5px 12px;background:var(--bg-subtle)}
 
-  .flow { display: flex; align-items: stretch; gap: 20px; }
-  .card { display: flex; flex-direction: column; gap: 12px; flex: 1 1 0; padding: 28px; border: 1px solid var(--hair); border-radius: 16px; background: var(--glass); }
-  .card .tag { font-family: var(--font-mono); font-size: 13px; color: var(--accent-eyebrow); }
-  .card h3 { margin: 0; font-size: 19px; font-weight: 700; }
-  .card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); overflow-wrap: break-word; }
-  .arrow { display: flex; align-items: center; flex-shrink: 0; }
-  .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-  .check { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border: 1px solid var(--hair); border-radius: 999px; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
-  .check svg { flex-shrink: 0; }
-  .sec-lead { margin: -18px 0 0; max-width: 72ch; }
-  /* the hero terminal, reused inline inside a section */
-  .section .term { position: static; width: 100%; max-width: 900px; }
+/* ============================ PORTABILITY ============================ */
+.strip{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:32px;align-items:center;padding:28px;border:1px solid var(--border);border-radius:var(--r-xl);background:var(--bg-subtle)}
+@media(max-width:820px){.strip{grid-template-columns:minmax(0,1fr);gap:24px}}
+.strip-chips{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+/* The trailing "open" chip carries a sentence, not a token, and .chip is
+   nowrap — at 320px that one chip sets the grid track's min-content width
+   and pushes the whole strip past the viewport. It is the only chip allowed
+   to wrap; the file-name chips stay on one line. */
+.strip-chips .chip-open{white-space:normal;height:auto;min-height:24px;padding-block:3px;line-height:1.5;text-align:start}
+.strip-lines{display:flex;flex-direction:column;gap:12px;font-size:clamp(1rem,1.8vw,1.2rem);line-height:1.5;letter-spacing:-.015em;color:var(--fg-muted)}
+.strip-lines b{font-weight:500;color:var(--fg-bright)}
+.strip-lines .fine{font-size:.94rem;line-height:1.65;color:var(--fg-dim);letter-spacing:0}
+.strip-lines .fine b{color:var(--fg-muted)}
+.what-strip{margin-top:28px}
 
-  .addons-bg { position: absolute; inset: 0; background-image: url('addons.jpg'); background-size: cover; background-position: center; filter: blur(6px); transform: scale(1.08); }
-  .addons-shade { position: absolute; inset: 0; background: linear-gradient(95deg, rgba(16,32,51,0.92) 0%, rgba(16,32,51,0.8) 45%, rgba(16,32,51,0.62) 100%); }
-  .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .tool { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 24px 20px; }
-  .pill { display: inline-flex; align-items: center; min-height: 56px; padding: 12px 36px; border: 1px solid rgba(79,140,255,0.46); border-radius: 999px; background: var(--glass); box-shadow: 0 24px 80px rgba(79,140,255,0.3); font-size: 19px; font-weight: 700; letter-spacing: 2px; }
-  .tool p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); text-align: center; }
-  .tools-note { font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); text-align: center; line-height: 1.7; }
-  .tools-note a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
+/* ============================== DOCTOR ============================== */
+.checks{counter-reset:chk;display:flex;flex-direction:column;gap:14px;max-width:var(--maxw-prose)}
+.check{counter-increment:chk;position:relative;padding:18px 20px 18px 62px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);transition:border-color .2s var(--ease)}
+.check:hover{border-color:var(--border-hover)}
+.check:before{content:counter(chk,decimal-leading-zero);position:absolute;inset-inline-start:20px;top:19px;font-family:var(--font-mono);font-size:.8rem;color:var(--accent)}
+.check h3{font-size:1rem;letter-spacing:-.01em}
+.check p{margin-top:7px;color:var(--fg-muted);font-size:.92rem;line-height:1.65}
+.check code{border-radius:5px;padding:1px 7px;border:1px solid var(--border);background:var(--surface-2);color:var(--accent);white-space:nowrap}
+.check p code.warn{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
+.check p code.err{color:var(--danger);background:var(--danger-wash);border-color:var(--danger-line)}
+@media(max-width:420px){.check{padding:16px 16px 16px 16px}.check:before{position:static;display:block;margin-bottom:8px}}
 
-  /* footer */
-  footer { border-top: 1px solid var(--hair); background: var(--ink); }
-  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; padding-bottom: 24px; font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); }
-  .foot-brand { display: flex; align-items: center; gap: 12px; color: var(--muted-2); }
-  .foot-tag { color: var(--accent-soft); }
+/* ============================== ADD-ONS ============================== */
+.addons-detect{max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+.addons-detect code{border-radius:5px;padding:1px 7px;border:1px solid var(--border);background:var(--surface-2);color:var(--accent);white-space:nowrap}
+.addons-sub{margin-top:38px;margin-bottom:4px;font-size:1rem;letter-spacing:-.01em}
+.addons-note{margin-top:18px;color:var(--fg-dim);font-size:.84rem;line-height:1.5}
+/* Comparison table. Same reflow contract as the record panels' .mdtable:
+   the header row is taken out of the flow below 760px and each cell grows
+   its own label from data-label, so a row becomes a small stacked card. */
+.cmp-wrap{margin-top:26px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);overflow:hidden}
+.cmp{width:100%;border-collapse:collapse;font-size:.92rem}
+.cmp th{text-align:start;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);background:var(--bg-subtle);padding:13px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
+.cmp td{padding:16px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--fg-muted);line-height:1.6}
+.cmp tr:last-child td{border-bottom:0}
+.cmp-name{font-family:var(--font-mono);font-size:.9rem;color:var(--fg-bright);white-space:nowrap}
+@media(max-width:760px){
+  .cmp,.cmp tbody,.cmp tr,.cmp td{display:block;width:100%}
+  .cmp thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .cmp tr{padding:14px 16px;border-bottom:1px solid var(--border)}
+  .cmp tr:last-child{border-bottom:0}
+  .cmp td{border-bottom:0;padding:7px 0}
+  .cmp td:first-child{padding-top:0}
+  .cmp td:before{content:attr(data-label);display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:3px}
+  .cmp td:first-child:before{display:none}
+}
+.typelist{margin-top:14px;display:flex;flex-direction:column}
+.typelist li{display:flex;gap:16px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--border);min-width:0}
+.typelist li:last-child{border-bottom:0}
+.typelist .chip{flex:none;min-width:112px;justify-content:center}
+.typelist p{min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.6}
+@media(max-width:600px){.typelist li{flex-direction:column;gap:9px}.typelist .chip{min-width:0;align-self:flex-start}}
 
-  @media (max-width: 1160px) {
-    .hero-in { grid-template-columns: minmax(0, 1fr); }
-    .hero-visual { min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 28px; margin-top: 8px; }
-    .sq-label { position: static; align-self: flex-end; margin-right: 8px; }
-    .square { position: static; width: min(300px, 78vw); }
-    .term { position: static; width: 100%; max-width: 640px; }
-    .vlabel { display: none; }
-  }
-  @media (max-width: 900px) {
-    .flow { flex-direction: column; }
-    .arrow { justify-content: center; transform: rotate(90deg); padding: 2px 0; }
-    .checks { grid-template-columns: 1fr; }
-    .tools { grid-template-columns: 1fr; gap: 8px; }
-  }
-  @media (max-width: 640px) {
-    .top-links .meta { display: none; }
-    .brand .org { display: none; }
-    .term-body { font-size: 12.5px; }
-    .kicker-rule { display: none; }
-  }
+/* ============================== FOOTER ============================== */
+.footer{border-top:1px solid var(--border);background:var(--bg-subtle);padding-block:52px 28px;margin-top:clamp(48px,8vw,96px)}
+/* One column since the Links list was folded back into the brand block. */
+.footer-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;margin-bottom:36px}
+.foot-brand{display:inline-flex;align-items:center;gap:10px;min-width:0;color:var(--fg-bright)}
+.foot-brand .brand-mark svg{width:24px;height:24px}
+.foot-name{font-size:1.02rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+.foot-desc{margin-top:10px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.92rem;line-height:1.6}
+.foot-desc b{font-weight:500;color:var(--fg)}
+.foot-inline{margin-top:18px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;font-size:.9rem;color:var(--fg-muted)}
+.foot-inline a{color:var(--fg-muted);transition:color .15s;overflow-wrap:anywhere;min-width:0}
+.foot-inline a:hover{color:var(--fg-bright)}
+.foot-inline .sep{color:var(--fg-faint)}
+.foot-caps{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px}
+.foot-caps li{font-family:var(--font-mono);font-size:11px;color:var(--fg-dim);border:1px solid var(--border);border-radius:999px;padding:4px 10px}
+.license{margin-top:28px;padding-top:24px;border-top:1px solid var(--border);color:var(--fg-dim);font-size:.85rem;line-height:1.6;max-width:var(--maxw-prose)}
+.license b{color:var(--fg);font-weight:500}
+.foot-bottom{margin-top:20px;color:var(--fg-faint);font-size:.8rem;font-family:var(--font-mono)}
+
+@media print{
+  .nav,.nav-mobile,.skip-link,.hero-glow,.grid-bg{display:none!important}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .hero-title{background:none;-webkit-text-fill-color:#111;color:#111}
+}
+
+/* Korean line-breaking. Latin text breaks at spaces, but the default
+   `word-break:normal` lets Korean break between any two syllables, so a
+   headline splits mid-word (철 지 / 난). `keep-all` forces breaks at the
+   space-delimited eojeol boundary, which is how Korean is actually set.
+   Not applied to Chinese: breaking between Han characters is correct there.
+   overflow-wrap is the escape hatch for a single unbreakable token. */
+html[lang="ko"]{word-break:keep-all;overflow-wrap:break-word}
+.sign-off{max-width:var(--maxw);margin:0 auto;padding:0 24px 56px;text-align:center}
+.sign-off p{font-size:var(--text-lg);letter-spacing:-.01em;color:var(--fg-muted);margin:0}
+@media(max-width:640px){.sign-off{padding-bottom:40px}}
 </style>
 </head>
 <body>
 
-<header class="top">
-  <div class="wrap top-in">
-    <div class="brand notranslate" translate="no">
-      <a class="brand-logo" href="https://monomind.one" aria-label="MonoMind AI Lab">
-      <svg width="26" height="26" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="#ffffff" transform="translate(74,141)"></path><path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="#ffffff" transform="translate(450,315)"></path></svg>
+<a class="skip-link" href="#main" data-i18n="nav.skip">Skip to content</a>
+<div id="googleTranslateHost" aria-hidden="true"></div>
+
+<!-- The MonoMind mark, defined once and used in the header and the footer.
+     Both paths ship fill="currentColor", so the mark takes --brand-mark:
+     white on dark, the accent blue on light. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mm-mark" viewBox="0 0 512 512">
+      <path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="currentColor" transform="translate(74,141)"/>
+      <path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="currentColor" transform="translate(450,315)"/>
+  </symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav-inner container">
+    <div class="brand">
+      <a class="brand-link" href="https://monomind.one" target="_blank" rel="noopener" aria-label="MonoMind — monomind.one">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 512 512" focusable="false"><use href="#mm-mark"/></svg></span>
+        <span class="brand-name notranslate" translate="no">MonoMind</span>
       </a>
-      <a class="brand-text" href="https://github.com/monomind-ai-lab/project-context" aria-label="Project Context repository on GitHub"><span class="org">monomind-ai-lab /</span><span class="repo">project-context</span></a>
+      <span class="brand-tag notranslate" translate="no">project-context</span>
     </div>
-    <nav class="top-links" aria-label="Repository links">
-      <a class="meta" translate="no" href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" title="Source-available under MIT + Commons Clause v1.0 — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold, sublicensed, or redistributed standalone.">MIT + Commons Clause</a>
-      <div class="lang notranslate" role="group" aria-label="Language">
-        <button class="lang-btn" data-lang="en" type="button">EN</button>
-        <button class="lang-btn" data-lang="ko" type="button">KR</button>
-        <button class="lang-btn" data-lang="zh-TW" type="button">ZH-TW</button>
-      </div>
-      <a class="chip" href="/guide">docs ↗</a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a class="nav-link" href="#record" data-i18n="nav.record">The record</a>
+      <a class="nav-link" href="#install" data-i18n="nav.install">Install</a>
+      <a class="nav-link" href="#addons" data-i18n="nav.addons">Add-ons</a>
+      <a class="nav-link" href="/use-cases" data-i18n="nav.usecases">Use cases</a>
+      <a class="nav-link" href="/guide" data-i18n="nav.guide">Guide</a>
+      <a class="nav-link notranslate" translate="no" href="https://github.com/monomind-ai-lab/project-context" rel="noopener">GitHub</a>
     </nav>
+
+    <div class="nav-actions">
+      <button type="button" class="iconbtn" id="themeBtn" aria-pressed="false" aria-label="Toggle theme" data-i18n-attr="aria-label:ui.theme;title:ui.theme" title="Toggle theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z"/></svg>
+      </button>
+
+      <div class="langwrap" id="langWrap">
+        <button type="button" class="langbtn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="langPanel" aria-label="Language">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.6 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.6-3.6-9S9.6 5.5 12 3Z"/></svg>
+          <span class="lang-code notranslate" translate="no" id="langCode">EN</span>
+          <span class="caret" aria-hidden="true"></span>
+        </button>
+        <div class="langpanel" id="langPanel" hidden>
+          <div class="langsearch">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.4"/><path d="m16 16 4.4 4.4"/></svg>
+            <input id="langSearch" type="text" role="combobox" aria-expanded="true" aria-controls="langList" aria-autocomplete="list" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search languages…" aria-label="Search languages…" data-i18n-attr="placeholder:ui.langSearch;aria-label:ui.langSearch">
+          </div>
+          <div class="langlist" id="langList" role="listbox" aria-label="Language" data-i18n-attr="aria-label:ui.lang" tabindex="-1">
+            <div class="langgroup" role="group" id="grpNative" aria-label="Translated by hand" data-i18n-attr="aria-label:ui.langNative">
+              <p class="langgrouphd" aria-hidden="true" data-i18n="ui.langNative">Translated by hand</p>
+              <div class="langopts" data-tier="native"></div>
+            </div>
+            <div class="langgroup" role="group" id="grpAuto" aria-label="Machine translated" data-i18n-attr="aria-label:ui.langAuto">
+              <p class="langgrouphd" aria-hidden="true" data-i18n="ui.langAuto">Machine translated</p>
+              <p class="langgroupnote" aria-hidden="true" data-i18n="ui.langAutoNote">Other languages are machine translated by Google.</p>
+              <div class="langopts" data-tier="auto"></div>
+            </div>
+            <p class="langempty" id="langEmpty" hidden aria-hidden="true">—</p>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMobile" aria-label="Menu"><span></span><span></span></button>
+    </div>
   </div>
+
+  <nav class="nav-mobile container" id="navMobile" aria-label="Mobile">
+    <a href="#record" data-i18n="nav.record">The record</a>
+    <a href="#install" data-i18n="nav.install">Install</a>
+    <a href="#addons" data-i18n="nav.addons">Add-ons</a>
+    <a href="/use-cases" data-i18n="nav.usecases">Use cases</a>
+    <a href="/guide" data-i18n="nav.guide">Guide</a>
+    <a class="notranslate" translate="no" href="https://github.com/monomind-ai-lab/project-context" rel="noopener">GitHub</a>
+  </nav>
 </header>
 
-<main>
-  <section class="hero" aria-label="Introduction">
-    <div class="hero-bg" role="img" aria-label="Blurred forest in motion — trees smeared into soft vertical streaks"></div>
-    <div class="hero-shade"></div>
-    <div class="wrap hero-in">
-      <div>
-        <div class="kicker">
-          <span class="eyebrow">Agent-operated · human-readable</span>
-          <span class="kicker-rule" aria-hidden="true"></span>
+<main id="main">
+
+<!-- ============================== HERO ============================== -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">MonoMind AI Lab</span></p>
+
+    <div class="hero-lockup">
+      <p class="hero-product notranslate" translate="no">Project Context</p>
+      <p class="hero-kicker" data-i18n="hero.kicker">a durable project record for agents and people</p>
+    </div>
+
+    <h1 class="hero-title" id="hero-title" data-i18n="hero.title">Weeks away should never mean rebuilding the project from <b>stale chats</b>.</h1>
+
+    <p class="hero-sub" data-i18n="hero.sub">Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">NOW.md</li>
+      <li class="chip notranslate" translate="no">DECISIONS.md</li>
+      <li class="chip notranslate" translate="no">LEARNINGS.md</li>
+      <li class="chip chip-open" data-i18n="hero.chips">plain Markdown, in your git history</li>
+    </ul>
+
+    <div class="hero-cmd">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="hero.installLabel">install · one command</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span>
         </div>
-        <h1>A context pipeline built into the repo.</h1>
-        <p class="lead">Work blurs — chats scatter, plans go stale, memory fades. Project Context keeps one sharp frame on what is true: small Markdown records that outlive any one person, agent, or chat.</p>
-        <div class="cta-row">
-          <button class="btn btn-primary js-copy" type="button" data-copy="command" data-label="Copy the install command" data-copied="Copied — paste it into your terminal">Copy the install command</button>
-          <a class="btn btn-ghost" href="/guide">Read the guide</a>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Install command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:hero.cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
       </div>
-      <div class="hero-visual">
-        <span class="sq-label mono">// 001</span>
-        <div class="square" translate="no" aria-label="The three context records">
-          <span class="f">NOW.md</span>
-          <span class="f">DECISIONS.md</span>
-          <span class="f">LEARNINGS.md</span>
+    </div>
+
+    <div class="hero-cta">
+      <button type="button" class="btn btn-primary" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span data-i18n="hero.cta.copy">Copy the install command</span>
+      </button>
+      <a class="btn btn-secondary" href="/guide" data-i18n="hero.cta.guide">Read the guide</a>
+    </div>
+    <p class="copy-status" role="status" aria-live="polite" id="copyStatus"></p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 01 WHAT IT IS ========================== -->
+<section class="section" id="what" aria-labelledby="what-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="what.index">01</span></span>
+      <h2 class="section-title" id="what-title" data-i18n="what.title">What Project Context actually is</h2>
+      <p class="section-lede" data-i18n="what.lede">A handful of small Markdown files that live in the project folder, next to the work. Between them they hold where things stand right now, the decisions that constrain what comes next, and the learnings that have been verified. The agents doing the work write and maintain them. The next agent — or the next person — reads them first.</p>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c1.tag">the files</span>
+        <h3 data-i18n="what.c1.title">Small Markdown, in the folder</h3>
+        <p class="body" data-i18n="what.c1.body">No database, no service, no vendor memory store. A few tracked files sit beside the work and open in any editor.</p>
+      </article>
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c2.tag">what they hold</span>
+        <h3 data-i18n="what.c2.title">State, decisions, learnings</h3>
+        <p class="body" data-i18n="what.c2.body">Where the project stands today. The decisions that bind what comes next. The findings that were verified, so nobody pays for them twice.</p>
+      </article>
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c3.tag">who keeps it</span>
+        <h3 data-i18n="what.c3.title">Maintained by the agents doing the work</h3>
+        <p class="body" data-i18n="what.c3.body">Updating the record is part of finishing a piece of work, not a report filed afterwards — and it is the first thing the next session reads.</p>
+      </article>
+    </div>
+
+    <div class="strip what-strip reveal">
+      <ul class="strip-chips">
+        <li class="chip notranslate" translate="no">Code</li>
+        <li class="chip notranslate" translate="no">Documents</li>
+        <li class="chip notranslate" translate="no">Research</li>
+        <li class="chip notranslate" translate="no">Writing</li>
+        <li class="chip notranslate" translate="no">Mixed</li>
+        <li class="chip chip-open" data-i18n="what.any">any collaborative project an agent works on</li>
+      </ul>
+      <div class="strip-lines">
+        <p data-i18n="what.line1"><b>Not only software, and not only GitHub.</b> Software, document, research, writing and mixed projects all keep the same kind of record.</p>
+        <p class="fine" data-i18n="what.line2">It suits repo-bound work best, where version control makes shared context easy to review. But any project whose working materials live in one folder that people and agents can reach consistently will do.</p>
+        <p class="fine" data-i18n="what.line3">Git is not required. Without it, the tooling falls back to file-modification times.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 02 THE RECORD =========================== -->
+<section class="section" id="record" aria-labelledby="record-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="record.index">02</span></span>
+      <h2 class="section-title" id="record-title" data-i18n="record.title">What actually gets written down</h2>
+      <p class="section-lede" data-i18n="record.lede">Not a transcript, and not a summary of the chat. Each file answers one question a returning session really asks: where does this stand, what is already settled, and what did we learn the expensive way.</p>
+    </div>
+
+    <ol class="flow reveal">
+      <li><span class="flow-label" data-i18n="record.step1">work stops for the day</span></li>
+      <li class="is-on"><span class="flow-label" data-i18n="record.step2">the three files are brought up to date</span></li>
+      <li><span class="flow-label" data-i18n="record.step3">the next session opens with the state in hand</span></li>
+    </ol>
+
+    <div class="panels">
+
+      <article class="panel card reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">NOW.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
         </div>
-        <div class="term">
-          <div class="term-head">
-            <span translate="no">project-context init</span>
-            <button class="term-copy js-copy" type="button" data-copy="command" data-label="copy">copy</button>
+        <div class="panel-body md">
+          <p class="h1"><span class="hash" aria-hidden="true">#</span> <span data-i18n="sample.now.h1">Current Project State</span></p>
+          <p class="meta"><span data-i18n="sample.now.reviewed">Last reviewed:</span> <span class="val notranslate" translate="no">2026-08-30</span></p>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2a">Snapshot</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.area">Area</th>
+              <th scope="col" data-i18n="sample.th.state">Current state</th>
+              <th scope="col" data-i18n="sample.th.evidence">Evidence</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Area" data-i18n-attr="data-label:sample.th.area"><span data-i18n="sample.now.area1">Auth</span></td>
+              <td data-label="Current state" data-i18n-attr="data-label:sample.th.state"><span data-i18n="sample.now.state1">Session cookies replaced by short-lived JWTs</span></td>
+              <td data-label="Evidence" data-i18n-attr="data-label:sample.th.evidence"><span class="rid notranslate" translate="no">D-014</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2b">Active work</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.initiative">Initiative</th>
+              <th scope="col" data-i18n="sample.th.status">Status</th>
+              <th scope="col" data-i18n="sample.th.next">Next action</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Initiative" data-i18n-attr="data-label:sample.th.initiative"><span data-i18n="sample.now.init1">Rate limiting</span></td>
+              <td data-label="Status" data-i18n-attr="data-label:sample.th.status"><span class="pill pill-work notranslate" translate="no">in-progress</span></td>
+              <td data-label="Next action" data-i18n-attr="data-label:sample.th.next"><span data-i18n="sample.now.next1">Decide per-tenant vs per-key before the gateway merge</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2c">Blockers</span></p>
+          <p class="bullet" data-i18n="sample.now.blocker1">Staging Redis is single-node; the limiter needs a cluster before load tests.</p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.now">what the next session reads first</p>
+      </article>
+
+      <article class="panel card reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">DECISIONS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-014</span>: <span data-i18n="sample.dec.title">Short-lived JWTs over session cookies</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kStatus">Status:</span> <span class="pill pill-ok notranslate" translate="no">accepted</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kDate">Date:</span> <span class="val notranslate" translate="no">2026-08-24</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kStatement">Statement:</span> <span data-i18n="sample.dec.vStatement">API auth uses 15-minute JWTs with refresh, not server-side sessions.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kRationale">Rationale:</span> <span data-i18n="sample.dec.vRationale">The mobile client cannot share a cookie jar with the web app.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kConsequences">Consequences:</span> <span data-i18n="sample.dec.vConsequences">Every service needs clock sync; revocation is now a denylist.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kEvidence">Evidence:</span>
+            <span class="anchor notranslate" translate="no">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
+            </span>
+          </p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.decisions">what constrains the next agent</p>
+      </article>
+
+      <article class="panel card panel-wide reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">LEARNINGS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">L-007</span>: <span data-i18n="sample.lrn.title">Redis keyspace events drop silently under memory pressure</span></p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kScope">Scope:</span> <span data-i18n="sample.lrn.vScope">rate limiting, staging</span></p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kEvidence">Evidence:</span>
+            <span class="anchor notranslate" translate="no">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span class="a-path">infra/redis.conf</span><span class="a-at">@</span><span class="a-sha">3f9a1c2</span>
+            </span>
+          </p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kAction">Action:</span> <span data-i18n="sample.lrn.vAction">Do not rely on keyspace notifications to expire limiter buckets; poll the sorted set instead.</span></p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.learnings">what nobody should have to discover twice</p>
+      </article>
+    </div>
+
+    <div class="anchor-note reveal">
+      <span class="anchor anchor-lg notranslate" translate="no">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+        <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
+      </span>
+      <p data-i18n="record.anchor.explain">The evidence anchor. A decision pins its justification to a path at a commit — so a later session can check whether the reason still holds.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================== THESIS ============================== -->
+<section class="section" id="thesis" aria-labelledby="thesis-title">
+  <div class="container">
+    <div class="thesis reveal">
+      <h2 class="thesis-eyebrow" id="thesis-title" data-i18n="thesis.eyebrow">The distinction</h2>
+      <div class="thesis-lines">
+        <p data-i18n="thesis.line1">Project Context records what the code <b>cannot</b> say — the decisions, the learnings, the current handoff.</p>
+        <p class="dim" data-i18n="thesis.line2">A generated wiki regenerates what the code <b>does</b> say.</p>
+        <p data-i18n="thesis.line3">They compose: Project Context is the <b>authority layer</b>; a generated wiki is an optional derived view.</p>
+      </div>
+    </div>
+
+    <div class="compose reveal">
+      <div class="compose-cell is-primary">
+        <span class="compose-role" data-i18n="thesis.card1.label">authority layer</span>
+        <span class="compose-name" data-i18n="thesis.card1.title">Project Context</span>
+        <p class="compose-note" data-i18n="thesis.card1.body">Decisions, learnings, the current handoff — written by hand or by an agent, versioned with the code.</p>
+      </div>
+      <span class="compose-link" aria-hidden="true" data-i18n="thesis.compose">compose</span>
+      <div class="compose-cell">
+        <span class="compose-role" data-i18n="thesis.card2.label">derived view · optional</span>
+        <span class="compose-name" data-i18n="thesis.card2.title">A generated wiki</span>
+        <p class="compose-note" data-i18n="thesis.card2.body">Regenerates what the code already says. Useful, replaceable, and not the source of truth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 03 INSTALL ============================= -->
+<section class="section" id="install" aria-labelledby="install-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="install.index">03</span></span>
+      <h2 class="section-title" id="install-title" data-i18n="install.title">One command, or one prompt</h2>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">uvx</span>
+        <p class="body" data-i18n="install.uvx.body">Runs the CLI straight from the repo. No clone, no virtualenv. Swap <code>--apply</code> for <code>--dry-run</code> to print the plan first.</p>
+        <div class="cmd cmd-sm" data-cmd>
+          <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
+          <div class="cmd-body">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="uvx command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+            <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:hero.cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
           </div>
-          <div class="term-body" translate="no"><span class="p">$</span> uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init <span class="hl">--target . --install-skills --apply</span><span class="p">█</span></div>
         </div>
-      </div>
-    </div>
-    <a class="vlabel notranslate" translate="no" href="https://monomind.one">@monomind ai lab</a>
-  </section>
+      </article>
 
-  <section class="section" aria-labelledby="h-install">
-    <div class="section-wash" aria-hidden="true"></div>
-    <div class="wrap section-in">
-      <div class="sec-head">
-        <span class="eyebrow">[01]</span>
-        <h2 id="h-install">One command, or one prompt</h2>
-      </div>
-      <div class="flow">
-        <div class="card">
-          <span class="tag" translate="no">uvx</span>
-          <h3>One command, nothing installed</h3>
-          <p>The install command runs the CLI straight from the repository — no clone, no virtualenv. Swap <span translate="no">--apply</span> for <span translate="no">--dry-run</span> and it prints the exact file plan instead of writing it.</p>
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">pipx</span>
+        <p class="body" data-i18n="install.pipx.body">Keeps <code>init</code>, <code>inspect</code>, <code>review</code> and <code>doctor</code> on your path.</p>
+        <div class="cmd cmd-sm" data-cmd>
+          <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
+          <div class="cmd-body">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span></code>
+            <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context" aria-label="Copy the install command" data-i18n-attr="aria-label:hero.cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="card">
-          <span class="tag" translate="no">pipx</span>
-          <h3>Or a command that stays</h3>
-          <p><span class="mono" translate="no">pipx install git+https://github.com/monomind-ai-lab/project-context</span> keeps <span translate="no">init</span>, <span translate="no">inspect</span>, <span translate="no">review</span>, and <span translate="no">doctor</span> on your path for every repository after this one.</p>
-        </div>
-        <div class="card">
-          <span class="tag" translate="no">prompt</span>
-          <h3>Or no tooling at all</h3>
-          <p>Paste one prompt into any agent that can read and edit the folder. It asks the onboarding question, proposes the plan, and waits for your approval before it writes.</p>
-        </div>
-      </div>
-      <div class="term">
-        <div class="term-head">
-          <span translate="no">install-prompt.md</span>
-          <button class="term-copy js-copy" type="button" data-copy="prompt" data-label="copy">copy</button>
-        </div>
-        <div class="term-body"><span class="p">&gt;</span> Install Project Context in the current repository using <span translate="no">github.com/monomind-ai-lab/project-context</span>. Read and follow <span class="hl" translate="no">skills/project-context-init/SKILL.md</span>, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes.<span class="p">█</span></div>
-      </div>
-      <div class="checks">
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>zero runtime dependencies · stdlib Python 3.10+</span></div>
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>a stock install lands 13 files, core profile</span></div>
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>the installer itself is never copied in</span></div>
-      </div>
-    </div>
-  </section>
+      </article>
 
-  <section class="section" aria-labelledby="h-pipeline">
-    <div class="section-wash" aria-hidden="true"></div>
-    <div class="wrap section-in">
-      <div class="sec-head">
-        <span class="eyebrow">[02]</span>
-        <h2 id="h-pipeline">How the pipeline runs</h2>
-      </div>
-      <div class="flow">
-        <div class="card">
-          <span class="tag" translate="no">evidence/</span>
-          <h3>Work produces evidence</h3>
-          <p>Primary artifacts stay primary. Nothing is copied into a second knowledge base.</p>
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">prompt</span>
+        <p class="body" data-i18n="install.prompt.body">Paste one prompt into any agent that can read and edit the folder. Zero tooling.</p>
+        <div class="cmd cmd-sm cmd-note">
+          <div class="cmd-body">
+            <span class="cmd-prompt t-comment" aria-hidden="true">#</span>
+            <span class="cmd-text t-comment" data-i18n="install.prompt.comment">no CLI, no install — the agent writes the files itself</span>
+          </div>
         </div>
-        <div class="arrow" aria-hidden="true"><svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10h22m0 0-7-7m7 7-7 7" stroke="rgba(255,255,255,0.45)" stroke-width="2"></path></svg></div>
-        <div class="card">
-          <span class="tag" translate="no">promote()</span>
-          <h3>Milestones promote context</h3>
-          <p>Current state to <span translate="no">NOW.md</span>, constraints to <span translate="no">DECISIONS.md</span>, verified lessons to <span translate="no">LEARNINGS.md</span>.</p>
-        </div>
-        <div class="arrow" aria-hidden="true"><svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10h22m0 0-7-7m7 7-7 7" stroke="rgba(255,255,255,0.45)" stroke-width="2"></path></svg></div>
-        <div class="card">
-          <span class="tag" translate="no">inherit</span>
-          <h3>The next agent reads first</h3>
-          <p><span translate="no">NOW.md</span>, decisions, learnings, then only the relevant evidence links.</p>
-        </div>
-      </div>
-      <div class="checks">
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>dry-run before every apply</span></div>
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>existing files preserved byte-for-byte</span></div>
-        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>read-only doctor for stale context</span></div>
-      </div>
+      </article>
     </div>
-  </section>
 
-  <section class="section" aria-labelledby="h-doctor">
-    <div class="section-wash" aria-hidden="true"></div>
-    <div class="wrap section-in">
-      <div class="sec-head">
-        <span class="eyebrow">[03]</span>
-        <h2 id="h-doctor">What the doctor actually checks</h2>
-      </div>
-      <div class="flow">
-        <div class="card">
-          <span class="tag" translate="no">doctor</span>
-          <h3>The documents hold up</h3>
-          <p>Required files, installed scaffold version, freshness of <span translate="no">NOW.md</span>, duplicate decision and learning IDs, broken relative links. Read-only: it reports, it never rewrites your knowledge.</p>
-        </div>
-        <div class="card">
-          <span class="tag" translate="no">file@commit</span>
-          <h3>The evidence still says what it said</h3>
-          <p>Evidence may pin the state it cites as <span translate="no">path/to/file@&lt;commit&gt;</span>. <span translate="no">evidence-drift</span> warns when that path changed since — the justification may no longer hold. <span translate="no">evidence-unverifiable</span> warns when the commit is unknown.</p>
-        </div>
-        <div class="card">
-          <span class="tag" translate="no">reachability</span>
-          <h3>Something still delivers it</h3>
-          <p>The managed instruction block, a harness pointer, a working hook — at least one route has to carry the protocol into a session. <span translate="no">no-delivery-path</span> is an error, because perfect files that nothing ever loads otherwise report healthy.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    <ul class="proof reveal">
+      <li data-i18n="install.proof1">zero runtime dependencies · stdlib Python 3.10+</li>
+      <li data-i18n="install.proof2">a stock install lands 13 files</li>
+      <li data-i18n="install.proof3">the installer is never copied into your repo</li>
+    </ul>
+  </div>
+</section>
 
-  <section class="section" aria-labelledby="h-addons">
-    <div class="addons-bg" aria-hidden="true"></div>
-    <div class="addons-shade" aria-hidden="true"></div>
-    <div class="wrap section-in">
-      <div class="sec-head">
-        <span class="eyebrow">[04]</span>
-        <h2 id="h-addons">Optional add-ons, informed opt-in</h2>
-      </div>
-      <p class="lead sec-lead">Project Context records what the code cannot say — the decisions, the learnings, the current handoff. A generated wiki regenerates what the code does say. They compose: Project Context is the authority layer, a generated wiki an optional derived view.</p>
-      <div class="tools">
-        <div class="tool">
-          <span class="pill" translate="no">GITNEXUS</span>
-          <p>Code symbols, relationships, impact, and execution flows.</p>
-        </div>
-        <div class="tool">
-          <span class="pill" translate="no">GRAPHIFY</span>
-          <p>Relationships across code, documents, research artifacts, and media.</p>
-        </div>
-        <div class="tool">
-          <span class="pill" translate="no">OPENWIKI</span>
-          <p>Ongoing generated documentation and navigation for stable projects.</p>
-        </div>
-      </div>
-      <p class="tools-note">Independent open-source projects, recommended when they fit. Project Context works without any of them.<br>Setup notes live in <a href="https://github.com/monomind-ai-lab/project-context/blob/main/skills/project-context-init/references/optional-tools.md">the optional-tools reference</a>.</p>
+<hr class="hairline">
+
+<!-- =========================== 04 PORTABILITY =========================== -->
+<section class="section" id="portability" aria-labelledby="port-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="port.index">04</span></span>
+      <h2 class="section-title" id="port-title" data-i18n="port.title">It comes with you</h2>
     </div>
-  </section>
+    <div class="strip reveal">
+      <ul class="strip-chips">
+        <li class="chip notranslate" translate="no">Claude Code</li>
+        <li class="chip notranslate" translate="no">Codex</li>
+        <li class="chip notranslate" translate="no">Cursor</li>
+        <li class="chip chip-open" data-i18n="port.any">any agent that reads a folder</li>
+      </ul>
+      <div class="strip-lines">
+        <p data-i18n="port.line1">Your context lives in <b>your git history</b>, not a vendor's memory store.</p>
+        <p data-i18n="port.line2">Switch tools or machines and <b>it comes with you</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 05 DOCTOR ============================= -->
+<section class="section" id="doctor" aria-labelledby="doctor-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="doctor.index">05</span></span>
+      <h2 class="section-title" id="doctor-title" data-i18n="doctor.title">How it stays true</h2>
+      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor checks three things.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c1.title">The documents hold up</h3>
+        <p data-i18n="doctor.c1.body">Required files, version, NOW.md freshness, duplicate IDs, broken links.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c2.title">Evidence anchors</h3>
+        <p data-i18n="doctor.c2.body"><code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — meaning the justification may no longer hold.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c3.title">Reachability</h3>
+        <p data-i18n="doctor.c3.body">The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error — because perfect files nothing ever loads otherwise report healthy.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 06 ADD-ONS ============================= -->
+<section class="section" id="addons" aria-labelledby="addons-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="addons.index">06</span></span>
+      <h2 class="section-title" id="addons-title" data-i18n="addons.title">Add-ons, only where they earn it</h2>
+      <p class="section-lede" data-i18n="addons.lede">Three independent open-source tools can sit alongside the record. Project Context does not just list them: it inspects the project, recommends only what fits, and installs or configures nothing until you have said yes.</p>
+    </div>
+
+    <ol class="flow reveal">
+      <li><span class="flow-label" data-i18n="addons.step1">it inspects the project</span></li>
+      <li><span class="flow-label" data-i18n="addons.step2">it recommends only what fits</span></li>
+      <li class="is-on"><span class="flow-label" data-i18n="addons.step3">nothing lands until you opt in</span></li>
+    </ol>
+
+    <p class="addons-detect reveal" data-i18n="addons.detect">Per tool, the initializer separates two states that look identical from the outside: merely available on your <code>PATH</code>, and actually configured for this repository. Something already installed but unconfigured gets an offer to configure it, not a pointless reinstall. It asks only about unconfigured tools that match the confirmed project type and a need it has actually observed — and it installs only after an explicit answer.</p>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="addons.th.tool">Tool</th>
+            <th scope="col" data-i18n="addons.th.what">What it is</th>
+            <th scope="col" data-i18n="addons.th.when">When it fits</th>
+            <th scope="col" data-i18n="addons.th.rel">Relation to Project Context</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">GitNexus</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gn.what">Code symbols, their relationships, impact analysis and execution flows.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gn.when">Source that needs structural or impact analysis. Suppressed for writing projects; on mixed ones it is scoped to a meaningful code subtree.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gn.rel">A derived read of the code. The decisions about that code still live in the tracked Markdown.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">Graphify</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gf.what">Relationships across code, documents, research artifacts and media.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gf.when">When the useful corpus reaches past code — a substantial interlinked document set, cross-source research and evidence, or a large relational manuscript or story world.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gf.rel">A derived index over your material. Rebuildable, and never the thing being cited.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">OpenWiki</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.ow.what">Ongoing generated documentation and navigation for stable projects.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.ow.when">Stable, complex projects with a real audience for derived navigation. Deferred while claims or structure are still moving; suppressed for writing projects.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.ow.rel">Regenerated from what already exists — including the record it is generated against.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="addons-sub reveal" data-i18n="addons.types.title">What gets offered, by project type</h3>
+    <ul class="typelist reveal">
+      <li><span class="chip notranslate" translate="no">Code</span><p data-i18n="addons.type.code">GitNexus when the source needs structural or impact analysis. OpenWiki only for stable, complex projects with a real audience for derived navigation. Graphify when the useful corpus extends beyond code.</p></li>
+      <li><span class="chip notranslate" translate="no">Documents</span><p data-i18n="addons.type.docs">Graphify for a substantial interlinked corpus. OpenWiki only when collaborators need a maintained browse layer.</p></li>
+      <li><span class="chip notranslate" translate="no">Research</span><p data-i18n="addons.type.research">Graphify for cross-source, data and evidence relationships. OpenWiki is deferred until claims and structure are stable.</p></li>
+      <li><span class="chip notranslate" translate="no">Writing</span><p data-i18n="addons.type.writing">GitNexus and OpenWiki are suppressed. Graphify only for a large relational manuscript or story world.</p></li>
+      <li><span class="chip notranslate" translate="no">Mixed</span><p data-i18n="addons.type.mixed">GitNexus, scoped to a meaningful code subtree.</p></li>
+      <li><span class="chip notranslate" translate="no">General</span><p data-i18n="addons.type.general">Nothing is offered until inspection finds a concrete need — the same answer while the type is still uncertain.</p></li>
+    </ul>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="addons.authority"><b>Project Context stays the authority.</b> The tracked Markdown is what the project is committed to; these three are optional derived systems built from it. None of them becomes the source of truth, and the record works fully with none of them installed.</p>
+    </div>
+    <p class="addons-note reveal" data-i18n="addons.note">independent open-source tools · optional · installed or configured only after you opt in</p>
+  </div>
+</section>
+
 </main>
 
-<footer>
-  <div class="wrap foot-in">
-    <a class="foot-brand" href="https://monomind.one">
-      <svg width="18" height="18" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="rgba(255,255,255,0.6)" transform="translate(74,141)"></path><path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="rgba(255,255,255,0.6)" transform="translate(450,315)"></path></svg>
-      <span translate="no">© MonoMind AI Lab</span>
-    </a>
-    <span class="foot-tag">clarity comes with context</span>
-    <a href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" translate="no" title="Source-available under MIT + Commons Clause v1.0 — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold, sublicensed, or redistributed standalone." style="color: var(--muted-2);">MIT + Commons Clause</a>
+<div class="sign-off"><p data-i18n="brand.tagline">Clarity comes with context.</p></div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="foot-brand" href="https://monomind.one" target="_blank" rel="noopener" aria-label="MonoMind — monomind.one">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 512 512" focusable="false"><use href="#mm-mark"/></svg></span>
+          <span class="foot-name notranslate" translate="no">MonoMind</span>
+        </a>
+        <p class="foot-desc" data-i18n="footer.agency"><b>AI Innovation Studio</b> for the autonomous agent era — intelligent engineering, intentional design.</p>
+        <ul class="foot-caps">
+          <li data-i18n="footer.s1">Product strategy</li>
+          <li data-i18n="footer.s2">Agent Experience (AX)</li>
+          <li data-i18n="footer.s3">Agent &amp; harness engineering</li>
+          <li data-i18n="footer.s4">Advanced RAG</li>
+          <li data-i18n="footer.s5">Brand identity</li>
+          <li data-i18n="footer.s6">Web experience</li>
+        </ul>
+        <p class="foot-inline">
+          <a class="notranslate" translate="no" href="https://github.com/monomind-ai-lab/project-context" rel="noopener">github.com/monomind-ai-lab/project-context</a>
+          <span class="sep" aria-hidden="true">·</span>
+          <a href="/guide" data-i18n="hero.cta.guide">Read the guide</a>
+        </p>
+      </div>
+    </div>
+    <p class="license" data-i18n="footer.license"><b>MIT + Commons Clause</b> — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold or redistributed standalone.</p>
+    <p class="foot-bottom notranslate" translate="no">Project Context · MonoMind AI Lab</p>
   </div>
 </footer>
 
 <script>
-(function () {
-  var PROMPT = 'Install Project Context in the current repository or project folder using https://github.com/monomind-ai-lab/project-context. Read and follow `skills/project-context-init/SKILL.md`, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes.';
-  var COMMAND = 'uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply';
-  var PAYLOAD = { prompt: PROMPT, command: COMMAND };
-  var buttons = document.querySelectorAll('.js-copy');
-  function payload(btn) {
-    return PAYLOAD[btn.getAttribute('data-copy')] || PROMPT;
+/* =====================================================================
+   1. DICTIONARIES
+   `en` is the copy deck, verbatim. `ko` and `zh-TW` carry the SAME keys
+   in the SAME order, currently holding the English strings; a separate
+   translation pass replaces the two blocks wholesale. The marker
+   comments below delimit them for that automated swap — keep them.
+   Values may contain trusted inline <b>/<code>/<em> only.
+   ===================================================================== */
+const I18N = {
+"en": {
+"nav.record": "The record",
+"nav.install": "Install",
+"nav.guide": "Guide",
+"nav.addons": "Add-ons",
+"nav.usecases": "Use cases",
+"nav.skip": "Skip to content",
+"hero.eyebrow": "MonoMind AI Lab",
+"hero.kicker": "a durable project record for agents and people",
+"hero.title": "Weeks away should never mean rebuilding the project from <b>stale chats</b>.",
+"hero.sub": "Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.",
+"hero.chips": "plain Markdown, in your git history",
+"hero.installLabel": "install · one command",
+"hero.cta.copy": "Copy the install command",
+"hero.cta.copied": "Copied",
+"hero.cta.guide": "Read the guide",
+"hero.scroll": "scroll →",
+"what.index": "01",
+"what.title": "What Project Context actually is",
+"what.lede": "A handful of small Markdown files that live in the project folder, next to the work. Between them they hold where things stand right now, the decisions that constrain what comes next, and the learnings that have been verified. The agents doing the work write and maintain them. The next agent — or the next person — reads them first.",
+"what.c1.tag": "the files",
+"what.c1.title": "Small Markdown, in the folder",
+"what.c1.body": "No database, no service, no vendor memory store. A few tracked files sit beside the work and open in any editor.",
+"what.c2.tag": "what they hold",
+"what.c2.title": "State, decisions, learnings",
+"what.c2.body": "Where the project stands today. The decisions that bind what comes next. The findings that were verified, so nobody pays for them twice.",
+"what.c3.tag": "who keeps it",
+"what.c3.title": "Maintained by the agents doing the work",
+"what.c3.body": "Updating the record is part of finishing a piece of work, not a report filed afterwards — and it is the first thing the next session reads.",
+"what.any": "any collaborative project an agent works on",
+"what.line1": "<b>Not only software, and not only GitHub.</b> Software, document, research, writing and mixed projects all keep the same kind of record.",
+"what.line2": "It suits repo-bound work best, where version control makes shared context easy to review. But any project whose working materials live in one folder that people and agents can reach consistently will do.",
+"what.line3": "Git is not required. Without it, the tooling falls back to file-modification times.",
+"record.index": "02",
+"record.title": "What actually gets written down",
+"record.lede": "Not a transcript, and not a summary of the chat. Each file answers one question a returning session really asks: where does this stand, what is already settled, and what did we learn the expensive way.",
+"record.step1": "work stops for the day",
+"record.step2": "the three files are brought up to date",
+"record.step3": "the next session opens with the state in hand",
+"record.cap.now": "what the next session reads first",
+"record.cap.decisions": "what constrains the next agent",
+"record.cap.learnings": "what nobody should have to discover twice",
+"record.anchor.explain": "The evidence anchor. A decision pins its justification to a path at a commit — so a later session can check whether the reason still holds.",
+"sample.now.h1": "Current Project State",
+"sample.now.reviewed": "Last reviewed:",
+"sample.now.h2a": "Snapshot",
+"sample.now.h2b": "Active work",
+"sample.now.h2c": "Blockers",
+"sample.now.area1": "Auth",
+"sample.now.state1": "Session cookies replaced by short-lived JWTs",
+"sample.now.init1": "Rate limiting",
+"sample.now.next1": "Decide per-tenant vs per-key before the gateway merge",
+"sample.now.blocker1": "Staging Redis is single-node; the limiter needs a cluster before load tests.",
+"sample.th.area": "Area",
+"sample.th.state": "Current state",
+"sample.th.evidence": "Evidence",
+"sample.th.initiative": "Initiative",
+"sample.th.status": "Status",
+"sample.th.next": "Next action",
+"sample.dec.title": "Short-lived JWTs over session cookies",
+"sample.dec.kStatus": "Status:",
+"sample.dec.kDate": "Date:",
+"sample.dec.kStatement": "Statement:",
+"sample.dec.vStatement": "API auth uses 15-minute JWTs with refresh, not server-side sessions.",
+"sample.dec.kRationale": "Rationale:",
+"sample.dec.vRationale": "The mobile client cannot share a cookie jar with the web app.",
+"sample.dec.kConsequences": "Consequences:",
+"sample.dec.vConsequences": "Every service needs clock sync; revocation is now a denylist.",
+"sample.dec.kEvidence": "Evidence:",
+"sample.lrn.title": "Redis keyspace events drop silently under memory pressure",
+"sample.lrn.kScope": "Scope:",
+"sample.lrn.vScope": "rate limiting, staging",
+"sample.lrn.kEvidence": "Evidence:",
+"sample.lrn.kAction": "Action:",
+"sample.lrn.vAction": "Do not rely on keyspace notifications to expire limiter buckets; poll the sorted set instead.",
+"thesis.eyebrow": "The distinction",
+"thesis.line1": "Project Context records what the code <b>cannot</b> say — the decisions, the learnings, the current handoff.",
+"thesis.line2": "A generated wiki regenerates what the code <b>does</b> say.",
+"thesis.line3": "They compose: Project Context is the <b>authority layer</b>; a generated wiki is an optional derived view.",
+"thesis.card1.label": "authority layer",
+"thesis.card1.title": "Project Context",
+"thesis.card1.body": "Decisions, learnings, the current handoff — written by hand or by an agent, versioned with the code.",
+"thesis.compose": "compose",
+"thesis.card2.label": "derived view · optional",
+"thesis.card2.title": "A generated wiki",
+"thesis.card2.body": "Regenerates what the code already says. Useful, replaceable, and not the source of truth.",
+"install.index": "03",
+"install.title": "One command, or one prompt",
+"install.uvx.body": "Runs the CLI straight from the repo. No clone, no virtualenv. Swap <code>--apply</code> for <code>--dry-run</code> to print the plan first.",
+"install.pipx.body": "Keeps <code>init</code>, <code>inspect</code>, <code>review</code> and <code>doctor</code> on your path.",
+"install.prompt.body": "Paste one prompt into any agent that can read and edit the folder. Zero tooling.",
+"install.prompt.comment": "no CLI, no install — the agent writes the files itself",
+"install.proof1": "zero runtime dependencies · stdlib Python 3.10+",
+"install.proof2": "a stock install lands 13 files",
+"install.proof3": "the installer is never copied into your repo",
+"port.index": "04",
+"port.title": "It comes with you",
+"port.any": "any agent that reads a folder",
+"port.line1": "Your context lives in <b>your git history</b>, not a vendor's memory store.",
+"port.line2": "Switch tools or machines and <b>it comes with you</b>.",
+"doctor.index": "05",
+"doctor.title": "How it stays true",
+"doctor.sub": "A read-only doctor checks three things.",
+"doctor.c1.title": "The documents hold up",
+"doctor.c1.body": "Required files, version, NOW.md freshness, duplicate IDs, broken links.",
+"doctor.c2.title": "Evidence anchors",
+"doctor.c2.body": "<code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — meaning the justification may no longer hold.",
+"doctor.c3.title": "Reachability",
+"doctor.c3.body": "The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error — because perfect files nothing ever loads otherwise report healthy.",
+"addons.index": "06",
+"addons.title": "Add-ons, only where they earn it",
+"addons.lede": "Three independent open-source tools can sit alongside the record. Project Context does not just list them: it inspects the project, recommends only what fits, and installs or configures nothing until you have said yes.",
+"addons.step1": "it inspects the project",
+"addons.step2": "it recommends only what fits",
+"addons.step3": "nothing lands until you opt in",
+"addons.detect": "Per tool, the initializer separates two states that look identical from the outside: merely available on your <code>PATH</code>, and actually configured for this repository. Something already installed but unconfigured gets an offer to configure it, not a pointless reinstall. It asks only about unconfigured tools that match the confirmed project type and a need it has actually observed — and it installs only after an explicit answer.",
+"addons.th.tool": "Tool",
+"addons.th.what": "What it is",
+"addons.th.when": "When it fits",
+"addons.th.rel": "Relation to Project Context",
+"addons.gn.what": "Code symbols, their relationships, impact analysis and execution flows.",
+"addons.gn.when": "Source that needs structural or impact analysis. Suppressed for writing projects; on mixed ones it is scoped to a meaningful code subtree.",
+"addons.gn.rel": "A derived read of the code. The decisions about that code still live in the tracked Markdown.",
+"addons.gf.what": "Relationships across code, documents, research artifacts and media.",
+"addons.gf.when": "When the useful corpus reaches past code — a substantial interlinked document set, cross-source research and evidence, or a large relational manuscript or story world.",
+"addons.gf.rel": "A derived index over your material. Rebuildable, and never the thing being cited.",
+"addons.ow.what": "Ongoing generated documentation and navigation for stable projects.",
+"addons.ow.when": "Stable, complex projects with a real audience for derived navigation. Deferred while claims or structure are still moving; suppressed for writing projects.",
+"addons.ow.rel": "Regenerated from what already exists — including the record it is generated against.",
+"addons.types.title": "What gets offered, by project type",
+"addons.type.code": "GitNexus when the source needs structural or impact analysis. OpenWiki only for stable, complex projects with a real audience for derived navigation. Graphify when the useful corpus extends beyond code.",
+"addons.type.docs": "Graphify for a substantial interlinked corpus. OpenWiki only when collaborators need a maintained browse layer.",
+"addons.type.research": "Graphify for cross-source, data and evidence relationships. OpenWiki is deferred until claims and structure are stable.",
+"addons.type.writing": "GitNexus and OpenWiki are suppressed. Graphify only for a large relational manuscript or story world.",
+"addons.type.mixed": "GitNexus, scoped to a meaningful code subtree.",
+"addons.type.general": "Nothing is offered until inspection finds a concrete need — the same answer while the type is still uncertain.",
+"addons.authority": "<b>Project Context stays the authority.</b> The tracked Markdown is what the project is committed to; these three are optional derived systems built from it. None of them becomes the source of truth, and the record works fully with none of them installed.",
+"addons.note": "independent open-source tools · optional · installed or configured only after you opt in",
+"footer.agency": "<b>AI Innovation Studio</b> for the autonomous agent era — intelligent engineering, intentional design.",
+"brand.tagline": "Clarity comes with context.",
+"footer.s1": "Product strategy",
+"footer.s2": "Agent Experience (AX)",
+"footer.s3": "Agent &amp; harness engineering",
+"footer.s4": "Advanced RAG",
+"footer.s5": "Brand identity",
+"footer.s6": "Web experience",
+"footer.license": "<b>MIT + Commons Clause</b> — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold or redistributed standalone.",
+"ui.theme": "Toggle theme",
+"ui.lang": "Language",
+"ui.langSearch": "Search languages…",
+"ui.langNative": "Translated by hand",
+"ui.langAuto": "Machine translated",
+"ui.langAutoNote": "Other languages are machine translated by Google."
+},
+/* I18N:KO:START */
+"ko": {
+"nav.record": "기록",
+"nav.install": "설치",
+"nav.guide": "가이드",
+"nav.addons": "애드온",
+"nav.usecases": "활용 사례",
+"nav.skip": "본문 바로가기",
+"hero.eyebrow": "MonoMind AI Lab",
+"hero.kicker": "에이전트와 사람을 위한, 오래 남는 프로젝트 기록",
+"hero.title": "몇 주 만에 돌아왔다고 <b>철 지난 대화 기록</b>으로 프로젝트를 다시 짜맞출 이유는 없습니다.",
+"hero.sub": "저장소에서 버전 관리되는 작은 Markdown 기록. 사람 한 명, 에이전트 하나, 대화 하나보다 오래 남습니다.",
+"hero.chips": "평범한 Markdown, git 히스토리 안에",
+"hero.installLabel": "설치 · 명령어 하나",
+"hero.cta.copy": "설치 명령어 복사",
+"hero.cta.copied": "복사됨",
+"hero.cta.guide": "가이드 읽기",
+"hero.scroll": "스크롤 →",
+"what.index": "01",
+"what.title": "Project Context는 실제로 무엇인가",
+"what.lede": "프로젝트 폴더 안, 작업물 바로 옆에 놓인 작은 Markdown 파일 몇 개. 지금 상황이 어디까지 왔는지, 앞으로의 작업을 제약하는 결정은 무엇인지, 검증을 마친 학습 내용은 무엇인지를 이 파일들이 나눠 담습니다. 작업을 수행하는 에이전트가 직접 쓰고 관리합니다. 다음 에이전트가, 또는 다음 사람이 가장 먼저 읽습니다.",
+"what.c1.tag": "파일",
+"what.c1.title": "폴더 안의 작은 Markdown",
+"what.c1.body": "데이터베이스도, 서비스도, 벤더의 메모리 저장소도 없습니다. 버전 관리되는 파일 몇 개가 작업물 옆에 놓이고, 어떤 에디터에서도 열립니다.",
+"what.c2.tag": "담기는 것",
+"what.c2.title": "상태, 결정, 학습 내용",
+"what.c2.body": "프로젝트가 오늘 어디까지 와 있는지. 다음에 올 작업을 묶어 두는 결정. 검증을 마친 발견들 — 누구도 같은 값을 두 번 치르지 않도록.",
+"what.c3.tag": "누가 관리하나",
+"what.c3.title": "작업을 수행하는 에이전트가 관리",
+"what.c3.body": "기록 갱신은 작업을 끝내는 과정의 일부지, 끝난 뒤에 제출하는 보고서가 아닙니다 — 그리고 다음 세션이 가장 먼저 읽는 것이기도 합니다.",
+"what.any": "에이전트가 참여하는 모든 협업 프로젝트",
+"what.line1": "<b>소프트웨어만이 아니고, GitHub만도 아닙니다.</b> software, document, research, writing, mixed 프로젝트 모두 같은 종류의 기록을 남깁니다.",
+"what.line2": "저장소에 묶인 작업에 가장 잘 맞습니다. 버전 관리 덕분에 공유된 컨텍스트를 검토하기 쉽기 때문입니다. 하지만 작업 자료가 사람과 에이전트가 일관되게 접근할 수 있는 하나의 폴더에 모여 있는 프로젝트라면 무엇이든 괜찮습니다.",
+"what.line3": "Git은 필수가 아닙니다. Git이 없으면 도구는 파일 수정 시각을 대신 사용합니다.",
+"record.index": "02",
+"record.title": "실제로 적히는 것",
+"record.lede": "대화록도 아니고, 채팅 요약도 아닙니다. 각 파일은 돌아온 세션이 실제로 던지는 질문 하나에 답합니다. 지금 어디까지 왔는가, 무엇이 이미 확정됐는가, 그리고 비싼 값을 치르고 무엇을 배웠는가.",
+"record.step1": "그날의 작업이 끝난다",
+"record.step2": "세 파일을 최신 상태로 갱신한다",
+"record.step3": "다음 세션은 상태를 손에 쥐고 시작한다",
+"record.cap.now": "다음 세션이 가장 먼저 읽는 것",
+"record.cap.decisions": "다음 에이전트를 제약하는 것",
+"record.cap.learnings": "누구도 두 번 알아낼 필요 없는 것",
+"record.anchor.explain": "근거 앵커. 결정은 자신의 근거를 특정 커밋 시점의 파일 경로에 고정합니다 — 이후 세션이 그 근거가 아직 유효한지 확인할 수 있도록.",
+"sample.now.h1": "Current Project State",
+"sample.now.reviewed": "Last reviewed:",
+"sample.now.h2a": "Snapshot",
+"sample.now.h2b": "Active work",
+"sample.now.h2c": "Blockers",
+"sample.now.area1": "Auth",
+"sample.now.state1": "세션 쿠키를 단기 JWT로 교체",
+"sample.now.init1": "레이트 리미팅",
+"sample.now.next1": "게이트웨이 머지 전에 테넌트 단위 vs 키 단위 결정",
+"sample.now.blocker1": "스테이징 Redis가 단일 노드. 부하 테스트 전에 리미터에 클러스터 필요.",
+"sample.th.area": "Area",
+"sample.th.state": "Current state",
+"sample.th.evidence": "Evidence",
+"sample.th.initiative": "Initiative",
+"sample.th.status": "Status",
+"sample.th.next": "Next action",
+"sample.dec.title": "세션 쿠키 대신 단기 JWT",
+"sample.dec.kStatus": "Status:",
+"sample.dec.kDate": "Date:",
+"sample.dec.kStatement": "Statement:",
+"sample.dec.vStatement": "API 인증은 서버 사이드 세션이 아니라 리프레시 포함 15분 JWT를 사용한다.",
+"sample.dec.kRationale": "Rationale:",
+"sample.dec.vRationale": "모바일 클라이언트는 웹 앱과 쿠키 저장소를 공유할 수 없다.",
+"sample.dec.kConsequences": "Consequences:",
+"sample.dec.vConsequences": "모든 서비스에 시간 동기화가 필요하다. 무효화는 이제 denylist로 처리한다.",
+"sample.dec.kEvidence": "Evidence:",
+"sample.lrn.title": "메모리 압박 시 Redis keyspace 이벤트가 조용히 유실됨",
+"sample.lrn.kScope": "Scope:",
+"sample.lrn.vScope": "레이트 리미팅, 스테이징",
+"sample.lrn.kEvidence": "Evidence:",
+"sample.lrn.kAction": "Action:",
+"sample.lrn.vAction": "리미터 버킷 만료를 keyspace 알림에 의존하지 말 것. 대신 sorted set을 폴링할 것.",
+"thesis.eyebrow": "구분",
+"thesis.line1": "Project Context는 코드가 <b>말할 수 없는</b> 것을 기록합니다 — 결정, 학습 내용, 지금의 인수인계 상태.",
+"thesis.line2": "자동 생성 위키는 코드가 <b>말하고 있는</b> 것을 다시 만들어 냅니다.",
+"thesis.line3": "둘은 함께 씁니다. Project Context가 <b>기준 계층</b>이고, 자동 생성 위키는 선택적인 파생 뷰입니다.",
+"thesis.card1.label": "기준 계층",
+"thesis.card1.title": "Project Context",
+"thesis.card1.body": "결정, 학습 내용, 지금의 인수인계 상태 — 사람이 쓰든 에이전트가 쓰든, 코드와 함께 버전 관리됩니다.",
+"thesis.compose": "조합",
+"thesis.card2.label": "파생 뷰 · 선택",
+"thesis.card2.title": "자동 생성 위키",
+"thesis.card2.body": "코드가 이미 말하고 있는 것을 다시 만들어 냅니다. 유용하지만 대체 가능하며, 기준이 되지는 않습니다.",
+"install.index": "03",
+"install.title": "명령어 하나, 또는 프롬프트 하나",
+"install.uvx.body": "저장소에서 곧바로 CLI를 실행합니다. clone도, virtualenv도 필요 없습니다. <code>--apply</code> 대신 <code>--dry-run</code>을 쓰면 실행 계획을 먼저 출력합니다.",
+"install.pipx.body": "<code>init</code>, <code>inspect</code>, <code>review</code>, <code>doctor</code>를 PATH에 남겨 둡니다.",
+"install.prompt.body": "폴더를 읽고 수정할 수 있는 에이전트에 프롬프트 하나만 붙여넣으면 됩니다. 도구는 전혀 필요 없습니다.",
+"install.prompt.comment": "CLI도 설치도 없이 — 에이전트가 파일을 직접 씁니다",
+"install.proof1": "런타임 의존성 0 · Python 3.10+ 표준 라이브러리만",
+"install.proof2": "기본 설치 시 파일 13개 생성",
+"install.proof3": "설치 도구는 저장소에 복사되지 않음",
+"port.index": "04",
+"port.title": "어디로 가든 따라옵니다",
+"port.any": "폴더를 읽는 에이전트라면 무엇이든",
+"port.line1": "컨텍스트는 벤더의 메모리 저장소가 아니라 <b>내 git 히스토리</b> 안에 있습니다.",
+"port.line2": "도구를 바꾸든 장비를 바꾸든 <b>그대로 따라옵니다</b>.",
+"doctor.index": "05",
+"doctor.title": "기록이 사실로 남는 법",
+"doctor.sub": "읽기 전용 doctor가 세 가지를 확인합니다.",
+"doctor.c1.title": "문서가 온전한가",
+"doctor.c1.body": "필수 파일, 버전, NOW.md 최신성, 중복 ID, 끊어진 링크.",
+"doctor.c2.title": "근거 앵커",
+"doctor.c2.body": "<code>path@commit</code>이 인용을 고정합니다. 인용된 파일이 그 이후 바뀌면 <code>evidence-drift</code>가 경고합니다 — 근거가 더 이상 유효하지 않을 수 있다는 뜻입니다.",
+"doctor.c3.title": "도달성",
+"doctor.c3.body": "관리형 지시 블록, 하네스 포인터, 정상 동작하는 훅 중 무엇이든 프로토콜을 세션까지 전달하고 있어야 합니다. <code>no-delivery-path</code>는 오류입니다 — 그렇지 않으면 어디에서도 불러오지 않는 완벽한 파일이 정상으로 보고되고 말기 때문입니다.",
+"addons.index": "06",
+"addons.title": "애드온, 제값을 하는 곳에만",
+"addons.lede": "독립된 오픈소스 도구 세 가지를 기록 옆에 함께 둘 수 있습니다. Project Context는 이들을 나열만 하지 않습니다. 프로젝트를 검사하고, 맞는 것만 추천하며, 사용자가 동의하기 전까지는 아무것도 설치하거나 설정하지 않습니다.",
+"addons.step1": "프로젝트를 검사한다",
+"addons.step2": "맞는 것만 추천한다",
+"addons.step3": "동의하기 전에는 아무것도 들어오지 않는다",
+"addons.detect": "초기화 도구는 각 도구마다, 겉보기에는 똑같은 두 상태를 구분합니다. 단지 <code>PATH</code>에 있을 뿐인 상태와, 이 저장소에 실제로 설정된 상태. 이미 설치됐지만 설정되지 않은 도구에는 무의미한 재설치가 아니라 설정하겠냐는 제안이 갑니다. 확인된 프로젝트 유형에 맞으면서 실제로 관찰된 필요가 있는, 아직 설정되지 않은 도구에 대해서만 묻습니다 — 그리고 명시적인 답을 받은 뒤에만 설치합니다.",
+"addons.th.tool": "도구",
+"addons.th.what": "무엇인가",
+"addons.th.when": "언제 맞는가",
+"addons.th.rel": "Project Context와의 관계",
+"addons.gn.what": "코드 심볼과 그 관계, 영향도 분석, 실행 흐름.",
+"addons.gn.when": "구조 분석이나 영향도 분석이 필요한 소스. writing 프로젝트에서는 제외되고, mixed 프로젝트에서는 의미 있는 코드 하위 트리로 범위가 좁혀집니다.",
+"addons.gn.rel": "코드에서 파생된 해석. 그 코드에 대한 결정은 여전히 버전 관리되는 Markdown에 남습니다.",
+"addons.gf.what": "코드, 문서, 연구 산출물, 미디어를 가로지르는 관계.",
+"addons.gf.when": "유용한 말뭉치가 코드 너머까지 뻗을 때 — 서로 얽힌 상당한 규모의 문서 집합, 여러 출처를 넘나드는 연구와 근거, 또는 관계가 복잡한 대형 원고나 세계관.",
+"addons.gf.rel": "자료 위에 얹히는 파생 인덱스. 언제든 다시 만들 수 있고, 인용의 대상이 되지는 않습니다.",
+"addons.ow.what": "안정된 프로젝트를 위한 지속 생성 문서와 탐색.",
+"addons.ow.when": "파생 탐색을 실제로 볼 독자가 있는, 안정적이고 복잡한 프로젝트. 주장이나 구조가 아직 움직이는 동안은 보류되고, writing 프로젝트에서는 제외됩니다.",
+"addons.ow.rel": "이미 존재하는 것으로부터 다시 생성됩니다 — 그 대상이 되는 기록까지 포함해서.",
+"addons.types.title": "프로젝트 유형별로 무엇이 제안되는가",
+"addons.type.code": "소스에 구조 분석이나 영향도 분석이 필요하면 GitNexus. 파생 탐색을 실제로 볼 독자가 있는, 안정적이고 복잡한 프로젝트에만 OpenWiki. 유용한 말뭉치가 코드 너머로 확장되면 Graphify.",
+"addons.type.docs": "서로 얽힌 상당한 규모의 말뭉치라면 Graphify. 협업자에게 관리되는 탐색 계층이 필요할 때만 OpenWiki.",
+"addons.type.research": "여러 출처, 데이터, 근거 사이의 관계라면 Graphify. OpenWiki는 주장과 구조가 안정될 때까지 보류됩니다.",
+"addons.type.writing": "GitNexus와 OpenWiki는 제외됩니다. Graphify는 관계가 복잡한 대형 원고나 세계관에만.",
+"addons.type.mixed": "GitNexus, 의미 있는 코드 하위 트리로 범위를 좁혀서.",
+"addons.type.general": "검사가 구체적인 필요를 찾기 전까지는 아무것도 제안되지 않습니다 — 유형이 아직 불확실할 때도 답은 같습니다.",
+"addons.authority": "<b>기준은 언제나 Project Context입니다.</b> 버전 관리되는 Markdown이 프로젝트가 실제로 약속한 내용이고, 이 세 도구는 그로부터 만들어지는 선택적 파생 시스템입니다. 어느 것도 기준이 되지 않으며, 셋 다 설치하지 않아도 기록은 온전히 동작합니다.",
+"addons.note": "독립된 오픈소스 도구 · 선택 사항 · 동의한 뒤에만 설치하거나 설정합니다",
+"footer.agency": "자율 에이전트 시대를 위한 <b>AI Innovation Studio</b> — 지능형 엔지니어링, 의도된 디자인.",
+"brand.tagline": "명확함은 맥락과 함께 온다.",
+"footer.s1": "프로덕트 전략",
+"footer.s2": "에이전트 경험(AX)",
+"footer.s3": "에이전트 &amp; 하네스 엔지니어링",
+"footer.s4": "고급 RAG",
+"footer.s5": "브랜드 아이덴티티",
+"footer.s6": "웹 경험",
+"footer.license": "<b>MIT + Commons Clause</b> — 상업적 용도를 포함해 자유롭게 사용하고, 수정하고, 제품에 담아 배포할 수 있습니다. 다만 구성 요소 자체를 단독으로 판매하거나 재배포할 수는 없습니다.",
+"ui.theme": "테마 전환",
+"ui.lang": "언어",
+"ui.langSearch": "언어 검색…",
+"ui.langNative": "사람이 번역",
+"ui.langAuto": "기계 번역",
+"ui.langAutoNote": "그 외 언어는 Google이 기계 번역합니다."
+},
+/* I18N:KO:END */
+/* I18N:ZH:START */
+"zh-TW": {
+"nav.record": "紀錄",
+"nav.install": "安裝",
+"nav.guide": "指南",
+"nav.addons": "延伸工具",
+"nav.usecases": "應用情境",
+"nav.skip": "跳至主要內容",
+"hero.eyebrow": "MonoMind AI Lab",
+"hero.kicker": "給 AI 代理與人的持久專案紀錄",
+"hero.title": "離開幾週再回來，絕不該還得從<b>過時的對話紀錄</b>重建整個專案。",
+"hero.sub": "小巧的 Markdown 紀錄，在儲存庫裡納入版本控制，比任何一個人、任何一個 AI 代理、任何一段對話都活得久。",
+"hero.chips": "純 Markdown，就在你的 git 歷史裡",
+"hero.installLabel": "安裝 · 一行指令",
+"hero.cta.copy": "複製安裝指令",
+"hero.cta.copied": "已複製",
+"hero.cta.guide": "閱讀指南",
+"hero.scroll": "向下捲動 →",
+"what.index": "01",
+"what.title": "Project Context 究竟是什麼",
+"what.lede": "幾個小巧的 Markdown 檔案，就放在專案資料夾裡，緊鄰著實際的工作。它們合起來記錄了目前的進度、約束後續工作的決策，以及已經驗證過的經驗。這些檔案由實際執行工作的 AI 代理撰寫與維護；下一個 AI 代理——或下一個接手的人——都會先讀它們。",
+"what.c1.tag": "這些檔案",
+"what.c1.title": "小巧的 Markdown，就在資料夾裡",
+"what.c1.body": "沒有資料庫、沒有服務、沒有廠商的記憶服務。幾個納入版本控制的檔案就放在工作旁邊，用任何編輯器都打得開。",
+"what.c2.tag": "它們記錄什麼",
+"what.c2.title": "狀態、決策、經驗",
+"what.c2.body": "專案今天走到哪裡。約束後續工作的決策。已經驗證過的發現——這樣就不會有人再付一次同樣的代價。",
+"what.c3.tag": "由誰維護",
+"what.c3.title": "由實際執行工作的 AI 代理維護",
+"what.c3.body": "更新紀錄是把一件工作做完的一部分，而不是事後補交的報告——而且它是下一個工作階段最先讀的東西。",
+"what.any": "任何有 AI 代理參與的協作專案",
+"what.line1": "<b>不只是軟體，也不只是 GitHub。</b>software、document、research、writing 與 mixed 專案，保存的都是同一種紀錄。",
+"what.line2": "它最適合綁在儲存庫裡的工作——版本控制讓共享的專案脈絡容易審閱。但只要專案的工作素材放在同一個資料夾、而且人和 AI 代理都能穩定取用，就同樣適用。",
+"what.line3": "Git 不是必要條件。沒有 Git 時，工具會退而使用檔案的修改時間。",
+"record.index": "02",
+"record.title": "實際被寫下來的是什麼",
+"record.lede": "不是逐字稿，也不是對話摘要。每個檔案各回答一個回頭接手的工作階段真正會問的問題：現在進度到哪、哪些已經定案，以及哪些是我們付出代價才學到的。",
+"record.step1": "今天的工作收工",
+"record.step2": "三個檔案同步更新到最新",
+"record.step3": "下一個工作階段一開始就掌握現況",
+"record.cap.now": "下一個工作階段最先讀的內容",
+"record.cap.decisions": "約束下一個 AI 代理的條件",
+"record.cap.learnings": "不該有人再摸索第二次的事",
+"record.anchor.explain": "證據錨點。一項決策會把它的理由釘在某個路徑的某次提交上——之後的工作階段就能檢查這個理由是否仍然成立。",
+"sample.now.h1": "Current Project State",
+"sample.now.reviewed": "Last reviewed:",
+"sample.now.h2a": "Snapshot",
+"sample.now.h2b": "Active work",
+"sample.now.h2c": "Blockers",
+"sample.now.area1": "Auth",
+"sample.now.state1": "session cookie 已換成短效 JWT",
+"sample.now.init1": "速率限制",
+"sample.now.next1": "gateway 合併前決定 per-tenant 或 per-key",
+"sample.now.blocker1": "staging 的 Redis 是單節點；rate limiter 需要 cluster 才能跑負載測試。",
+"sample.th.area": "Area",
+"sample.th.state": "Current state",
+"sample.th.evidence": "Evidence",
+"sample.th.initiative": "Initiative",
+"sample.th.status": "Status",
+"sample.th.next": "Next action",
+"sample.dec.title": "以短效 JWT 取代 session cookie",
+"sample.dec.kStatus": "Status:",
+"sample.dec.kDate": "Date:",
+"sample.dec.kStatement": "Statement:",
+"sample.dec.vStatement": "API auth 使用 15 分鐘效期的 JWT 搭配 refresh，而非伺服器端 session。",
+"sample.dec.kRationale": "Rationale:",
+"sample.dec.vRationale": "行動端 client 無法與 web app 共用 cookie jar。",
+"sample.dec.kConsequences": "Consequences:",
+"sample.dec.vConsequences": "所有服務都要做時鐘同步；撤銷機制改為 denylist。",
+"sample.dec.kEvidence": "Evidence:",
+"sample.lrn.title": "記憶體壓力下，Redis keyspace 事件會靜默遺失",
+"sample.lrn.kScope": "Scope:",
+"sample.lrn.vScope": "速率限制、staging",
+"sample.lrn.kEvidence": "Evidence:",
+"sample.lrn.kAction": "Action:",
+"sample.lrn.vAction": "不要靠 keyspace notification 讓 limiter bucket 過期；改成輪詢 sorted set。",
+"thesis.eyebrow": "關鍵區別",
+"thesis.line1": "Project Context 記錄程式碼<b>無法</b>說出口的事——決策、學到的經驗，以及當前的交接。",
+"thesis.line2": "自動生成的 wiki 重新產生的，是程式碼<b>本來就</b>說得出來的事。",
+"thesis.line3": "兩者可以組合使用：Project Context 是<b>權威層</b>；自動生成的 wiki 則是選用的衍生視圖。",
+"thesis.card1.label": "權威層",
+"thesis.card1.title": "Project Context",
+"thesis.card1.body": "決策、學到的經驗、當前的交接——由人或 AI 代理寫下，隨程式碼一起納入版本控制。",
+"thesis.compose": "組合",
+"thesis.card2.label": "衍生視圖 · 選用",
+"thesis.card2.title": "自動生成的 wiki",
+"thesis.card2.body": "重新產生程式碼本來就說得出來的內容。好用、可替換，但不是事實來源。",
+"install.index": "03",
+"install.title": "一行指令，或一段提示詞",
+"install.uvx.body": "直接從儲存庫執行 CLI，不必 clone，也不必建立 virtualenv。把 <code>--apply</code> 換成 <code>--dry-run</code>，可以先印出將要執行的計畫。",
+"install.pipx.body": "讓 <code>init</code>、<code>inspect</code>、<code>review</code> 與 <code>doctor</code> 常駐在你的 PATH 上。",
+"install.prompt.body": "把一段提示詞貼進任何能讀取並編輯該資料夾的 AI 代理即可，完全不需要工具鏈。",
+"install.prompt.comment": "不用 CLI、不用安裝——檔案由 AI 代理自己寫",
+"install.proof1": "零執行期相依性 · 僅用 Python 3.10+ 標準函式庫",
+"install.proof2": "標準安裝會產生 13 個檔案",
+"install.proof3": "安裝程式永遠不會被複製進你的儲存庫",
+"port.index": "04",
+"port.title": "它跟著你走",
+"port.any": "任何能讀取資料夾的 AI 代理",
+"port.line1": "你的專案脈絡存在<b>你自己的 git 歷史</b>裡，而不是某家廠商的記憶服務中。",
+"port.line2": "換工具、換機器，<b>它都跟著你走</b>。",
+"doctor.index": "05",
+"doctor.title": "它如何保持可信",
+"doctor.sub": "唯讀的 doctor 會檢查三件事。",
+"doctor.c1.title": "文件本身站得住腳",
+"doctor.c1.body": "必要檔案、版本、NOW.md 是否過期、重複的 ID、失效的連結。",
+"doctor.c2.title": "證據錨點",
+"doctor.c2.body": "<code>path@commit</code> 會把引用釘在特定版本上。當被引用的檔案在那之後有所變動，<code>evidence-drift</code> 就會提出警告——代表原本的理由可能已經不成立。",
+"doctor.c3.title": "可達性",
+"doctor.c3.body": "受管理的指令區塊、harness 的指向設定，或一個可正常運作的 hook，其中至少要有一個仍能把協定送進工作階段。<code>no-delivery-path</code> 會被視為錯誤——因為一組內容完美、卻從來沒有任何東西載入的檔案，若不這樣檢查，照樣會被回報為健康。",
+"addons.index": "06",
+"addons.title": "延伸工具，只在值得的地方才出現",
+"addons.lede": "三個獨立的開放原始碼工具可以和紀錄並存。Project Context 不只是把它們列出來：它會檢視專案、只推薦真正合適的，而且在你點頭之前，不會安裝或設定任何東西。",
+"addons.step1": "它會檢視專案",
+"addons.step2": "只推薦真正合適的",
+"addons.step3": "你同意前，什麼都不會裝上去",
+"addons.detect": "對每個工具，初始化程序都會分辨兩種從外面看完全一樣的狀態：只是出現在你的 <code>PATH</code> 上，以及真的針對這個儲存庫完成設定。已經安裝但尚未設定的工具，得到的是一次設定的詢問，而不是一次沒有意義的重新安裝。它只會針對符合已確認專案類型、而且它確實觀察到需求的未設定工具發問——並且只有在你明確回答之後才會安裝。",
+"addons.th.tool": "工具",
+"addons.th.what": "它是什麼",
+"addons.th.when": "何時適用",
+"addons.th.rel": "與 Project Context 的關係",
+"addons.gn.what": "程式碼符號、符號之間的關係、影響分析與執行流程。",
+"addons.gn.when": "需要結構或影響分析的原始碼。writing 專案不會推薦；mixed 專案則限縮在有意義的程式碼子樹上。",
+"addons.gn.rel": "對程式碼的衍生解讀。關於這些程式碼的決策，仍然留在納入版本控制的 Markdown 裡。",
+"addons.gf.what": "橫跨程式碼、文件、研究產出與媒體素材之間的關係。",
+"addons.gf.when": "當有價值的素材集合已經超出程式碼——例如彼此高度連結的大量文件、跨來源的研究與證據，或是一部關係複雜的長篇稿件或故事世界觀。",
+"addons.gf.rel": "建立在你素材之上的衍生索引。可以隨時重建，而且永遠不會是被引用的對象。",
+"addons.ow.what": "為穩定的專案持續生成文件與導覽。",
+"addons.ow.when": "結構穩定、複雜度高，而且真的有人需要衍生導覽的專案。論點或結構還在變動時會先擱置；writing 專案不會推薦。",
+"addons.ow.rel": "從既有內容重新生成——包含它所依據的那份紀錄。",
+"addons.types.title": "依專案類型，會推薦什麼",
+"addons.type.code": "原始碼需要結構或影響分析時，推薦 GitNexus。OpenWiki 只給結構穩定、複雜，而且真的有人需要衍生導覽的專案。素材集合超出程式碼時，推薦 Graphify。",
+"addons.type.docs": "大量彼此連結的素材集合推薦 Graphify。OpenWiki 只在協作者確實需要一層持續維護的瀏覽介面時才推薦。",
+"addons.type.research": "跨來源、資料與證據之間的關係推薦 Graphify。OpenWiki 會等到論點與結構穩定之後才考慮。",
+"addons.type.writing": "GitNexus 與 OpenWiki 不會推薦。Graphify 只給關係複雜的長篇稿件或故事世界觀。",
+"addons.type.mixed": "GitNexus，限縮在有意義的程式碼子樹上。",
+"addons.type.general": "在檢視找到具體需求之前，什麼都不會推薦——專案類型還不確定時，答案也一樣。",
+"addons.authority": "<b>Project Context 始終是權威。</b>納入版本控制的 Markdown 才是專案真正承諾的內容；這三個工具都是由它衍生出來的選用系統。它們都不會成為事實來源，而且一個都不安裝，紀錄照樣完整運作。",
+"addons.note": "獨立的開放原始碼工具 · 選用 · 只有在你同意後才會安裝或設定",
+"footer.agency": "專為自主代理時代打造的 <b>AI Innovation Studio</b>——工程講求智慧，設計出於意圖。",
+"brand.tagline": "清晰，隨脈絡而來。",
+"footer.s1": "產品策略",
+"footer.s2": "AI 代理體驗（AX）",
+"footer.s3": "AI 代理與 harness 工程",
+"footer.s4": "進階 RAG",
+"footer.s5": "品牌識別",
+"footer.s6": "網頁體驗",
+"footer.license": "<b>MIT + Commons Clause</b>——可自由使用、修改，並放進你的產品出貨，包含商業用途；但元件本身不得單獨販售或再散布。",
+"ui.theme": "切換佈景主題",
+"ui.lang": "語言",
+"ui.langSearch": "搜尋語言…",
+"ui.langNative": "人工翻譯",
+"ui.langAuto": "機器翻譯",
+"ui.langAutoNote": "其他語言由 Google 機器翻譯。"
+}
+/* I18N:ZH:END */
+};
+
+/* =====================================================================
+   2. LANGUAGE TABLE
+   `tier:"native"` = a hand-written dictionary above. `tier:"auto"` = the
+   page stays English and Google Translate renders it.
+   ===================================================================== */
+const LANGS = [
+  { code:"en",    tier:"native", label:"EN",    name:"English",             native:"English" },
+  { code:"ko",    tier:"native", label:"KO",    name:"Korean",              native:"한국어" },
+  { code:"zh-TW", tier:"native", label:"ZH-TW", name:"Traditional Chinese", native:"繁體中文" },
+  { code:"ja",    tier:"auto",   label:"JA",    name:"Japanese",            native:"日本語" },
+  { code:"zh-CN", tier:"auto",   label:"ZH-CN", name:"Simplified Chinese",  native:"简体中文" },
+  { code:"es",    tier:"auto",   label:"ES",    name:"Spanish",             native:"Español" },
+  { code:"fr",    tier:"auto",   label:"FR",    name:"French",              native:"Français" },
+  { code:"de",    tier:"auto",   label:"DE",    name:"German",              native:"Deutsch" },
+  { code:"pt",    tier:"auto",   label:"PT",    name:"Portuguese",          native:"Português" },
+  { code:"it",    tier:"auto",   label:"IT",    name:"Italian",             native:"Italiano" },
+  { code:"ru",    tier:"auto",   label:"RU",    name:"Russian",             native:"Русский" },
+  { code:"hi",    tier:"auto",   label:"HI",    name:"Hindi",               native:"हिन्दी" },
+  { code:"ar",    tier:"auto",   label:"AR",    name:"Arabic",              native:"العربية" },
+  { code:"id",    tier:"auto",   label:"ID",    name:"Indonesian",          native:"Bahasa Indonesia" },
+  { code:"th",    tier:"auto",   label:"TH",    name:"Thai",                native:"ไทย" },
+  { code:"vi",    tier:"auto",   label:"VI",    name:"Vietnamese",          native:"Tiếng Việt" },
+  { code:"nl",    tier:"auto",   label:"NL",    name:"Dutch",               native:"Nederlands" },
+  { code:"pl",    tier:"auto",   label:"PL",    name:"Polish",              native:"Polski" },
+  { code:"tr",    tier:"auto",   label:"TR",    name:"Turkish",             native:"Türkçe" },
+  { code:"sv",    tier:"auto",   label:"SV",    name:"Swedish",             native:"Svenska" }
+];
+const RTL = ["ar","he","fa","ur"];
+const LANG_KEY = 'pc-lang', THEME_KEY = 'pc-theme';
+function langByCode(c){ for (var i=0;i<LANGS.length;i++) if (LANGS[i].code === c) return LANGS[i]; return null; }
+function isNative(c){ var l = langByCode(c); return !!l && l.tier === 'native'; }
+
+/* =====================================================================
+   3. GOOGTRANS COOKIE — THE PART THAT MUST NOT BE SIMPLIFIED
+   Google's element.js does not only read `googtrans`; it REWRITES it, and
+   it writes at the REGISTRABLE DOMAIN (e.g. `.monomind.one`), not at the
+   host we wrote it on. So a host-scoped write leaves TWO cookies with the
+   same name. document.cookie exposes no domain attribute, so the first
+   match wins on read — and that is the stale domain-scoped one. The site
+   then freezes on a previously chosen language, on EVERY subdomain, with
+   no way for the user to get back. That is the production bug this file
+   exists to not reproduce.
+   The rule: DELETE at every scope first, then write at exactly one.
+   ===================================================================== */
+var EXPIRED = 'expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+
+function clearGoogtrans(){
+  var host = location.hostname;
+  /* 1. the no-domain (host-only) copy */
+  document.cookie = 'googtrans=; ' + EXPIRED;
+  /* 2. every parent-domain suffix, with and without the leading dot.
+        A bare IPv4 literal has no domain hierarchy — skip the loop. */
+  if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+    var parts = host.split('.');
+    for (var i = 0; i <= parts.length - 2; i++) {
+      var suffix = parts.slice(i).join('.');
+      document.cookie = 'googtrans=; domain=' + suffix + '; ' + EXPIRED;
+      document.cookie = 'googtrans=; domain=.' + suffix + '; ' + EXPIRED;
+    }
   }
-  function flash(btn) {
-    var original = btn.getAttribute('data-label');
-    btn.textContent = btn.getAttribute('data-copied') ||
-      (original === 'copy' ? 'copied' : 'Copied — paste it into your agent');
-    clearTimeout(btn._t);
-    btn._t = setTimeout(function () { btn.textContent = original; }, 2200);
+}
+
+function setGoogtrans(code){
+  clearGoogtrans();                                   /* never write over a stale twin */
+  document.cookie = 'googtrans=/en/' + code + '; path=/';   /* exactly one scope: host */
+}
+
+/* Do NOT take the first `googtrans=` match blindly — after Google has
+   rewritten the cookie there may be several, and the leading one is often
+   the stale or malformed copy. Take the first WELL-FORMED `/en/<code>`. */
+function readGoogtrans(){
+  var jar = document.cookie ? document.cookie.split(/;\s*/) : [];
+  for (var i = 0; i < jar.length; i++) {
+    if (jar[i].indexOf('googtrans=') !== 0) continue;
+    var raw;
+    try { raw = decodeURIComponent(jar[i].slice(10)); } catch (e) { raw = jar[i].slice(10); }
+    var m = raw.match(/^\/[A-Za-z-]+\/([A-Za-z]{2,3}(?:-[A-Za-z]{2,4})?)$/);
+    if (m) return m[1];
   }
-  function fallback(btn) {
-    var ta = document.createElement('textarea');
-    ta.value = payload(btn);
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    var ok = false;
-    try { ok = document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(ta);
-    if (ok) flash(btn);
+  return null;
+}
+
+function googleIsLoaded(){
+  return !!document.querySelector('.goog-te-combo, iframe.skiptranslate, #goog-gt-tt') ||
+         /(^|\s)translated-(ltr|rtl)(\s|$)/.test(document.documentElement.className);
+}
+
+var googleInjected = false;
+function loadGoogleTranslate(){
+  if (googleInjected) return;
+  googleInjected = true;
+  window.googleTranslateElementInit = function(){
+    try {
+      new google.translate.TranslateElement({ pageLanguage:'en', autoDisplay:false }, 'googleTranslateHost');
+    } catch (e) {}
+  };
+  var s = document.createElement('script');
+  s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  s.async = true;
+  document.head.appendChild(s);
+}
+
+/* =====================================================================
+   4. APPLYING A DICTIONARY
+   ===================================================================== */
+function applyDict(code){
+  var dict = I18N[code] || I18N.en;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var v = dict[el.getAttribute('data-i18n')];
+    if (typeof v === 'string') el.innerHTML = v;      /* trusted, static, first-party */
+  });
+  /* attrs: data-i18n-attr="aria-label:ui.lang;title:ui.theme" */
+  document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+    el.getAttribute('data-i18n-attr').split(';').forEach(function(pair){
+      var bits = pair.split(':');
+      if (bits.length !== 2) return;
+      var v = dict[bits[1].trim()];
+      if (typeof v === 'string') el.setAttribute(bits[0].trim(), v);
+    });
+  });
+  /* Never-translate tokens: any <code> that arrived inside a dictionary
+     string is a command, path or error code. Fence it off from Google, and
+     tint the two diagnostic codes semantically. The tokens are on the
+     never-translate list, so matching on their literal text is stable
+     across every language. */
+  document.querySelectorAll('[data-i18n] code').forEach(function(el){
+    el.setAttribute('translate','no'); el.classList.add('notranslate');
+    var t = el.textContent.trim();
+    if (t === 'evidence-drift') el.classList.add('warn');
+    else if (t === 'no-delivery-path') el.classList.add('err');
+  });
+  document.documentElement.lang = code;
+  document.documentElement.dir = RTL.indexOf(code.split('-')[0]) >= 0 ? 'rtl' : 'ltr';
+  syncLangUI(code);
+  measureScrollHints();
+}
+
+function syncLangUI(code){
+  var l = langByCode(code) || LANGS[0];
+  var dict = I18N[isNative(code) ? code : 'en'] || I18N.en;
+  var codeEl = document.getElementById('langCode');
+  if (codeEl) codeEl.textContent = l.label;
+  var btn = document.getElementById('langBtn');
+  if (btn) btn.setAttribute('aria-label', dict['ui.lang'] + ': ' + l.name);
+  document.querySelectorAll('.langopt').forEach(function(o){
+    o.setAttribute('aria-selected', String(o.dataset.code === code));
+  });
+}
+
+/* =====================================================================
+   5. SELECTING A LANGUAGE
+   ===================================================================== */
+function selectLang(code){
+  if (!langByCode(code)) return;
+  try { localStorage.setItem(LANG_KEY, code); } catch (e) {}
+
+  if (isNative(code)) {
+    /* Google must NOT run on top of a hand-written Korean or Chinese
+       page — it would translate our translation into garbage. Clear the
+       cookie at every scope, then reload if Google has already injected
+       itself, so its DOM rewrites are gone before our dictionary lands. */
+    var hadGoogle = readGoogtrans() || googleIsLoaded();
+    clearGoogtrans();
+    if (hadGoogle) { location.reload(); return; }
+    applyDict(code);
+    closeLangPanel(true);
+    return;
   }
-  buttons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(payload(btn)).then(function () { flash(btn); }, function () { fallback(btn); });
-      } else {
-        fallback(btn);
-      }
+  /* Machine tier: element.js reads the cookie at init, so the cookie is
+     written first and the page reloaded into it. */
+  setGoogtrans(code);
+  location.reload();
+}
+
+/* =====================================================================
+   6. LANGUAGE DROPDOWN
+   ===================================================================== */
+var langWrap  = document.getElementById('langWrap');
+var langBtn   = document.getElementById('langBtn');
+var langPanel = document.getElementById('langPanel');
+var langList  = document.getElementById('langList');
+var langInput = document.getElementById('langSearch');
+var langEmpty = document.getElementById('langEmpty');
+var activeOpt = null;
+
+(function buildOptions(){
+  document.querySelectorAll('.langopts').forEach(function(host){
+    var tier = host.dataset.tier;
+    LANGS.filter(function(l){ return l.tier === tier; }).forEach(function(l){
+      var o = document.createElement('div');
+      o.className = 'langopt';
+      o.id = 'langopt-' + l.code;
+      o.setAttribute('role','option');
+      o.setAttribute('aria-selected','false');
+      o.dataset.code = l.code;
+      o.dataset.hay = (l.name + ' ' + l.native + ' ' + l.code).toLowerCase();
+      o.innerHTML = '<span class="lo-name notranslate" translate="no"></span>' +
+                    '<span class="lo-native notranslate" translate="no"></span>' +
+                    '<span class="lo-code notranslate" translate="no"></span>';
+      o.querySelector('.lo-name').textContent = l.name;
+      o.querySelector('.lo-native').textContent = (l.native === l.name) ? '' : l.native;
+      o.querySelector('.lo-code').textContent = l.code;
+      o.addEventListener('click', function(){ selectLang(l.code); });
+      o.addEventListener('mousemove', function(){ setActive(o); });
+      host.appendChild(o);
     });
   });
 })();
-</script>
-<div id="google_translate_element" class="notranslate" aria-hidden="true"></div>
-<script>
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,ko,zh-TW', autoDisplay: false }, 'google_translate_element');
+
+function visibleOpts(){
+  return Array.prototype.filter.call(document.querySelectorAll('.langopt'), function(o){ return !o.hidden; });
 }
-(function () {
-  function currentLang() {
-    var m = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([^;]+)/);
-    return m ? decodeURIComponent(m[1]) : 'en';
+function setActive(o){
+  document.querySelectorAll('.langopt.active').forEach(function(x){ x.classList.remove('active'); });
+  activeOpt = o || null;
+  if (!o) { langInput.removeAttribute('aria-activedescendant'); return; }
+  o.classList.add('active');
+  langInput.setAttribute('aria-activedescendant', o.id);
+  var top = o.offsetTop, bot = top + o.offsetHeight;
+  if (top < langList.scrollTop) langList.scrollTop = top - 8;
+  else if (bot > langList.scrollTop + langList.clientHeight) langList.scrollTop = bot - langList.clientHeight + 8;
+}
+function filterOpts(q){
+  q = (q || '').trim().toLowerCase();
+  var any = false;
+  document.querySelectorAll('.langopt').forEach(function(o){
+    var hit = !q || o.dataset.hay.indexOf(q) >= 0;
+    o.hidden = !hit;
+    if (hit) any = true;
+  });
+  document.querySelectorAll('.langgroup').forEach(function(g){
+    g.hidden = !g.querySelector('.langopt:not([hidden])');
+  });
+  langEmpty.hidden = any;
+  var vis = visibleOpts();
+  setActive(vis.length ? vis[0] : null);
+}
+function openLangPanel(){
+  langPanel.hidden = false;
+  langWrap.classList.add('open');
+  langBtn.setAttribute('aria-expanded','true');
+  langInput.value = '';
+  filterOpts('');
+  var cur = document.querySelector('.langopt[aria-selected="true"]:not([hidden])');
+  if (cur) setActive(cur);
+  langInput.focus();
+}
+function closeLangPanel(refocus){
+  if (langPanel.hidden) return;
+  langPanel.hidden = true;
+  langWrap.classList.remove('open');
+  langBtn.setAttribute('aria-expanded','false');
+  setActive(null);
+  if (refocus) langBtn.focus();
+}
+langBtn.addEventListener('click', function(){ langPanel.hidden ? openLangPanel() : closeLangPanel(true); });
+langBtn.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); openLangPanel(); }
+});
+langInput.addEventListener('input', function(){ filterOpts(langInput.value); });
+langInput.addEventListener('keydown', function(e){
+  var vis = visibleOpts(), i = activeOpt ? vis.indexOf(activeOpt) : -1;
+  if (e.key === 'ArrowDown')      { e.preventDefault(); if (vis.length) setActive(vis[(i + 1) % vis.length]); }
+  else if (e.key === 'ArrowUp')   { e.preventDefault(); if (vis.length) setActive(vis[(i - 1 + vis.length) % vis.length]); }
+  else if (e.key === 'Home')      { e.preventDefault(); if (vis.length) setActive(vis[0]); }
+  else if (e.key === 'End')       { e.preventDefault(); if (vis.length) setActive(vis[vis.length - 1]); }
+  else if (e.key === 'Enter')     { e.preventDefault(); if (activeOpt) selectLang(activeOpt.dataset.code); }
+  else if (e.key === 'Escape')    { e.preventDefault(); closeLangPanel(true); }
+  else if (e.key === 'Tab')       { closeLangPanel(false); }   /* focus leaves naturally */
+});
+document.addEventListener('pointerdown', function(e){
+  if (!langPanel.hidden && !langWrap.contains(e.target)) closeLangPanel(false);
+});
+
+/* =====================================================================
+   7. THEME
+   ===================================================================== */
+(function(){
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  function paint(t){
+    root.setAttribute('data-theme', t);
+    btn.setAttribute('aria-pressed', String(t === 'light'));
   }
-  function cookieDomains() {
-    // Google's element.js rewrites the googtrans cookie at the registrable
-    // domain (.monomind.one), so a kill that only covers the full host leaves
-    // that copy alive — and it sorts first, overriding every later choice.
-    // Clear every parent-domain scope, then set the new value at exactly one.
-    var host = location.hostname;
-    var domains = [''];
-    if (host && !/^\d+\.\d+\.\d+\.\d+$/.test(host)) {
-      var parts = host.split('.');
-      for (var i = 0; i < parts.length - 1; i++) {
-        var d = parts.slice(i).join('.');
-        domains.push(d, '.' + d);
+  paint(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  btn.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    paint(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  });
+})();
+
+/* =====================================================================
+   8. NAV
+   ===================================================================== */
+(function(){
+  var t = document.getElementById('navToggle'), m = document.getElementById('navMobile');
+  t.addEventListener('click', function(){
+    var open = m.classList.toggle('open');
+    t.setAttribute('aria-expanded', String(open));
+  });
+  m.addEventListener('click', function(e){
+    if (e.target.tagName === 'A') { m.classList.remove('open'); t.setAttribute('aria-expanded','false'); }
+  });
+})();
+
+/* =====================================================================
+   9. COPY + SCROLL AFFORDANCE
+   The hint is shown only when the block ACTUALLY overflows, measured
+   rather than guessed — a wide viewport fits the command and a badge
+   telling you to scroll something that does not scroll is a lie.
+   ===================================================================== */
+function measureScrollHints(){
+  document.querySelectorAll('[data-cmd]').forEach(function(cmd){
+    var sc = cmd.querySelector('[data-scroller]'), hint = cmd.querySelector('[data-scrollhint]');
+    if (!sc || !hint) return;
+    hint.hidden = !(sc.scrollWidth > sc.clientWidth + 2);
+  });
+}
+(function(){
+  var status = document.getElementById('copyStatus'), timer = null;
+  function announce(){
+    var dict = I18N[document.documentElement.lang] || I18N.en;
+    status.textContent = dict['hero.cta.copied'] || I18N.en['hero.cta.copied'];
+    clearTimeout(timer);
+    timer = setTimeout(function(){ status.textContent = ''; }, 2600);
+  }
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy');
+      function done(){
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.classList.remove('copied'); }, 1800);
+        announce();
       }
-    } else if (host) {
-      domains.push(host);
-    }
-    return domains;
-  }
-  function setLang(code) {
-    var kill = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-    cookieDomains().forEach(function (domain) {
-      document.cookie = kill + (domain ? '; domain=' + domain : '');
-    });
-    if (code !== 'en') {
-      document.cookie = 'googtrans=/en/' + code + '; path=/';
-    }
-    location.reload();
-  }
-  var cur = currentLang();
-  document.querySelectorAll('.lang-btn').forEach(function (btn) {
-    if (btn.getAttribute('data-lang') === cur) btn.classList.add('active');
-    btn.addEventListener('click', function () {
-      if (btn.getAttribute('data-lang') !== cur) setLang(btn.getAttribute('data-lang'));
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+        document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, text.length);
+        try { document.execCommand('copy'); } catch (e) {}
+        ta.remove(); done();
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
     });
   });
-  if (cur !== 'en') {
-    var s = document.createElement('script');
-    s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    document.head.appendChild(s);
+  var rt = null;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(measureScrollHints, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureScrollHints);
+})();
+
+/* =====================================================================
+   10. REVEAL ON SCROLL — fails visible, never blank
+   ===================================================================== */
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function(el){ el.classList.add('in'); });
+    return;
   }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { rootMargin:'0px 0px -8% 0px', threshold:.05 });
+  els.forEach(function(el){ io.observe(el); });
+  /* Some contexts never deliver callbacks (hidden embed, print preview,
+     headless screenshot) and .reveal starts at opacity 0. Show everything
+     rather than show nothing. */
+  setTimeout(function(){
+    if (document.querySelector('.reveal.in')) return;
+    els.forEach(function(el){ el.classList.add('in'); io.unobserve(el); });
+  }, 1200);
+})();
+
+/* =====================================================================
+   11. BOOT
+   ===================================================================== */
+(function(){
+  var stored = null;
+  try { stored = localStorage.getItem(LANG_KEY); } catch (e) {}
+  if (!langByCode(stored)) stored = null;
+
+  /* A googtrans cookie with no stored machine choice is a leftover — very
+     likely the domain-scoped twin Google wrote on some other page of the
+     registrable domain. Honour the user's stored choice, not the cookie. */
+  var cookieLang = readGoogtrans();
+  var lang = stored || (langByCode(cookieLang) && !isNative(cookieLang) ? cookieLang : 'en');
+
+  if (isNative(lang)) {
+    clearGoogtrans();          /* idempotent; guarantees no stale twin survives */
+    applyDict(lang);
+  } else {
+    applyDict('en');           /* Google translates FROM our English DOM */
+    setGoogtrans(lang);        /* re-assert host scope on every load */
+    syncLangUI(lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = RTL.indexOf(lang.split('-')[0]) >= 0 ? 'rtl' : 'ltr';
+    loadGoogleTranslate();
+  }
+  measureScrollHints();
 })();
 </script>
 </body>

@@ -12,8 +12,9 @@
 #   build command:     bash site/sync.sh
 #   output directory:  site
 #
-# Routes served:  /             -> site/index.html
-#                 /guide/       -> site/guide/index.html
+# Routes served:  /             -> site/index.html          (committed)
+#                 /use-cases/   -> site/use-cases/index.html (committed)
+#                 /guide/       -> site/guide/index.html     (copied here)
 #                 /og-image.jpg -> derived from assets/project-context-cover.jpg
 #
 # Run it locally before previewing site/index.html.
