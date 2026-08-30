@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Context — Clarity Comes With Context</title>
+<meta name="description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo: small Markdown records maintained by agents, readable by everyone.">
+<link rel="canonical" href="https://projectcontext.monomind.one/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Context">
+<meta property="og:title" content="Project Context — Clarity Comes With Context">
+<meta property="og:description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo: small Markdown records maintained by agents, readable by everyone.">
+<meta property="og:url" content="https://projectcontext.monomind.one/">
+<meta property="og:image" content="https://projectcontext.monomind.one/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="Project Context — a sharp white square over a blurred forest. Clarity comes with context.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Project Context — Clarity Comes With Context">
+<meta name="twitter:description" content="Shared project context that outlives any one person, agent, or chat. A context pipeline built into the repo.">
+<meta name="twitter:image" content="https://projectcontext.monomind.one/og-image.jpg">
+<meta name="theme-color" content="#102033">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #102033;
+    --accent: #4f8cff;
+    --accent-soft: #7fa9ff;
+    --accent-eyebrow: #85acff;
+    --hair: rgba(255,255,255,0.22);
+    --glass: rgba(255,255,255,0.1);
+    --muted: rgba(255,255,255,0.72);
+    --muted-2: rgba(255,255,255,0.6);
+    --font-body: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: #ffffff; font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+  a { color: #ffffff; text-decoration: none; }
+  a:hover { color: var(--accent-soft); }
+  .wrap { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 4vw, 56px); padding-right: clamp(20px, 4vw, 56px); }
+  .mono { font-family: var(--font-mono); }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-eyebrow); }
+
+  /* header */
+  .top { border-bottom: 1px solid var(--hair); background: var(--ink); position: relative; z-index: 2; }
+  .top-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+  .brand { display: flex; align-items: center; gap: 14px; font-family: var(--font-mono); font-size: 14px; min-width: 0; }
+  .brand-logo { display: inline-flex; align-items: center; }
+  .brand-text { display: inline-flex; align-items: baseline; gap: 6px; min-width: 0; }
+  .brand .org { color: var(--muted-2); }
+  .brand .repo { font-weight: 600; }
+  .top-links { display: flex; align-items: center; gap: 24px; font-family: var(--font-mono); font-size: 13px; color: var(--muted-2); flex-shrink: 0; }
+  .top-links .meta { color: var(--muted-2); }
+  .chip { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 22px; border: 1px solid rgba(79,140,255,0.46); border-radius: 999px; background: var(--glass); color: var(--accent-soft); }
+  .chip:hover { background: rgba(255,255,255,0.16); color: var(--accent-soft); }
+  .lang { display: flex; border: 1px solid var(--hair); border-radius: 999px; overflow: hidden; }
+  .lang-btn { background: none; border: 0; color: var(--muted-2); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px; padding: 0 14px; min-height: 40px; cursor: pointer; }
+  .lang-btn:hover { color: #ffffff; }
+  .lang-btn.active { background: var(--glass); color: #ffffff; }
+  /* When translated, protected terms sit flush against translated text */
+  html.translated-ltr .term-body span[translate="no"],
+  html.translated-ltr .card p span[translate="no"],
+  html.translated-rtl .term-body span[translate="no"],
+  html.translated-rtl .card p span[translate="no"] { margin-inline: 0.3em; }
+  /* Google Translate chrome: keep the page clean */
+  #google_translate_element { display: none; }
+  iframe.skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame,
+  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf, .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; visibility: hidden !important; }
+  body { top: 0 !important; position: static !important; }
+
+  /* hero */
+  .hero { position: relative; overflow: hidden; }
+  .hero-bg, .hero-shade { position: absolute; inset: 0; }
+  .hero-bg { background-image: url('hero.jpg'); background-size: cover; background-position: center; }
+  .hero-shade { background: linear-gradient(95deg, rgba(16,32,51,0.92) 0%, rgba(16,32,51,0.78) 40%, rgba(16,32,51,0.46) 66%, rgba(16,32,51,0.28) 100%); }
+  .hero-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 620px); gap: clamp(32px, 4vw, 48px); align-items: center; padding-top: clamp(56px, 7vw, 92px); padding-bottom: clamp(56px, 7vw, 92px); }
+  .kicker { display: flex; align-items: center; gap: 24px; margin-bottom: 26px; }
+  .kicker-rule { height: 1px; width: 110px; background: var(--hair); }
+  h1 { margin: 0 0 26px; font-size: clamp(38px, 5vw, 70px); font-weight: 700; line-height: 1.06; letter-spacing: -0.025em; max-width: 14ch; }
+  .lead { margin: 0 0 30px; font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; color: var(--muted); max-width: 52ch; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 12px 30px; border-radius: 999px; font-size: 15px; font-weight: 700; border: 0; cursor: pointer; font-family: var(--font-body); }
+  .btn-primary { background: var(--accent); color: #ffffff; }
+  .btn-primary:hover { background: #4680ec; color: #ffffff; }
+  .btn-ghost { background: var(--glass); color: #ffffff; border: 1px solid var(--hair); font-weight: 600; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.16); color: #ffffff; }
+
+  .hero-visual { position: relative; min-height: 520px; }
+  .sq-label { position: absolute; top: 0; right: 60px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 2px; color: rgba(255,255,255,0.85); }
+  .square { position: absolute; top: 26px; right: 56px; width: min(336px, 70%); aspect-ratio: 1 / 1; border: 6px solid #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding-bottom: 30px; }
+  .square .f { font-family: var(--font-mono); font-size: 15px; font-weight: 600; }
+  .term { position: absolute; left: 0; bottom: 0; width: min(560px, 100%); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; background: rgba(16,32,51,0.85); box-shadow: 0 24px 80px rgba(79,140,255,0.22); }
+  .term-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; border-bottom: 1px solid var(--hair); font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); }
+  .term-copy { display: inline-flex; align-items: center; color: var(--accent-soft); background: none; border: 0; cursor: pointer; font-family: var(--font-mono); font-size: 12px; padding: 12px 14px; margin: -12px -14px; }
+  .term-body { padding: 22px 24px 26px; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.8; color: rgba(255,255,255,0.82); }
+  .term-body .hl, .term-body .p { color: var(--accent-soft); }
+  .vlabel { position: absolute; color: rgba(255,255,255,0.5); top: 96px; right: 14px; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+
+  /* sections */
+  .section { position: relative; overflow: hidden; border-top: 1px solid var(--hair); }
+  .section-wash { position: absolute; inset: 0; background: radial-gradient(900px 620px at 80% 0%, rgba(79,140,255,0.28) 0%, rgba(79,140,255,0) 60%), radial-gradient(760px 540px at 6% 100%, rgba(79,140,255,0.13) 0%, rgba(79,140,255,0) 62%); }
+  .section-in { position: relative; padding-top: clamp(56px, 6vw, 84px); padding-bottom: clamp(56px, 6vw, 84px); display: flex; flex-direction: column; gap: clamp(32px, 4vw, 44px); }
+  .sec-head { display: flex; align-items: baseline; gap: 20px; }
+  .sec-head h2 { margin: 0; font-size: clamp(26px, 3vw, 34px); font-weight: 700; letter-spacing: -0.025em; }
+
+  .flow { display: flex; align-items: stretch; gap: 20px; }
+  .card { display: flex; flex-direction: column; gap: 12px; flex: 1 1 0; padding: 28px; border: 1px solid var(--hair); border-radius: 16px; background: var(--glass); }
+  .card .tag { font-family: var(--font-mono); font-size: 13px; color: var(--accent-eyebrow); }
+  .card h3 { margin: 0; font-size: 19px; font-weight: 700; }
+  .card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); overflow-wrap: break-word; }
+  .arrow { display: flex; align-items: center; flex-shrink: 0; }
+  .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .check { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border: 1px solid var(--hair); border-radius: 999px; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+  .check svg { flex-shrink: 0; }
+  .sec-lead { margin: -18px 0 0; max-width: 72ch; }
+  /* the hero terminal, reused inline inside a section */
+  .section .term { position: static; width: 100%; max-width: 900px; }
+
+  .addons-bg { position: absolute; inset: 0; background-image: url('addons.jpg'); background-size: cover; background-position: center; filter: blur(6px); transform: scale(1.08); }
+  .addons-shade { position: absolute; inset: 0; background: linear-gradient(95deg, rgba(16,32,51,0.92) 0%, rgba(16,32,51,0.8) 45%, rgba(16,32,51,0.62) 100%); }
+  .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  .tool { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 24px 20px; }
+  .pill { display: inline-flex; align-items: center; min-height: 56px; padding: 12px 36px; border: 1px solid rgba(79,140,255,0.46); border-radius: 999px; background: var(--glass); box-shadow: 0 24px 80px rgba(79,140,255,0.3); font-size: 19px; font-weight: 700; letter-spacing: 2px; }
+  .tool p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); text-align: center; }
+  .tools-note { font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); text-align: center; line-height: 1.7; }
+  .tools-note a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* footer */
+  footer { border-top: 1px solid var(--hair); background: var(--ink); }
+  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 24px; padding-bottom: 24px; font-family: var(--font-mono); font-size: 12px; color: var(--muted-2); }
+  .foot-brand { display: flex; align-items: center; gap: 12px; color: var(--muted-2); }
+  .foot-tag { color: var(--accent-soft); }
+
+  @media (max-width: 1160px) {
+    .hero-in { grid-template-columns: minmax(0, 1fr); }
+    .hero-visual { min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 28px; margin-top: 8px; }
+    .sq-label { position: static; align-self: flex-end; margin-right: 8px; }
+    .square { position: static; width: min(300px, 78vw); }
+    .term { position: static; width: 100%; max-width: 640px; }
+    .vlabel { display: none; }
+  }
+  @media (max-width: 900px) {
+    .flow { flex-direction: column; }
+    .arrow { justify-content: center; transform: rotate(90deg); padding: 2px 0; }
+    .checks { grid-template-columns: 1fr; }
+    .tools { grid-template-columns: 1fr; gap: 8px; }
+  }
+  @media (max-width: 640px) {
+    .top-links .meta { display: none; }
+    .brand .org { display: none; }
+    .term-body { font-size: 12.5px; }
+    .kicker-rule { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand notranslate" translate="no">
+      <a class="brand-logo" href="https://monomind.one" aria-label="MonoMind AI Lab">
+      <svg width="26" height="26" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="#ffffff" transform="translate(74,141)"></path><path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="#ffffff" transform="translate(450,315)"></path></svg>
+      </a>
+      <a class="brand-text" href="https://github.com/monomind-ai-lab/project-context" aria-label="Project Context repository on GitHub"><span class="org">monomind-ai-lab /</span><span class="repo">project-context</span></a>
+    </div>
+    <nav class="top-links" aria-label="Repository links">
+      <a class="meta" translate="no" href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" title="Source-available under MIT + Commons Clause v1.0 — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold, sublicensed, or redistributed standalone.">MIT + Commons Clause</a>
+      <div class="lang notranslate" role="group" aria-label="Language">
+        <button class="lang-btn" data-lang="en" type="button">EN</button>
+        <button class="lang-btn" data-lang="ko" type="button">KR</button>
+        <button class="lang-btn" data-lang="zh-TW" type="button">ZH-TW</button>
+      </div>
+      <a class="chip" href="/guide">docs ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-label="Introduction">
+    <div class="hero-bg" role="img" aria-label="Blurred forest in motion — trees smeared into soft vertical streaks"></div>
+    <div class="hero-shade"></div>
+    <div class="wrap hero-in">
+      <div>
+        <div class="kicker">
+          <span class="eyebrow">Agent-operated · human-readable</span>
+          <span class="kicker-rule" aria-hidden="true"></span>
+        </div>
+        <h1>A context pipeline built into the repo.</h1>
+        <p class="lead">Work blurs — chats scatter, plans go stale, memory fades. Project Context keeps one sharp frame on what is true: small Markdown records that outlive any one person, agent, or chat.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary js-copy" type="button" data-copy="command" data-label="Copy the install command" data-copied="Copied — paste it into your terminal">Copy the install command</button>
+          <a class="btn btn-ghost" href="/guide">Read the guide</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <span class="sq-label mono">// 001</span>
+        <div class="square" translate="no" aria-label="The three context records">
+          <span class="f">NOW.md</span>
+          <span class="f">DECISIONS.md</span>
+          <span class="f">LEARNINGS.md</span>
+        </div>
+        <div class="term">
+          <div class="term-head">
+            <span translate="no">project-context init</span>
+            <button class="term-copy js-copy" type="button" data-copy="command" data-label="copy">copy</button>
+          </div>
+          <div class="term-body" translate="no"><span class="p">$</span> uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init <span class="hl">--target . --install-skills --apply</span><span class="p">█</span></div>
+        </div>
+      </div>
+    </div>
+    <a class="vlabel notranslate" translate="no" href="https://monomind.one">@monomind ai lab</a>
+  </section>
+
+  <section class="section" aria-labelledby="h-install">
+    <div class="section-wash" aria-hidden="true"></div>
+    <div class="wrap section-in">
+      <div class="sec-head">
+        <span class="eyebrow">[01]</span>
+        <h2 id="h-install">One command, or one prompt</h2>
+      </div>
+      <div class="flow">
+        <div class="card">
+          <span class="tag" translate="no">uvx</span>
+          <h3>One command, nothing installed</h3>
+          <p>The install command runs the CLI straight from the repository — no clone, no virtualenv. Swap <span translate="no">--apply</span> for <span translate="no">--dry-run</span> and it prints the exact file plan instead of writing it.</p>
+        </div>
+        <div class="card">
+          <span class="tag" translate="no">pipx</span>
+          <h3>Or a command that stays</h3>
+          <p><span class="mono" translate="no">pipx install git+https://github.com/monomind-ai-lab/project-context</span> keeps <span translate="no">init</span>, <span translate="no">inspect</span>, <span translate="no">review</span>, and <span translate="no">doctor</span> on your path for every repository after this one.</p>
+        </div>
+        <div class="card">
+          <span class="tag" translate="no">prompt</span>
+          <h3>Or no tooling at all</h3>
+          <p>Paste one prompt into any agent that can read and edit the folder. It asks the onboarding question, proposes the plan, and waits for your approval before it writes.</p>
+        </div>
+      </div>
+      <div class="term">
+        <div class="term-head">
+          <span translate="no">install-prompt.md</span>
+          <button class="term-copy js-copy" type="button" data-copy="prompt" data-label="copy">copy</button>
+        </div>
+        <div class="term-body"><span class="p">&gt;</span> Install Project Context in the current repository using <span translate="no">github.com/monomind-ai-lab/project-context</span>. Read and follow <span class="hl" translate="no">skills/project-context-init/SKILL.md</span>, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes.<span class="p">█</span></div>
+      </div>
+      <div class="checks">
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>zero runtime dependencies · stdlib Python 3.10+</span></div>
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>a stock install lands 13 files, core profile</span></div>
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>the installer itself is never copied in</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-pipeline">
+    <div class="section-wash" aria-hidden="true"></div>
+    <div class="wrap section-in">
+      <div class="sec-head">
+        <span class="eyebrow">[02]</span>
+        <h2 id="h-pipeline">How the pipeline runs</h2>
+      </div>
+      <div class="flow">
+        <div class="card">
+          <span class="tag" translate="no">evidence/</span>
+          <h3>Work produces evidence</h3>
+          <p>Primary artifacts stay primary. Nothing is copied into a second knowledge base.</p>
+        </div>
+        <div class="arrow" aria-hidden="true"><svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10h22m0 0-7-7m7 7-7 7" stroke="rgba(255,255,255,0.45)" stroke-width="2"></path></svg></div>
+        <div class="card">
+          <span class="tag" translate="no">promote()</span>
+          <h3>Milestones promote context</h3>
+          <p>Current state to <span translate="no">NOW.md</span>, constraints to <span translate="no">DECISIONS.md</span>, verified lessons to <span translate="no">LEARNINGS.md</span>.</p>
+        </div>
+        <div class="arrow" aria-hidden="true"><svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10h22m0 0-7-7m7 7-7 7" stroke="rgba(255,255,255,0.45)" stroke-width="2"></path></svg></div>
+        <div class="card">
+          <span class="tag" translate="no">inherit</span>
+          <h3>The next agent reads first</h3>
+          <p><span translate="no">NOW.md</span>, decisions, learnings, then only the relevant evidence links.</p>
+        </div>
+      </div>
+      <div class="checks">
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>dry-run before every apply</span></div>
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>existing files preserved byte-for-byte</span></div>
+        <div class="check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4f8cff" stroke-width="2"></path></svg><span>read-only doctor for stale context</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-doctor">
+    <div class="section-wash" aria-hidden="true"></div>
+    <div class="wrap section-in">
+      <div class="sec-head">
+        <span class="eyebrow">[03]</span>
+        <h2 id="h-doctor">What the doctor actually checks</h2>
+      </div>
+      <div class="flow">
+        <div class="card">
+          <span class="tag" translate="no">doctor</span>
+          <h3>The documents hold up</h3>
+          <p>Required files, installed scaffold version, freshness of <span translate="no">NOW.md</span>, duplicate decision and learning IDs, broken relative links. Read-only: it reports, it never rewrites your knowledge.</p>
+        </div>
+        <div class="card">
+          <span class="tag" translate="no">file@commit</span>
+          <h3>The evidence still says what it said</h3>
+          <p>Evidence may pin the state it cites as <span translate="no">path/to/file@&lt;commit&gt;</span>. <span translate="no">evidence-drift</span> warns when that path changed since — the justification may no longer hold. <span translate="no">evidence-unverifiable</span> warns when the commit is unknown.</p>
+        </div>
+        <div class="card">
+          <span class="tag" translate="no">reachability</span>
+          <h3>Something still delivers it</h3>
+          <p>The managed instruction block, a harness pointer, a working hook — at least one route has to carry the protocol into a session. <span translate="no">no-delivery-path</span> is an error, because perfect files that nothing ever loads otherwise report healthy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-addons">
+    <div class="addons-bg" aria-hidden="true"></div>
+    <div class="addons-shade" aria-hidden="true"></div>
+    <div class="wrap section-in">
+      <div class="sec-head">
+        <span class="eyebrow">[04]</span>
+        <h2 id="h-addons">Optional add-ons, informed opt-in</h2>
+      </div>
+      <p class="lead sec-lead">Project Context records what the code cannot say — the decisions, the learnings, the current handoff. A generated wiki regenerates what the code does say. They compose: Project Context is the authority layer, a generated wiki an optional derived view.</p>
+      <div class="tools">
+        <div class="tool">
+          <span class="pill" translate="no">GITNEXUS</span>
+          <p>Code symbols, relationships, impact, and execution flows.</p>
+        </div>
+        <div class="tool">
+          <span class="pill" translate="no">GRAPHIFY</span>
+          <p>Relationships across code, documents, research artifacts, and media.</p>
+        </div>
+        <div class="tool">
+          <span class="pill" translate="no">OPENWIKI</span>
+          <p>Ongoing generated documentation and navigation for stable projects.</p>
+        </div>
+      </div>
+      <p class="tools-note">Independent open-source projects, recommended when they fit. Project Context works without any of them.<br>Setup notes live in <a href="https://github.com/monomind-ai-lab/project-context/blob/main/skills/project-context-init/references/optional-tools.md">the optional-tools reference</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <a class="foot-brand" href="https://monomind.one">
+      <svg width="18" height="18" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="rgba(255,255,255,0.6)" transform="translate(74,141)"></path><path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="rgba(255,255,255,0.6)" transform="translate(450,315)"></path></svg>
+      <span translate="no">© MonoMind AI Lab</span>
+    </a>
+    <span class="foot-tag">clarity comes with context</span>
+    <a href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" translate="no" title="Source-available under MIT + Commons Clause v1.0 — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold, sublicensed, or redistributed standalone." style="color: var(--muted-2);">MIT + Commons Clause</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var PROMPT = 'Install Project Context in the current repository or project folder using https://github.com/monomind-ai-lab/project-context. Read and follow `skills/project-context-init/SKILL.md`, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes.';
+  var COMMAND = 'uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply';
+  var PAYLOAD = { prompt: PROMPT, command: COMMAND };
+  var buttons = document.querySelectorAll('.js-copy');
+  function payload(btn) {
+    return PAYLOAD[btn.getAttribute('data-copy')] || PROMPT;
+  }
+  function flash(btn) {
+    var original = btn.getAttribute('data-label');
+    btn.textContent = btn.getAttribute('data-copied') ||
+      (original === 'copy' ? 'copied' : 'Copied — paste it into your agent');
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.textContent = original; }, 2200);
+  }
+  function fallback(btn) {
+    var ta = document.createElement('textarea');
+    ta.value = payload(btn);
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    if (ok) flash(btn);
+  }
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload(btn)).then(function () { flash(btn); }, function () { fallback(btn); });
+      } else {
+        fallback(btn);
+      }
+    });
+  });
+})();
+</script>
+<div id="google_translate_element" class="notranslate" aria-hidden="true"></div>
+<script>
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,ko,zh-TW', autoDisplay: false }, 'google_translate_element');
+}
+(function () {
+  function currentLang() {
+    var m = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : 'en';
+  }
+  function cookieDomains() {
+    // Google's element.js rewrites the googtrans cookie at the registrable
+    // domain (.monomind.one), so a kill that only covers the full host leaves
+    // that copy alive — and it sorts first, overriding every later choice.
+    // Clear every parent-domain scope, then set the new value at exactly one.
+    var host = location.hostname;
+    var domains = [''];
+    if (host && !/^\d+\.\d+\.\d+\.\d+$/.test(host)) {
+      var parts = host.split('.');
+      for (var i = 0; i < parts.length - 1; i++) {
+        var d = parts.slice(i).join('.');
+        domains.push(d, '.' + d);
+      }
+    } else if (host) {
+      domains.push(host);
+    }
+    return domains;
+  }
+  function setLang(code) {
+    var kill = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+    cookieDomains().forEach(function (domain) {
+      document.cookie = kill + (domain ? '; domain=' + domain : '');
+    });
+    if (code !== 'en') {
+      document.cookie = 'googtrans=/en/' + code + '; path=/';
+    }
+    location.reload();
+  }
+  var cur = currentLang();
+  document.querySelectorAll('.lang-btn').forEach(function (btn) {
+    if (btn.getAttribute('data-lang') === cur) btn.classList.add('active');
+    btn.addEventListener('click', function () {
+      if (btn.getAttribute('data-lang') !== cur) setLang(btn.getAttribute('data-lang'));
+    });
+  });
+  if (cur !== 'en') {
+    var s = document.createElement('script');
+    s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>

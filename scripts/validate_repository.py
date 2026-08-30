@@ -26,6 +26,8 @@ REQUIRED = (
     "scripts/install.py",
     "prompts/install-project-context.md",
     "prompts/maintain-project-context.md",
+    "site/index.html",
+    "site/sync.sh",
     "skills/project-context/SKILL.md",
     "skills/project-context/agents/openai.yaml",
     "skills/project-context/scripts/context_triggers.py",
