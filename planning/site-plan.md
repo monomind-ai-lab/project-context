@@ -927,3 +927,46 @@ so it ships, but it is worth a look on a wide display.
 obviously intended word. `project-context-8d` caught this and is confirming with
 him; the corrected forms are what is in the build. If he meant something else,
 this is the thing to re-check first.
+
+
+---
+
+## 18. Phase 0 closed, 2026-08-31
+
+The tail landed, with one plan change forced by a fact §14.2 got wrong:
+**Cloudflare Pages is on direct upload today, not git-connected** (confirmed by
+`project-context-8d`, which stopped short of deploying for exactly this
+reason). So there is no existing build command to stay compatible with, and the
+compatibility shim §14.2 implied is pointless — the dashboard will be
+configured once, fresh, when Daren connects the project to git. No shim.
+
+What changed:
+
+- `scripts/sync.sh` — the build entrypoint. Runs `build_site.py`, copies the
+  guide from its single source (`docs/project-context-complete-guide.html`),
+  derives the og-image. `site/sync.sh` is gone.
+- `.gitignore` — the whole `site/` directory. The two piecemeal entries
+  (`site/guide/`, `site/og-image.jpg`) are subsumed.
+- `git rm -r --cached site/` — nothing under `site/` is tracked any more.
+  `web/` is the source; `site/` is output.
+- `scripts/validate_repository.py` — the three `site/` entries in REQUIRED are
+  replaced by the sixteen real sources: the generator, the sync script, the
+  layout, both shared assets, both static files, and all nine content files.
+  50 required files, passing.
+
+Proof, not assertion: a fresh clone with `site/` **deleted** was built with
+`bash scripts/sync.sh` alone and came out **byte-identical** to the main
+tree's `site/` across all eight routes. That is the property the whole
+restructure claimed — the repository needs no committed output to produce the
+site.
+
+Deploy state: `c7dd321` (V5, footer changes, source/build split content) is
+pushed but **not live** — the live site still serves the pre-V5 build from
+`7b1df77`. Going live is one of:
+
+1. **Connect Cloudflare Pages to git** — build command `bash scripts/sync.sh`,
+   output directory `site`. Then this push and every later one deploys itself.
+   This is the endstate §14.2 decided.
+2. `wrangler pages deploy site` once more by hand, and connect git after.
+
+Both sessions have deliberately not deployed; that choice is Daren's.
