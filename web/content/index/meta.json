@@ -1,0 +1,51 @@
+{
+  "output": "index.html",
+  "title": "Project Context — MonoMind",
+  "description": "Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.",
+  "og_image_alt": "Project Context — MonoMind AI Lab",
+  "nav": [
+    {
+      "href": "#record",
+      "label": "The record",
+      "i18n": "nav.record"
+    },
+    {
+      "href": "#install",
+      "label": "Install",
+      "i18n": "nav.install"
+    },
+    {
+      "href": "#addons",
+      "label": "Add-ons",
+      "i18n": "nav.addons"
+    },
+    {
+      "href": "/use-cases",
+      "label": "Use cases",
+      "i18n": "nav.usecases"
+    },
+    {
+      "href": "/guide",
+      "label": "Guide",
+      "i18n": "nav.guide"
+    },
+    {
+      "href": "https://github.com/monomind-ai-lab/project-context",
+      "label": "GitHub",
+      "external": true
+    }
+  ],
+  "footer_links": [
+    {
+      "href": "https://github.com/monomind-ai-lab/project-context",
+      "label": "GitHub",
+      "external": true,
+      "icon": "github"
+    },
+    {
+      "href": "/guide",
+      "label": "Read the guide",
+      "i18n": "cta.guide"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="{{lang}}" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="description" content="{{description}}">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MonoMind AI Lab">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:image" content="{{og_image}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="{{og_image_alt}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{title}}">
+<meta name="twitter:description" content="{{description}}">
+<meta name="twitter:image" content="{{og_image}}">
+
+<!-- Blocking theme application: runs before first paint so a stored light
+     theme never flashes black. Falls back to the OS preference. -->
+<script>
+(function(){
+  var r = document.documentElement, t = null;
+  try { t = localStorage.getItem('pc-theme'); } catch(e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  }
+  r.setAttribute('data-theme', t);
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Geist / Geist Mono carry the look. Noto Sans KR and Noto Sans TC are here
+     only so the Korean and Traditional-Chinese dictionaries have a face. -->
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/_assets/site.css?v={{asset_version}}">
+{{page_style}}
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="nav.skip">Skip to content</a>
+<div id="googleTranslateHost" aria-hidden="true"></div>
+
+<!-- The MonoMind mark, defined once and used in the header and the footer.
+     Both paths ship fill="currentColor", so the mark takes --brand-mark:
+     white on dark, the accent blue on light. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mm-mark" viewBox="0 0 512 512">
+      <path d="M0 0 C21.12 0 42.24 0 64 0 C64.33 9.24 64.66 18.48 65 28 C67.31 28.825 69.62 29.65 72 30.5 C80.67855394 33.70320466 88.83987436 37.66197192 97 42 C98.13824219 42.59296875 99.27648437 43.1859375 100.44921875 43.796875 C114.11283709 51.2237895 126.32645153 60.78564509 138 71 C138.33 53.51 138.66 36.02 139 18 C147.41726708 18 155.23771035 18.11320702 163.5 19.1875 C165.04349121 19.38714355 165.04349121 19.38714355 166.61816406 19.59082031 C209.08178959 25.42223064 247.55036699 43.98420048 278.48925781 73.55664062 C279.51252583 74.53426838 280.54069027 75.50679224 281.57324219 76.47460938 C316.21868127 109.03500379 337.95056536 156.61339058 341 204 C341 209.28 341 214.56 341 220 C319.88 220 298.76 220 277 220 C276.34 213.07 275.68 206.14 275 199 C274.38439297 195.37078182 273.77803562 191.97121696 272.875 188.4375 C272.66327148 187.58655762 272.45154297 186.73561523 272.23339844 185.85888672 C266.69864116 164.72016184 256.75707174 146.80424072 243 130 C242.33226562 129.17757812 241.66453125 128.35515625 240.9765625 127.5078125 C235.93066496 121.55571295 230.17510386 116.74552502 224 112 C223.10023438 111.30777344 222.20046875 110.61554688 221.2734375 109.90234375 C203.20851766 96.39269908 177.88565782 83.53645418 154.625 83.9375 C153.42875 83.958125 152.2325 83.97875 151 84 C151.58265625 84.66902344 152.1653125 85.33804688 152.765625 86.02734375 C185.07129092 123.86967253 203 170.1014647 203 220 C181.88 220 160.76 220 139 220 C138.01 211.75 137.02 203.5 136 195 C129.68082068 166.91475858 117.85438519 144.07221923 98 123 C97.45085937 122.39800781 96.90171875 121.79601562 96.3359375 121.17578125 C86.97145584 111.2807994 75.80572295 104.7461274 64 98 C64 138.26 64 178.52 64 220 C42.88 220 21.76 220 0 220 C0 147.4 0 74.8 0 0 Z " fill="currentColor" transform="translate(74,141)"/>
+      <path d="M0 0 C6.93122125 2.33191353 11.59348712 6.73609933 15 13.15234375 C17.3325015 19.79450622 17.26381755 27.06296996 14.3125 33.5 C10.66303794 39.55276634 5.78715496 43.90906429 -1 46 C-7.43466397 46.85737784 -13.48798557 46.74360867 -19.18359375 43.40234375 C-24.96806721 38.93648145 -29.37878226 33.62316781 -30.37109375 26.23828125 C-30.53935564 18.82486011 -29.62715748 12.97497629 -25 7 C-17.06174054 0.27985277 -10.33089416 -1.10531813 0 0 Z " fill="currentColor" transform="translate(450,315)"/>
+  </symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav-inner container">
+    <div class="brand">
+      <a class="brand-link" href="https://monomind.one" target="_blank" rel="noopener" aria-label="MonoMind — monomind.one">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 512 512" focusable="false"><use href="#mm-mark"/></svg></span>
+        <span class="brand-name notranslate" translate="no">MonoMind</span>
+      </a>
+      <span class="brand-tag notranslate" translate="no">project-context</span>
+    </div>
+
+    <nav class="nav-links" aria-label="Primary">
+{{nav_desktop}}
+    </nav>
+
+    <div class="nav-actions">
+      <button type="button" class="iconbtn" id="themeBtn" aria-pressed="false" aria-label="Toggle theme" data-i18n-attr="aria-label:ui.theme;title:ui.theme" title="Toggle theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z"/></svg>
+      </button>
+
+      <div class="langwrap" id="langWrap">
+        <button type="button" class="langbtn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="langPanel" aria-label="Language">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.6 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.6-3.6-9S9.6 5.5 12 3Z"/></svg>
+          <span class="lang-code notranslate" translate="no" id="langCode">EN</span>
+          <span class="caret" aria-hidden="true"></span>
+        </button>
+        <div class="langpanel" id="langPanel" hidden>
+          <div class="langsearch">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.4"/><path d="m16 16 4.4 4.4"/></svg>
+            <input id="langSearch" type="text" role="combobox" aria-expanded="true" aria-controls="langList" aria-autocomplete="list" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search languages…" aria-label="Search languages…" data-i18n-attr="placeholder:ui.langSearch;aria-label:ui.langSearch">
+          </div>
+          <div class="langlist" id="langList" role="listbox" aria-label="Language" data-i18n-attr="aria-label:ui.lang" tabindex="-1">
+            <div class="langgroup" role="group" id="grpNative" aria-label="Translated by hand" data-i18n-attr="aria-label:ui.langNative">
+              <p class="langgrouphd" aria-hidden="true" data-i18n="ui.langNative">Translated by hand</p>
+              <div class="langopts" data-tier="native"></div>
+            </div>
+            <div class="langgroup" role="group" id="grpAuto" aria-label="Machine translated" data-i18n-attr="aria-label:ui.langAuto">
+              <p class="langgrouphd" aria-hidden="true" data-i18n="ui.langAuto">Machine translated</p>
+              <div class="langopts" data-tier="auto"></div>
+            </div>
+            <p class="langempty" id="langEmpty" hidden aria-hidden="true">—</p>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMobile" aria-label="Menu"><span></span><span></span></button>
+    </div>
+  </div>
+
+  <nav class="nav-mobile container" id="navMobile" aria-label="Mobile">
+{{nav_mobile}}
+  </nav>
+</header>
+
+<main id="main">
+{{content}}
+</main>
+
+<div class="sign-off">
+  <div class="sign-bg" aria-hidden="true"></div>
+  <div class="sign-scrim" aria-hidden="true"></div>
+  <div class="sign-inner"><p class="sign-line" data-i18n="brand.tagline">Clarity comes with context.</p></div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="foot-brand" href="https://monomind.one" target="_blank" rel="noopener" aria-label="MonoMind — monomind.one">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 512 512" focusable="false"><use href="#mm-mark"/></svg></span>
+          <span class="foot-name notranslate" translate="no">MonoMind</span>
+        </a>
+        <p class="foot-desc" data-i18n="footer.agency"><b>AI Innovation Studio</b> for the autonomous agent era — intelligent engineering, intentional design.</p>
+        <ul class="foot-caps">
+          <li data-i18n="footer.s1">Product strategy</li>
+          <li data-i18n="footer.s2">Agent Experience (AX)</li>
+          <li data-i18n="footer.s3">Agent &amp; harness engineering</li>
+          <li data-i18n="footer.s4">Advanced RAG</li>
+          <li data-i18n="footer.s5">Brand identity</li>
+          <li data-i18n="footer.s6">Web experience</li>
+          <li data-i18n="footer.s7">AI transformation</li>
+        </ul>
+        <p class="foot-inline">
+{{footer_links}}
+        </p>
+      </div>
+    </div>
+    <p class="license" data-i18n="footer.license"><b>MIT + Commons Clause</b> — free to use, modify, and ship in your products, including commercially; the components themselves may not be sold or redistributed standalone.</p>
+    <p class="foot-bottom notranslate" translate="no">Project Context · MonoMind AI Lab</p>
+  </div>
+</footer>
+
+<!-- Page dictionaries first: `const I18N` is script-scoped but visible to the
+     classic scripts that follow, which is how site.js reads it. -->
+<script>
+{{i18n}}
+</script>
+<script src="/_assets/site.js?v={{asset_version}}"></script>
+{{page_script}}
+</body>
+</html>

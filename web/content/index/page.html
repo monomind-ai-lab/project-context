@@ -1,0 +1,429 @@
+
+<!-- ============================== HERO ============================== -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">MonoMind AI Lab</span></p>
+
+    <div class="hero-lockup">
+      <p class="hero-product notranslate" translate="no">Project Context</p>
+      <p class="hero-kicker" data-i18n="hero.kicker">a durable project record for agents and people</p>
+    </div>
+
+    <h1 class="hero-title" id="hero-title" data-i18n="hero.title">Weeks away should never mean rebuilding the project from <b>stale chats</b>.</h1>
+
+    <p class="hero-sub" data-i18n="hero.sub">Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">NOW.md</li>
+      <li class="chip notranslate" translate="no">DECISIONS.md</li>
+      <li class="chip notranslate" translate="no">LEARNINGS.md</li>
+      <li class="chip chip-open" data-i18n="hero.chips">plain Markdown, in your git history</li>
+    </ul>
+
+    <div class="hero-cmd">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="hero.installLabel">install · one command</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Install command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <button type="button" class="btn btn-primary" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span data-i18n="cta.copy">Copy the install command</span>
+      </button>
+      <a class="btn btn-secondary" href="/guide" data-i18n="cta.guide">Read the guide</a>
+    </div>
+    <p class="copy-status" role="status" aria-live="polite" id="copyStatus"></p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 01 WHAT IT IS ========================== -->
+<section class="section" id="what" aria-labelledby="what-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="what.index">01</span></span>
+      <h2 class="section-title" id="what-title" data-i18n="what.title">What Project Context actually is</h2>
+      <p class="section-lede" data-i18n="what.lede">A handful of small Markdown files that live in the project folder, next to the work. Between them they hold where things stand right now, the decisions that constrain what comes next, and the learnings that have been verified. The agents doing the work write and maintain them. The next agent — or the next person — reads them first.</p>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c1.tag">the files</span>
+        <h3 data-i18n="what.c1.title">Small Markdown, in the folder</h3>
+        <p class="body" data-i18n="what.c1.body">No database, no service, no vendor memory store. A few tracked files sit beside the work and open in any editor.</p>
+      </article>
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c2.tag">what they hold</span>
+        <h3 data-i18n="what.c2.title">State, decisions, learnings</h3>
+        <p class="body" data-i18n="what.c2.body">Where the project stands today. The decisions that bind what comes next. The findings that were verified, so nobody pays for them twice.</p>
+      </article>
+      <article class="card icard reveal">
+        <span class="card-tag" data-i18n="what.c3.tag">who keeps it</span>
+        <h3 data-i18n="what.c3.title">Maintained by the agents doing the work</h3>
+        <p class="body" data-i18n="what.c3.body">Updating the record is part of finishing a piece of work, not a report filed afterwards — and it is the first thing the next session reads.</p>
+      </article>
+    </div>
+
+    <div class="strip what-strip reveal">
+      <ul class="strip-chips">
+        <li class="chip notranslate" translate="no">Code</li>
+        <li class="chip notranslate" translate="no">Documents</li>
+        <li class="chip notranslate" translate="no">Research</li>
+        <li class="chip notranslate" translate="no">Writing</li>
+        <li class="chip notranslate" translate="no">Mixed</li>
+        <li class="chip chip-open" data-i18n="what.any">any collaborative project an agent works on</li>
+      </ul>
+      <div class="strip-lines">
+        <p data-i18n="what.line1"><b>Not only software, and not only GitHub.</b> Software, document, research, writing and mixed projects all keep the same kind of record.</p>
+        <p class="fine" data-i18n="what.line2">It suits repo-bound work best, where version control makes shared context easy to review. But any project whose working materials live in one folder that people and agents can reach consistently will do.</p>
+        <p class="fine" data-i18n="what.line3">Git is not required. Without it, the tooling falls back to file-modification times.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 02 THE RECORD =========================== -->
+<section class="section" id="record" aria-labelledby="record-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="record.index">02</span></span>
+      <h2 class="section-title" id="record-title" data-i18n="record.title">What actually gets written down</h2>
+      <p class="section-lede" data-i18n="record.lede">Not a transcript, and not a summary of the chat. Each file answers one question a returning session really asks: where does this stand, what is already settled, and what did we learn the expensive way.</p>
+    </div>
+
+    <ol class="flow reveal">
+      <li><span class="flow-label" data-i18n="record.step1">work stops for the day</span></li>
+      <li class="is-on"><span class="flow-label" data-i18n="record.step2">the three files are brought up to date</span></li>
+      <li><span class="flow-label" data-i18n="record.step3">the next session opens with the state in hand</span></li>
+    </ol>
+
+    <div class="panels">
+
+      <article class="panel card reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">NOW.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h1"><span class="hash" aria-hidden="true">#</span> <span data-i18n="sample.now.h1">Current Project State</span></p>
+          <p class="meta"><span data-i18n="sample.now.reviewed">Last reviewed:</span> <span class="val notranslate" translate="no">2026-08-30</span></p>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2a">Snapshot</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.area">Area</th>
+              <th scope="col" data-i18n="sample.th.state">Current state</th>
+              <th scope="col" data-i18n="sample.th.evidence">Evidence</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Area" data-i18n-attr="data-label:sample.th.area"><span data-i18n="sample.now.area1">Auth</span></td>
+              <td data-label="Current state" data-i18n-attr="data-label:sample.th.state"><span data-i18n="sample.now.state1">Session cookies replaced by short-lived JWTs</span></td>
+              <td data-label="Evidence" data-i18n-attr="data-label:sample.th.evidence"><span class="rid notranslate" translate="no">D-014</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2b">Active work</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.initiative">Initiative</th>
+              <th scope="col" data-i18n="sample.th.status">Status</th>
+              <th scope="col" data-i18n="sample.th.next">Next action</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Initiative" data-i18n-attr="data-label:sample.th.initiative"><span data-i18n="sample.now.init1">Rate limiting</span></td>
+              <td data-label="Status" data-i18n-attr="data-label:sample.th.status"><span class="pill pill-work notranslate" translate="no">in-progress</span></td>
+              <td data-label="Next action" data-i18n-attr="data-label:sample.th.next"><span data-i18n="sample.now.next1">Decide per-tenant vs per-key before the gateway merge</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.now.h2c">Blockers</span></p>
+          <p class="bullet" data-i18n="sample.now.blocker1">Staging Redis is single-node; the limiter needs a cluster before load tests.</p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.now">what the next session reads first</p>
+      </article>
+
+      <article class="panel card reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">DECISIONS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-014</span>: <span data-i18n="sample.dec.title">Short-lived JWTs over session cookies</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kStatus">Status:</span> <span class="pill pill-ok notranslate" translate="no">accepted</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kDate">Date:</span> <span class="val notranslate" translate="no">2026-08-24</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kStatement">Statement:</span> <span data-i18n="sample.dec.vStatement">API auth uses 15-minute JWTs with refresh, not server-side sessions.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kRationale">Rationale:</span> <span data-i18n="sample.dec.vRationale">The mobile client cannot share a cookie jar with the web app.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kConsequences">Consequences:</span> <span data-i18n="sample.dec.vConsequences">Every service needs clock sync; revocation is now a denylist.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kEvidence">Evidence:</span>
+            <span class="anchor notranslate" translate="no">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
+            </span>
+          </p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.decisions">what constrains the next agent</p>
+      </article>
+
+      <article class="panel card panel-wide reveal">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">LEARNINGS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">L-007</span>: <span data-i18n="sample.lrn.title">Redis keyspace events drop silently under memory pressure</span></p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kScope">Scope:</span> <span data-i18n="sample.lrn.vScope">rate limiting, staging</span></p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kEvidence">Evidence:</span>
+            <span class="anchor notranslate" translate="no">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span class="a-path">infra/redis.conf</span><span class="a-at">@</span><span class="a-sha">3f9a1c2</span>
+            </span>
+          </p>
+          <p class="kv"><span class="hash" aria-hidden="true">-</span> <span class="key" data-i18n="sample.lrn.kAction">Action:</span> <span data-i18n="sample.lrn.vAction">Do not rely on keyspace notifications to expire limiter buckets; poll the sorted set instead.</span></p>
+        </div>
+        <p class="panel-foot" data-i18n="record.cap.learnings">what nobody should have to discover twice</p>
+      </article>
+    </div>
+
+    <div class="anchor-note reveal">
+      <span class="anchor anchor-lg notranslate" translate="no">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+        <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
+      </span>
+      <p data-i18n="record.anchor.explain">The evidence anchor. A decision pins its justification to a path at a commit — so a later session can check whether the reason still holds.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================== THESIS ============================== -->
+<section class="section" id="thesis" aria-labelledby="thesis-title">
+  <div class="container">
+    <div class="thesis reveal">
+      <h2 class="thesis-eyebrow" id="thesis-title" data-i18n="thesis.eyebrow">The distinction</h2>
+      <div class="thesis-lines">
+        <p data-i18n="thesis.line1">Project Context records what the code <b>cannot</b> say — the decisions, the learnings, the current handoff.</p>
+        <p class="dim" data-i18n="thesis.line2">A generated wiki regenerates what the code <b>does</b> say.</p>
+        <p data-i18n="thesis.line3">They compose: Project Context is the <b>authority layer</b>; a generated wiki is an optional derived view.</p>
+      </div>
+    </div>
+
+    <div class="compose reveal">
+      <div class="compose-cell is-primary">
+        <span class="compose-role" data-i18n="thesis.card1.label">authority layer</span>
+        <span class="compose-name" data-i18n="thesis.card1.title">Project Context</span>
+        <p class="compose-note" data-i18n="thesis.card1.body">Decisions, learnings, the current handoff — written by hand or by an agent, versioned with the code.</p>
+      </div>
+      <span class="compose-link" aria-hidden="true" data-i18n="thesis.compose">compose</span>
+      <div class="compose-cell">
+        <span class="compose-role" data-i18n="thesis.card2.label">derived view · optional</span>
+        <span class="compose-name" data-i18n="thesis.card2.title">A generated wiki</span>
+        <p class="compose-note" data-i18n="thesis.card2.body">Regenerates what the code already says. Useful, replaceable, and not the source of truth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 03 INSTALL ============================= -->
+<section class="section" id="install" aria-labelledby="install-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="install.index">03</span></span>
+      <h2 class="section-title" id="install-title" data-i18n="install.title">One command, or one prompt</h2>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">uvx</span>
+        <p class="body" data-i18n="install.uvx.body">Runs the CLI straight from the repo. No clone, no virtualenv. Swap <code>--apply</code> for <code>--dry-run</code> to print the plan first.</p>
+        <div class="cmd cmd-sm" data-cmd>
+          <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
+          <div class="cmd-body">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="uvx command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+            <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">pipx</span>
+        <p class="body" data-i18n="install.pipx.body">Keeps <code>init</code>, <code>inspect</code>, <code>review</code> and <code>doctor</code> on your path.</p>
+        <div class="cmd cmd-sm" data-cmd>
+          <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
+          <div class="cmd-body">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span></code>
+            <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card icard reveal">
+        <span class="card-tag notranslate" translate="no">prompt</span>
+        <p class="body" data-i18n="install.prompt.body">Paste one prompt into any agent that can read and edit the folder. Zero tooling.</p>
+        <div class="cmd cmd-sm cmd-note">
+          <div class="cmd-body">
+            <span class="cmd-prompt t-comment" aria-hidden="true">#</span>
+            <span class="cmd-text t-comment" data-i18n="install.prompt.comment">no CLI, no install — the agent writes the files itself</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <ul class="proof reveal">
+      <li data-i18n="install.proof1">zero runtime dependencies · stdlib Python 3.10+</li>
+      <li data-i18n="install.proof2">a stock install lands 13 files</li>
+      <li data-i18n="install.proof3">the installer is never copied into your repo</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 04 PORTABILITY =========================== -->
+<section class="section" id="portability" aria-labelledby="port-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="port.index">04</span></span>
+      <h2 class="section-title" id="port-title" data-i18n="port.title">It comes with you</h2>
+    </div>
+    <div class="strip reveal">
+      <ul class="strip-chips">
+        <li class="chip notranslate" translate="no">Claude Code</li>
+        <li class="chip notranslate" translate="no">Codex</li>
+        <li class="chip notranslate" translate="no">Cursor</li>
+        <li class="chip chip-open" data-i18n="port.any">any agent that reads a folder</li>
+      </ul>
+      <div class="strip-lines">
+        <p data-i18n="port.line1">Your context lives in <b>your git history</b>, not a vendor's memory store.</p>
+        <p data-i18n="port.line2">Switch tools or machines and <b>it comes with you</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 05 DOCTOR ============================= -->
+<section class="section" id="doctor" aria-labelledby="doctor-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="doctor.index">05</span></span>
+      <h2 class="section-title" id="doctor-title" data-i18n="doctor.title">How it stays true</h2>
+      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor checks three things.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c1.title">The documents hold up</h3>
+        <p data-i18n="doctor.c1.body">Required files, version, NOW.md freshness, duplicate IDs, broken links.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c2.title">Evidence anchors</h3>
+        <p data-i18n="doctor.c2.body"><code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — meaning the justification may no longer hold.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c3.title">Reachability</h3>
+        <p data-i18n="doctor.c3.body">The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error — because perfect files nothing ever loads otherwise report healthy.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 06 ADD-ONS ============================= -->
+<section class="section" id="addons" aria-labelledby="addons-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num" data-i18n="addons.index">06</span></span>
+      <h2 class="section-title" id="addons-title" data-i18n="addons.title">Add-ons, only where they earn it</h2>
+      <p class="section-lede" data-i18n="addons.lede">Three independent open-source tools can sit alongside the record. Project Context does not just list them: it inspects the project, recommends only what fits, and installs or configures nothing until you have said yes.</p>
+    </div>
+
+    <ol class="flow reveal">
+      <li><span class="flow-label" data-i18n="addons.step1">it inspects the project</span></li>
+      <li><span class="flow-label" data-i18n="addons.step2">it recommends only what fits</span></li>
+      <li class="is-on"><span class="flow-label" data-i18n="addons.step3">nothing lands until you opt in</span></li>
+    </ol>
+
+    <p class="addons-detect reveal" data-i18n="addons.detect">Per tool, the initializer separates two states that look identical from the outside: merely available on your <code>PATH</code>, and actually configured for this repository. Something already installed but unconfigured gets an offer to configure it, not a pointless reinstall. It asks only about unconfigured tools that match the confirmed project type and a need it has actually observed — and it installs only after an explicit answer.</p>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="addons.th.tool">Tool</th>
+            <th scope="col" data-i18n="addons.th.what">What it is</th>
+            <th scope="col" data-i18n="addons.th.when">When it fits</th>
+            <th scope="col" data-i18n="addons.th.rel">Relation to Project Context</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">GitNexus</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gn.what">Code symbols, their relationships, impact analysis and execution flows.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gn.when">Source that needs structural or impact analysis. Suppressed for writing projects; on mixed ones it is scoped to a meaningful code subtree.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gn.rel">A derived read of the code. The decisions about that code still live in the tracked Markdown.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">Graphify</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gf.what">Relationships across code, documents, research artifacts and media.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gf.when">When the useful corpus reaches past code — a substantial interlinked document set, cross-source research and evidence, or a large relational manuscript or story world.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gf.rel">A derived index over your material. Rebuildable, and never the thing being cited.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">OpenWiki</span></td>
+            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.ow.what">Ongoing generated documentation and navigation for stable projects.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.ow.when">Stable, complex projects with a real audience for derived navigation. Deferred while claims or structure are still moving; suppressed for writing projects.</span></td>
+            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.ow.rel">Regenerated from what already exists — including the record it is generated against.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="addons-sub reveal" data-i18n="addons.types.title">What gets offered, by project type</h3>
+    <ul class="typelist reveal">
+      <li><span class="chip notranslate" translate="no">Code</span><p data-i18n="addons.type.code">GitNexus when the source needs structural or impact analysis. OpenWiki only for stable, complex projects with a real audience for derived navigation. Graphify when the useful corpus extends beyond code.</p></li>
+      <li><span class="chip notranslate" translate="no">Documents</span><p data-i18n="addons.type.docs">Graphify for a substantial interlinked corpus. OpenWiki only when collaborators need a maintained browse layer.</p></li>
+      <li><span class="chip notranslate" translate="no">Research</span><p data-i18n="addons.type.research">Graphify for cross-source, data and evidence relationships. OpenWiki is deferred until claims and structure are stable.</p></li>
+      <li><span class="chip notranslate" translate="no">Writing</span><p data-i18n="addons.type.writing">GitNexus and OpenWiki are suppressed. Graphify only for a large relational manuscript or story world.</p></li>
+      <li><span class="chip notranslate" translate="no">Mixed</span><p data-i18n="addons.type.mixed">GitNexus, scoped to a meaningful code subtree.</p></li>
+      <li><span class="chip notranslate" translate="no">General</span><p data-i18n="addons.type.general">Nothing is offered until inspection finds a concrete need — the same answer while the type is still uncertain.</p></li>
+    </ul>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="addons.authority"><b>Project Context stays the authority.</b> The tracked Markdown is what the project is committed to; these three are optional derived systems built from it. None of them becomes the source of truth, and the record works fully with none of them installed.</p>
+    </div>
+    <p class="addons-note reveal" data-i18n="addons.note">independent open-source tools · optional · installed or configured only after you opt in</p>
+  </div>
+</section>

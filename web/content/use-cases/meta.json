@@ -1,0 +1,52 @@
+{
+  "output": "use-cases/index.html",
+  "title": "Use cases — Project Context",
+  "description": "Two shapes of the same problem: a code repository many agents work in, and any collaborative project whose materials live in one folder people and agents can reach.",
+  "og_image_alt": "Use cases — Project Context — MonoMind AI Lab",
+  "nav": [
+    {
+      "href": "/",
+      "label": "Home",
+      "i18n": "nav.home"
+    },
+    {
+      "href": "/use-cases",
+      "label": "Use cases",
+      "i18n": "nav.usecases",
+      "current": true
+    },
+    {
+      "href": "/#addons",
+      "label": "Add-ons",
+      "i18n": "nav.addons"
+    },
+    {
+      "href": "/guide",
+      "label": "Guide",
+      "i18n": "nav.guide"
+    },
+    {
+      "href": "https://github.com/monomind-ai-lab/project-context",
+      "label": "GitHub",
+      "external": true
+    }
+  ],
+  "footer_links": [
+    {
+      "href": "https://github.com/monomind-ai-lab/project-context",
+      "label": "GitHub",
+      "external": true,
+      "icon": "github"
+    },
+    {
+      "href": "/",
+      "label": "Home",
+      "i18n": "footer.home"
+    },
+    {
+      "href": "/guide",
+      "label": "Read the guide",
+      "i18n": "cta.guide"
+    }
+  ]
+}

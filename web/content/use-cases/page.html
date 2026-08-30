@@ -1,0 +1,259 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">Use cases</span></p>
+
+    <h1 class="hero-title" id="page-title" data-i18n="hero.title">Any project where the work <b>outlives the session</b>.</h1>
+
+    <p class="hero-sub" data-i18n="hero.sub">Three small Markdown records kept beside the work: the current state, the decisions that constrain what comes next, and the learnings that were verified. Two very different kinds of project, one record — the familiar repository, and everything else a group builds together.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">NOW.md</li>
+      <li class="chip notranslate" translate="no">DECISIONS.md</li>
+      <li class="chip notranslate" translate="no">LEARNINGS.md</li>
+      <li class="chip chip-open" data-i18n="hero.chips">the same three records either way</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================================ TABS ================================ -->
+<!-- No aria-label on this <section>: an unnamed section is not exposed as a
+     landmark, which keeps the tablist's own name from being announced twice. -->
+<section class="tabs-shell">
+  <div class="container">
+    <div class="tablist" id="ucTabs" role="tablist" aria-label="Use case categories" data-i18n-attr="aria-label:tabs.label">
+      <button type="button" class="tab" role="tab" id="tab-coding" aria-controls="panel-coding" aria-selected="true" tabindex="0" data-hash="coding">
+        <span class="tab-num notranslate" translate="no" aria-hidden="true">01</span>
+        <span data-i18n="tabs.t1">For coding projects</span>
+      </button>
+      <button type="button" class="tab" role="tab" id="tab-collaborative" aria-controls="panel-collaborative" aria-selected="false" tabindex="-1" data-hash="collaborative">
+        <span class="tab-num notranslate" translate="no" aria-hidden="true">02</span>
+        <span data-i18n="tabs.t2">For any collaborative project</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= TAB 1 · CODING ========================= -->
+<div class="tabpanel" id="panel-coding" role="tabpanel" aria-labelledby="tab-coding" tabindex="0">
+  <section class="section" aria-labelledby="coding-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="code.eyebrow">for coding projects</span></span>
+        <h2 class="section-title" id="coding-title" data-i18n="code.title">A repository many agents work in</h2>
+        <p class="section-lede" data-i18n="code.lede">The familiar case: a software repository where AI coding agents do real work across many sessions, weeks apart, in different tools, on different machines.</p>
+      </div>
+
+      <div class="cards-grid two">
+        <article class="card icard reveal">
+          <span class="card-tag" data-i18n="code.c1.tag">continuity</span>
+          <h3 data-i18n="code.c1.title">Picking up mid-refactor</h3>
+          <p class="body" data-i18n="code.c1.body">A session ends halfway through splitting the auth module. Days later the next agent — often a different agent entirely — opens the current-state record and finds what was decided, what already landed, and what is still open. It does not re-derive the plan from a diff, and it does not start a fourth parallel approach.</p>
+        </article>
+
+        <article class="card icard reveal">
+          <span class="card-tag" data-i18n="code.c2.tag">decisions</span>
+          <h3 data-i18n="code.c2.title">Constraints that survive the session</h3>
+          <p class="body" data-i18n="code.c2.body">Why short-lived JWTs rather than server-side sessions. Which conventions are settled and not up for reopening. Written down as decisions with the reasoning attached, so a later agent does not silently reverse a choice it never saw being made.</p>
+        </article>
+
+        <article class="card icard reveal">
+          <span class="card-tag" data-i18n="code.c3.tag">learnings</span>
+          <h3 data-i18n="code.c3.title">The mistake you only make once</h3>
+          <p class="body" data-i18n="code.c3.body">A root cause the code does not make obvious. An approach that was tried, failed, and would fail the same way again. Verified learnings are how that loop stops repeating every few weeks at the cost of another afternoon.</p>
+        </article>
+
+        <article class="card icard reveal">
+          <span class="card-tag" data-i18n="code.c4.tag">handoff</span>
+          <h3 data-i18n="code.c4.title">Across agents, tools and machines</h3>
+          <p class="body" data-i18n="code.c4.body">Claude Code today, Codex tomorrow, Cursor on the laptop. Because the records are committed alongside the code, the context travels with the project instead of living in one vendor's memory store.</p>
+        </article>
+      </div>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="code.honest.title">How the record stays honest</h3>
+        <p data-i18n="code.honest.lede">Records go stale quietly, and a stale record is worse than none. A read-only doctor is what keeps the difference visible.</p>
+      </div>
+
+      <div class="anchor-note reveal">
+        <span class="anchor anchor-lg notranslate" translate="no">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
+        </span>
+        <p data-i18n="code.anchor.explain">The evidence anchor. A decision pins its justification to a path at a commit, so a later session can check whether the reason still holds.</p>
+      </div>
+
+      <div class="checks" style="margin-top:20px">
+        <article class="check reveal">
+          <h4 data-i18n="code.chk1.title">Evidence anchors and drift</h4>
+          <p data-i18n="code.chk1.body">A decision pins its justification to <code>path/to/file@commit</code>. The doctor reports <code>evidence-drift</code> when that file has changed since — meaning the justification may no longer hold, and the decision is worth a second look before anyone builds on it.</p>
+        </article>
+        <article class="check reveal">
+          <h4 data-i18n="code.chk2.title">Reachability</h4>
+          <p data-i18n="code.chk2.body">The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error, because perfect files that nothing ever loads otherwise report healthy.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ====================== TAB 2 · COLLABORATIVE ====================== -->
+<div class="tabpanel" id="panel-collaborative" role="tabpanel" aria-labelledby="tab-collaborative" tabindex="0" hidden>
+  <section class="section" aria-labelledby="collab-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="any.eyebrow">for any collaborative project</span></span>
+        <h2 class="section-title" id="collab-title" data-i18n="any.title">Not only software, and not only GitHub</h2>
+        <p class="section-lede" data-i18n="any.lede">Project Context works for any project a group of people and agents work on together, whose materials live in one folder they can all reach. Supported project types are software, document, research, writing, and mixed.</p>
+      </div>
+
+      <div class="strip reveal">
+        <ul class="strip-chips">
+          <li class="chip" data-i18n="any.type1">software</li>
+          <li class="chip" data-i18n="any.type2">document</li>
+          <li class="chip" data-i18n="any.type3">research</li>
+          <li class="chip" data-i18n="any.type4">writing</li>
+          <li class="chip chip-open" data-i18n="any.type5">mixed</li>
+        </ul>
+        <div class="strip-lines">
+          <p data-i18n="any.fit1">Best suited to <b>repo-bound collaborative work</b>, where version control makes shared context easy to review and evolve.</p>
+          <p data-i18n="any.fit2">It also works for any project whose working materials are organized in <b>one folder</b> that people and AI agents can access consistently.</p>
+        </div>
+      </div>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="any.records.title">The same three records, everywhere</h3>
+        <p data-i18n="any.records.lede">Nothing about them is specific to code. A literature review, a manuscript and a client engagement all have a current state, decisions that constrain what comes next, and learnings that were verified rather than assumed.</p>
+      </div>
+
+      <div class="cards-grid">
+        <article class="card icard reveal">
+          <span class="card-tag notranslate" translate="no">NOW.md</span>
+          <p class="rec-label" data-i18n="any.rec1.label">current state</p>
+          <p class="body" data-i18n="any.rec1.body">Where the project actually stands today, what is in flight, and what is blocked — the first thing the next person or agent reads.</p>
+        </article>
+        <article class="card icard reveal">
+          <span class="card-tag notranslate" translate="no">DECISIONS.md</span>
+          <p class="rec-label" data-i18n="any.rec2.label">decisions that constrain future work</p>
+          <p class="body" data-i18n="any.rec2.body">The choices already made and the reasoning behind them, so later work builds on them instead of quietly undoing them.</p>
+        </article>
+        <article class="card icard reveal">
+          <span class="card-tag notranslate" translate="no">LEARNINGS.md</span>
+          <p class="rec-label" data-i18n="any.rec3.label">verified learnings</p>
+          <p class="body" data-i18n="any.rec3.body">What was tried and what it actually taught you — kept separate from what everyone merely believes to be true.</p>
+        </article>
+      </div>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="any.vig.title">Four projects that are not code</h3>
+        <p data-i18n="any.vig.lede">Same records, same folder, no repository of source files in sight.</p>
+      </div>
+
+      <div class="panels">
+        <article class="panel card reveal">
+          <div class="panel-bar">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-file notranslate" translate="no">research/lit-review/</span>
+            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v1.tag">research</span>
+          </div>
+          <div class="vig-body">
+            <h4 data-i18n="any.v1.title">A literature review that spans months</h4>
+            <p data-i18n="any.v1.body">Screening criteria were settled in March. The dataset was swapped in May for a reason nobody wrote down. Three different agents have since summarised the same twenty papers. The decision record holds why the inclusion criteria are what they are; the learnings record holds which extraction pass produced unusable output — so the next pass starts where the last one stopped, not where the last one started.</p>
+          </div>
+        </article>
+
+        <article class="panel card reveal">
+          <div class="panel-bar">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-file notranslate" translate="no">manuscript/</span>
+            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v2.tag">writing</span>
+          </div>
+          <div class="vig-body">
+            <h4 data-i18n="any.v2.title">A book, a screenplay, a documentation set</h4>
+            <p data-i18n="any.v2.body">Long-form work is mostly continuity: what the reader already knows by chapter nine, which voice was agreed for the second act, the terminology call that has to hold across four hundred pages. Editorial decisions live as decisions with their reasoning, rather than as somebody's memory of a conversation in a chat window nobody can find.</p>
+          </div>
+        </article>
+
+        <article class="panel card reveal">
+          <div class="panel-bar">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-file notranslate" translate="no">engagements/acme/</span>
+            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v3.tag">consulting</span>
+          </div>
+          <div class="vig-body">
+            <h4 data-i18n="any.v3.title">A client engagement that outlives its staffing</h4>
+            <p data-i18n="any.v3.body">Deliverables, constraints and the commitments made in week two are exactly the things that walk out of the door with whoever leaves. Held as records in the engagement folder, they survive a handover: the analyst who joins in month five, and the agent drafting the next deck, can both see what was promised and on what basis.</p>
+          </div>
+        </article>
+
+        <article class="panel card reveal">
+          <div class="panel-bar">
+            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="panel-file notranslate" translate="no">handbook/</span>
+            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v4.tag">operations</span>
+          </div>
+          <div class="vig-body">
+            <h4 data-i18n="any.v4.title">A handbook a mixed team maintains</h4>
+            <p data-i18n="any.v4.body">An operations or policy handbook edited by people and agents together drifts quietly. A rule changes, the reason never gets recorded, and six months later nobody can say whether it still applies. The decision record carries the reasoning; the current-state record says which version is in force today and what is still under review.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="any.git.title">Git is not required</h3>
+        <p data-i18n="any.git.body">Version control is the best case, not a prerequisite. Without it, the tooling falls back to file-modification times to detect that work has landed since the context was last updated.</p>
+      </div>
+
+      <div class="callout reveal">
+        <span class="callout-label" data-i18n="any.tradeoff.label">the trade-off</span>
+        <p data-i18n="any.tradeoff.body">Without git you lose the commit-anchored evidence trail and the drift detection that depends on it. The records still work. The verification is weaker.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<hr class="hairline">
+
+<!-- ================================ CTA ================================ -->
+<section class="section" id="start" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div>
+        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="cta.eyebrow">start</span></span>
+        <h2 class="section-title" id="cta-title" style="margin-top:14px" data-i18n="cta.title">One command, in the folder you point it at</h2>
+        <p class="section-lede" data-i18n="cta.lede">It works the same whether that folder holds source files, a manuscript or a client engagement.</p>
+      </div>
+
+      <div class="cta-cmd">
+        <div class="cmd" data-cmd>
+          <div class="cmd-head">
+            <span class="cmd-label" data-i18n="cta.installLabel">install · one command</span>
+            <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+          </div>
+          <div class="cmd-body">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Install command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+            <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-actions">
+        <button type="button" class="btn btn-primary" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span data-i18n="cta.copy">Copy the install command</span>
+        </button>
+        <a class="btn btn-secondary" href="/guide" data-i18n="cta.guide">Read the guide</a>
+      </div>
+      <p class="copy-status" role="status" aria-live="polite" id="copyStatus"></p>
+    </div>
+  </div>
+</section>

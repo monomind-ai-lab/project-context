@@ -1,0 +1,162 @@
+.section-lede{margin-top:16px;max-width:640px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+
+.nav-link[aria-current="page"]{color:var(--fg-bright);background:var(--surface-2);border:1px solid var(--border-strong);padding:6px 10px}
+
+.nav-mobile a[aria-current="page"]{color:var(--fg-bright)}
+
+
+/* ============================== PAGE HEAD ============================== */
+.hero{position:relative;padding-top:clamp(48px,8vw,88px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:19ch;font-size:clamp(1.95rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:20px;max-width:640px;font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:var(--fg-muted)}
+
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+.copy-status{font-family:var(--font-mono);font-size:.78rem;color:var(--success);min-height:1em}
+
+
+/* ============================== TABS ==============================
+   Two tabs, real tab semantics. On a narrow screen the strip stacks into
+   one column instead of scrolling sideways: two long labels never fit on a
+   375px row, and a stacked pair is easier to hit than a scroller. */
+.tabs-shell{padding-block:0 clamp(40px,6vw,64px)}
+
+.tablist{display:flex;gap:8px;padding:6px;border:1px solid var(--border);background:var(--bg-subtle);border-radius:var(--r-lg);max-width:var(--maxw-prose);margin-inline:auto}
+
+.tab{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border-radius:var(--r-md);border:1px solid transparent;background:transparent;color:var(--fg-muted);font-size:.95rem;font-weight:500;letter-spacing:-.01em;line-height:1.35;text-align:center;transition:color .15s var(--ease),background .15s var(--ease),border-color .15s var(--ease)}
+
+.tab:hover{color:var(--fg-bright);background:var(--surface-2)}
+
+.tab[aria-selected="true"]{background:var(--surface-2);border-color:var(--border-strong);color:var(--fg-bright)}
+
+.tab-num{font-family:var(--font-mono);font-size:11px;letter-spacing:.07em;color:var(--fg-faint);flex:none}
+
+.tab[aria-selected="true"] .tab-num{color:var(--accent)}
+
+@media(max-width:620px){
+  .tablist{flex-direction:column;gap:6px}
+  .tab{justify-content:flex-start;text-align:start;padding:13px 14px}
+}
+
+.tabpanel[hidden]{display:none}
+
+.tabpanel:focus-visible{outline:2px solid var(--accent);outline-offset:6px}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+.subhead{margin-top:clamp(40px,6vw,60px);margin-bottom:20px;max-width:var(--maxw-prose)}
+
+.subhead h3{font-size:clamp(1.15rem,2.2vw,1.4rem);letter-spacing:-.02em}
+
+.subhead p{margin-top:10px;color:var(--fg-muted);font-size:.96rem;line-height:1.65}
+
+
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+.cards-grid.two{grid-template-columns:repeat(2,1fr)}
+
+@media(max-width:860px){.cards-grid,.cards-grid.two{grid-template-columns:1fr}}
+
+.icard{display:flex;flex-direction:column;gap:12px;padding:20px;min-width:0}
+
+.icard h3,.icard h4{font-size:1.06rem;letter-spacing:-.02em}
+
+.card-tag{align-self:flex-start;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--accent);background:var(--accent-wash);border:1px solid var(--accent-line);border-radius:999px;padding:2px 10px}
+
+.icard p.body{color:var(--fg-muted);font-size:.94rem;line-height:1.65;flex:1}
+
+.icard p.body code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.rec-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint)}
+
+
+/* -------- vignette panels: the record's chrome, prose inside -------- */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+
+@media(max-width:900px){.panels{grid-template-columns:1fr}}
+
+.panel{display:flex;flex-direction:column;overflow:hidden}
+
+.panel-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+
+.vig-body{padding:18px 16px 20px;flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+
+.vig-body h4{font-size:1.04rem;letter-spacing:-.02em}
+
+.vig-body p{color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* The evidence anchor is a first-class token: three tinted parts, one box. */
+.anchor{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:2px 8px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--border-strong);font-family:var(--font-mono);font-size:11.5px;line-height:1.7;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+
+.anchor::-webkit-scrollbar{display:none}
+
+.anchor svg{width:12px;height:12px;color:var(--accent);flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.a-path{color:var(--fg-bright)}
+
+.a-at{color:var(--accent)}
+
+.a-sha{color:var(--fg-dim)}
+
+.anchor-lg{font-size:13px;padding:5px 11px;gap:7px}
+
+.anchor-note{margin-top:20px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:18px 20px;border:1px solid var(--border);border-inline-start:2px solid var(--accent);border-radius:var(--r-md);background:var(--surface)}
+
+.anchor-note p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.6}
+
+
+/* ------------------------------- STRIP ------------------------------- */
+.strip{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:32px;align-items:center;padding:28px;border:1px solid var(--border);border-radius:var(--r-xl);background:var(--bg-subtle)}
+
+@media(max-width:820px){.strip{grid-template-columns:1fr;gap:24px}}
+
+.strip-chips{display:flex;flex-wrap:wrap;gap:8px}
+
+.strip-lines{display:flex;flex-direction:column;gap:12px;font-size:clamp(1rem,1.7vw,1.15rem);line-height:1.55;letter-spacing:-.015em;color:var(--fg-muted)}
+
+.strip-lines b{font-weight:500;color:var(--fg-bright)}
+
+
+/* ------------------------------ CALLOUT ------------------------------ */
+.callout{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:18px 20px;border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:var(--r-md);max-width:var(--maxw-prose)}
+
+.callout-label{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+
+.callout p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* -------------------------------- CTA -------------------------------- */
+.cta-inner{display:flex;flex-direction:column;align-items:flex-start;gap:20px;max-width:640px}
+
+.cta-cmd{width:100%;max-width:560px}
+
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;width:100%}
+
+@media(max-width:420px){.cta-actions .btn{width:100%}}
