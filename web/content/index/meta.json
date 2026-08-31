@@ -28,11 +28,6 @@
       "href": "/guide",
       "label": "Guide",
       "i18n": "nav.guide"
-    },
-    {
-      "href": "https://github.com/monomind-ai-lab/project-context",
-      "label": "GitHub",
-      "external": true
     }
   ],
   "footer_links": [

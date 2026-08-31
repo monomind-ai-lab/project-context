@@ -201,7 +201,7 @@ code,kbd{font-family:var(--font-mono);font-size:.9em}
    page's own --bg, blurred, on the hairline token. The plain rgba() line
    is the fallback for engines without color-mix(); the line after it wins
    everywhere else, and both flip with the theme. */
-.nav{position:sticky;top:0;z-index:50;background:var(--nav-bg);background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--border)}
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--border)}
 .nav-inner{display:flex;align-items:center;gap:16px;height:var(--nav-h)}
 .brand{display:inline-flex;align-items:center;gap:9px;min-width:0;flex:0 1 auto}
 /* The mark and the wordmark are one link; the tag beside them is not, so it
@@ -375,8 +375,9 @@ html[data-theme="light"] .i-moon{display:block}
    headline splits mid-word (철 지 / 난). `keep-all` forces breaks at the
    space-delimited eojeol boundary, which is how Korean is actually set.
    Not applied to Chinese: breaking between Han characters is correct there.
-   overflow-wrap is the escape hatch for a single unbreakable token. */
-html[lang="ko"]{word-break:keep-all;overflow-wrap:break-word}
+   overflow-wrap is the escape hatch for a single unbreakable token.
+   Applied globally to handle dynamic language switching. */
+html{word-break:keep-all;overflow-wrap:break-word}
 /* ========================= SIGN-OFF BAND =========================
    Full-bleed closing band: the brand photograph, a theme-tuned scrim, and
    the tagline settling out of wide, blurred tracking.
