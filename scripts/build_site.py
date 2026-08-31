@@ -96,6 +96,7 @@ def footer_html(links: list[dict]) -> str:
         if link.get("external"):
             cls = 'class="notranslate" translate="no" '
             attrs.append('rel="noopener"')
+            attrs.append('target="_blank"')
         if link.get("i18n"):
             attrs.append(f'data-i18n="{html.escape(link["i18n"])}"')
         icon = FOOTER_ICONS.get(link.get("icon", ""))
