@@ -1,0 +1,340 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span>Docs · The records</span></p>
+
+    <h1 class="hero-title" id="page-title">Three files, each answering <b>one question</b>.</h1>
+
+    <p class="hero-sub">The moment after install is where adoption is usually lost: you have three Markdown files and no feel for them. This page is a tour of what goes in each, what stays out, and how each one changes over time — with real entries, not a schema.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">NOW.md</li>
+      <li class="chip notranslate" translate="no">DECISIONS.md</li>
+      <li class="chip notranslate" translate="no">LEARNINGS.md</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================== 01 WHAT LANDED ======================== -->
+<section class="section" id="tree" aria-labelledby="tree-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span>what a stock install lands</span></span>
+      <h2 class="section-title" id="tree-title">Thirteen files, three of which you will ever edit</h2>
+      <p class="section-lede">A core install adds one readable directory, the protocol that maintains it, and the wiring that delivers the protocol into a session. The three records at the top are the whole point; everything below them exists so agents keep the records honest.</p>
+    </div>
+
+    <article class="panel card reveal">
+      <div class="panel-bar">
+        <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="panel-file notranslate" translate="no">your-project/</span>
+        <span class="chip notranslate" translate="no" style="margin-inline-start:auto">13 files</span>
+      </div>
+      <div class="panel-body treewrap">
+<pre class="tree notranslate" translate="no" aria-label="File tree of a stock core install"><span class="tr-dir">your-project/</span>
+├── <span class="tr-file">AGENTS.md</span>                        <span class="tr-note">← managed block added, or refreshed in an existing file</span>
+├── <span class="tr-dir">project-context/</span>
+│   ├── <span class="tr-rec">NOW.md</span>
+│   ├── <span class="tr-rec">DECISIONS.md</span>
+│   ├── <span class="tr-rec">LEARNINGS.md</span>
+│   ├── <span class="tr-file">SKILL.md</span>                     <span class="tr-note">← the operating protocol, readable in place</span>
+│   ├── <span class="tr-file">README.md</span>
+│   └── <span class="tr-file">.project-context.json</span>
+├── <span class="tr-dir">.agents/skills/project-context/</span>
+│   ├── <span class="tr-file">SKILL.md</span>                     <span class="tr-note">← same protocol text; the two can never disagree</span>
+│   ├── <span class="tr-file">agents/openai.yaml</span>
+│   └── <span class="tr-dir">scripts/</span>
+│       ├── <span class="tr-file">context_triggers.py</span>
+│       ├── <span class="tr-file">context_index.py</span>
+│       └── <span class="tr-file">context_doctor.py</span>
+└── <span class="tr-dir">.claude/skills/project-context/</span>
+    └── <span class="tr-file">SKILL.md</span>                     <span class="tr-note">← pointer so Claude Code discovers the skill</span></pre>
+      </div>
+      <p class="panel-foot">core profile · zero runtime dependencies · stdlib Python 3.10+</p>
+    </article>
+
+    <p class="treenote reveal">The full profile adds <code>decisions/</code>, <code>designs/</code>, <code>incidents/</code>, and <code>tasks/</code> subfolders with templates, for projects that need the complete evidence structure. The three records stay the same either way.</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 02 NOW.md ============================ -->
+<section class="section" id="now" aria-labelledby="now-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span class="notranslate" translate="no">NOW.md</span></span>
+      <h2 class="section-title" id="now-title">What is true now, what is active, and what happens next?</h2>
+      <p class="section-lede">The first thing the next person or agent reads. It holds exactly the state a stranger would need to act — nothing that git history already knows.</p>
+    </div>
+
+    <div class="rec-grid reveal">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/NOW.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">real example</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h1"><span class="hash" aria-hidden="true">#</span> Current Project State</p>
+          <p class="meta">Last reviewed: <span class="val notranslate" translate="no">2026-08-26</span></p>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Snapshot</p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col">Area</th>
+              <th scope="col">Current state</th>
+              <th scope="col">Evidence</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Area">Evidence scope</td>
+              <td data-label="Current state">The report uses public studies published through 2025-12-31.</td>
+              <td data-label="Evidence"><span class="rid notranslate" translate="no">D-001</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Active work</p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col">Initiative</th>
+              <th scope="col">Status</th>
+              <th scope="col">Next action</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Initiative">Findings synthesis</td>
+              <td data-label="Status"><span class="pill pill-work notranslate" translate="no">in-progress</span></td>
+              <td data-label="Next action">Resolve three claims that lack page-level citations. <span class="rid notranslate" translate="no">L-001</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Blockers</p>
+          <p class="bullet">None.</p>
+        </div>
+        <p class="panel-foot">from the shipped example — a research report, not code</p>
+      </article>
+
+      <div class="rec-side">
+        <div class="callout">
+          <span class="callout-label">not a changelog</span>
+          <p>Git already records what changed and when. <span class="notranslate" translate="no">NOW.md</span> records what a next contributor would act on: what is in flight, what is blocked, and the next concrete step. If a line only describes the past, it belongs in a commit message.</p>
+        </div>
+        <div class="overtime">
+          <h3>How it changes over time</h3>
+          <p>It is replaced, not appended to. When work lands, stale state is removed once its durable result is linked, and <code>Last reviewed</code> is set to today. The file stays around a screenful forever; its history lives in version control.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gb reveal">
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-ok">a good entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Active work</p>
+          <p class="kv"><span class="key">Findings synthesis:</span> <span class="pill pill-work notranslate" translate="no">in-progress</span></p>
+          <p class="kv"><span class="key">Next:</span> resolve three claims that lack page-level citations. <span class="rid notranslate" translate="no">L-001</span></p>
+        </div>
+        <p class="gb-note">State a stranger could act on: what is in flight, and the next concrete step, with a pointer at the evidence.</p>
+      </article>
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-bad">a bad entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Updates</p>
+          <p class="bullet">14:20 fixed typos in the intro</p>
+          <p class="bullet">15:05 reran the bibliography export</p>
+          <p class="bullet">16:40 more edits, see commit log</p>
+        </div>
+        <p class="gb-note">A changelog of edits. Git already knows all of this, and none of it says what happens next.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= 03 DECISIONS.md ========================= -->
+<section class="section" id="decisions" aria-labelledby="dec-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span class="notranslate" translate="no">DECISIONS.md</span></span>
+      <h2 class="section-title" id="dec-title">Which accepted choices constrain future work, and why?</h2>
+      <p class="section-lede">The choices already made and the reasoning behind them, so later work builds on them instead of quietly undoing them. Every entry has a stable ID other records can point at.</p>
+    </div>
+
+    <div class="rec-grid reveal">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/DECISIONS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">real example</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-001</span>: Set an evidence cutoff</p>
+          <p class="kv"><span class="key">Status:</span> <span class="pill pill-ok notranslate" translate="no">accepted</span></p>
+          <p class="kv"><span class="key">Date:</span> <span class="val notranslate" translate="no">2026-08-05</span></p>
+          <p class="kv"><span class="key">Decision:</span> Include public studies published on or before 2025-12-31.</p>
+          <p class="kv"><span class="key">Rationale:</span> Keep the review reproducible while the first report is drafted.</p>
+          <p class="kv"><span class="key">Consequences:</span> Newer evidence is logged for the next review rather than silently added.</p>
+          <p class="kv"><span class="key">Evidence:</span>
+            <span class="anchor notranslate" translate="no">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+              <span class="a-path">docs/research-protocol.md</span><span class="a-at">@</span><span class="a-sha">8c41f2e</span>
+            </span>
+          </p>
+        </div>
+        <p class="panel-foot">ID · status · date · statement · rationale · consequences · evidence</p>
+      </article>
+
+      <div class="rec-side">
+        <div class="callout">
+          <span class="callout-label">not a design doc</span>
+          <p>The registry holds the constraint and the reason, and points at the design. The full architecture, the rejected alternatives, the diagrams — those live in a design document the entry links to. An entry a future contributor may freely change is not a decision at all; leave implementation details out.</p>
+        </div>
+        <div class="overtime">
+          <h3>How it changes over time</h3>
+          <p>Decisions are superseded, not deleted. Reversing or narrowing one means a new entry with a supersession link; the old entry keeps its ID, its status becomes <code>superseded</code>, and it remains readable as historical evidence. History is corrected through status, never rewritten.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gb reveal">
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-ok">a good entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-001</span>: Set an evidence cutoff</p>
+          <p class="kv"><span class="key">Decision:</span> include public studies published on or before 2025-12-31.</p>
+          <p class="kv"><span class="key">Rationale:</span> keep the review reproducible while the first report is drafted.</p>
+        </div>
+        <p class="gb-note">The constraint and the reason. Anyone can now tell whether new work violates it — and whether the reason still holds.</p>
+      </article>
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-bad">a bad entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-002</span>: Report generator architecture</p>
+          <p class="bullet">The generator runs three passes. Pass one tokenises the corpus into…</p>
+          <p class="bullet faint">(forty more lines of design)</p>
+        </div>
+        <p class="gb-note">A design doc pasted into the registry. Record the constraint, give the reason, and link the design instead.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= 04 LEARNINGS.md ========================= -->
+<section class="section" id="learnings" aria-labelledby="lrn-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span class="notranslate" translate="no">LEARNINGS.md</span></span>
+      <h2 class="section-title" id="lrn-title">Which verified lessons should future collaborators reuse?</h2>
+      <p class="section-lede">What was tried and what it actually taught you — kept separate from what everyone merely believes to be true. An entry earns its place by being reusable and verified; evidence is required.</p>
+    </div>
+
+    <div class="rec-grid reveal">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/LEARNINGS.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">real example</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">L-001</span>: Capture claim-level provenance</p>
+          <p class="kv"><span class="key">Status:</span> <span class="pill pill-ok notranslate" translate="no">accepted</span></p>
+          <p class="kv"><span class="key">Scope:</span> evidence synthesis and collaborative editing</p>
+          <p class="kv"><span class="key">Learning:</span> A bibliography entry alone does not show which source supports a specific claim.</p>
+          <p class="kv"><span class="key">Action:</span> Record a page, section, table, or dataset locator for every material claim.</p>
+          <p class="kv"><span class="key">Evidence:</span> Editorial review found three claims that could not be traced from the bibliography alone.</p>
+        </div>
+        <p class="panel-foot">verified once, reused by every later session</p>
+      </article>
+
+      <div class="rec-side">
+        <div class="callout">
+          <span class="callout-label">not a diary</span>
+          <p>Not a log of what a session did, and not a place for hunches. An entry earns its place by being reusable beyond the task that produced it and verified by evidence — an observed result, a reproduced failure, a review finding. If nobody verified it, it is a belief, and beliefs do not go in the registry.</p>
+        </div>
+        <div class="overtime">
+          <h3>How it changes over time</h3>
+          <p>An entry stands while its evidence holds. When the cited material changes — the doctor flags this as drift — the lesson is re-verified, then re-anchored to the current state or superseded. Like decisions, learnings are never silently rewritten.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gb reveal">
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-ok">a good entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">L-001</span>: Capture claim-level provenance</p>
+          <p class="kv"><span class="key">Learning:</span> a bibliography entry alone does not show which source supports a claim.</p>
+          <p class="kv"><span class="key">Evidence:</span> editorial review found three claims that could not be traced.</p>
+        </div>
+        <p class="gb-note">Verified by a real finding, and reusable on every future claim — not just the three that triggered it.</p>
+      </article>
+      <article class="gb-card card">
+        <div class="gb-head"><span class="pill pill-bad">a bad entry</span></div>
+        <div class="panel-body md">
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">L-002</span>: Long day on the export bug</p>
+          <p class="bullet">Spent most of Tuesday chasing the export bug. Frustrating.</p>
+          <p class="bullet">Might be the encoding? Will look again tomorrow.</p>
+        </div>
+        <p class="gb-note">A diary entry: no evidence, nothing verified, nothing the next person can reuse.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 05 EVIDENCE ANCHORS ======================= -->
+<section class="section" id="anchors" aria-labelledby="anchor-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span>evidence anchors</span></span>
+      <h2 class="section-title" id="anchor-title">Pinning a citation to a point in history</h2>
+      <p class="section-lede">Decisions and learnings cite evidence. When that evidence lives in the repository, the citation can be pinned to the exact commit it was verified at — so a later session can tell whether the justification still holds.</p>
+    </div>
+
+    <div class="anchor-note reveal">
+      <span class="anchor anchor-lg notranslate" translate="no">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+        <span class="a-path">docs/research-protocol.md</span><span class="a-at">@</span><span class="a-sha">8c41f2e</span>
+      </span>
+      <p>The anchor form is <code>path/to/file@commit</code> — a repository-root-relative path at the commit where the evidence was verified. It goes on an <code>Evidence:</code> line inside the entry it supports.</p>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label">drift</span>
+      <p>The doctor verifies every anchor. <code>evidence-drift</code> warns when the cited path has changed since the pinned commit — the justification may no longer hold; re-verify, then re-anchor or supersede. <code>evidence-unverifiable</code> warns when the commit is unknown. Anchors are optional and Git-gated: warnings only, never errors.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ NEXT STEP ============================ -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span>next</span></span>
+      <h2 class="section-title" id="next-title">Now make it a habit</h2>
+      <p class="section-lede">You know what the three files hold. The next page is the day-2 ritual: what agents read before work, what triggers a durable record, and the five things worth having written down by the end of week one.</p>
+    </div>
+    <div class="next-grid reveal">
+      <a class="card next-card" href="/docs/operate/">
+        <span class="next-kicker">next</span>
+        <span class="next-name">Operate — the session loop</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/">
+        <span class="next-kicker">back</span>
+        <span class="next-name">Docs — getting started</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

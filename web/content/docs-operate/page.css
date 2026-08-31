@@ -1,0 +1,77 @@
+.section-lede{margin-top:16px;max-width:640px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+
+.nav-link[aria-current="page"]{color:var(--fg-bright);background:var(--surface-2);border:1px solid var(--border-strong);padding:6px 10px}
+
+.nav-mobile a[aria-current="page"]{color:var(--fg-bright)}
+
+
+/* ============================== PAGE HEAD ============================== */
+.hero{position:relative;padding-top:clamp(48px,8vw,88px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:19ch;font-size:clamp(1.95rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:20px;max-width:640px;font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:var(--fg-muted)}
+
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+
+/* --------------------------- WORKED EXAMPLE --------------------------- */
+.worked{max-width:var(--maxw-prose)}
+
+.worked+.worked{margin-top:28px}
+
+.worked-title{font-size:1.06rem;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.worked-body{margin-top:8px;margin-bottom:14px;color:var(--fg-muted);font-size:.95rem;line-height:1.65}
+
+.worked-body code,.callout p code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.worked .cmd{max-width:640px}
+
+
+/* ------------------------------ CALLOUT ------------------------------ */
+.callout{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:18px 20px;border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:var(--r-md);max-width:var(--maxw-prose)}
+
+.callout-label{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+
+.callout p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* ------------------------------ DOCTOR CMD ------------------------------ */
+.cmdwrap{margin-top:24px;max-width:640px}
+
+
+/* ------------------------------- NEXT ------------------------------- */
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:var(--maxw-prose)}
+
+@media(max-width:700px){.next-grid{grid-template-columns:1fr}}
+
+.next-card{display:flex;flex-direction:column;gap:8px;padding:20px;text-decoration:none;min-width:0}
+
+.next-card:hover{border-color:var(--accent-line)}
+
+.next-kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.next-arrow{color:var(--accent);font-size:1rem}

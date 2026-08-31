@@ -1,28 +1,19 @@
 {
-  "output": "index.html",
-  "title": "Project Context — MonoMind",
-  "description": "Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.",
-  "og_image_alt": "Project Context — MonoMind AI Lab",
+  "output": "docs/index.html",
+  "title": "Docs — Project Context",
+  "description": "The record a returning collaborator reads first: a real NOW.md, whether it fits your project, install in 30 seconds, and the session loop.",
+  "og_image_alt": "Docs — Project Context — MonoMind AI Lab",
   "nav": [
     {
-      "href": "#record",
-      "label": "The record",
-      "i18n": "nav.record"
-    },
-    {
-      "href": "#install",
-      "label": "Install",
-      "i18n": "nav.install"
-    },
-    {
-      "href": "#addons",
-      "label": "Add-ons",
-      "i18n": "nav.addons"
+      "href": "/",
+      "label": "Home",
+      "i18n": "nav.home"
     },
     {
       "href": "/docs/",
       "label": "Docs",
-      "i18n": "nav.docs"
+      "i18n": "nav.docs",
+      "current": true
     },
     {
       "href": "/use-cases",
@@ -41,6 +32,11 @@
       "label": "GitHub",
       "external": true,
       "icon": "github"
+    },
+    {
+      "href": "/",
+      "label": "Home",
+      "i18n": "footer.home"
     },
     {
       "href": "/guide",

@@ -1,0 +1,294 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span class="notranslate" translate="no">Docs</span>&nbsp;<span aria-hidden="true">·</span>&nbsp;<span data-i18n="hero.eyebrow">Install</span></p>
+
+    <h1 class="hero-title" id="page-title" data-i18n="hero.title">Read the plan <b>before</b> anything is written.</h1>
+
+    <p class="hero-sub" data-i18n="hero.sub">This tool edits <code>AGENTS.md</code> and <code>CLAUDE.md</code>, and any careful reader stops right there. So the promises come first, the preview command comes second, and the write comes only after you have read its plan.</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 01 · PROMISES =========================== -->
+<section class="section" id="promises" aria-labelledby="promises-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="prom.eyebrow">before the command</span></span>
+      <h2 class="section-title" id="promises-title" data-i18n="prom.title">What it will never do to your repo</h2>
+      <p class="section-lede" data-i18n="prom.lede">Six promises, enforced by the installer itself and covered by the test suite — not aspirations.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="prom.c1.title">Byte-for-byte preservation</h3>
+        <p data-i18n="prom.c1.body">Existing context files are preserved byte-for-byte.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="prom.c2.title">One managed block, nothing else</h3>
+        <p data-i18n="prom.c2.body">Existing <code>AGENTS.md</code> / <code>CLAUDE.md</code> content is preserved outside one clearly marked managed block — including file mode and CRLF line endings.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="prom.c3.title">Review, never migrate</h3>
+        <p data-i18n="prom.c3.body">Unknown or overlapping memory — old status files, ADRs, lessons folders — is reviewed and classified, never migrated behind your back.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="prom.c4.title">Halt before harm</h3>
+        <p data-i18n="prom.c4.body">Malformed blocks, unsafe symlinks and non-UTF-8 instructions stop apply mode before any write.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="prom.c5.title">Add-ons are opt-in, each</h3>
+        <p data-i18n="prom.c5.body">Optional tools need a separate, informed opt-in each. Nothing is a default checklist.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="prom.c6.title">A small, inspectable footprint</h3>
+        <p data-i18n="prom.c6.body">13 files. One skill. Zero runtime dependencies — stdlib Python 3.10+. The installer itself is never copied into your repo.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 02 · INSTALL ============================ -->
+<section class="section" id="install" aria-labelledby="install-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="inst.eyebrow">the command</span></span>
+      <h2 class="section-title" id="install-title" data-i18n="inst.title">Dry-run first, apply second</h2>
+      <p class="section-lede" data-i18n="inst.lede">The CLI is deterministic: the plan <code>--dry-run</code> prints is exactly what <code>--apply</code> will do, and running it twice changes nothing the second time.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.step1">1 · preview the exact file plan — nothing is written</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Preview command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --dry-run" aria-label="Copy the preview command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.step2">2 · apply the plan you just read</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Apply command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the apply command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once, keep init / inspect / review / doctor on your path</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-comment">&amp;&amp;</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context && project-context init --target . --dry-run" aria-label="Copy the pipx command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="inst.onboard"><b>One question before anything else.</b> The initializer asks whether the repository is brand-new or existing — because an existing project may already hold status files, ADRs or lessons that deserve review, and a brand-new one has nothing to review. It then adapts to software, document, research, writing, mixed or general work, proposes the profile and the exact file changes, and waits for approval.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 03 · DISCOVERY =========================== -->
+<section class="section" id="harnesses" aria-labelledby="harnesses-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="har.eyebrow">per harness</span></span>
+      <h2 class="section-title" id="harnesses-title" data-i18n="har.title">How your agent finds it</h2>
+      <p class="section-lede" data-i18n="har.lede">Installation creates two complementary trigger paths, so no single harness is required: harnesses that support the Agent Skills convention discover the installed skill directly, and a managed block in the root agent instructions routes everything else. This is the whole block, verbatim:</p>
+    </div>
+
+    <div class="block-wrap reveal">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">AGENTS.md · the managed block</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md notranslate" translate="no">
+          <p class="marker">&lt;!-- project-context:start --&gt;</p>
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> Project Context</p>
+          <p class="blk">Before substantial repository work, read <span class="tick">`project-context/SKILL.md`</span> and <span class="tick">`project-context/NOW.md`</span>, then search <span class="tick">`project-context/DECISIONS.md`</span> and <span class="tick">`project-context/LEARNINGS.md`</span> for relevant constraints and evidence. Update project context at meaningful milestones and handoffs. Confirm important claims against the repository's primary artifacts and evidence. Treat generated indexes and wikis as auxiliary views, not authority.</p>
+          <p class="marker">&lt;!-- project-context:end --&gt;</p>
+        </div>
+        <p class="panel-foot" data-i18n="har.blockfoot">everything outside these two markers is never touched</p>
+      </article>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="har.th.env">Environment</th>
+            <th scope="col" data-i18n="har.th.how">How the protocol reaches it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Environment" data-i18n-attr="data-label:har.th.env"><span class="cmp-name notranslate" translate="no">Claude Code</span></td>
+            <td data-label="How the protocol reaches it" data-i18n-attr="data-label:har.th.how"><span data-i18n="har.r1.how">Discovers the installed skill through the pointer at <code>.claude/skills/project-context/SKILL.md</code>; the managed block in <code>CLAUDE.md</code> covers it too.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Environment" data-i18n-attr="data-label:har.th.env"><span class="cmp-name notranslate" translate="no">Cursor · Windsurf · Copilot Chat · Aider</span></td>
+            <td data-label="How the protocol reaches it" data-i18n-attr="data-label:har.th.how"><span data-i18n="har.r2.how">Agent mode with repository access. The managed block in <code>AGENTS.md</code> routes them into the record before substantial work.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Environment" data-i18n-attr="data-label:har.th.env"><span class="cmp-name notranslate" translate="no">Claude Desktop · ChatGPT</span></td>
+            <td data-label="How the protocol reaches it" data-i18n-attr="data-label:har.th.how"><span data-i18n="har.r3.how">Filesystem, workspace or project access to the folder. The managed block applies, and the paste-in prompt below works with no tooling at all.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Environment" data-i18n-attr="data-label:har.th.env"><span class="cmp-name notranslate" translate="no">Any other agent</span></td>
+            <td data-label="How the protocol reaches it" data-i18n-attr="data-label:har.th.how"><span data-i18n="har.r4.how">If it can read and write files in the project folder, it is supported — the managed block is the delivery path, and no launcher is required.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 04 · PROMPT ============================ -->
+<section class="section" id="prompt" aria-labelledby="prompt-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="pr.eyebrow">zero tooling</span></span>
+      <h2 class="section-title" id="prompt-title" data-i18n="pr.title">No Python, no CLI — one prompt</h2>
+      <p class="section-lede" data-i18n="pr.lede">Paste this into any AI agent that can read and edit the target folder. The agent asks the onboarding question, shows you the plan, and waits for approval — the same guarantees, delivered by the agent instead of the CLI.</p>
+    </div>
+
+    <div class="prompt-card card reveal">
+      <div class="prompt-bar">
+        <span class="prompt-label" data-i18n="pr.label">install prompt · paste into your agent</span>
+        <button type="button" class="cmd-btn" data-copy="Install Project Context in the current repository or project folder using https://github.com/monomind-ai-lab/project-context. Read and follow `skills/project-context-init/SKILL.md`, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes." aria-label="Copy the install prompt" data-i18n-attr="aria-label:pr.copy">
+          <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+          <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="prompt-text notranslate" translate="no">Install Project Context in the current repository or project folder using https://github.com/monomind-ai-lab/project-context. Read and follow <span class="tick">`skills/project-context-init/SKILL.md`</span>, starting with its required onboarding question. Show me the proposed plan and wait for my approval before making changes.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 05 · VERIFY ============================ -->
+<section class="section" id="verify" aria-labelledby="verify-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="ver.eyebrow">verify</span></span>
+      <h2 class="section-title" id="verify-title" data-i18n="ver.title">Prove it took</h2>
+      <p class="section-lede" data-i18n="ver.lede">A read-only doctor checks the install end to end. It reports; it never rewrites. With pipx it is simply <code>project-context doctor --target .</code></p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="ver.label">health check · read-only</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Doctor command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context doctor</span> <span class="t-flag">--target</span> <span class="t-arg">.</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context doctor --target ." aria-label="Copy the doctor command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ul class="proof reveal">
+      <li data-i18n="ver.p1">required core files</li>
+      <li data-i18n="ver.p2">installed scaffold version</li>
+      <li data-i18n="ver.p3">NOW.md freshness</li>
+      <li data-i18n="ver.p4">duplicate decision and learning IDs</li>
+      <li data-i18n="ver.p5">broken relative links</li>
+      <li data-i18n="ver.p6">reachability — something still delivers the protocol</li>
+    </ul>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="ver.reach">The last check is the one that matters. A healthy result names the routes that carry the protocol into a session — the managed block, the harness pointer, any hooks. <code>no-delivery-path</code> is an error, because perfect files that nothing ever loads would otherwise report healthy.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 06 · UNINSTALL =========================== -->
+<section class="section" id="uninstall" aria-labelledby="uninstall-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="un.eyebrow">uninstall</span></span>
+      <h2 class="section-title" id="uninstall-title" data-i18n="un.title">Leaving is four deletions</h2>
+      <p class="section-lede" data-i18n="un.lede">There is no uninstall command because nothing needs one: everything the installer creates is a plain file in your repo. Removal is deleting them.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="un.c1.title">Delete the records</h3>
+        <p data-i18n="un.c1.body">Remove the <code>project-context/</code> directory. Consider keeping a copy first — it holds your project's decisions and learnings, not the tool's.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="un.c2.title">Delete the skill and its pointer</h3>
+        <p data-i18n="un.c2.body">Remove <code>.agents/skills/project-context/</code> and the pointer at <code>.claude/skills/project-context/</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="un.c3.title">Remove the managed block</h3>
+        <p data-i18n="un.c3.body">In <code>AGENTS.md</code> / <code>CLAUDE.md</code>, delete everything between <code>&lt;!-- project-context:start --&gt;</code> and <code>&lt;!-- project-context:end --&gt;</code>, markers included. The rest of the file was never touched.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="un.c4.title">If you opted into hooks</h3>
+        <p data-i18n="un.c4.body">Remove the two Project Context entries from <code>.claude/settings.json</code> — they are the ones whose commands call <code>context_triggers.py</code>. Hooks exist only if you explicitly opted in.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= NEXT STEP ============================= -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div>
+        <span class="eyebrow"><span data-i18n="next.eyebrow">next</span></span>
+        <h2 class="section-title" id="next-title" style="margin-top:14px" data-i18n="next.title">You have three new files. Now meet them.</h2>
+        <p class="section-lede" data-i18n="next.lede">The moment after install is where adoption is usually lost. The records page walks each file — what it answers, what does not belong in it, and what a good entry looks like next to a bad one.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="/docs/records/" data-i18n="next.cta">The three records, annotated</a>
+        <a class="btn btn-secondary" href="/docs/operate/" data-i18n="next.cta2">The session loop</a>
+      </div>
+    </div>
+  </div>
+</section>

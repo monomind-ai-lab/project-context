@@ -1,8 +1,8 @@
 {
-  "output": "use-cases/index.html",
-  "title": "Use cases — Project Context",
-  "description": "Two shapes of the same problem: a code repository many agents work in, and any collaborative project whose materials live in one folder people and agents can reach.",
-  "og_image_alt": "Use cases — Project Context — MonoMind AI Lab",
+  "output": "docs/operate/index.html",
+  "title": "Operating the loop — Project Context",
+  "description": "The day-2 page: what agents read before substantial work, what triggers a durable record, what gets updated at the end of a session, when the doctor runs, and the five things worth having written down by day 7.",
+  "og_image_alt": "Operating the loop — Project Context — MonoMind AI Lab",
   "nav": [
     {
       "href": "/",
@@ -12,18 +12,13 @@
     {
       "href": "/docs/",
       "label": "Docs",
-      "i18n": "nav.docs"
+      "i18n": "nav.docs",
+      "current": true
     },
     {
       "href": "/use-cases",
       "label": "Use cases",
-      "i18n": "nav.usecases",
-      "current": true
-    },
-    {
-      "href": "/#addons",
-      "label": "Add-ons",
-      "i18n": "nav.addons"
+      "i18n": "nav.usecases"
     },
     {
       "href": "/guide",

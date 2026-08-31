@@ -1,28 +1,19 @@
 {
-  "output": "index.html",
-  "title": "Project Context — MonoMind",
-  "description": "Small Markdown records, versioned in the repo, that outlive any one person, agent, or chat.",
-  "og_image_alt": "Project Context — MonoMind AI Lab",
+  "output": "docs/install/index.html",
+  "title": "Install — Project Context",
+  "description": "What installing does to your repo — six safety promises above the command, dry-run first, per-harness setup, the zero-tooling prompt, verifying, and uninstalling.",
+  "og_image_alt": "Install — Project Context — MonoMind AI Lab",
   "nav": [
     {
-      "href": "#record",
-      "label": "The record",
-      "i18n": "nav.record"
-    },
-    {
-      "href": "#install",
-      "label": "Install",
-      "i18n": "nav.install"
-    },
-    {
-      "href": "#addons",
-      "label": "Add-ons",
-      "i18n": "nav.addons"
+      "href": "/",
+      "label": "Home",
+      "i18n": "nav.home"
     },
     {
       "href": "/docs/",
       "label": "Docs",
-      "i18n": "nav.docs"
+      "i18n": "nav.docs",
+      "current": true
     },
     {
       "href": "/use-cases",
@@ -41,6 +32,11 @@
       "label": "GitHub",
       "external": true,
       "icon": "github"
+    },
+    {
+      "href": "/",
+      "label": "Home",
+      "i18n": "footer.home"
     },
     {
       "href": "/guide",

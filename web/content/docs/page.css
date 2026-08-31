@@ -1,0 +1,184 @@
+
+/* Current-page marker in the nav (page-level by convention; see use-cases). */
+.nav-link[aria-current="page"]{color:var(--fg-bright);background:var(--surface-2);border:1px solid var(--border-strong);padding:6px 10px}
+
+.nav-mobile a[aria-current="page"]{color:var(--fg-bright)}
+
+
+/* ============================== PAGE HEAD ==============================
+   Deliberately compact: the plan's one hard requirement for this page is a
+   real NOW.md inside the first viewport, so the hero spends its height on
+   the panel, not on itself. */
+.hero{position:relative;padding-top:clamp(40px,6vw,72px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:22ch;font-size:clamp(1.8rem,4.4vw,2.9rem);letter-spacing:-.035em;line-height:1.08;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:16px;max-width:600px;font-size:clamp(.98rem,1.7vw,1.1rem);line-height:1.6;color:var(--fg-muted)}
+
+/* The four questions, as one compact row that wraps. */
+.qs{margin-top:18px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+.qs li{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:.88rem;color:var(--fg-muted)}
+
+.qs .qs-num{font-family:var(--font-mono);font-size:11px;color:var(--accent);flex:none}
+
+
+/* --------------------- the NOW.md panel, hero-sized --------------------- */
+.now-wrap{margin-top:30px;width:100%;max-width:680px;text-align:start}
+
+.now-note{margin-top:14px;color:var(--fg-dim);font-size:.88rem;line-height:1.65;text-align:start}
+
+.now-note code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+
+/* ------------- record-panel chrome (from the landing page) ------------- */
+.panel{container-type:inline-size;display:flex;flex-direction:column;overflow:hidden}
+
+.panel-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+
+.panel-body{padding:18px 16px;font-family:var(--font-mono);font-size:12.5px;line-height:1.6;color:var(--fg-muted);flex:1;min-width:0}
+
+.panel-foot{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint)}
+
+.md .hash{color:var(--fg-faint);user-select:none}
+
+.md .h1{color:var(--fg-bright);font-size:14px;font-weight:500;margin-bottom:4px}
+
+.md .h2{color:var(--fg);font-size:13px;font-weight:500;margin-top:18px;margin-bottom:8px}
+
+.md .meta{color:var(--fg-dim);font-size:11.5px;margin-bottom:2px}
+
+.md .val{color:var(--fg-muted)}
+
+.md .bullet{position:relative;padding-inline-start:16px;color:var(--fg-muted)}
+
+.md .bullet:before{content:"-";position:absolute;inset-inline-start:0;color:var(--fg-faint)}
+
+.md .rid{color:var(--accent)}
+
+.mdtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:2px}
+
+.mdtable th{text-align:start;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);padding:0 12px 7px 0;border-bottom:1px solid var(--border);white-space:nowrap}
+
+.mdtable td{padding:9px 12px 9px 0;border-bottom:1px solid var(--border);vertical-align:top;color:var(--fg-muted);line-height:1.5}
+
+.mdtable tr:last-child td{border-bottom:0;padding-bottom:0}
+
+.mdtable td:first-child{color:var(--fg);font-weight:500}
+
+.mdtable th:last-child,.mdtable td:last-child{padding-inline-end:0}
+
+/* Stacked label/value rows once the panel itself is narrow. Container query
+   first; the media query is the fallback where they are unavailable. The
+   680px panel holds a 4-column table, so the stack point is higher than the
+   landing page's half-width panels. */
+@container (max-width:560px){
+  .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+  .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+  .mdtable tr+tr{margin-top:8px}
+  .mdtable td{border-bottom:0;padding:4px 0}
+  .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+  .mdtable tr:last-child td{padding-bottom:4px}
+}
+
+@supports not (container-type:inline-size){
+  @media(max-width:640px){
+    .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+    .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+    .mdtable tr+tr{margin-top:8px}
+    .mdtable td{border-bottom:0;padding:4px 0}
+    .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+    .mdtable tr:last-child td{padding-bottom:4px}
+  }
+}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;border:1px solid;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:nowrap;text-indent:0}
+
+.pill:before{content:"";width:5px;height:5px;border-radius:999px;background:currentColor;flex:none}
+
+.pill-work{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+
+/* ------------------------------- FIT ------------------------------- */
+.cmp a{color:var(--accent);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px;transition:text-decoration-color .15s}
+
+.cmp a:hover{text-decoration-color:var(--accent)}
+
+.fit-yes{color:var(--fg)}
+
+.fit-no{color:var(--warn)}
+
+.fit-dash{color:var(--fg-faint)}
+
+
+/* ----------------------------- INSTALL ----------------------------- */
+.cmd-stack{display:flex;flex-direction:column;gap:20px;max-width:720px}
+
+.proof{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px 10px}
+
+.proof li{font-family:var(--font-mono);font-size:11.5px;color:var(--fg-dim);border:1px solid var(--border);border-radius:999px;padding:5px 12px;background:var(--bg-subtle)}
+
+.more-line{margin-top:22px;font-size:.92rem;line-height:1.6;max-width:var(--maxw-prose)}
+
+.more-line a{color:var(--accent);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px;transition:text-decoration-color .15s}
+
+.more-line a:hover{text-decoration-color:var(--accent)}
+
+
+/* ------------------------------- LOOP ------------------------------- */
+/* .checks is shared chrome; only the trailing link needs page rules. */
+
+
+/* ---------------------------- CTA CARDS ---------------------------- */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+.cards-grid.two{grid-template-columns:repeat(2,1fr)}
+
+@media(max-width:860px){.cards-grid,.cards-grid.two{grid-template-columns:1fr}}
+
+.icard{display:flex;flex-direction:column;gap:12px;padding:20px;min-width:0}
+
+.icard h3{font-size:1.06rem;letter-spacing:-.02em}
+
+.card-tag{align-self:flex-start;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--accent);background:var(--accent-wash);border:1px solid var(--accent-line);border-radius:999px;padding:2px 10px}
+
+.icard p.body{color:var(--fg-muted);font-size:.94rem;line-height:1.65;flex:1}
+
+.icard p.body code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+/* The whole card is the link; the arrow answers the hover. */
+.cta-card{cursor:pointer}
+
+.cta-card:hover .cta-arrow{transform:translateX(4px);color:var(--accent)}
+
+.cta-card:hover h3{color:var(--accent)}
+
+.cta-arrow{align-self:flex-end;font-size:1.1rem;color:var(--fg-faint);transition:transform .2s var(--ease),color .2s var(--ease)}

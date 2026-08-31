@@ -1,8 +1,8 @@
 {
-  "output": "use-cases/index.html",
-  "title": "Use cases — Project Context",
-  "description": "Two shapes of the same problem: a code repository many agents work in, and any collaborative project whose materials live in one folder people and agents can reach.",
-  "og_image_alt": "Use cases — Project Context — MonoMind AI Lab",
+  "output": "docs/records/index.html",
+  "title": "The three records — Project Context",
+  "description": "An annotated tour of NOW.md, DECISIONS.md, and LEARNINGS.md — the question each answers, what stays out of it, one good and one bad entry side by side, and how each record changes over time.",
+  "og_image_alt": "The three records — Project Context — MonoMind AI Lab",
   "nav": [
     {
       "href": "/",
@@ -12,18 +12,13 @@
     {
       "href": "/docs/",
       "label": "Docs",
-      "i18n": "nav.docs"
+      "i18n": "nav.docs",
+      "current": true
     },
     {
       "href": "/use-cases",
       "label": "Use cases",
-      "i18n": "nav.usecases",
-      "current": true
-    },
-    {
-      "href": "/#addons",
-      "label": "Add-ons",
-      "i18n": "nav.addons"
+      "i18n": "nav.usecases"
     },
     {
       "href": "/guide",

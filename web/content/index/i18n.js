@@ -10,6 +10,7 @@ const I18N = {
 "en": {
 "nav.record": "The record",
 "nav.install": "Install",
+"nav.docs": "Docs",
 "nav.guide": "Guide",
 "nav.addons": "Add-ons",
 "nav.usecases": "Use cases",
@@ -165,6 +166,7 @@ const I18N = {
 "ko": {
 "nav.record": "기록",
 "nav.install": "설치",
+"nav.docs": "문서",
 "nav.guide": "가이드",
 "nav.addons": "애드온",
 "nav.usecases": "활용 사례",
@@ -321,6 +323,7 @@ const I18N = {
 "zh-TW": {
 "nav.record": "紀錄",
 "nav.install": "安裝",
+"nav.docs": "文件",
 "nav.guide": "指南",
 "nav.addons": "延伸工具",
 "nav.usecases": "應用情境",

@@ -1,0 +1,223 @@
+.section-lede{margin-top:16px;max-width:640px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+
+.nav-link[aria-current="page"]{color:var(--fg-bright);background:var(--surface-2);border:1px solid var(--border-strong);padding:6px 10px}
+
+.nav-mobile a[aria-current="page"]{color:var(--fg-bright)}
+
+
+/* ============================== PAGE HEAD ============================== */
+.hero{position:relative;padding-top:clamp(48px,8vw,88px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:19ch;font-size:clamp(1.95rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:20px;max-width:640px;font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:var(--fg-muted)}
+
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+
+/* ------------------- record panels (the .md rendering) ------------------- */
+.panel{container-type:inline-size;display:flex;flex-direction:column;overflow:hidden}
+
+.panel-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+
+.panel-body{padding:18px 16px;font-family:var(--font-mono);font-size:12.5px;line-height:1.6;color:var(--fg-muted);flex:1;min-width:0}
+
+.panel-foot{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint)}
+
+.md .hash{color:var(--fg-faint);user-select:none}
+
+.md .h1{color:var(--fg-bright);font-size:14px;font-weight:500;margin-bottom:4px}
+
+.md .h2{color:var(--fg);font-size:13px;font-weight:500;margin-top:18px;margin-bottom:8px}
+
+.md .h2:first-child{margin-top:0}
+
+.md .meta{color:var(--fg-dim);font-size:11.5px;margin-bottom:2px}
+
+.md .val{color:var(--fg-muted)}
+
+.md .key{color:var(--fg-dim);margin-inline-end:5px}
+
+/* Key and value share one text flow so a long value wraps under itself
+   instead of being pushed onto its own line by a flex break. */
+.md .kv{margin-top:6px;padding-inline-start:14px;text-indent:-14px}
+
+.md .kv .anchor,.md .kv .pill{text-indent:0;vertical-align:middle}
+
+.md .bullet{position:relative;padding-inline-start:16px;color:var(--fg-muted)}
+
+.md .bullet:before{content:"-";position:absolute;inset-inline-start:0;color:var(--fg-faint)}
+
+.md .bullet.faint{color:var(--fg-faint);font-style:italic}
+
+.md .rid{color:var(--accent)}
+
+.mdtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:2px}
+
+.mdtable th{text-align:start;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);padding:0 12px 7px 0;border-bottom:1px solid var(--border);white-space:nowrap}
+
+.mdtable td{padding:9px 12px 9px 0;border-bottom:1px solid var(--border);vertical-align:top;color:var(--fg-muted);line-height:1.5}
+
+.mdtable tr:last-child td{border-bottom:0;padding-bottom:0}
+
+.mdtable td:first-child{color:var(--fg);font-weight:500}
+
+.mdtable th:last-child,.mdtable td:last-child{padding-inline-end:0}
+
+/* Stacked label/value rows once the panel itself is narrow. Container
+   query first (the panel is column-width on desktop, full-width below
+   900px, so a viewport media query alone measures the wrong box); the
+   media query is the fallback where container queries are unavailable. */
+@container (max-width:440px){
+  .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+  .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+  .mdtable tr+tr{margin-top:8px}
+  .mdtable td{border-bottom:0;padding:4px 0}
+  .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+  .mdtable tr:last-child td{padding-bottom:4px}
+}
+
+@supports not (container-type:inline-size){
+  @media(max-width:640px){
+    .mdtable,.mdtable tbody,.mdtable tr,.mdtable td{display:block;width:100%}
+    .mdtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .mdtable tr{border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px}
+    .mdtable tr+tr{margin-top:8px}
+    .mdtable td{border-bottom:0;padding:4px 0}
+    .mdtable td:before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:2px}
+    .mdtable tr:last-child td{padding-bottom:4px}
+  }
+}
+
+/* text-indent:0 is the bug fix, not decoration. .md .kv hangs its first
+   line by -14px, that indent is inherited into this inline-flex box, and it
+   pulled the label 14px left — straight across its own leading dot. The
+   evidence anchor already carried the same repair. */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;border:1px solid;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:nowrap;text-indent:0}
+
+.pill:before{content:"";width:5px;height:5px;border-radius:999px;background:currentColor;flex:none}
+
+.pill-ok{color:var(--success);background:var(--success-wash);border-color:var(--success-line)}
+
+.pill-work{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
+
+.pill-bad{color:var(--danger);background:var(--danger-wash);border-color:var(--danger-line)}
+
+
+/* The evidence anchor is a first-class token: three tinted parts, one box. */
+.anchor{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:2px 8px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--border-strong);font-family:var(--font-mono);font-size:11.5px;line-height:1.7;white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+
+.anchor::-webkit-scrollbar{display:none}
+
+.anchor svg{width:12px;height:12px;color:var(--accent);flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.a-path{color:var(--fg-bright)}
+
+.a-at{color:var(--accent)}
+
+.a-sha{color:var(--fg-dim)}
+
+.anchor-lg{font-size:13px;padding:5px 11px;gap:7px}
+
+.anchor-lg svg{width:13px;height:13px}
+
+.anchor-note{margin-top:20px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:18px 20px;border:1px solid var(--border);border-inline-start:2px solid var(--accent);border-radius:var(--r-md);background:var(--surface)}
+
+.anchor-note p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.6}
+
+.anchor-note p code,.callout p code,.treenote code,.overtime p code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+
+/* ------------------------------ FILE TREE ------------------------------ */
+/* The tree is wider than 375px by nature; it scrolls inside its own box
+   rather than ever widening the page. */
+.treewrap{overflow-x:auto}
+
+.tree{margin:0;font-family:var(--font-mono);font-size:12.5px;line-height:1.75;color:var(--fg-dim);white-space:pre}
+
+.tr-dir{color:var(--fg-bright)}
+
+.tr-file{color:var(--fg-muted)}
+
+.tr-rec{color:var(--accent);font-weight:500}
+
+.tr-note{color:var(--fg-faint)}
+
+.treenote{margin-top:18px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* ---------------- record layout: example + side notes ---------------- */
+.rec-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:16px;align-items:start}
+
+@media(max-width:900px){.rec-grid{grid-template-columns:1fr}}
+
+.rec-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+
+.overtime{padding:18px 20px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface)}
+
+.overtime h3{font-size:.95rem;letter-spacing:-.01em;color:var(--fg-bright)}
+
+.overtime p{margin-top:8px;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* ------------------------------ CALLOUT ------------------------------ */
+.callout{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:18px 20px;border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:var(--r-md)}
+
+.callout-label{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+
+.callout p{flex:1 1 220px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* --------------------- good / bad, side by side --------------------- */
+.gb{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+
+@media(max-width:860px){.gb{grid-template-columns:1fr}}
+
+.gb-card{container-type:inline-size;display:flex;flex-direction:column;overflow:hidden}
+
+.gb-head{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle)}
+
+.gb-note{padding:12px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);color:var(--fg-muted);font-size:.86rem;line-height:1.6}
+
+
+/* ------------------------------- NEXT ------------------------------- */
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:var(--maxw-prose)}
+
+@media(max-width:700px){.next-grid{grid-template-columns:1fr}}
+
+.next-card{display:flex;flex-direction:column;gap:8px;padding:20px;text-decoration:none;min-width:0}
+
+.next-card:hover{border-color:var(--accent-line)}
+
+.next-kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.next-arrow{color:var(--accent);font-size:1rem}

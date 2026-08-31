@@ -1,0 +1,269 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">Docs</span></p>
+
+    <h1 class="hero-title" id="page-title" data-i18n="hero.title">Weeks away, and <b>four questions</b> still have answers.</h1>
+
+    <p class="hero-sub" data-i18n="hero.sub">A collaborator returning after three weeks should not rebuild the project from stale chats. They should open one small file and be able to answer:</p>
+
+    <ol class="qs">
+      <li><span class="qs-num notranslate" translate="no" aria-hidden="true">1</span><span data-i18n="qs.q1">What is true now?</span></li>
+      <li><span class="qs-num notranslate" translate="no" aria-hidden="true">2</span><span data-i18n="qs.q2">Which decisions constrain the work?</span></li>
+      <li><span class="qs-num notranslate" translate="no" aria-hidden="true">3</span><span data-i18n="qs.q3">What has already been learned?</span></li>
+      <li><span class="qs-num notranslate" translate="no" aria-hidden="true">4</span><span data-i18n="qs.q4">Where is the evidence?</span></li>
+    </ol>
+
+    <!-- The real sample, not a diagram of one: the complete NOW.md from
+         examples/sample-project-context/, rendered line for line. -->
+    <div class="now-wrap">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/NOW.md</span>
+          <span class="chip notranslate" translate="no" style="margin-inline-start:auto">markdown</span>
+        </div>
+        <div class="panel-body md">
+          <p class="h1"><span class="hash" aria-hidden="true">#</span> <span data-i18n="sample.h1">Current Project State</span></p>
+          <p class="meta"><span data-i18n="sample.reviewed">Last reviewed:</span> <span class="val notranslate" translate="no">2026-08-26</span></p>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.h2a">Snapshot</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.area">Area</th>
+              <th scope="col" data-i18n="sample.th.state">Current state</th>
+              <th scope="col" data-i18n="sample.th.evidence">Evidence</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Area" data-i18n-attr="data-label:sample.th.area"><span data-i18n="sample.area1">Evidence scope</span></td>
+              <td data-label="Current state" data-i18n-attr="data-label:sample.th.state"><span data-i18n="sample.state1">The report uses public studies published through 2025-12-31.</span></td>
+              <td data-label="Evidence" data-i18n-attr="data-label:sample.th.evidence"><span class="rid notranslate" translate="no">D-001</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.h2b">Active work</span></p>
+          <table class="mdtable">
+            <thead><tr>
+              <th scope="col" data-i18n="sample.th.initiative">Initiative</th>
+              <th scope="col" data-i18n="sample.th.status">Status</th>
+              <th scope="col" data-i18n="sample.th.next">Next action</th>
+              <th scope="col" data-i18n="sample.th.evidence">Evidence</th>
+            </tr></thead>
+            <tbody><tr>
+              <td data-label="Initiative" data-i18n-attr="data-label:sample.th.initiative"><span data-i18n="sample.init1">Findings synthesis</span></td>
+              <td data-label="Status" data-i18n-attr="data-label:sample.th.status"><span class="pill pill-work notranslate" translate="no">in-progress</span></td>
+              <td data-label="Next action" data-i18n-attr="data-label:sample.th.next"><span data-i18n="sample.next1">Resolve three claims that lack page-level citations.</span></td>
+              <td data-label="Evidence" data-i18n-attr="data-label:sample.th.evidence"><span class="rid notranslate" translate="no">L-001</span></td>
+            </tr></tbody>
+          </table>
+
+          <p class="h2"><span class="hash" aria-hidden="true">##</span> <span data-i18n="sample.h2c">Blockers</span></p>
+          <p class="bullet" data-i18n="sample.blocker1">None.</p>
+        </div>
+        <p class="panel-foot" data-i18n="sample.foot">what the next session reads first</p>
+      </article>
+      <p class="now-note" data-i18n="sample.note">This is not a mock-up. It is the complete <code>NOW.md</code> from the shipped sample project, unedited — a research report with an evidence cutoff. <code>D-001</code> and <code>L-001</code> point into the decision and learning registries beside it.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 01 · FIT ============================ -->
+<section class="section" id="fit" aria-labelledby="fit-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="fit.eyebrow">fit</span></span>
+      <h2 class="section-title" id="fit-title" data-i18n="fit.title">Will it fit your project?</h2>
+      <p class="section-lede" data-i18n="fit.lede">Not only software, and not only GitHub — but also not everything. The last row is the honest one: a project nobody will return to has nothing to hand off, and installing a handoff record into it is busywork.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="fit.th.project">Your project</th>
+            <th scope="col" data-i18n="fit.th.fits">Fits?</th>
+            <th scope="col" data-i18n="fit.th.start">Start here</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r1.p">Code repository, several agents touch it</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-yes" data-i18n="fit.r1.f">Yes — the core case</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><a href="/docs/install/" data-i18n="fit.link.install">Install</a></td>
+          </tr>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r2.p">Brand-new repository, nothing written yet</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-yes" data-i18n="fit.r2.f">Yes</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><a href="/docs/install/" data-i18n="fit.link.install2">Install</a></td>
+          </tr>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r3.p">Research corpus — papers, datasets, findings</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-yes" data-i18n="fit.r3.f">Yes</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><a href="/use-cases#collaborative" data-i18n="fit.link.usecases">Use cases</a></td>
+          </tr>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r4.p">Writing or documents project</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-yes" data-i18n="fit.r4.f">Yes</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><a href="/use-cases#collaborative" data-i18n="fit.link.usecases2">Use cases</a></td>
+          </tr>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r5.p">A shared folder with no Git</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-yes" data-i18n="fit.r5.f">Yes — Git adds history, it is not required</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><a href="/docs/install/" data-i18n="fit.link.install3">Install</a></td>
+          </tr>
+          <tr>
+            <td data-label="Your project" data-i18n-attr="data-label:fit.th.project"><span data-i18n="fit.r6.p">A project you will not return to</span></td>
+            <td data-label="Fits?" data-i18n-attr="data-label:fit.th.fits"><span class="fit-no" data-i18n="fit.r6.f">No — nothing to hand off</span></td>
+            <td data-label="Start here" data-i18n-attr="data-label:fit.th.start"><span class="fit-dash notranslate" translate="no" aria-hidden="true">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 02 · INSTALL ========================== -->
+<section class="section" id="install" aria-labelledby="install-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="inst.eyebrow">install</span></span>
+      <h2 class="section-title" id="install-title" data-i18n="inst.title">Install in 30 seconds</h2>
+      <p class="section-lede" data-i18n="inst.lede">Preview first. <code>--dry-run</code> prints the exact file plan and writes nothing; run <code>--apply</code> only after you have read it.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.step1">1 · preview — nothing is written</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Preview command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --dry-run" aria-label="Copy the preview command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.step2">2 · apply the plan you just read</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Apply command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the apply command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once, keep the CLI on your path</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-comment">&amp;&amp;</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context && project-context init --target . --dry-run" aria-label="Copy the pipx command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ul class="proof reveal">
+      <li data-i18n="inst.proof1">a stock install lands 13 files</li>
+      <li data-i18n="inst.proof2">zero runtime dependencies · stdlib Python 3.10+</li>
+      <li data-i18n="inst.proof3">the installer is never copied into your repo</li>
+    </ul>
+
+    <p class="more-line reveal"><a href="/docs/install/" data-i18n="inst.more">What it will never do to your repo, per-harness setup, the no-tooling path, and uninstalling → the install page</a></p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 03 · THE LOOP =========================== -->
+<section class="section" id="loop" aria-labelledby="loop-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="loop.eyebrow">the session loop</span></span>
+      <h2 class="section-title" id="loop-title" data-i18n="loop.title">What happens from now on</h2>
+      <p class="section-lede" data-i18n="loop.lede">Installing is not adopting. The record earns its keep through four moments in every working session — and the agents handle all four.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="loop.c1.title">Before substantial work</h3>
+        <p data-i18n="loop.c1.body">The agent reads <code>NOW.md</code>, then searches <code>DECISIONS.md</code> and <code>LEARNINGS.md</code> for the task topic. Automatic where the harness discovers the installed skill; the managed block in <code>AGENTS.md</code> / <code>CLAUDE.md</code> covers the rest.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="loop.c2.title">During work</h3>
+        <p data-i18n="loop.c2.body">Trigger detection flags moments that produce a durable record — an accepted trade-off, a reproduced bug, a verified benchmark. The agent proposes; an <code>ack</code> confirms.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="loop.c3.title">At the end</h3>
+        <p data-i18n="loop.c3.body"><code>NOW.md</code> is updated to what is now true. Decisions and learnings are appended only if they were earned — durable constraints and verified lessons, not a diary.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="loop.c4.title">When state may be stale</h3>
+        <p data-i18n="loop.c4.body">The doctor runs. Read-only, always: it flags stale state, broken links and dead delivery paths, and it never rewrites your judgement.</p>
+      </article>
+    </div>
+
+    <p class="more-line reveal"><a href="/docs/operate/" data-i18n="loop.more">The full day-2 ritual, trigger examples and the first-week checklist → operate</a></p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 04 · GO DEEPER =========================== -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="next.eyebrow">go deeper</span></span>
+      <h2 class="section-title" id="next-title" data-i18n="next.title">Where to next</h2>
+    </div>
+
+    <div class="cards-grid two reveal">
+      <a class="card icard cta-card" href="/docs/install/">
+        <span class="card-tag" data-i18n="next.c1.tag">install</span>
+        <h3 data-i18n="next.c1.title">What installing actually does</h3>
+        <p class="body" data-i18n="next.c1.body">The six safety promises, both install paths, per-harness setup, verifying, and uninstalling.</p>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card icard cta-card" href="/docs/records/">
+        <span class="card-tag" data-i18n="next.c2.tag">records</span>
+        <h3 data-i18n="next.c2.title">The three records, annotated</h3>
+        <p class="body" data-i18n="next.c2.body">What each file answers, what does not belong in it, and a good entry next to a bad one.</p>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card icard cta-card" href="/docs/operate/">
+        <span class="card-tag" data-i18n="next.c3.tag">operate</span>
+        <h3 data-i18n="next.c3.title">The day-2 ritual</h3>
+        <p class="body" data-i18n="next.c3.body">The session loop in detail, trigger detection with <code>ack</code>, and the first-week checklist.</p>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card icard cta-card" href="/use-cases">
+        <span class="card-tag" data-i18n="next.c4.tag">use cases</span>
+        <h3 data-i18n="next.c4.title">Two shapes of the problem</h3>
+        <p class="body" data-i18n="next.c4.body">The repository many agents work in — and every collaborative project that is not code.</p>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
