@@ -61,16 +61,20 @@ def nav_html(links: list[dict], mobile: bool = False) -> str:
     for link in links:
         attrs = [f'href="{html.escape(link["href"])}"']
         cls = [] if mobile else ["nav-link"]
+        body = html.escape(link["label"])
         if link.get("external"):
             cls.append("notranslate")
             attrs.append('translate="no"')
-            attrs.append('rel="noopener"')
+            attrs.append('rel="noopener noreferrer"')
+            attrs.append('target="_blank"')
+            # Add external link icon
+            body += ' <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;margin-left:4px;vertical-align:-2px"><path d="M2 10H1V1h9v1M11 1l-4 4M11 1v3.5M11 1h-3.5"/></svg>'
         if link.get("current"):
             attrs.append('aria-current="page"')
         if link.get("i18n"):
             attrs.append(f'data-i18n="{html.escape(link["i18n"])}"')
         cls_attr = f'class="{" ".join(cls)}" ' if cls else ""
-        out.append(f'{indent}<a {cls_attr}{" ".join(attrs)}>{html.escape(link["label"])}</a>')
+        out.append(f'{indent}<a {cls_attr}{" ".join(attrs)}>{body}</a>')
     return "\n".join(out)
 
 

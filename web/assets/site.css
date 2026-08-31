@@ -213,7 +213,7 @@ code,kbd{font-family:var(--font-mono);font-size:.9em}
 .brand-mark svg{width:26px;height:26px}
 .brand-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brand-tag{flex:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0;color:var(--fg-dim);padding:2px 7px;border:1px solid var(--border);border-radius:999px;white-space:nowrap}
-.nav-links{display:flex;gap:2px;margin-inline-start:6px;min-width:0}
+.nav-links{display:flex;gap:2px;margin-inline:auto;justify-content:center;min-width:0}
 .nav-link{padding:7px 11px;font-size:.9rem;color:var(--fg-muted);border-radius:var(--r-sm);white-space:nowrap;transition:color .15s,background .15s}
 .nav-link:hover{color:var(--fg-bright);background:var(--surface-2)}
 .nav-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto;flex:none}
