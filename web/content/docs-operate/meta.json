@@ -2,46 +2,5 @@
   "output": "docs/operate/index.html",
   "title": "Operating the loop — Project Context",
   "description": "The day-2 page: what agents read before substantial work, what triggers a durable record, what gets updated at the end of a session, when the doctor runs, and the five things worth having written down by day 7.",
-  "og_image_alt": "Operating the loop — Project Context — MonoMind AI Lab",
-  "nav": [
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "nav.home"
-    },
-    {
-      "href": "/docs/",
-      "label": "Docs",
-      "i18n": "nav.docs",
-      "current": true
-    },
-    {
-      "href": "/use-cases",
-      "label": "Use cases",
-      "i18n": "nav.usecases"
-    },
-    {
-      "href": "/guide",
-      "label": "Guide",
-      "i18n": "nav.guide"
-    }
-  ],
-  "footer_links": [
-    {
-      "href": "https://github.com/monomind-ai-lab/project-context",
-      "label": "GitHub",
-      "external": true,
-      "icon": "github"
-    },
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "footer.home"
-    },
-    {
-      "href": "/guide",
-      "label": "Read the guide",
-      "i18n": "cta.guide"
-    }
-  ]
+  "og_image_alt": "Operating the loop — Project Context — MonoMind AI Lab"
 }

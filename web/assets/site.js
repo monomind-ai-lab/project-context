@@ -335,6 +335,69 @@ document.addEventListener('pointerdown', function(e){
   });
 })();
 
+/* Header nav dropdowns (.navdrop, e.g. Guide) — same disclosure shape as
+   the language picker: click toggles, Escape and outside-click close,
+   aria-expanded mirrors the state. Hover-to-open is layered on top for
+   fine pointers, never instead of click. Pages whose nav has no dropdown
+   (the legacy per-page navs) simply match nothing here. */
+(function(){
+  document.querySelectorAll('.navdrop').forEach(function(wrap){
+    var btn = wrap.querySelector('.navdrop-btn'), panel = wrap.querySelector('.navdrop-panel');
+    if (!btn || !panel) return;
+    /* A mouse user hovers before clicking, so with hover-to-open the click
+       would always find the panel open and toggle it shut. Track how it
+       opened: the first click after a hover-open confirms rather than
+       closes. */
+    var openedByHover = false;
+    function open(byHover){
+      openedByHover = !!byHover;
+      if (!panel.hidden) return;
+      panel.hidden = false;
+      wrap.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+    function close(refocus){
+      openedByHover = false;
+      if (panel.hidden) return;
+      panel.hidden = true;
+      wrap.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+      if (refocus) btn.focus();
+    }
+    btn.addEventListener('click', function(){
+      if (panel.hidden) open(false);
+      else if (openedByHover) openedByHover = false;   /* confirm, don't close */
+      else close(false);
+    });
+    btn.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown') {
+        e.preventDefault(); open();
+        var first = panel.querySelector('a'); if (first) first.focus();
+      } else if (e.key === 'Escape') { close(true); }
+    });
+    panel.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') { e.preventDefault(); close(true); }
+    });
+    panel.addEventListener('click', function(e){
+      if (e.target.closest && e.target.closest('a')) close(false);
+    });
+    document.addEventListener('pointerdown', function(e){
+      if (!panel.hidden && !wrap.contains(e.target)) close(false);
+    });
+    /* Nice-to-have on devices that can actually hover. */
+    if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      var t;
+      wrap.addEventListener('mouseenter', function(){ clearTimeout(t); if (panel.hidden) open(true); });
+      wrap.addEventListener('mouseleave', function(){
+        clearTimeout(t);
+        t = setTimeout(function(){
+          if (!wrap.contains(document.activeElement)) close(false);
+        }, 140);
+      });
+    }
+  });
+})();
+
 /* =====================================================================
    8. COPY + SCROLL AFFORDANCE
    The hint is shown only when the block ACTUALLY overflows, measured

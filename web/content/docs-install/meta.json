@@ -2,46 +2,5 @@
   "output": "docs/install/index.html",
   "title": "Install — Project Context",
   "description": "What installing does to your repo — six safety promises above the command, dry-run first, per-harness setup, the zero-tooling prompt, verifying, and uninstalling.",
-  "og_image_alt": "Install — Project Context — MonoMind AI Lab",
-  "nav": [
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "nav.home"
-    },
-    {
-      "href": "/docs/",
-      "label": "Docs",
-      "i18n": "nav.docs",
-      "current": true
-    },
-    {
-      "href": "/use-cases",
-      "label": "Use cases",
-      "i18n": "nav.usecases"
-    },
-    {
-      "href": "/guide",
-      "label": "Guide",
-      "i18n": "nav.guide"
-    }
-  ],
-  "footer_links": [
-    {
-      "href": "https://github.com/monomind-ai-lab/project-context",
-      "label": "GitHub",
-      "external": true,
-      "icon": "github"
-    },
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "footer.home"
-    },
-    {
-      "href": "/guide",
-      "label": "Read the guide",
-      "i18n": "cta.guide"
-    }
-  ]
+  "og_image_alt": "Install — Project Context — MonoMind AI Lab"
 }

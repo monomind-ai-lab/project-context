@@ -2,46 +2,5 @@
   "output": "docs/index.html",
   "title": "Docs — Project Context",
   "description": "The record a returning collaborator reads first: a real NOW.md, whether it fits your project, install in 30 seconds, and the session loop.",
-  "og_image_alt": "Docs — Project Context — MonoMind AI Lab",
-  "nav": [
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "nav.home"
-    },
-    {
-      "href": "/docs/",
-      "label": "Docs",
-      "i18n": "nav.docs",
-      "current": true
-    },
-    {
-      "href": "/use-cases",
-      "label": "Use cases",
-      "i18n": "nav.usecases"
-    },
-    {
-      "href": "/guide",
-      "label": "Guide",
-      "i18n": "nav.guide"
-    }
-  ],
-  "footer_links": [
-    {
-      "href": "https://github.com/monomind-ai-lab/project-context",
-      "label": "GitHub",
-      "external": true,
-      "icon": "github"
-    },
-    {
-      "href": "/",
-      "label": "Home",
-      "i18n": "footer.home"
-    },
-    {
-      "href": "/guide",
-      "label": "Read the guide",
-      "i18n": "cta.guide"
-    }
-  ]
+  "og_image_alt": "Docs — Project Context — MonoMind AI Lab"
 }

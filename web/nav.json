@@ -1,0 +1,77 @@
+{
+  "_comment": "Single source of truth for the global header nav and footer columns. A page's meta.json `nav` / `footer_links` still wins when present (legacy override, used by the docs pages until their migration). Hrefs are absolute so the same nav works from every route; `current` is derived from each page's output route at build time.",
+  "nav": [
+    {
+      "href": "/",
+      "label": "Home",
+      "i18n": "nav.home"
+    },
+    {
+      "href": "/#what",
+      "label": "What it is?",
+      "i18n": "nav.what"
+    },
+    {
+      "href": "/use-cases",
+      "label": "Use cases",
+      "i18n": "nav.usecases"
+    },
+    {
+      "href": "/#addons",
+      "label": "Add-ons",
+      "i18n": "nav.addons"
+    },
+    {
+      "label": "Guide",
+      "i18n": "nav.guide",
+      "items": [
+        {
+          "href": "/docs/",
+          "label": "Quick guide",
+          "i18n": "nav.guideQuick"
+        },
+        {
+          "href": "/guide",
+          "label": "Learn more",
+          "i18n": "nav.guideLearn"
+        }
+      ]
+    },
+    {
+      "href": "/docs/install/",
+      "label": "Install",
+      "i18n": "nav.install",
+      "cta": true
+    }
+  ],
+  "footer_columns": [
+    {
+      "label": "Product",
+      "i18n": "footer.colProduct",
+      "links": [
+        { "href": "/#what", "label": "What it is?", "i18n": "nav.what" },
+        { "href": "/use-cases", "label": "Use cases", "i18n": "nav.usecases" },
+        { "href": "/#addons", "label": "Add-ons", "i18n": "nav.addons" },
+        { "href": "/docs/install/", "label": "Install", "i18n": "nav.install" }
+      ]
+    },
+    {
+      "label": "Docs",
+      "i18n": "footer.colDocs",
+      "links": [
+        { "href": "/docs/", "label": "Quick guide", "i18n": "nav.guideQuick" },
+        { "href": "/docs/records/", "label": "The records", "i18n": "footer.docsRecords" },
+        { "href": "/docs/operate/", "label": "Operating loop", "i18n": "footer.docsOperate" },
+        { "href": "/guide", "label": "Slide deck", "i18n": "footer.docsDeck" }
+      ]
+    },
+    {
+      "label": "Resources",
+      "i18n": "footer.colResources",
+      "links": [
+        { "href": "https://github.com/monomind-ai-lab/project-context", "label": "GitHub", "external": true, "icon": "github" },
+        { "href": "https://monomind.one", "label": "monomind.one", "external": true }
+      ]
+    }
+  ]
+}

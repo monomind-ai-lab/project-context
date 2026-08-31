@@ -6,7 +6,9 @@ itself to. Cloudflare Pages runs this through site/sync.sh.
 
 Content model, one directory per route under web/content/:
 
-    meta.json    route, output path, title, description, nav, footer links
+    meta.json    route, output path, title, description; optional `nav` /
+                 `footer_links` overrides (legacy — the global header nav and
+                 footer columns live once in web/nav.json)
     page.html    the body fragment that goes inside <main id="main">
     page.css     optional page-only CSS, inlined into <style>
     i18n.js      optional `const I18N = {...}`, emitted before site.js
@@ -35,9 +37,36 @@ CONTENT = SRC / "content"
 LAYOUT = SRC / "layout" / "base.html"
 ASSETS = SRC / "assets"
 STATIC = SRC / "static"
+NAVSPEC = SRC / "nav.json"
 OUT = ROOT / "site"
 
 PLACEHOLDER = re.compile(r"\{\{([a-z0-9_]+)\}\}")
+
+# The global header nav and footer columns, defined ONCE in web/nav.json.
+# A page's meta.json `nav` / `footer_links` still wins when present — the
+# docs pages rely on that until their migration — but a page that omits
+# them gets these.
+_navspec = json.loads(NAVSPEC.read_text()) if NAVSPEC.exists() else {}
+GLOBAL_NAV: list[dict] = _navspec.get("nav", [])
+GLOBAL_FOOTER_COLUMNS: list[dict] = _navspec.get("footer_columns", [])
+
+
+def page_route(output: str) -> str:
+    """The route a page is served at, derived from its output path.
+    `index.html` -> `/`, `use-cases/index.html` -> `/use-cases/`."""
+    route = "/" + output
+    if route.endswith("index.html"):
+        route = route[: -len("index.html")]
+    return route
+
+
+def is_current(href: str, route: str) -> bool:
+    """Whether an absolute nav href points at the page being built. A href
+    carrying a fragment (`/#what`) is a jump, never the current page; an
+    external URL never matches either."""
+    if "#" in href or href.startswith(("http://", "https://")):
+        return False
+    return href.rstrip("/") == route.rstrip("/")
 
 
 def asset_version() -> str:
@@ -53,28 +82,63 @@ def asset_version() -> str:
     return h.hexdigest()[:8]
 
 
-def nav_html(links: list[dict], mobile: bool = False) -> str:
+def nav_anchor(link: dict, route: str, cls: list[str], indent: str) -> str:
+    """One nav <a>. `current` from meta is honoured (legacy override navs);
+    otherwise it is derived from the page's output route."""
+    attrs = [f'href="{html.escape(link["href"])}"']
+    cls = list(cls)
+    body = html.escape(link["label"])
+    if link.get("external"):
+        cls.append("notranslate")
+        attrs.append('translate="no"')
+        attrs.append('rel="noopener noreferrer"')
+        attrs.append('target="_blank"')
+        # Add external link icon
+        body += ' <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;margin-left:4px;vertical-align:-2px"><path d="M2 10H1V1h9v1M11 1l-4 4M11 1v3.5M11 1h-3.5"/></svg>'
+    if link.get("current") or is_current(link["href"], route):
+        attrs.append('aria-current="page"')
+    if link.get("i18n"):
+        attrs.append(f'data-i18n="{html.escape(link["i18n"])}"')
+    cls_attr = f'class="{" ".join(cls)}" ' if cls else ""
+    return f'{indent}<a {cls_attr}{" ".join(attrs)}>{body}</a>'
+
+
+def nav_html(links: list[dict], route: str = "", mobile: bool = False) -> str:
     """Render one nav link list. The desktop and mobile navs are the same list
-    rendered twice — they cannot drift because there is only one source."""
+    rendered twice — they cannot drift because there is only one source.
+
+    A link with `items` is a dropdown: on desktop it renders as a disclosure
+    (a real <button> trigger + panel, wired up in site.js §7, same house
+    pattern as the language picker); on mobile the group is flattened into
+    the list under a small header. A link with `cta` renders as the compact
+    pill button instead of a plain nav link."""
     out = []
     indent = "    " if mobile else "      "
-    for link in links:
-        attrs = [f'href="{html.escape(link["href"])}"']
-        cls = [] if mobile else ["nav-link"]
-        body = html.escape(link["label"])
-        if link.get("external"):
-            cls.append("notranslate")
-            attrs.append('translate="no"')
-            attrs.append('rel="noopener noreferrer"')
-            attrs.append('target="_blank"')
-            # Add external link icon
-            body += ' <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline;margin-left:4px;vertical-align:-2px"><path d="M2 10H1V1h9v1M11 1l-4 4M11 1v3.5M11 1h-3.5"/></svg>'
-        if link.get("current"):
-            attrs.append('aria-current="page"')
-        if link.get("i18n"):
-            attrs.append(f'data-i18n="{html.escape(link["i18n"])}"')
-        cls_attr = f'class="{" ".join(cls)}" ' if cls else ""
-        out.append(f'{indent}<a {cls_attr}{" ".join(attrs)}>{body}</a>')
+    for n, link in enumerate(links):
+        if link.get("items"):
+            label = html.escape(link["label"])
+            i18n = f' data-i18n="{html.escape(link["i18n"])}"' if link.get("i18n") else ""
+            if mobile:
+                out.append(f'{indent}<span class="nav-mobile-hd"{i18n}>{label}</span>')
+                for item in link["items"]:
+                    out.append(nav_anchor(item, route, ["nav-sub"], indent))
+            else:
+                bid, pid = f"navDropBtn{n}", f"navDropPanel{n}"
+                out.append(f'{indent}<div class="navdrop">')
+                out.append(f'{indent}  <button type="button" class="nav-link navdrop-btn" id="{bid}" '
+                           f'aria-haspopup="true" aria-expanded="false" aria-controls="{pid}">'
+                           f'<span{i18n}>{label}</span><span class="caret" aria-hidden="true"></span></button>')
+                out.append(f'{indent}  <div class="navdrop-panel" id="{pid}" hidden>')
+                for item in link["items"]:
+                    out.append(nav_anchor(item, route, [], indent + "    "))
+                out.append(f'{indent}  </div>')
+                out.append(f'{indent}</div>')
+            continue
+        if link.get("cta"):
+            cls = ["nav-mobile-cta"] if mobile else ["nav-cta"]
+        else:
+            cls = [] if mobile else ["nav-link"]
+        out.append(nav_anchor(link, route, cls, indent))
     return "\n".join(out)
 
 
@@ -107,6 +171,40 @@ def footer_html(links: list[dict]) -> str:
         else:
             body = html.escape(link["label"])
         out.append(f'          <a {cls}{" ".join(attrs)}>{body}</a>')
+    return "\n".join(out)
+
+
+def footer_columns_html(columns: list[dict], route: str) -> str:
+    """The global multi-column footer nav (web/nav.json `footer_columns`).
+    Rendered only for pages WITHOUT a legacy `footer_links` override, so the
+    docs pages keep their inline list until they are migrated."""
+    out = []
+    for col in columns:
+        hd_i18n = f' data-i18n="{html.escape(col["i18n"])}"' if col.get("i18n") else ""
+        out.append('      <div class="foot-col">')
+        out.append(f'        <h3 class="foot-col-hd"{hd_i18n}>{html.escape(col["label"])}</h3>')
+        out.append('        <ul>')
+        for link in col.get("links", []):
+            attrs = [f'href="{html.escape(link["href"])}"']
+            cls = []
+            if link.get("external"):
+                cls.append("notranslate")
+                attrs.append('translate="no"')
+                attrs.append('rel="noopener"')
+                attrs.append('target="_blank"')
+            if link.get("current") or is_current(link["href"], route):
+                attrs.append('aria-current="page"')
+            if link.get("i18n"):
+                attrs.append(f'data-i18n="{html.escape(link["i18n"])}"')
+            icon = FOOTER_ICONS.get(link.get("icon", ""))
+            body = html.escape(link["label"])
+            if icon:
+                # icon + visible text, same GitHub mark as the legacy inline list
+                body = icon + body
+            cls_attr = f'class="{" ".join(cls)}" ' if cls else ""
+            out.append(f'          <li><a {cls_attr}{" ".join(attrs)}>{body}</a></li>')
+        out.append('        </ul>')
+        out.append('      </div>')
     return "\n".join(out)
 
 
@@ -205,6 +303,23 @@ def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int]:
     i18n = (src / "i18n.js").read_text().strip() if (src / "i18n.js").exists() else ""
     page_js = (src / "page.js").read_text().strip() if (src / "page.js").exists() else ""
 
+    route = page_route(meta["output"])
+    # Per-page meta.json `nav` wins when present (legacy override, used by the
+    # docs pages until migration); pages without one get the global nav.
+    nav = meta.get("nav") or GLOBAL_NAV
+    # Same principle for the footer: a page carrying `footer_links` keeps the
+    # legacy inline list inside the brand column; otherwise the global
+    # multi-column footer renders beside it.
+    legacy_footer = meta.get("footer_links")
+    if legacy_footer:
+        footer_inline = ('        <p class="foot-inline">\n'
+                         + footer_html(legacy_footer)
+                         + '\n        </p>')
+        footer_columns = ""
+    else:
+        footer_inline = ""
+        footer_columns = footer_columns_html(GLOBAL_FOOTER_COLUMNS, route)
+
     values = {
         "lang": meta.get("lang", "en"),
         "title": html.escape(meta["title"], quote=True),
@@ -213,10 +328,11 @@ def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int]:
         "og_image_alt": html.escape(meta.get("og_image_alt", f'{meta["title"]} — MonoMind AI Lab'), quote=True),
         "asset_version": version,
         "page_style": f"<style>\n{page_css}\n</style>" if page_css else "",
-        "nav_desktop": nav_html(meta.get("nav", [])),
-        "nav_mobile": nav_html(meta.get("nav", []), mobile=True),
+        "nav_desktop": nav_html(nav, route),
+        "nav_mobile": nav_html(nav, route, mobile=True),
         "content": (src / "page.html").read_text().rstrip("\n"),
-        "footer_links": footer_html(meta.get("footer_links", [])),
+        "footer_inline": footer_inline,
+        "footer_columns": footer_columns,
         "i18n": i18n,
         "page_script": f"<script>\n{page_js}\n</script>" if page_js else "",
     }

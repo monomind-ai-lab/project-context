@@ -4,17 +4,17 @@
   <div class="grid-bg" aria-hidden="true"></div>
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="container hero-inner">
-    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span>Docs · Operate</span></p>
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="operate.badge">Docs · Operate</span></p>
 
-    <h1 class="hero-title" id="page-title">What you do <b>from now on</b>.</h1>
+    <h1 class="hero-title" id="page-title" data-i18n="operate.hero.title">What you do <b>from now on</b>.</h1>
 
-    <p class="hero-sub">Most installs die because nobody knows the day-2 ritual. There is exactly one loop, it has four steps, and agents run almost all of it. This page is the whole ritual — plus the five things worth having written down by the end of your first week.</p>
+    <p class="hero-sub" data-i18n="operate.hero.sub">Most installs die because nobody knows the day-2 ritual. There is exactly one loop, it has four steps, and agents run almost all of it. This page is the whole ritual — plus the five things worth having written down by the end of your first week.</p>
 
     <ul class="hero-chips">
-      <li class="chip">read</li>
-      <li class="chip">detect</li>
-      <li class="chip">update</li>
-      <li class="chip">verify</li>
+      <li class="chip" data-i18n="operate.chip1">read</li>
+      <li class="chip" data-i18n="operate.chip2">detect</li>
+      <li class="chip" data-i18n="operate.chip3">update</li>
+      <li class="chip" data-i18n="operate.chip4">verify</li>
     </ul>
   </div>
 </section>
@@ -25,27 +25,27 @@
 <section class="section" id="loop" aria-labelledby="loop-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span>the loop</span></span>
-      <h2 class="section-title" id="loop-title">Four steps, most of them automatic</h2>
-      <p class="section-lede">You provide intent and approve proposals. Agents read the records, watch for the moments that produce a durable entry, and keep the files honest.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="operate.loop.eyebrow">the loop</span></span>
+      <h2 class="section-title" id="loop-title" data-i18n="operate.loop.title">Four steps, most of them automatic</h2>
+      <p class="section-lede" data-i18n="operate.loop.lede">You provide intent and approve proposals. Agents read the records, watch for the moments that produce a durable entry, and keep the files honest.</p>
     </div>
 
     <div class="checks">
       <article class="check reveal">
-        <h3>Before substantial work — the agent reads the record</h3>
-        <p>It reads <code>project-context/NOW.md</code>, searches <code>DECISIONS.md</code> and <code>LEARNINGS.md</code> for the task topic, and follows only relevant links into evidence. This happens automatically in harnesses that discover the installed skill; the managed block in <code>AGENTS.md</code> / <code>CLAUDE.md</code> routes every other agent to the same protocol.</p>
+        <h3 data-i18n="operate.loop.s1.title">Before substantial work — the agent reads the record</h3>
+        <p data-i18n="operate.loop.s1.body">It reads <code>project-context/NOW.md</code>, searches <code>DECISIONS.md</code> and <code>LEARNINGS.md</code> for the task topic, and follows only relevant links into evidence. This happens automatically in harnesses that discover the installed skill; the managed block in <code>AGENTS.md</code> / <code>CLAUDE.md</code> routes every other agent to the same protocol.</p>
       </article>
       <article class="check reveal">
-        <h3>During work — trigger detection watches for durable records</h3>
-        <p>The trigger script detects the <em>window</em>: work has landed since project context was last updated. Judging what fired stays with the agent, against three triggers — the state a next contributor would act on changed, a choice now constrains future work, or evidence changed what is believed and it will recur. The agent proposes the entry; when nothing fired, <code>ack</code> records that honest outcome instead.</p>
+        <h3 data-i18n="operate.loop.s2.title">During work — trigger detection watches for durable records</h3>
+        <p data-i18n="operate.loop.s2.body">The trigger script detects the <em>window</em>: work has landed since project context was last updated. Judging what fired stays with the agent, against three triggers — the state a next contributor would act on changed, a choice now constrains future work, or evidence changed what is believed and it will recur. The agent proposes the entry; when nothing fired, <code>ack</code> records that honest outcome instead.</p>
       </article>
       <article class="check reveal">
-        <h3>At the end — the record is brought up to date</h3>
-        <p><code>NOW.md</code> is updated to what is now true: stale state replaced, not appended to, and <code>Last reviewed</code> set. Decisions and learnings are appended only if they were earned — a real constraint with its reason, a verified lesson with its evidence. Reversals supersede the old entry; nothing is silently rewritten.</p>
+        <h3 data-i18n="operate.loop.s3.title">At the end — the record is brought up to date</h3>
+        <p data-i18n="operate.loop.s3.body"><code>NOW.md</code> is updated to what is now true: stale state replaced, not appended to, and <code>Last reviewed</code> set. Decisions and learnings are appended only if they were earned — a real constraint with its reason, a verified lesson with its evidence. Reversals supersede the old entry; nothing is silently rewritten.</p>
       </article>
       <article class="check reveal">
-        <h3>When state may be stale — the doctor runs</h3>
-        <p>Read-only, always. It checks the documents, the evidence anchors, and whether the protocol can still reach an agent at all. It flags; it never rewrites. A doctor that edited your judgement would defeat the point of having one.</p>
+        <h3 data-i18n="operate.loop.s4.title">When state may be stale — the doctor runs</h3>
+        <p data-i18n="operate.loop.s4.body">Read-only, always. It checks the documents, the evidence anchors, and whether the protocol can still reach an agent at all. It flags; it never rewrites. A doctor that edited your judgement would defeat the point of having one.</p>
       </article>
     </div>
   </div>
@@ -57,16 +57,16 @@
 <section class="section" id="triggers" aria-labelledby="trig-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span>trigger detection, worked</span></span>
-      <h2 class="section-title" id="trig-title">One session where a trigger fires, one where nothing does</h2>
-      <p class="section-lede">The script can only detect that work has landed since the context was last updated. Whether a decision or a learning actually fired is a judgement, and the judgement stays with the agent reading the protocol.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="operate.trig.eyebrow">trigger detection, worked</span></span>
+      <h2 class="section-title" id="trig-title" data-i18n="operate.trig.title">One session where a trigger fires, one where nothing does</h2>
+      <p class="section-lede" data-i18n="operate.trig.lede">The script can only detect that work has landed since the context was last updated. Whether a decision or a learning actually fired is a judgement, and the judgement stays with the agent reading the protocol.</p>
     </div>
 
     <div class="worked reveal">
-      <h3 class="worked-title">Check the window</h3>
-      <p class="worked-body">At session start and before a session ends, the agent checks whether work has landed that the context has not seen. A hook can run this automatically; it also runs by hand:</p>
+      <h3 class="worked-title" data-i18n="operate.trig.w1.title">Check the window</h3>
+      <p class="worked-body" data-i18n="operate.trig.w1.body">At session start and before a session ends, the agent checks whether work has landed that the context has not seen. A hook can run this automatically; it also runs by hand:</p>
       <div class="cmd cmd-sm" data-cmd>
-        <div class="cmd-head"><span class="cmd-label">trigger window · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="operate.trig.w1.label">trigger window · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
           <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Trigger status command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_triggers.py</span> <span class="t-sub">status</span></code>
@@ -79,15 +79,15 @@
     </div>
 
     <div class="worked reveal">
-      <h3 class="worked-title">Session one — a trigger fires</h3>
-      <p class="worked-body">The session capped API retries at three with backoff, after unbounded retries took staging down. The window is open, and the agent walks the triggers: a choice was taken over a viable alternative — that constrains future work. It proposes a decision entry with the rationale and the evidence; you approve; <code>D-002</code> lands in <code>DECISIONS.md</code> and <code>NOW.md</code> is updated. Updating the record is what closes the window — no <code>ack</code> involved.</p>
+      <h3 class="worked-title" data-i18n="operate.trig.w2.title">Session one — a trigger fires</h3>
+      <p class="worked-body" data-i18n="operate.trig.w2.body">The session capped API retries at three with backoff, after unbounded retries took staging down. The window is open, and the agent walks the triggers: a choice was taken over a viable alternative — that constrains future work. It proposes a decision entry with the rationale and the evidence; you approve; <code>D-002</code> lands in <code>DECISIONS.md</code> and <code>NOW.md</code> is updated. Updating the record is what closes the window — no <code>ack</code> involved.</p>
     </div>
 
     <div class="worked reveal">
-      <h3 class="worked-title">Session two — nothing fires</h3>
-      <p class="worked-body">A typo pass across the docs. The window is open — work landed — but no state a next contributor acts on changed, no choice constrains anything, no evidence changed a belief. Silence is a valid outcome, and it gets recorded rather than papered over with a padded entry:</p>
+      <h3 class="worked-title" data-i18n="operate.trig.w3.title">Session two — nothing fires</h3>
+      <p class="worked-body" data-i18n="operate.trig.w3.body">A typo pass across the docs. The window is open — work landed — but no state a next contributor acts on changed, no choice constrains anything, no evidence changed a belief. Silence is a valid outcome, and it gets recorded rather than papered over with a padded entry:</p>
       <div class="cmd cmd-sm" data-cmd>
-        <div class="cmd-head"><span class="cmd-label">record an honest “nothing fired”</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="operate.trig.w3.label">record an honest “nothing fired”</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
           <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Trigger ack command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_triggers.py</span> <span class="t-sub">ack</span> <span class="t-flag">--note</span> <span class="t-arg">"typo pass across docs; no decision or learning"</span></code>
@@ -100,8 +100,8 @@
     </div>
 
     <div class="callout reveal">
-      <span class="callout-label">why ack cannot become a skip button</span>
-      <p>An <code>ack</code> stores <em>what</em> was acknowledged against the current commit. The window reopens on the next commit — and as soon as uncommitted work appears that the acknowledgement never saw. It can record an honest evaluation; it cannot become a standing way to skip one.</p>
+      <span class="callout-label" data-i18n="operate.trig.callout.label">why ack cannot become a skip button</span>
+      <p data-i18n="operate.trig.callout.body">An <code>ack</code> stores <em>what</em> was acknowledged against the current commit. The window reopens on the next commit — and as soon as uncommitted work appears that the acknowledgement never saw. It can record an honest evaluation; it cannot become a standing way to skip one.</p>
     </div>
   </div>
 </section>
@@ -112,29 +112,29 @@
 <section class="section" id="doctor" aria-labelledby="doctor-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span>the doctor, in brief</span></span>
-      <h2 class="section-title" id="doctor-title">Three families of checks, all read-only</h2>
-      <p class="section-lede">Run it when context looks stale, contradictory, or hard to navigate. A fuller doctor reference — every check by name, the JSON shape, exit codes, CI — is a page of its own, coming to this docs set.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="operate.doc.eyebrow">the doctor, in brief</span></span>
+      <h2 class="section-title" id="doctor-title" data-i18n="operate.doc.title">Three families of checks, all read-only</h2>
+      <p class="section-lede" data-i18n="operate.doc.lede">Run it when context looks stale, contradictory, or hard to navigate. A fuller doctor reference — every check by name, the JSON shape, exit codes, CI — is a page of its own, coming to this docs set.</p>
     </div>
 
     <div class="checks">
       <article class="check reveal">
-        <h3>The documents hold up</h3>
-        <p>Required core files, installed scaffold version, freshness of <code>NOW.md</code>, duplicate decision and learning IDs, broken relative links.</p>
+        <h3 data-i18n="operate.doc.c1.title">The documents hold up</h3>
+        <p data-i18n="operate.doc.c1.body">Required core files, installed scaffold version, freshness of <code>NOW.md</code>, duplicate decision and learning IDs, broken relative links.</p>
       </article>
       <article class="check reveal">
-        <h3>Evidence anchors</h3>
-        <p><code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — the justification may no longer hold; re-verify, then re-anchor or supersede. <code>evidence-unverifiable</code> warns when the commit is unknown.</p>
+        <h3 data-i18n="operate.doc.c2.title">Evidence anchors</h3>
+        <p data-i18n="operate.doc.c2.body"><code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — the justification may no longer hold; re-verify, then re-anchor or supersede. <code>evidence-unverifiable</code> warns when the commit is unknown.</p>
       </article>
       <article class="check reveal">
-        <h3>Reachability</h3>
-        <p>The managed instruction block, a harness skill pointer, or a working session hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error — perfect files that nothing ever loads would otherwise report healthy.</p>
+        <h3 data-i18n="operate.doc.c3.title">Reachability</h3>
+        <p data-i18n="operate.doc.c3.body">The managed instruction block, a harness skill pointer, or a working session hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error — perfect files that nothing ever loads would otherwise report healthy.</p>
       </article>
     </div>
 
     <div class="cmdwrap reveal">
       <div class="cmd cmd-sm" data-cmd>
-        <div class="cmd-head"><span class="cmd-label">run the doctor · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="operate.doc.label">run the doctor · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
           <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Doctor command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_doctor.py</span> <span class="t-flag">--target</span> <span class="t-arg">.</span></code>
@@ -154,31 +154,31 @@
 <section class="section" id="first-week" aria-labelledby="week-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span>the first week</span></span>
-      <h2 class="section-title" id="week-title">Five things written down by day 7</h2>
-      <p class="section-lede">Not aspirations — artifacts. A project that has these five by the end of week one has actually adopted the tool; the loop above produces all of them as a side effect of normal work.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="operate.week.eyebrow">the first week</span></span>
+      <h2 class="section-title" id="week-title" data-i18n="operate.week.title">Five things written down by day 7</h2>
+      <p class="section-lede" data-i18n="operate.week.lede">Not aspirations — artifacts. A project that has these five by the end of week one has actually adopted the tool; the loop above produces all of them as a side effect of normal work.</p>
     </div>
 
     <div class="checks">
       <article class="check reveal">
-        <h3>One real decision, with its reason</h3>
-        <p>An entry in <code>DECISIONS.md</code> recording a choice this week actually made — with a rationale a stranger could evaluate, not just the verdict.</p>
+        <h3 data-i18n="operate.week.c1.title">One real decision, with its reason</h3>
+        <p data-i18n="operate.week.c1.body">An entry in <code>DECISIONS.md</code> recording a choice this week actually made — with a rationale a stranger could evaluate, not just the verdict.</p>
       </article>
       <article class="check reveal">
-        <h3>One learning, with evidence</h3>
-        <p>Something verified the expensive way — a root cause, a failed approach, a disproved assumption — recorded with the evidence that proved it, so nobody pays for it twice.</p>
+        <h3 data-i18n="operate.week.c2.title">One learning, with evidence</h3>
+        <p data-i18n="operate.week.c2.body">Something verified the expensive way — a root cause, a failed approach, a disproved assumption — recorded with the evidence that proved it, so nobody pays for it twice.</p>
       </article>
       <article class="check reveal">
-        <h3>A NOW.md a stranger could act on</h3>
-        <p>Open it cold: can someone who was never in the room tell what is in flight, what is blocked, and what the next concrete step is? If yes, the handoff already works.</p>
+        <h3 data-i18n="operate.week.c3.title">A NOW.md a stranger could act on</h3>
+        <p data-i18n="operate.week.c3.body">Open it cold: can someone who was never in the room tell what is in flight, what is blocked, and what the next concrete step is? If yes, the handoff already works.</p>
       </article>
       <article class="check reveal">
-        <h3>One anchored evidence link</h3>
-        <p>At least one <code>path@commit</code> anchor on a decision or learning that matters, so drift on that justification becomes visible instead of silent.</p>
+        <h3 data-i18n="operate.week.c4.title">One anchored evidence link</h3>
+        <p data-i18n="operate.week.c4.body">At least one <code>path@commit</code> anchor on a decision or learning that matters, so drift on that justification becomes visible instead of silent.</p>
       </article>
       <article class="check reveal">
-        <h3>One clean doctor run</h3>
-        <p>The doctor reporting healthy — documents intact, anchors verified, and at least one live route delivering the protocol into a session.</p>
+        <h3 data-i18n="operate.week.c5.title">One clean doctor run</h3>
+        <p data-i18n="operate.week.c5.body">The doctor reporting healthy — documents intact, anchors verified, and at least one live route delivering the protocol into a session.</p>
       </article>
     </div>
   </div>
@@ -190,19 +190,19 @@
 <section class="section" id="next" aria-labelledby="next-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span>next</span></span>
-      <h2 class="section-title" id="next-title">Where to go from here</h2>
-      <p class="section-lede">The loop is the same whether the folder holds source files, a manuscript, or a research corpus — see how it plays out beyond code, or head back to the docs hub.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="operate.next.eyebrow">next</span></span>
+      <h2 class="section-title" id="next-title" data-i18n="operate.next.title">Where to go from here</h2>
+      <p class="section-lede" data-i18n="operate.next.lede">The loop is the same whether the folder holds source files, a manuscript, or a research corpus — see how it plays out beyond code, or head back to the docs hub.</p>
     </div>
     <div class="next-grid reveal">
       <a class="card next-card" href="/use-cases">
-        <span class="next-kicker">breadth</span>
-        <span class="next-name">Use cases — not only code</span>
+        <span class="next-kicker" data-i18n="operate.next.kicker1">breadth</span>
+        <span class="next-name" data-i18n="operate.next.card1">Use cases — not only code</span>
         <span class="next-arrow" aria-hidden="true">→</span>
       </a>
       <a class="card next-card" href="/docs/">
-        <span class="next-kicker">back</span>
-        <span class="next-name">Docs — getting started</span>
+        <span class="next-kicker" data-i18n="operate.next.kicker2">back</span>
+        <span class="next-name" data-i18n="operate.next.card2">Docs — getting started</span>
         <span class="next-arrow" aria-hidden="true">→</span>
       </a>
     </div>
