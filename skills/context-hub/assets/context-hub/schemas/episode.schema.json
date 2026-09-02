@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "episode.schema.json",
+  "title": "Context Hub immutable source episode frontmatter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "hard_metadata", "curated_metadata", "soft_metadata"],
+  "properties": {
+    "schema": { "const": "context-hub/episode@1" },
+    "hard_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "scope", "actor_id", "occurred_at", "captured_at", "recorded_by", "source_kind", "workspace_ref", "source_ref", "content_sha256", "immutable", "corrects"],
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/episodeId" },
+        "scope": { "$ref": "common.schema.json#/$defs/scope" },
+        "actor_id": { "$ref": "common.schema.json#/$defs/actorId" },
+        "occurred_at": { "$ref": "common.schema.json#/$defs/timePoint" },
+        "captured_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+        "recorded_by": { "$ref": "common.schema.json#/$defs/actorId" },
+        "source_kind": {
+          "enum": ["agent-session", "agent-daily-log", "human-note", "meeting", "artifact", "import", "correction", "other"]
+        },
+        "workspace_ref": { "type": "string", "pattern": "^(repo|folder|document):" },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "sequence_id": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ],
+          "description": "Optional stable session/document sequence; project membership alone is not a sequence."
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash of the exact L2 text body or the byte-exact raw payload named by source_ref."
+        },
+        "immutable": { "const": true },
+        "corrects": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/episodeId" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "curated_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification"],
+      "properties": {
+        "classification": { "enum": ["public", "internal", "confidential", "restricted"] }
+      }
+    },
+    "soft_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 0,
+      "description": "Kept empty so later agent enrichment cannot mutate an immutable source; derived records point back to the episode."
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "hard_metadata": {
+          "properties": {
+            "scope": {
+              "properties": { "level": { "const": "project" } }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

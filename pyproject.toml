@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "project-context"
-version = "0.5.0"
-description = "Lightweight, agent-maintained project context that lives in your repository as plain Markdown."
+version = "0.6.0"
+description = "Agent-maintained Markdown context for projects and private cross-project hubs."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
-keywords = ["agents", "context", "memory", "markdown", "claude", "codex"]
+keywords = ["agents", "context", "memory", "markdown", "obsidian", "claude", "codex"]
 
 [project.urls]
 Homepage = "https://github.com/monomind-ai-lab/project-context"
@@ -25,4 +25,4 @@ packages = ["src/project_context_cli"]
 "VERSION" = "project_context_cli/_bundle/VERSION"
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "skills", "VERSION", "README.md", "LICENSE"]
+include = ["src", "skills", "prompts", "docs/context-hub-architecture.md", "VERSION", "README.md", "LICENSE"]
