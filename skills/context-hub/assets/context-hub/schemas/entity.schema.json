@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "entity.schema.json",
+  "title": "Context Hub entity frontmatter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "hard_metadata", "curated_metadata", "soft_metadata"],
+  "properties": {
+    "schema": { "const": "context-hub/entity@1" },
+    "hard_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "scope", "created_at", "recorded_by"],
+      "properties": {
+        "id": { "$ref": "common.schema.json#/$defs/entityId" },
+        "scope": { "$ref": "common.schema.json#/$defs/scope" },
+        "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+        "recorded_by": { "$ref": "common.schema.json#/$defs/actorId" }
+      }
+    },
+    "curated_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "canonical_name", "entity_type", "aliases", "asserted_by", "approved_by", "approved_at", "evidence", "supersedes", "superseded_by"],
+      "properties": {
+        "status": { "enum": ["candidate", "approved", "superseded"] },
+        "canonical_name": { "type": "string", "minLength": 1 },
+        "entity_type": {
+          "enum": ["person", "organization", "project", "product", "concept", "artifact", "system", "location", "event", "other"]
+        },
+        "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "asserted_by": { "$ref": "common.schema.json#/$defs/actorId" },
+        "approved_by": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/actorId" },
+          "uniqueItems": true
+        },
+        "approved_at": { "$ref": "common.schema.json#/$defs/nullableTimestamp" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/evidenceRef" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/entityId" },
+          "uniqueItems": true
+        },
+        "superseded_by": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/entityId" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "soft_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suggested_description", "extracted_from", "labels", "generated_at", "generated_by", "confidence"],
+      "properties": {
+        "suggested_description": { "type": "string" },
+        "extracted_from": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/evidenceRef" },
+          "uniqueItems": true
+        },
+        "labels": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "generated_at": { "$ref": "common.schema.json#/$defs/nullableTimestamp" },
+        "generated_by": {
+          "oneOf": [
+            { "$ref": "common.schema.json#/$defs/actorId" },
+            { "type": "null" }
+          ]
+        },
+        "confidence": { "$ref": "common.schema.json#/$defs/confidence" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "curated_metadata": { "properties": { "status": { "const": "approved" } } } }
+      },
+      "then": {
+        "properties": {
+          "curated_metadata": {
+            "properties": {
+              "approved_by": { "minItems": 1 },
+              "approved_at": { "$ref": "common.schema.json#/$defs/timestamp" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "curated_metadata": { "properties": { "status": { "const": "superseded" } } } }
+      },
+      "then": {
+        "properties": { "curated_metadata": { "properties": { "superseded_by": { "minItems": 1 } } } }
+      }
+    }
+  ]
+}

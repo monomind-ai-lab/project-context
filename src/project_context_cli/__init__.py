@@ -1,9 +1,9 @@
-"""Console entry point for the bundled Project Context initializer.
+"""Console entry point for the bundled Project Context tools.
 
-The initializer locates its templates and the sibling ``project-context``
-skill relative to its own file, so the wheel carries the whole ``skills/``
-tree unmodified under ``_bundle/`` and this shim simply runs the bundled
-script in place. Nothing here duplicates the CLI: one script, two homes.
+Each tool locates its own templates and sibling skills relative to its file, so
+the wheel carries the whole ``skills/`` tree unmodified under ``_bundle/``.
+This shim only selects a bundled script and forwards its arguments; it does not
+duplicate either CLI.
 """
 
 from __future__ import annotations
@@ -11,24 +11,42 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 import sys
+from types import ModuleType
 
 
-def main() -> int:
+def _load_script(skill: str, filename: str) -> ModuleType | None:
     script = (
         Path(__file__).resolve().parent
         / "_bundle"
         / "skills"
-        / "project-context-init"
+        / skill
         / "scripts"
-        / "project_context_init.py"
+        / filename
     )
-    spec = importlib.util.spec_from_file_location("project_context_init", script)
+    module_name = filename.removesuffix(".py")
+    if not script.is_file():
+        print(f"bundled Project Context tool missing: {script}", file=sys.stderr)
+        return None
+    spec = importlib.util.spec_from_file_location(module_name, script)
     if spec is None or spec.loader is None:
-        print(f"bundled initializer missing: {script}", file=sys.stderr)
-        return 2
+        print(f"bundled Project Context tool missing: {script}", file=sys.stderr)
+        return None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return int(module.main())
+    return module
+
+
+def main() -> int:
+    argv = sys.argv[1:]
+    if argv and argv[0] == "hub":
+        module = _load_script("context-hub", "context_hub.py")
+        forwarded = argv[1:]
+    else:
+        module = _load_script("project-context-init", "project_context_init.py")
+        forwarded = argv
+    if module is None:
+        return 2
+    return int(module.main(forwarded))
 
 
 if __name__ == "__main__":

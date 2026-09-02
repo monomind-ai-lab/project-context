@@ -1,0 +1,21 @@
+# Operating-system and sync artifacts
+.DS_Store
+Thumbs.db
+*.icloud
+.trash/
+
+# Clone-specific bindings and credentials
+.context-hub/local.yaml
+.env
+.env.*
+!.env.example
+
+# Obsidian transient and community-plugin state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/plugins/
+.obsidian/community-plugins.json
+
+# Rebuildable graph/index output
+graphify-out/

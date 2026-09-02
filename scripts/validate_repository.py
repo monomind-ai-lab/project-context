@@ -10,6 +10,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
+    "docs/context-hub-architecture.md",
     "README.md",
     "LICENSE",
     "VERSION",
@@ -26,6 +27,7 @@ REQUIRED = (
     "scripts/install.py",
     "prompts/install-project-context.md",
     "prompts/maintain-project-context.md",
+    "prompts/create-context-hub.md",
     "scripts/build_site.py",
     "scripts/sync.sh",
     "web/layout/base.html",
@@ -59,10 +61,53 @@ REQUIRED = (
     "skills/project-context-init/assets/project-context/designs/TEMPLATE.md",
     "skills/project-context-init/assets/project-context/incidents/TEMPLATE.md",
     "skills/project-context-init/assets/project-context/tasks/TEMPLATE.md",
+    "skills/context-hub/SKILL.md",
+    "skills/context-hub/agents/openai.yaml",
+    "skills/context-hub/scripts/context_hub.py",
+    "skills/context-hub/assets/context-hub/README.md",
+    "skills/context-hub/assets/context-hub/SUMMARY.md",
+    "skills/context-hub/assets/context-hub/OVERVIEW.md",
+    "skills/context-hub/assets/context-hub/.context-hub.json",
+    "skills/context-hub/assets/context-hub/.context-hub/local.example.yaml",
+    "skills/context-hub/assets/context-hub/.gitignore",
+    "skills/context-hub/assets/context-hub/.graphifyignore",
+    "skills/context-hub/assets/context-hub/actors/actor-context-hub.md",
+    "skills/context-hub/assets/context-hub/schemas/common.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/project.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/actor.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/entity.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/episode.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/relationship.schema.json",
+    "skills/context-hub/assets/context-hub/schemas/insight.schema.json",
+    "skills/context-hub/assets/context-hub/templates/ACTOR.md",
+    "skills/context-hub/assets/context-hub/templates/ENTITY.md",
+    "skills/context-hub/assets/context-hub/templates/EPISODE.md",
+    "skills/context-hub/assets/context-hub/templates/RELATIONSHIP.md",
+    "skills/context-hub/assets/context-hub/templates/INSIGHT.md",
+    "skills/context-hub/assets/context-hub/templates/project/PROJECT.md",
+    "skills/context-hub/assets/context-hub/templates/project/SUMMARY.md",
+    "skills/context-hub/assets/context-hub/templates/project/OVERVIEW.md",
+    "skills/context-hub/assets/context-hub/templates/project/NOW.md",
+    "skills/context-hub/assets/context-hub/templates/project/DECISIONS.md",
+    "skills/context-hub/assets/context-hub/templates/project/LEARNINGS.md",
+    "skills/context-hub/assets/context-hub/.obsidian/app.json",
+    "skills/context-hub/assets/context-hub/.obsidian/core-plugins.json",
+    "skills/context-hub/assets/context-hub/.obsidian/templates.json",
     "tests/test_project_context_init.py",
+    "tests/test_context_hub.py",
 )
 
-TEXT_SUFFIXES = {".md", ".py", ".yaml", ".yml", ".txt", ".html", ""}
+TEXT_SUFFIXES = {
+    ".html",
+    ".json",
+    ".md",
+    ".py",
+    ".toml",
+    ".txt",
+    ".yaml",
+    ".yml",
+    "",
+}
 PRIVATE_PATTERNS = (
     re.compile(r"/Users/(?!example|your-name|username)[^/\s]+"),
     re.compile(r"sk-(?:proj-|or-v1-)?[A-Za-z0-9_-]{16,}"),
@@ -160,17 +205,23 @@ def main() -> int:
             errors.extend(validate_jpeg(path, dimensions, label))
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
-    # Both the installer and the installed doctor stamp and compare the template
-    # version, so a release that moves one and not the other would make the
-    # doctor report a phantom upgrade in every repository it checks.
+    # The distribution version and embedded project scaffold version have
+    # separate lifecycles. The initializer and doctor must still agree with one
+    # another so the doctor does not report a phantom scaffold upgrade.
     versioned = {
         "initializer": ROOT / "skills/project-context-init/scripts/project_context_init.py",
         "doctor": ROOT / "skills/project-context/scripts/context_doctor.py",
     }
+    template_versions: dict[str, str] = {}
     for label, source in versioned.items():
         content = source.read_text(encoding="utf-8") if source.is_file() else ""
-        if version and f'TEMPLATE_VERSION = "{version}"' not in content:
-            errors.append(f"VERSION and {label} template version do not match")
+        match = re.search(r'^TEMPLATE_VERSION = "([^"]+)"$', content, re.MULTILINE)
+        if not match:
+            errors.append(f"{label} does not declare TEMPLATE_VERSION")
+        else:
+            template_versions[label] = match.group(1)
+    if len(set(template_versions.values())) > 1:
+        errors.append("initializer and doctor template versions do not match")
 
     # Also check pyproject.toml has the same version
     pyproject_path = ROOT / "pyproject.toml"
@@ -183,6 +234,10 @@ def main() -> int:
     for expected in (
         "Shared project context that outlives any one person, agent, or chat",
         "context pipeline right into a repository or project",
+        "Choose Where Context Lives",
+        "no database, vector store, or server is required",
+        "Linked",
+        "prompts/create-context-hub.md",
         "assets/project-context-cover.jpg",
         "assets/project-context-tools.jpg",
         "https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html",
@@ -251,6 +306,10 @@ def main() -> int:
     trigger_expectations = {
         "skills/project-context/SKILL.md": ("description: \"Use when", "contains project-context/"),
         "skills/project-context-init/SKILL.md": ("description: Use when", "install, initialize, adopt"),
+        "skills/context-hub/SKILL.md": (
+            "description: \"Use when",
+            "No database, vector store, or server is required",
+        ),
     }
     for relative, expected_values in trigger_expectations.items():
         content = (ROOT / relative).read_text(encoding="utf-8") if (ROOT / relative).exists() else ""
@@ -260,6 +319,7 @@ def main() -> int:
     for relative in (
         "skills/project-context/agents/openai.yaml",
         "skills/project-context-init/agents/openai.yaml",
+        "skills/context-hub/agents/openai.yaml",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8") if (ROOT / relative).exists() else ""
         if "allow_implicit_invocation: true" not in content:
