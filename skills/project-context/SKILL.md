@@ -127,16 +127,34 @@ stale, so CI can hold the line.
 ## Health
 
 When context appears stale, contradictory, or hard to navigate, run the
-read-only doctor. It checks core files, scaffold version, review freshness,
-duplicate decision and learning IDs, broken relative links, and pinned evidence
-that has drifted, without rewriting content.
+read-only doctor. It checks core files, the package version recorded in the
+marker, review freshness, duplicate decision and learning IDs, broken relative
+links, and pinned evidence that has drifted, without rewriting content.
 
     python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 
+It also validates records against the record model: a detail record in
+`decisions/`, `questions/`, `tasks/`, or `inbox/` carries six frontmatter keys —
+`id`, `kind`, `status`, `title`, `created`, `asserted_by` — and nothing else is
+required. Each kind has exactly one status vocabulary, and a status is checked
+against its own kind's set: a `decision`, `learning`, or `capsule` is `proposed`
+→ `accepted` → `superseded` | `rejected`; a `question` is `open` → `answered` →
+`superseded`; a `task` is `proposed` → `active` → `done` | `dropped`. A state
+that belongs to another kind is an error, and `candidate` and `approved` are
+retired everywhere. A reference is validated by shape, never by resolving it.
+
+Where a Project Hub owner has pushed `global/` or `blueprint/` into this
+repository, those files are read-only here. The doctor recomputes each one's
+digest against the stamp in `.project-context.json` and reports an edit as an
+error naming the Hub. To change a pushed record, raise a question rather than
+editing the copy; the next push would overwrite the edit anyway.
+
 It also checks reachability: whether the managed instruction block, the harness
 skill pointer, or a declared session hook will still deliver this protocol to an
-agent. A `no-delivery-path` error means the context files are intact but nothing
-loads them into a session — fix that before trusting the rest.
+agent. Both `AGENTS.md` and `CLAUDE.md` carry the same managed block, and the
+doctor names whichever is missing it. A `no-delivery-path` error means the
+context files are intact but nothing loads them into a session — fix that before
+trusting the rest.
 
 The `project-context-init` skill, which stays in the Project Context checkout
 rather than being installed here, exposes the same check as

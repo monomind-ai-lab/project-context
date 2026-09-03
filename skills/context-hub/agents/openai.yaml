@@ -1,6 +1,0 @@
-interface:
-  display_name: "Context Hub"
-  short_description: "Run private Markdown context across projects"
-  default_prompt: "Use $context-hub to recover and maintain team context in a private Markdown/Git hub without adding a database."
-policy:
-  allow_implicit_invocation: true

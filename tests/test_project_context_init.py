@@ -277,14 +277,24 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             self.run_script("init", "--target", directory, "--install-skills", "--apply")
             shutil.rmtree(target / ".claude")
-            (target / "AGENTS.md").write_text("# Repo\n", encoding="utf-8")
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                (target / name).write_text("# Repo\n", encoding="utf-8")
             report, _ = self.run_script("doctor", "--target", directory, expected=1)
             self.assertEqual("error", report["status"])
             self.assertFalse(report["reachability"]["delivers"])
             codes = {issue["code"] for issue in report["issues"]}
             self.assertIn("no-delivery-path", codes)
-            self.assertIn("missing-instruction-block", codes)
             self.assertIn("missing-harness-pointer", codes)
+            # One finding per missing file, named — not a single verdict that
+            # either file could satisfy.
+            self.assertEqual(
+                ["AGENTS.md", "CLAUDE.md"],
+                sorted(
+                    issue["path"]
+                    for issue in report["issues"]
+                    if issue["code"] == "missing-instruction-block"
+                ),
+            )
 
     def test_doctor_flags_dangling_pointer_and_unresolved_hook(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -448,7 +458,7 @@ class InitializerTests(unittest.TestCase):
                 encoding="utf-8",
             )
             metadata = json.loads((context / ".project-context.json").read_text())
-            metadata["template_version"] = "0.1.0"
+            metadata["version"] = "0.1.0"
             (context / ".project-context.json").write_text(
                 json.dumps(metadata), encoding="utf-8"
             )

@@ -1,7 +1,18 @@
-# Task: Title
+---
+id: T-001
+kind: task
+status: proposed
+title: Task title
+created: 2026-01-01
+asserted_by: person:name
+---
 
-- Status: `planned`
-- Started: YYYY-MM-DD
+# T-001: Task title
+
+The six keys above are the whole of what a record must carry. A task has its
+own lifecycle — `proposed` → `active` → `done` | `dropped` — because a task is
+not a claim and does not share the states an assertion uses.
+
 - Last updated: YYYY-MM-DD
 - Related decisions/designs/incidents: Link or `none`
 

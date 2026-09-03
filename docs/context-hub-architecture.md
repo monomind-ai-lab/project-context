@@ -1,5 +1,7 @@
 # Context Hub Architecture
 
+Superseded 2026-09-03. `skills/context-hub/` was removed rather than migrated; this document is kept as historical record of the design that was dropped.
+
 Status: experimental (`context-hub/1`)
 Runtime premise: plain files, Markdown, Git, and Python's standard library
 Optional clients and indexes: Obsidian, filesystem MCP, Graphify

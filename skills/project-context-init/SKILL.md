@@ -99,9 +99,14 @@ After approval of the exact plan:
 python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile core --repo-type TYPE --repository-stage STAGE --apply
 ```
 
-The script creates only missing files, records scaffold version and repository
-type, preserves differing files, and updates only its managed block in existing
-root `AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. `--install-skills`
+The script creates only missing files, records the schema, the package version,
+the project id, and the repository type in `project-context/.project-context.json`,
+preserves differing files, and updates only its managed block in existing root
+`AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. It ensures **both** root
+instruction files carry that block, creating whichever is missing, so a
+Claude-only repository does not end up with rules no Claude session reads; an
+existing lowercase `agents.md` or `claude.md` satisfies its role and no second
+file is created. `--install-skills`
 copies the `project-context` skill alone into `.agents/skills/` with the same
 preserve-existing rules, and writes a thin pointer for it under `.claude/skills/`
 so Claude Code can discover it — without that pointer the skill is installed but

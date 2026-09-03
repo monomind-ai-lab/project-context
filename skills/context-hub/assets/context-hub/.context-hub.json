@@ -1,7 +1,0 @@
-{
-  "schema_version": "context-hub/1",
-  "scaffold_version": "0.1.0",
-  "hub_id": "hub-example",
-  "created_at": "YYYY-MM-DD",
-  "created_by": "actor-example"
-}

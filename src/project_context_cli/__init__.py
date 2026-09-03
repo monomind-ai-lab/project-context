@@ -1,9 +1,9 @@
 """Console entry point for the bundled Project Context tools.
 
-Each tool locates its own templates and sibling skills relative to its file, so
+The tool locates its own templates and sibling skills relative to its file, so
 the wheel carries the whole ``skills/`` tree unmodified under ``_bundle/``.
-This shim only selects a bundled script and forwards its arguments; it does not
-duplicate either CLI.
+This shim only loads the bundled script and forwards its arguments; it does not
+duplicate the CLI.
 """
 
 from __future__ import annotations
@@ -38,15 +38,10 @@ def _load_script(skill: str, filename: str) -> ModuleType | None:
 
 def main() -> int:
     argv = sys.argv[1:]
-    if argv and argv[0] == "hub":
-        module = _load_script("context-hub", "context_hub.py")
-        forwarded = argv[1:]
-    else:
-        module = _load_script("project-context-init", "project_context_init.py")
-        forwarded = argv
+    module = _load_script("project-context-init", "project_context_init.py")
     if module is None:
         return 2
-    return int(module.main(forwarded))
+    return int(module.main(argv))
 
 
 if __name__ == "__main__":
