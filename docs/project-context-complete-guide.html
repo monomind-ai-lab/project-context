@@ -1173,7 +1173,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
   <section class="slide dark dg-slide dg-center" data-screen-label="03 How it works"
            role="group" aria-label="Slide 03 How it works">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
-    <p class="eyebrow">Part 1 · Why</p>
+    <p class="eyebrow">Part 1 · How it runs</p>
     <h2 class="h-md">Install once, then it runs inside the work.</h2>
     <div class="dg-canvas">
       <div class="wf-row">
@@ -1204,17 +1204,24 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 2 · Install</p>
     <h2 class="h-md">Install with any AI agent.</h2>
-    <p class="lead">Paste this. The agent reads the protocol and proposes a plan before it writes anything.</p>
+    <p class="lead">Paste this. The agent reads the protocol and proposes a plan before it writes anything — and the session hooks are opt-in, never assumed.</p>
     <div class="dg-canvas">
       <div class="dg-frame is-accent">
+        <div class="frame-head">
+          <div class="dg-frame-label">Copy-paste prompt</div>
+          <button type="button" class="copy-btn" data-copy-target="install-prompt" aria-label="Copy the installation prompt">
+            <svg class="ico ico-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.6" y="5.6" width="8.4" height="8.4" rx="1.8"/><path d="M10.9 3.4V3.2A1.2 1.2 0 0 0 9.7 2H3.2A1.2 1.2 0 0 0 2 3.2v6.5a1.2 1.2 0 0 0 1.2 1.2h.2"/></svg>
+            <svg class="ico ico-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg>
+            <span class="copy-label">Copy</span>
+          </button>
+        </div>
         <p class="code" id="install-prompt">Install Project Context in the current repository or project folder using
 https://github.com/monomind-ai-lab/project-context. Read and follow
 `skills/project-context-init/SKILL.md`, starting with its required onboarding
 question. Show me the proposed plan and wait for my approval before making changes.</p>
       </div>
-      <div class="dg-flag"><div class="fl">--dry-run</div><div class="fd">Inspect the exact changes first — nothing is written</div></div>
-      <div class="dg-flag"><div class="fl">--apply</div><div class="fd">Create only what the plan listed, and nothing else</div></div>
-      <div class="dg-flag"><div class="fl">--install-hooks</div><div class="fd">Wire the session hooks in. Opt-in, never assumed</div></div>
+      <div class="dg-flag"><div class="fl">project-context init --dry-run</div><div class="fd">Inspect the exact changes first — nothing is written</div></div>
+      <div class="dg-flag"><div class="fl">project-context init --apply</div><div class="fd">Create only what the plan listed, and nothing else</div></div>
     </div>
   </section>
 
@@ -1229,7 +1236,7 @@ question. Show me the proposed plan and wait for my approval before making chang
         <table class="tbl">
           <thead><tr><th style="width:26%">Profile</th><th>What lands</th></tr></thead>
           <tbody>
-            <tr><td class="k">core</td><td><span class="notranslate" translate="no">NOW.md</span>, <span class="notranslate" translate="no">DECISIONS.md</span>, <span class="notranslate" translate="no">LEARNINGS.md</span>, <span class="notranslate" translate="no">decisions/</span> — enough for most repositories</td></tr>
+            <tr><td class="k">core · default</td><td><span class="notranslate" translate="no">NOW.md</span>, <span class="notranslate" translate="no">DECISIONS.md</span>, <span class="notranslate" translate="no">LEARNINGS.md</span>, <span class="notranslate" translate="no">decisions/</span> — enough for most repositories</td></tr>
             <tr><td class="k">full</td><td>Adds <span class="notranslate" translate="no">tasks/</span>, <span class="notranslate" translate="no">designs/</span>, <span class="notranslate" translate="no">incidents/</span> — take it when the project already has that much going on</td></tr>
           </tbody>
         </table>
@@ -1259,7 +1266,7 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 3 · Records</p>
     <h2 class="h-md">Six required keys, and nothing else.</h2>
-    <p class="lead">Detail records carry frontmatter. Registries stay plain Markdown, as they always were.</p>
+    <p class="lead">A question is not an assertion and a task is not a claim — so one vocabulary for all three was wrong twice over. Detail records carry frontmatter; registries stay plain Markdown.</p>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame">
@@ -1285,7 +1292,6 @@ asserted_by: person:ren
           </table>
         </div>
       </div>
-      <div class="dg-loop">A question is not an assertion and a task is not a claim. One vocabulary for all three was wrong twice over — it left a finished task with no terminal state.</div>
     </div>
   </section>
 
@@ -1314,7 +1320,7 @@ asserted_by: person:ren
            role="group" aria-label="Slide 09 Checking your work">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 4 · Operate</p>
-    <h2 class="h-md">Two checks, and one of them is unusual.</h2>
+    <h2 class="h-md">Two checks. The second one nags you.</h2>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame is-accent">
@@ -1340,15 +1346,15 @@ asserted_by: person:ren
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 4 · Operate</p>
     <h2 class="h-md">Optional: working alongside a <span class="notranslate" translate="no">Project Hub</span>.</h2>
-    <p class="lead">A repository with no Hub is a complete product. When an organisation runs one, two folders arrive that you do not author.</p>
+    <p class="lead">A repository with no Hub is a complete product. When an organisation runs one, two folders arrive that you do not author — and if you disagree with something in them, you raise a question in your own records rather than editing theirs.</p>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame">
           <div class="dg-frame-label">You author these</div>
           <ul class="bullets tight">
-            <li><span class="notranslate" translate="no">NOW.md</span> · <span class="notranslate" translate="no">PLAN.md</span></li>
+            <li><span class="notranslate" translate="no">NOW.md</span> · current state</li>
             <li><span class="notranslate" translate="no">DECISIONS.md</span> · <span class="notranslate" translate="no">decisions/</span></li>
-            <li><span class="notranslate" translate="no">LEARNINGS.md</span> · <span class="notranslate" translate="no">QUESTIONS.md</span></li>
+            <li><span class="notranslate" translate="no">LEARNINGS.md</span> · your own notes</li>
           </ul>
           <p class="ds">Yours to write. The owner copies them upward when they want to look; nothing here ever reaches out to them.</p>
         </div>
@@ -1362,7 +1368,6 @@ asserted_by: person:ren
           <p class="ds">Stamped by hash. Editing one is an error, because your change would be silently overwritten at the next sync and the owner would never learn you disagreed.</p>
         </div>
       </div>
-      <div class="dg-loop"><b>Disagree with something pushed?</b> Raise a question in your own records. It reaches the owner with the project context that explains it.</div>
     </div>
   </section>
 
