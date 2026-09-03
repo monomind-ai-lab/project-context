@@ -1,7 +1,8 @@
 # Learning Registry
 
 Promote a learning only when evidence supports reuse beyond one task. Use
-stable IDs such as `L-001`.
+stable IDs such as `L-001`. The lifecycle is `proposed` → `accepted` →
+`superseded` | `rejected`.
 
 ## L-000: Example learning
 

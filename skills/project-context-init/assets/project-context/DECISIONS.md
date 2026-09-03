@@ -1,8 +1,10 @@
 # Decision Registry
 
-Statuses are `proposed`, `accepted`, or `superseded`. Only accepted decisions
-define current direction. Use stable IDs such as `D-001` and link detailed
-records from `decisions/` when the evidence or trade-offs need more space.
+The lifecycle is `proposed` → `accepted` → `superseded` | `rejected`. Only
+accepted decisions define current direction. Use stable IDs such as `D-001` and
+link detailed records from `decisions/` when the evidence or trade-offs need
+more space; a detail record carries the six required frontmatter keys, while
+this registry stays plain Markdown.
 
 ## D-000: Example decision
 

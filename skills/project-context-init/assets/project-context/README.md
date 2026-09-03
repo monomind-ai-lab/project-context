@@ -24,6 +24,13 @@ constrain future work, reusable learnings, and linked supporting evidence.
 | `designs/` | Designs and alternatives (full profile) | Keep decisions separate from proposals |
 | `incidents/` | Root cause, remediation, prevention (full profile) | Preserve history; promote reusable lessons |
 | `tasks/` | Plans, progress, validation, outcomes (full profile) | Keep completed records immutable |
+| `global/`, `blueprint/` | Owner-authored records pushed in from a Project Hub | Read-only here. Never edit; raise a question instead |
+
+`global/` and `blueprint/` are present only when a Project Hub owner has
+pushed them. Each pushed file is stamped in `.project-context.json` with the
+digest it arrived with, and the doctor reports an edit as an error naming the
+Hub as the place to make the change. A repository with no Hub simply has
+neither folder, and is a complete product without them.
 
 The repository's primary artifacts and verified evidence remain authoritative:
 for example source and tests, approved documents, citations and data, or the

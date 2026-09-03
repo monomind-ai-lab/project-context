@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import date, datetime
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -23,11 +24,88 @@ import sys
 from typing import Any
 
 
-TEMPLATE_VERSION = "0.5.0"
+# Record model v1. One schema string for both products; `context-hub/1` is
+# retired and survives here only as a diagnostic (see `legacy_hub_issues`).
+SCHEMA = "project-context/1"
+# One version number per product, and the two products ship on their own
+# cadences. The marker records which product wrote it so a reader never assumes
+# this version and a Hub's relate.
+PRODUCT = "project-context"
+LEGACY_SCHEMA = "context-hub/1"
+LEGACY_START = "<!-- context-hub:start -->"
+LEGACY_MARKER_NAME = ".context-hub.json"
+MARKER_NAME = ".project-context.json"
 START = "<!-- project-context:start -->"
 END = "<!-- project-context:end -->"
 INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
+# Both files carry the same managed block, so a Claude-only repository is not
+# left with rules no Claude session reads. One finding per missing file.
+INSTRUCTION_ROLES = ("AGENTS.md", "CLAUDE.md")
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
+# Detail records carry frontmatter. Registries stay plain Markdown.
+RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "inbox")
+# Scaffolding inside a record directory, not a record.
+NON_RECORD_NAMES = {"README.md", "TEMPLATE.md", "INDEX.md"}
+# `owners_window/` is the owner's own space in a Hub: never pushed, never
+# linted, never pulled into. `sessions/` never reaches Git at all. Neither is
+# a repository record set, so nothing below reads either one.
+UNLINTED_DIRECTORIES = {"owners_window", "sessions"}
+# The pushed set: owner-authored in the Hub, read-only here, verified against
+# the stamps the push left in the marker.
+PUSHED_ROOTS = ("global", "blueprint")
+REQUIRED_KEYS = ("id", "kind", "status", "title", "created", "asserted_by")
+# Validated only when present. There is deliberately no `serves` key: `PLAN.md`
+# is a registry and carries no frontmatter, so the conformance anchor is a body
+# line on the milestone item rather than a field.
+OPTIONAL_KEYS = (
+    "approved_by", "supersedes", "superseded_by", "evidence", "files",
+    "valid_at", "invalid_at", "session", "harness", "model",
+)
+# Required-but-empty fields the three-block metadata format demanded. Absent
+# means absent now, so carrying one forward is noise a reader has to skip.
+RETIRED_KEYS = ("generated_at", "generated_by", "confidence", "aliases")
+KINDS = ("decision", "learning", "question", "task", "capsule")
+# One vocabulary per kind, and the doctor enforces *that* kind's set. A
+# permissive union across all three would let two people write questions two
+# different ways with nothing to catch it, which is the failure a single
+# vocabulary exists to prevent. A question is not an assertion and a task is
+# not a claim, so they do not share the assertion states.
+LIFECYCLES = {
+    "decision": ("proposed", "accepted", "superseded", "rejected"),
+    "learning": ("proposed", "accepted", "superseded", "rejected"),
+    "capsule": ("proposed", "accepted", "superseded", "rejected"),
+    "question": ("open", "answered", "superseded"),
+    "task": ("proposed", "active", "done", "dropped"),
+}
+# `candidate → approved → superseded` is retired everywhere, whatever the kind.
+RETIRED_STATUSES = {"candidate": "proposed", "approved": "accepted"}
+REGISTRY_KINDS = {
+    "DECISIONS.md": "decision",
+    "LEARNINGS.md": "learning",
+    "QUESTIONS.md": "question",
+}
+ID_PATTERN = re.compile(r"^(?:[DLQT]-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+)$")
+ACTOR_PATTERN = re.compile(r"^(?:person|agent):[^\s:][^\s]*$")
+DATE_ONLY_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+STATUS_LINE_PATTERN = re.compile(r"^\s*-\s+Status:\s*`?([A-Za-z][A-Za-z-]*)`?\s*$")
+FRONTMATTER_KEY_PATTERN = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$")
+FRONTMATTER_ITEM_PATTERN = re.compile(r"^\s*-\s+(.*)$")
+# Reference grammar, validated by shape. Resolution is optional and never
+# required, so a reference is checked for the form its scheme promises and
+# nothing more. A token whose scheme is not one of these is prose.
+REFERENCE_PATTERNS = {
+    "session": re.compile(r"^session:[A-Za-z0-9._-]+:[A-Za-z0-9._-]+$"),
+    "commit": re.compile(r"^commit:[A-Za-z0-9._/-]+:[0-9a-f]{7,40}$"),
+    "pr": re.compile(r"^pr:[A-Za-z0-9._/-]+#\d+$"),
+    "review": re.compile(r"^review:[A-Za-z0-9._/-]+#\d+/[A-Za-z0-9._-]+$"),
+    "ticket": re.compile(r"^ticket:[A-Za-z0-9._-]+:[A-Za-z0-9._-]+$"),
+    "doc": re.compile(r"^doc:[A-Za-z0-9._/-]+:\S+@[0-9a-f]{7,40}$"),
+    "url": re.compile(r"^url:https?://\S+$"),
+    "capsule": re.compile(r"^capsule:[A-Za-z0-9._-]+$"),
+}
+REFERENCE_TOKEN_PATTERN = re.compile(
+    r"(?<![\w:/-])(" + "|".join(REFERENCE_PATTERNS) + r"):\S+"
+)
 # Harness-specific skill locations. These hold pointers, never copies: the
 # skill itself is installed once, harness-neutral, under .agents/skills/.
 HARNESS_POINTER_ROOTS = ((".claude", "skills"),)
@@ -54,6 +132,46 @@ ANCHOR_TEXT_PATTERN = re.compile(
     r"(?<![\w@])([\w.-]*[./][\w./-]*)@([0-9a-f]{7,40})\b"
 )
 EVIDENCE_LINE_PATTERN = re.compile(r"^\s*- Evidence:")
+
+
+VERSION_PATTERN = re.compile(r"^\d+(?:\.\d+)*(?:[-+.][0-9A-Za-z.-]+)?$")
+
+
+def version_file() -> Path | None:
+    """The one `VERSION` file this copy of the script belongs to, or None.
+
+    There is a single version number — the package version — and the scripts
+    read it rather than each carrying a constant that drifts. Two layouts hold
+    it: a checkout or the wheel bundle, where `VERSION` sits beside `skills/`,
+    and an installed copy under a repository's `.agents/skills/`, where the
+    installer writes a `VERSION` beside `SKILL.md` so the installed doctor
+    still knows which release it came from.
+
+    The lookup is exact rather than a walk up the tree: a consuming repository
+    may well have a `VERSION` of its own, and reporting the host project's
+    release as ours would be worse than reporting nothing.
+    """
+    here = Path(__file__).resolve()
+    beside = here.parents[1] / "VERSION"
+    if beside.is_file():
+        return beside
+    if here.parents[2].name == "skills":
+        packaged = here.parents[3] / "VERSION"
+        if packaged.is_file():
+            return packaged
+    return None
+
+
+def package_version() -> str:
+    """The package version, or "unknown" when this copy cannot establish it."""
+    path = version_file()
+    if path is None:
+        return "unknown"
+    try:
+        text = path.read_text(encoding="utf-8").strip()
+    except (OSError, UnicodeDecodeError):
+        return "unknown"
+    return text if VERSION_PATTERN.match(text) else "unknown"
 
 
 def instruction_paths(target: Path) -> list[Path]:
@@ -111,13 +229,18 @@ def reachability(target: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
         text = path.read_text(encoding="utf-8", errors="replace")
         if START in text and END in text:
             blocks.append(path.name)
-    if not blocks:
+    # One finding per missing file, named. Satisfied by *either* file, the
+    # check passed a Claude-only repository whose rules only Codex would read.
+    carried = {name.casefold() for name in blocks}
+    for role in INSTRUCTION_ROLES:
+        if role.casefold() in carried:
+            continue
         issues.append(
             {
                 "severity": "warning",
                 "code": "missing-instruction-block",
-                "path": str(target),
-                "detail": "no root AGENTS.md or CLAUDE.md carries the managed project-context block",
+                "path": role,
+                "detail": f"root {role} does not carry the managed project-context block",
             }
         )
 
@@ -303,6 +426,379 @@ def verify_anchors(
     return summary, issues
 
 
+def parse_frontmatter(text: str) -> tuple[dict[str, Any] | None, bool]:
+    """(mapping, well_formed) for a leading `---` YAML block.
+
+    A deliberately small subset: `key: value`, block sequences, and inline
+    `[a, b]` lists. That is the whole of what the record model asks a record to
+    carry, and parsing no more than the contract defines keeps the doctor free
+    of a runtime dependency and free of opinions about YAML it will never see.
+
+    Returns `(None, True)` when there is no frontmatter at all, and
+    `(None, False)` when a block opened and never closed.
+    """
+    if not text.startswith("---"):
+        return None, True
+    lines = text.splitlines()
+    if lines[0].strip() != "---":
+        return None, True
+    try:
+        end = next(index for index, line in enumerate(lines[1:], 1) if line.strip() in {"---", "..."})
+    except StopIteration:
+        return None, False
+    fields: dict[str, Any] = {}
+    key: str | None = None
+    for line in lines[1:end]:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        item = FRONTMATTER_ITEM_PATTERN.match(line)
+        if item is not None and key is not None and isinstance(fields.get(key), list):
+            fields[key].append(unquote(item.group(1)))
+            continue
+        match = FRONTMATTER_KEY_PATTERN.match(line)
+        if match is None:
+            continue
+        key, raw = match.group(1), match.group(2).strip()
+        if raw.startswith("[") and raw.endswith("]"):
+            inner = raw[1:-1].strip()
+            fields[key] = [unquote(part.strip()) for part in inner.split(",") if part.strip()]
+        elif raw:
+            fields[key] = unquote(raw)
+        else:
+            fields[key] = []
+    return fields, True
+
+
+def unquote(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        return value[1:-1]
+    return value
+
+
+def reference_issues(values: list[str], source: str) -> list[dict[str, str]]:
+    """Every token that claims a reference scheme must keep that scheme's shape.
+
+    Shape only: resolution is optional and never required, so this says nothing
+    about whether the commit, ticket, or page on the other end exists. A token
+    whose scheme is not in the grammar is ordinary prose and is left alone.
+    """
+    issues: list[dict[str, str]] = []
+    for value in values:
+        for match in REFERENCE_TOKEN_PATTERN.finditer(value):
+            token = match.group(0).rstrip(".,;)")
+            pattern = REFERENCE_PATTERNS[match.group(1)]
+            if not pattern.match(token):
+                issues.append(
+                    {
+                        "severity": "error",
+                        "code": "invalid-reference",
+                        "path": source,
+                        "detail": f"{token} does not match the {match.group(1)} reference grammar",
+                    }
+                )
+    return issues
+
+
+def status_issues(status: str, kind: str, source: str) -> list[dict[str, str]]:
+    """Validate a status against the vocabulary of *that record's kind*.
+
+    A state that belongs to a different kind is as wrong as one that belongs to
+    no kind: `accepted` on a question and `answered` on a decision are both
+    errors, because a question is not an assertion. When the kind is missing or
+    unrecognised there is no vocabulary to check against, and the record
+    already carries the error that says so — only the retired words are still
+    worth naming, since they are retired whatever the kind.
+    """
+    if status in RETIRED_STATUSES:
+        return [
+            {
+                "severity": "error",
+                "code": "retired-status",
+                "path": source,
+                "detail": f"`{status}` is retired; read `{RETIRED_STATUSES[status]}`",
+            }
+        ]
+    allowed = LIFECYCLES.get(kind)
+    if allowed is None or status in allowed:
+        return []
+    return [
+        {
+            "severity": "error",
+            "code": "invalid-status",
+            "path": source,
+            "detail": f"`{status}` is not a {kind} state; a {kind} is "
+            + " → ".join(allowed[:2])
+            + " → "
+            + " | ".join(allowed[2:]),
+        }
+    ]
+
+
+def record_issues(source: str, text: str) -> list[dict[str, str]]:
+    """Validate one detail record against the six required frontmatter keys.
+
+    Six, not eight. Eight is the ceiling the model allows, not a target, so
+    everything else is optional and is checked only when it is present.
+    """
+    issues: list[dict[str, str]] = []
+    fields, well_formed = parse_frontmatter(text)
+    if not well_formed:
+        return [
+            {
+                "severity": "error",
+                "code": "malformed-frontmatter",
+                "path": source,
+                "detail": "the frontmatter block opened and never closed",
+            }
+        ]
+    if fields is None:
+        return [
+            {
+                "severity": "error",
+                "code": "missing-frontmatter",
+                "path": source,
+                "detail": "a detail record carries frontmatter with " + ", ".join(REQUIRED_KEYS),
+            }
+        ]
+    missing = [key for key in REQUIRED_KEYS if not fields.get(key)]
+    if missing:
+        issues.append(
+            {
+                "severity": "error",
+                "code": "missing-required-key",
+                "path": source,
+                "detail": "frontmatter is missing " + ", ".join(missing),
+            }
+        )
+    retired = [key for key in RETIRED_KEYS if key in fields]
+    retired += [
+        key for key in ("supersedes", "superseded_by")
+        if isinstance(fields.get(key), list) and not fields[key]
+    ]
+    if retired:
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "retired-frontmatter-key",
+                "path": source,
+                "detail": "absent means absent; drop " + ", ".join(sorted(retired)),
+            }
+        )
+    record_id = fields.get("id")
+    if isinstance(record_id, str) and record_id and not ID_PATTERN.match(record_id):
+        issues.append(
+            {
+                "severity": "error",
+                "code": "invalid-record-id",
+                "path": source,
+                "detail": f"`{record_id}` is not a stable ID such as D-001, L-003, Q-002, T-012, or C-2026-09-03-a1b2",
+            }
+        )
+    kind = fields.get("kind") if isinstance(fields.get("kind"), str) else ""
+    if kind and kind not in KINDS:
+        issues.append(
+            {
+                "severity": "error",
+                "code": "invalid-kind",
+                "path": source,
+                "detail": f"`{kind}` is not one of {', '.join(KINDS)}",
+            }
+        )
+    status = fields.get("status")
+    if isinstance(status, str) and status:
+        issues.extend(status_issues(status, kind, source))
+    title = fields.get("title")
+    if isinstance(title, str) and title.endswith("."):
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "title-trailing-period",
+                "path": source,
+                "detail": "a title is one line with no trailing period",
+            }
+        )
+    for key in ("created", "valid_at", "invalid_at"):
+        value = fields.get(key)
+        if isinstance(value, str) and value and not DATE_ONLY_PATTERN.match(value):
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "invalid-date",
+                    "path": source,
+                    "detail": f"{key} is `{value}`; the record model uses YYYY-MM-DD",
+                }
+            )
+    for key in ("asserted_by", "approved_by"):
+        value = fields.get(key)
+        if isinstance(value, str) and value and not ACTOR_PATTERN.match(value):
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "invalid-actor",
+                    "path": source,
+                    "detail": f"{key} is `{value}`; an actor is person:<name> or agent:<name>",
+                }
+            )
+    asserted_by, approved_by = fields.get("asserted_by"), fields.get("approved_by")
+    if (
+        isinstance(asserted_by, str)
+        and asserted_by == approved_by
+        and asserted_by.startswith("agent:")
+    ):
+        # A correctness check on the record, not an access control: an agent
+        # that accepts its own assertion has recorded no second judgement.
+        issues.append(
+            {
+                "severity": "error",
+                "code": "agent-self-approval",
+                "path": source,
+                "detail": f"{asserted_by} both asserted and approved this record",
+            }
+        )
+    for key in ("evidence", "supersedes", "superseded_by", "session"):
+        value = fields.get(key)
+        values = value if isinstance(value, list) else [value] if isinstance(value, str) else []
+        issues.extend(reference_issues([item for item in values if isinstance(item, str)], source))
+    return issues
+
+
+def registry_issues(source: str, text: str) -> list[dict[str, str]]:
+    """A registry has no frontmatter, so its statuses live on `- Status:` lines."""
+    kind = REGISTRY_KINDS[source]
+    issues: list[dict[str, str]] = []
+    for line in text.splitlines():
+        match = STATUS_LINE_PATTERN.match(line)
+        if match:
+            issues.extend(status_issues(match.group(1), kind, source))
+    return issues
+
+
+def file_digest(path: Path) -> str | None:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
+
+
+def pushed_set(context: Path, marker: Any) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Verify `global/` and `blueprint/` against the stamps the push left.
+
+    The pushed set is owner-authored in the Hub and read-only here. Nothing is
+    injected into the files themselves — they stay clean Markdown — so the only
+    evidence that a copy is still the copy that was sent is the digest recorded
+    in the marker. A mismatch names the Hub, because that is where the change
+    belongs; editing it back here would only be undone by the next push.
+    """
+    summary: dict[str, Any] = {"stamped": 0, "modified": 0, "missing": 0, "oldest_pushed_at": None}
+    issues: list[dict[str, str]] = []
+    stamps = marker.get("pushed") if isinstance(marker, dict) else None
+    stamps = stamps if isinstance(stamps, dict) else {}
+    times: list[str] = []
+    for relative in sorted(stamps):
+        entry = stamps[relative]
+        if not isinstance(entry, dict) or not isinstance(entry.get("sha256"), str):
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "invalid-pushed-stamp",
+                    "path": relative,
+                    "detail": "a stamp records sha256, source_commit, and pushed_at",
+                }
+            )
+            continue
+        summary["stamped"] += 1
+        if isinstance(entry.get("pushed_at"), str):
+            times.append(entry["pushed_at"])
+        path = context / relative
+        if not path.is_file() or path.is_symlink():
+            summary["missing"] += 1
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "pushed-file-missing",
+                    "path": relative,
+                    "detail": "stamped as pushed but not present; the Hub owner re-pushes it",
+                }
+            )
+            continue
+        if file_digest(path) != entry["sha256"]:
+            summary["modified"] += 1
+            issues.append(
+                {
+                    "severity": "error",
+                    "code": "pushed-file-modified",
+                    "path": relative,
+                    "detail": "edited since it was pushed; change it in the Hub and push again, or raise a question here",
+                }
+            )
+    for root in PUSHED_ROOTS:
+        directory = context / root
+        if not directory.is_dir() or directory.is_symlink():
+            continue
+        for path in sorted(directory.rglob("*")):
+            if not path.is_file():
+                continue
+            relative = path.relative_to(context).as_posix()
+            if relative not in stamps:
+                issues.append(
+                    {
+                        "severity": "warning",
+                        "code": "pushed-file-unstamped",
+                        "path": relative,
+                        "detail": "in the pushed set with no stamp; it was added here rather than in the Hub",
+                    }
+                )
+    summary["oldest_pushed_at"] = min(times) if times else None
+    return summary, issues
+
+
+def legacy_hub_issues(target: Path, marker: Any) -> list[dict[str, str]]:
+    """Recognise a Context Hub install so a half-upgraded one is not silent.
+
+    Context Hub is superseded, not migrated: its record model, its second
+    doctor, and its second schema string are gone. This recognition is the only
+    part of it that ships forward, and it exists so a repository still carrying
+    `context-hub/1` reports that fact instead of appearing healthy while
+    nothing understands its records.
+    """
+    issues: list[dict[str, str]] = []
+    legacy_marker = target / LEGACY_MARKER_NAME
+    if legacy_marker.is_file():
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "legacy-context-hub-marker",
+                "path": LEGACY_MARKER_NAME,
+                "detail": "a Context Hub scaffold; Context Hub is superseded and its records are not read by this protocol",
+            }
+        )
+    if isinstance(marker, dict) and LEGACY_SCHEMA in {
+        marker.get("schema"), marker.get("schema_version")
+    }:
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "legacy-context-hub-marker",
+                "path": MARKER_NAME,
+                "detail": f"the marker still declares {LEGACY_SCHEMA}; the record model is {SCHEMA}",
+            }
+        )
+    for path in instruction_paths(target):
+        if not path.is_file() or path.is_symlink():
+            continue
+        if LEGACY_START in path.read_text(encoding="utf-8", errors="replace"):
+            issues.append(
+                {
+                    "severity": "warning",
+                    "code": "legacy-context-hub-block",
+                    "path": path.name,
+                    "detail": f"carries a {LEGACY_START} block; the managed block is {START}",
+                }
+            )
+    return issues
+
+
 def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
@@ -310,21 +806,46 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     for relative in sorted(CORE_TEMPLATE_PATHS):
         if not (context / relative).is_file():
             issues.append({"severity": "error", "code": "missing-core-file", "path": relative})
-    metadata = context / ".project-context.json"
+    available = package_version()
+    marker: Any = None
+    metadata = context / MARKER_NAME
     if not metadata.is_file():
         issues.append({"severity": "warning", "code": "missing-version-metadata", "path": str(metadata)})
     else:
         try:
-            installed = str(json.loads(metadata.read_text(encoding="utf-8")).get("template_version", "unknown"))
-            if installed != TEMPLATE_VERSION:
-                issues.append(
-                    {
-                        "severity": "warning", "code": "template-update-available", "path": str(metadata),
-                        "detail": f"installed {installed}; available {TEMPLATE_VERSION}",
-                    }
-                )
+            marker = json.loads(metadata.read_text(encoding="utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
             issues.append({"severity": "error", "code": "invalid-version-metadata", "path": str(metadata)})
+    if isinstance(marker, dict):
+        schema = marker.get("schema")
+        if isinstance(schema, str) and schema not in {SCHEMA, LEGACY_SCHEMA}:
+            issues.append(
+                {
+                    "severity": "error", "code": "unsupported-schema", "path": str(metadata),
+                    "detail": f"marker declares {schema}; this doctor reads {SCHEMA}",
+                }
+            )
+        product = marker.get("product")
+        foreign = isinstance(product, str) and product != PRODUCT
+        if foreign:
+            issues.append(
+                {
+                    "severity": "warning", "code": "foreign-product-marker", "path": str(metadata),
+                    "detail": f"written by {product}; its version does not relate to this one, so no upgrade is inferred",
+                }
+            )
+        # `template_version` is retired. A marker written before the version
+        # numbers were unified carries only that key, and reading it is what
+        # lets the doctor tell such an install that an upgrade is waiting
+        # rather than silently comparing against nothing.
+        installed = marker.get("version") or marker.get("template_version") or "unknown"
+        if not foreign and available != "unknown" and str(installed) != available:
+            issues.append(
+                {
+                    "severity": "warning", "code": "template-update-available", "path": str(metadata),
+                    "detail": f"installed {installed}; available {available}",
+                }
+            )
     now_path = context / "NOW.md"
     if now_path.is_file():
         now_text = now_path.read_text(encoding="utf-8", errors="replace")
@@ -344,10 +865,19 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     # (repository-relative path, commit, citing file, "link" or "text")
     anchors: list[tuple[str, str, str, str]] = []
     link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+    records = 0
     if context.is_dir() and not context.is_symlink():
-        for markdown in context.rglob("*.md"):
+        for markdown in sorted(context.rglob("*.md")):
+            relative_path = markdown.relative_to(context)
+            if UNLINTED_DIRECTORIES.intersection(relative_path.parts[:-1]):
+                continue
             text = markdown.read_text(encoding="utf-8", errors="replace")
-            source = str(markdown.relative_to(context))
+            source = relative_path.as_posix()
+            if relative_path.parts[0] in RECORD_DIRECTORIES and markdown.name not in NON_RECORD_NAMES:
+                records += 1
+                issues.extend(record_issues(source, text))
+            elif source in REGISTRY_KINDS:
+                issues.extend(registry_issues(source, text))
             for record_id in re.findall(r"^##\s+([DL]-\d{3,})\b", text, re.MULTILINE):
                 ids.setdefault(record_id, []).append(source)
             for target_text in link_pattern.findall(text):
@@ -384,17 +914,24 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
             )
     evidence, evidence_issues = verify_anchors(target, anchors)
     issues.extend(evidence_issues)
+    pushed, pushed_issues = pushed_set(context, marker)
+    issues.extend(pushed_issues)
+    issues.extend(legacy_hub_issues(target, marker))
     delivery, delivery_issues = reachability(target)
     issues.extend(delivery_issues)
     errors = sum(issue["severity"] == "error" for issue in issues)
     warnings = sum(issue["severity"] == "warning" for issue in issues)
     return {
         "target": str(target),
-        "template_version": TEMPLATE_VERSION,
+        "schema": SCHEMA,
+        "product": PRODUCT,
+        "version": available,
         "status": "error" if errors else ("warning" if warnings else "healthy"),
         "summary": {"errors": errors, "warnings": warnings},
         "reachability": delivery,
         "evidence": evidence,
+        "records": records,
+        "pushed": pushed,
         "issues": issues,
     }
 

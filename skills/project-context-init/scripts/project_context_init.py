@@ -17,21 +17,44 @@ import tempfile
 from typing import Any
 
 
-TEMPLATE_VERSION = "0.5.0"
+SCHEMA = "project-context/1"
+# The two products version independently, so the marker names the product that
+# wrote it alongside that product's version.
+PRODUCT = "project-context"
+MARKER_NAME = ".project-context.json"
 START = "<!-- project-context:start -->"
 END = "<!-- project-context:end -->"
+# One text, both files. The block is loaded into every session in the
+# repository, so it is held to the L0 budget and says what to do, never what
+# the product is. A repository with no Hub simply has no `blueprint/` and no
+# `global/`, and those two paragraphs are inert rather than wrong.
 MANAGED_BLOCK = """<!-- project-context:start -->
 ## Project Context
 
-Before substantial repository work, read `project-context/SKILL.md` and
-`project-context/NOW.md`, then search `project-context/DECISIONS.md` and
-`project-context/LEARNINGS.md` for relevant constraints and evidence. Update
-project context at meaningful milestones and handoffs. Confirm important claims
-against the repository's primary artifacts and evidence. Treat generated indexes
-and wikis as auxiliary views, not authority.
+Before substantial work, run `project-context context --task "<one line>"`, or
+read `project-context/NOW.md` and `project-context/PLAN.md` if the CLI is not
+available. Search `DECISIONS.md`, `LEARNINGS.md`, and `QUESTIONS.md` for
+constraints that touch the files you are about to change.
+
+When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal
+this project serves, `ARCHITECTURE.md` is the shape it has to keep. Every
+`PLAN.md` item names the epic item it serves.
+
+`project-context/global/` and `project-context/blueprint/` are owner-authored
+and read-only here. Do not edit them. To change one, run `project-context
+capture --kind proposal` or file the question in `QUESTIONS.md`; it reaches the
+owner on their next pull.
+
+Record decisions, learnings, and questions as they happen with `project-context
+capture`. Confirm important claims against the repository's primary artifacts.
+Treat generated indexes and wikis as auxiliary views, not authority.
 <!-- project-context:end -->"""
 
 INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
+# Install ensures *both* root instruction files carry the block, creating
+# whichever is missing. Updating only the files that happened to exist left a
+# Claude-only repository with rules no Claude session ever reads.
+INSTRUCTION_ROLES = ("AGENTS.md", "CLAUDE.md")
 # Harness-specific skill locations. These hold pointers, never copies: the
 # skill itself is installed once, harness-neutral, under .agents/skills/.
 HARNESS_POINTER_ROOTS = ((".claude", "skills"),)
@@ -136,6 +159,53 @@ ROLE_DESTINATIONS = {
     "incidents": "project-context/incidents/",
     "general_memory": "the relevant project-context registries and evidence folders",
 }
+
+
+VERSION_PATTERN = re.compile(r"^\d+(?:\.\d+)*(?:[-+.][0-9A-Za-z.-]+)?$")
+PROJECT_ID_PATTERN = re.compile(r"[^a-z0-9]+")
+
+
+def version_file() -> Path | None:
+    """The one `VERSION` file this copy of the script belongs to, or None.
+
+    There is a single version number — the package version — and the scripts
+    read it rather than each carrying a constant of their own. `VERSION` sits
+    beside `skills/` both in a checkout and in the wheel bundle. The lookup is
+    exact rather than a walk up the tree, because a consuming repository may
+    well have a `VERSION` of its own and reporting that one would be worse than
+    reporting nothing.
+    """
+    here = Path(__file__).resolve()
+    beside = here.parents[1] / "VERSION"
+    if beside.is_file():
+        return beside
+    if here.parents[2].name == "skills":
+        packaged = here.parents[3] / "VERSION"
+        if packaged.is_file():
+            return packaged
+    return None
+
+
+def package_version() -> str:
+    """The package version, or "unknown" when this copy cannot establish it."""
+    path = version_file()
+    if path is None:
+        return "unknown"
+    try:
+        text = path.read_text(encoding="utf-8").strip()
+    except (OSError, UnicodeDecodeError):
+        return "unknown"
+    return text if VERSION_PATTERN.match(text) else "unknown"
+
+
+def project_id(target: Path) -> str:
+    """A stable, portable identifier for this project.
+
+    The folder name, slugified: it is the one name every clone agrees on, and
+    it carries no absolute path, no host, and no account.
+    """
+    slug = PROJECT_ID_PATTERN.sub("-", target.name.casefold()).strip("-")
+    return slug or "project"
 
 
 def skill_root() -> Path:
@@ -358,13 +428,22 @@ def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str
     }
 
 
-def metadata_content(profile: str, repo_type: str) -> str:
+def metadata_content(target: Path, profile: str, repo_type: str) -> str:
+    """The one marker both products write.
+
+    One schema string, one version number per product, and the project id.
+    `pushed` is absent until a Hub owner pushes something: a repository with no
+    Hub is a complete product, and an empty stamp table would imply otherwise.
+    """
     return json.dumps(
         {
             "authority": "tracked-markdown",
+            "product": PRODUCT,
             "profile": profile,
+            "project_id": project_id(target),
             "repository_type": repo_type,
-            "template_version": TEMPLATE_VERSION,
+            "schema": SCHEMA,
+            "version": package_version(),
         },
         indent=2,
         sort_keys=True,
@@ -708,6 +787,12 @@ def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
                 destination_root / source_file.relative_to(source),
                 source_file.read_text(encoding="utf-8"),
             )
+        # The installed copy carries the release it came from, so the doctor
+        # running inside a repository can still say which version it is. It is
+        # derived from the one `VERSION` file, never hand-maintained.
+        version = package_version()
+        if version != "unknown":
+            add_file_action(actions, destination_root / "VERSION", version + "\n")
         plan_harness_pointer(target, skill_name, source / "SKILL.md", actions)
 
 
@@ -856,14 +941,19 @@ def build_plan(
         )
         add_file_action(
             actions,
-            context / ".project-context.json",
-            metadata_content(profile, repository["type"]),
+            context / MARKER_NAME,
+            metadata_content(target, profile, repository["type"]),
         )
     harnesses = instruction_paths(target)
-    if harnesses:
-        actions.extend(instruction_plan(path) for path in harnesses)
-    else:
-        actions.append({"kind": "create", "path": str(target / "AGENTS.md"), "content": MANAGED_BLOCK + "\n"})
+    actions.extend(instruction_plan(path) for path in harnesses)
+    # Both roles, always. `agents.md` satisfies the AGENTS role — the file that
+    # is already there is the one that gets the block, whatever its casing.
+    carried = {path.name.casefold() for path in harnesses}
+    for role in INSTRUCTION_ROLES:
+        if role.casefold() not in carried:
+            actions.append(
+                {"kind": "create", "path": str(target / role), "content": MANAGED_BLOCK + "\n"}
+            )
     if install_skills:
         plan_skill_install(target, actions)
     if install_hooks:
