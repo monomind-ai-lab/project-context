@@ -724,7 +724,67 @@ The split changes what this principle means, and makes it easier to honour.
 - `project-context doctor` reports `works offline: yes` when nothing the repo
   needs depends on a remote.
 
-### 2.9 Skills and commands
+### 2.9 Onboarding the Hub (Daren, 2026-09-03)
+
+The Hub is a folder a person opens for the first time, so its onboarding is a
+conversation, not a checklist in a README. **No plugin is vendored into the
+scaffold.** An onboarding agent walks the owner through installing and
+configuring what they need, and explains why each piece is there. Markdown
+guides sit beside it for anyone who would rather read than talk.
+
+**Bootstrap, and why nothing needs vendoring.** The obvious objection to an
+onboarding agent that installs Obsidian plugins is that it needs an agent
+runtime to run, and inside Obsidian that runtime *is* a plugin. The
+`mypka-scaffold` reference resolves this by vendoring exactly one plugin, a
+terminal, as the bootstrap. Project Hub does not need to: the owner opens the
+Hub folder in Claude Code or Codex, which is where they already work, and the
+agent configures Obsidian from outside it. Obsidian is optional here as
+everywhere else (2.3); an owner who never opens it still has a working Hub.
+That keeps the scaffold free of third-party binaries — Claudian's `main.js`
+alone is over 3 MB and goes stale on every upstream release — and keeps
+plugin licences out of this repository's distribution.
+
+**What the onboarding agent does, in order.** Each step is idempotent, checks
+before it writes, never overwrites a customisation, and reports what it did
+with counts:
+
+| Step | Does |
+| --- | --- |
+| 1. Identify the host | Claude Code, Codex, Gemini, Cursor, or chat-only; degrade gracefully where a capability is absent, and say so rather than failing |
+| 2. Personalise | Replace the scaffold's placeholder tokens after asking once; record the answers in one source-of-truth file |
+| 3. Write the host pointer | `CLAUDE.md`, `AGENTS.md`, or the host's equivalent — a thin pointer to the canonical contract, never a copy of it |
+| 4. Seed `global/` | Walk the owner through identity, guardrails, and workflows, writing only what they answer; leave the rest absent rather than filling it with placeholder prose |
+| 5. Register the first project | `/hub-init` or `/hub-pull` against a repository the owner names |
+| 6. Offer Obsidian | Explain what it adds and what it does not; on yes, guide the community-plugin installs — Claudian for in-vault agents first — and write `.obsidian/` config. On no, stop here with a working Hub |
+| 7. Report back | What was written, what was skipped and why, what is still empty, and the one next command worth running |
+
+**Two rules taken from the reference scaffold**, both of which the design
+already needed:
+
+- **Two layers, never three.** The canonical contract is one file; the host
+  file is a thin pointer. A pointer that duplicates the contract is the bug —
+  it is how the two drift. This is the same rule as the managed block in 2.2,
+  and the reference is independent evidence that it is the right one.
+- **Check, skip, report.** Every activation is safe to re-run. Anything the
+  owner has customised is skipped, not overwritten, and the count of skipped
+  versus written is reported rather than hidden.
+
+**Where the two mechanisms differ, and why both exist.** The reference
+scaffold *generates* the host file from a template at activation, which suits a
+fresh folder that has none. Project Context instead writes a *managed block*
+into a file that usually already exists, because a project repository normally
+has a `CLAUDE.md` full of things that are none of our business. So: the Hub, a
+folder we ship, uses the generate-on-activation path; a project repository uses
+the managed block (2.2). One rule underneath both — we own our markers and
+nothing outside them.
+
+**Guides that ship beside the agent**, short and each answering one question:
+what the Hub is and what it is not; the authored set versus the pushed set; how
+to add a project; what Obsidian adds; how to bring a second person in as a
+builder; and an LLM-readable migration changelog so an upgrade can be applied
+by an agent rather than read by a human.
+
+### 2.10 Skills and commands
 
 | Skill | Product | What it does | CLI |
 | --- | --- | --- | --- |
@@ -755,16 +815,26 @@ scaffold it fetched is newer than the one installed.
 The names stay Project Context and, for the second product, Project Hub. What
 still changes:
 
-- **One protocol, one namespace, two installables.** The `context-hub` skill's
-  record machinery folds into the shared `project-context` protocol; the
+- **`skills/context-hub/` is superseded, not migrated (Daren, 2026-09-03).** It
+  implemented the design that D2 and the two-product direction dropped: actors,
+  episodes, entities, relationships, a second doctor, a second schema string, a
+  second version number. Project Hub does not inherit its record model; it is a
+  much smaller thing — a global tier, a folder per project, and three commands.
+  So the skill is removed rather than refactored, together with
+  `tests/test_context_hub.py`, its `pyproject.toml` entry, its
+  `scripts/validate_repository.py` entries, `prompts/create-context-hub.md`, and
+  the README section. `docs/context-hub-handoff.md` and
+  `docs/context-hub-architecture.md` stay as historical record, headed as
+  superseded. What survives is not code but four ideas, already carried into
+  Part 2: the attribution triple, content-addressed receipts, `path@commit`
+  anchors, and the safety engineering (create-only plans, one managed block per
+  instruction file, no-follow writes).
+- **One protocol, one namespace, two installables.** The
   `<!-- context-hub:start -->` managed block and the `context-hub/1` schema
   string retire in favour of the `project-context` marker and a single
-  `project-context/1` record schema. The hub commands (`init`, `add-actor`,
-  `add-project`, `bind-project`, `ingest`, `index`, `doctor`) become the
-  `project-hub` product's `init` and `pull` plus the shared doctor. Today's
-  Context Hub — actors, episodes, entities, relationships — is the ancestor of
-  Project Hub, but Project Hub is a much smaller thing: a global tier, a folder
-  per project, and two pull commands.
+  `project-context/1` record schema. The doctor keeps recognising the old hub
+  marker for two releases so a half-upgraded install is diagnosed, not broken —
+  that recognition is the only part of the Context Hub that ships forward.
 - **One version number.** Retire `TEMPLATE_VERSION` and `SCAFFOLD_VERSION`; both
   markers record the package version they came from. The `VERSION` file and
   `pyproject.toml` already agree; make the scripts read from them.
@@ -795,11 +865,13 @@ own and keeps the test suite green.
    it and re-apply the capability on the unified model; the leftover
    `origin/docs/readme-onboarding-rewrite` deleted once authorised; a decision
    on when `main` takes the Context Hub.
-2. **One record model.** One template set, one doctor, one lifecycle vocabulary,
-   one schema string, one version number, slim frontmatter down to the required
-   core, and an upgrade from both the embedded and the hub scaffolds that
-   rewrites no records. This is the unification commit and it is the gate for
-   everything else.
+2. **One record model, and `skills/context-hub/` removed.** One template set,
+   one doctor, one lifecycle vocabulary, one schema string, one version number,
+   slim frontmatter down to the required core. Delete the context-hub skill,
+   its test, and its registry entries (2.9 in Part 3); keep the doctor's
+   recognition of the old marker for two releases. Upgrade from both the
+   embedded and the hub scaffolds without rewriting a record. This is the
+   unification commit and the gate for everything else.
 3. **Project Context, standalone.** `/projectcontext-init` writing the record
    set and the marker; the managed blocks in **both** `CLAUDE.md` and
    `AGENTS.md`, creating whichever is missing, with the tightened
@@ -821,7 +893,11 @@ own and keeps the test suite green.
    matching, topic matching, budgets, `--mode review --diff`; the epic-to-plan
    `Serves:` check; the `global/` files and templates; the shareable subset; the
    `onboard` preset; `QUESTIONS.md` and `review`.
-8. **Later, when measured (v2):** the Hub's cross-project assembler, sharded
+8. **The Hub's onboarding agent and its guides** (2.9): host detection,
+   personalisation, the host pointer file, the `global/` interview, the first
+   project, the optional Obsidian pass with the community-plugin walkthrough,
+   and the report-back. Ships with the Hub scaffold, not with Project Context.
+9. **Later, when measured (v2):** the Hub's cross-project assembler, sharded
    indexes, a derived SQLite cache on the Hub side only (see below), Windows
    no-reparse writes, the entity/relationship extension, archive and purge,
    skills-as-records evolution.

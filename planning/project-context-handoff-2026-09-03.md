@@ -211,6 +211,47 @@ Full reasoning in plan Part 4.
 
 None of the three gates any v1 slice.
 
+## 4b. Repo split and onboarding, 2026-09-03 (third round)
+
+**Two repositories.** `project-context` stays as it is, with the README gaining
+a section on extensibility with the Hub and the optional tools (GitNexus,
+Graphify, OpenWiki) kept. `project-hub` is a **new public MIT repository**.
+
+*Scaffold versus instance.* The public repo is the **scaffold** — installer,
+templates, skills, vault seed — exactly as `project-context` is today. A **Hub
+instance** created from it is private and closed to builders, which is what
+plan Part 2 describes. Say so in both READMEs or the first question anyone asks
+is why the private thing is public.
+
+**`skills/context-hub/` is superseded** (Daren): it implemented the dropped
+design. Remove the skill, `tests/test_context_hub.py`, the `pyproject.toml`
+entry, the `scripts/validate_repository.py` entries, `prompts/create-context-hub.md`,
+and the README section, in slice 2. Keep `docs/context-hub-handoff.md` and
+`docs/context-hub-architecture.md` as historical record. Keep the doctor's
+recognition of the old marker for two releases.
+
+**No vendored plugins; an onboarding agent instead** (Daren). Plan 2.9 has the
+design. The bootstrap works because the owner opens the Hub folder in Claude
+Code or Codex, so no in-vault runtime plugin has to be shipped to get started.
+Reference studied: `mypka-scaffold-latest` in Daren's Obsidian folder — its
+`ADAPTER-PROMPT.md` is the model. What was taken: host detection with graceful
+degradation, placeholder personalisation asked once, a thin generated host
+pointer, two-layers-never-three, check-skip-report idempotency, and an
+LLM-readable migration changelog. What was not: it vendors one terminal plugin
+as its bootstrap, which we do not need.
+
+**Open, and both shape the repos:**
+
+- **License.** `project-context` is MIT + Commons Clause v1.0 (© 2026 MonoMind
+  AI Lab); Daren asked for plain MIT on the Hub. That makes the more
+  strategically valuable half the more permissive one. Deliberate or not?
+- **Where the shared code lives.** The design promises one record model, one
+  doctor, one schema, one version — now across two repos, with zero runtime
+  dependencies ruling out a shared published package. Options: one repo that
+  publishes the Hub scaffold from it; or `project-hub` vendors a synced copy of
+  the protocol code, making the Hub just another consumer of the one-way flow
+  the product already enforces. The second is the recommendation.
+
 ## 5. Next steps, in order
 
 1. **Mirror this revision to the Notion page.** Search-and-replace or a
