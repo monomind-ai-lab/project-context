@@ -64,7 +64,7 @@ const I18N = {
 "har.th.env": "Environment",
 "har.th.how": "How the protocol reaches it",
 "har.r1.how": "Discovers the installed skill through the pointer at <code>.claude/skills/project-context/SKILL.md</code>; the managed block in <code>CLAUDE.md</code> covers it too.",
-"har.r2.how": "Agent mode with repository access. The managed block in <code>AGENTS.md</code> routes them into the record before substantial work.",
+"har.r2.how": "Agent mode with repository access. The managed block in <code>AGENTS.md</code> and <code>CLAUDE.md</code> routes them into the record before substantial work.",
 "har.r3.how": "Filesystem, workspace or project access to the folder. The managed block applies, and the paste-in prompt below works with no tooling at all.",
 "har.r4.how": "If it can read and write files in the project folder, it is supported — the managed block is the delivery path, and no launcher is required.",
 
@@ -176,7 +176,7 @@ const I18N = {
 "har.th.env": "환경",
 "har.th.how": "프로토콜이 도달하는 방식",
 "har.r1.how": "<code>.claude/skills/project-context/SKILL.md</code>의 포인터를 통해 설치된 스킬을 발견합니다. <code>CLAUDE.md</code>의 관리형 블록도 함께 적용됩니다.",
-"har.r2.how": "저장소 접근 권한이 있는 에이전트 모드. <code>AGENTS.md</code>의 관리형 블록이 본격적인 작업 전에 이들을 기록으로 안내합니다.",
+"har.r2.how": "저장소 접근 권한이 있는 에이전트 모드. <code>AGENTS.md</code>와 <code>CLAUDE.md</code>의 관리형 블록이 본격적인 작업 전에 이들을 기록으로 안내합니다.",
 "har.r3.how": "폴더에 대한 파일 시스템, 워크스페이스, 프로젝트 접근. 관리형 블록이 그대로 적용되며, 아래의 붙여넣기 프롬프트는 도구 없이도 동작합니다.",
 "har.r4.how": "프로젝트 폴더의 파일을 읽고 쓸 수 있다면 지원 대상입니다 — 관리형 블록이 전달 경로이고, 별도의 런처는 필요 없습니다.",
 
@@ -289,7 +289,7 @@ const I18N = {
 "har.th.env": "環境",
 "har.th.how": "協定如何送達",
 "har.r1.how": "透過 <code>.claude/skills/project-context/SKILL.md</code> 的指向設定發現已安裝的技能；<code>CLAUDE.md</code> 裡受管理的區塊也同樣涵蓋它。",
-"har.r2.how": "具備儲存庫存取權的代理模式。<code>AGENTS.md</code> 裡受管理的區塊會在正式動工之前，把它們引導到這份紀錄。",
+"har.r2.how": "具備儲存庫存取權的代理模式。<code>AGENTS.md</code> 與 <code>CLAUDE.md</code> 裡受管理的區塊會在正式動工之前，把它們引導到這份紀錄。",
 "har.r3.how": "以檔案系統、工作區或專案形式存取該資料夾。受管理的區塊照樣適用，而下方可直接貼上的提示詞完全不需要任何工具鏈。",
 "har.r4.how": "只要它能讀寫專案資料夾裡的檔案，就在支援之列——受管理的區塊就是傳遞路徑，不需要任何啟動器。",
 

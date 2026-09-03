@@ -535,7 +535,7 @@ carry the protocol rather than only vouching for the documents:
 "reachability": {
   "delivers": true,
   "paths": 3,
-  "instruction_blocks": ["AGENTS.md"],
+  "instruction_blocks": ["AGENTS.md", "CLAUDE.md"],
   "harness_pointers": [".claude/skills/project-context/SKILL.md"],
   "hooks": []
 }
