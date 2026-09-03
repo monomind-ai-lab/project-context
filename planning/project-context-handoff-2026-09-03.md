@@ -215,7 +215,8 @@ None of the three gates any v1 slice.
 
 **Two repositories.** `project-context` stays as it is, with the README gaining
 a section on extensibility with the Hub and the optional tools (GitNexus,
-Graphify, OpenWiki) kept. `project-hub` is a **new public MIT repository**.
+Graphify, OpenWiki) kept. `project-hub` is a **new public repository**, MIT + Commons Clause like this
+one.
 
 *Scaffold versus instance.* The public repo is the **scaffold** — installer,
 templates, skills, vault seed — exactly as `project-context` is today. A **Hub
@@ -240,17 +241,26 @@ pointer, two-layers-never-three, check-skip-report idempotency, and an
 LLM-readable migration changelog. What was not: it vendors one terminal plugin
 as its bootstrap, which we do not need.
 
-**Open, and both shape the repos:**
+**Resolved, same day:**
 
-- **License.** `project-context` is MIT + Commons Clause v1.0 (© 2026 MonoMind
-  AI Lab); Daren asked for plain MIT on the Hub. That makes the more
-  strategically valuable half the more permissive one. Deliberate or not?
-- **Where the shared code lives.** The design promises one record model, one
-  doctor, one schema, one version — now across two repos, with zero runtime
-  dependencies ruling out a shared published package. Options: one repo that
-  publishes the Hub scaffold from it; or `project-hub` vendors a synced copy of
-  the protocol code, making the Hub just another consumer of the one-way flow
-  the product already enforces. The second is the recommendation.
+- **License.** Both repositories are **MIT + Commons Clause v1.0**, © 2026
+  MonoMind AI Lab (Daren). The earlier note about plain MIT on the Hub is
+  withdrawn; there is no asymmetry to explain.
+- **Where the shared code lives: the Hub is a Project Context install.** Both
+  products validate the same records with the same rules — the parser, the
+  `project-context/1` schema, the doctor, the reference-grammar checks, the
+  stamp read/write, the safe-write layer. That code already ships as an
+  installable (`skills/project-context/`, ~1,100 lines), and the plan already
+  installs the protocol skill into the Hub as well as the repo. So the Hub is a
+  consumer like any other repository: ordinary create-only install, refreshed by
+  `/projectcontext-update`, never edited there. `project-hub` contains only its
+  own three commands and its own records. No vendoring, no submodule, no
+  package — see plan Part 3.
+- **`owners_window/`** (Daren): a folder in the Hub where the owner writes about
+  anything — future projects, reflections, ideas. Never pushed, never linted,
+  never pulled into. Push works from an allow-list (`global/` and `blueprint/`),
+  so it needs no special case. Ideas leave it by promotion into `blueprint/`,
+  `global/`, or a new `MARK.md`. Plan 2.3.
 
 ## 5. Next steps, in order
 

@@ -423,6 +423,7 @@ project-hub/
     SUMMARY.md  IDENTITY.md  GUARDRAILS.md  WORKFLOWS.md
     GOALS.md  RESOURCES.md
     people/  agents/  skills/  shared/
+  owners_window/              the owner's own space; never pushed, never linted
   projects/
     <repo-id>/
       MARK.md                 repo basic info and URLs; the identity of the project
@@ -434,6 +435,29 @@ project-hub/
   registry.md                 every known repo, its mark, and its last pull
   .project-hub.json           marker: schema, version, distribution target
 ```
+
+**`owners_window/` (Daren, 2026-09-03)** is where the owner writes about
+anything — future projects, reflections, ideas, a half-formed argument with
+themselves. It is the third kind of content in the Hub, next to what is pushed
+down and what is pulled up, and it is defined by three negatives:
+
+- **Never pushed.** `/hub-push` copies `global/` and `blueprint/` and nothing
+  else. This is worth stating as a property of the mechanism rather than a rule
+  someone has to remember: **push works from an allow-list, not a deny-list**,
+  so any folder added to the Hub in future is non-pushed by default and
+  `owners_window/` needs no special case to stay put.
+- **Never linted.** The doctor skips it: no required frontmatter, no record
+  schema, no word budget, no anchor validation. A place to think stops being one
+  the moment it starts reporting errors. The doctor's only interest is that it
+  exists and is not empty of intent — and even that is a note, not a warning.
+- **Never pulled into.** `/hub-pull` writes only to `projects/<id>/pulled/`.
+
+What it *does* have is a way out. An idea that matures is **promoted**, which is
+a deliberate act and a normal edit: it becomes `blueprint/EPIC.md` for a new
+project, a record in `global/`, or a `MARK.md` for a repository that does not
+exist yet. Freeform in, structured out. The Hub's own assembler may read
+`owners_window/` when the owner asks it about what is coming; no repository's
+packet ever can, because nothing here is pushed.
 
 **`MARK.md`** is the mark Daren asked for: the repo's basic information and
 URLs — remote URL, default branch, host, visibility, the project id, the
@@ -514,6 +538,7 @@ settings only with `--obsidian` or when an `.obsidian/` folder already exists.
 | The project's design: `EPIC.md`, `ARCHITECTURE.md`, later owner-authored records | Hub `projects/<id>/blueprint/` | `project-context/blueprint/`, stamped | Hub → repo, by owner push |
 | Project: SUMMARY, NOW, PLAN, tasks, decisions, learnings, questions, inbox, indexes | Repo `project-context/` | Hub `projects/<id>/pulled/`, stamped | Repo → Hub, by owner pull |
 | The owner's view of a project: mark, summary | Hub `projects/<id>/` | None | None |
+| The owner's own space: future projects, reflections, ideas | Hub `owners_window/` | None — never pushed, never linted | None |
 | Sessions and machine state | Local only | Never copied | None |
 
 **Two plans at two altitudes, and one conforms to the other (D11).**
@@ -835,6 +860,31 @@ still changes:
   `project-context/1` record schema. The doctor keeps recognising the old hub
   marker for two releases so a half-upgraded install is diagnosed, not broken —
   that recognition is the only part of the Context Hub that ships forward.
+- **Where the shared code lives: the Hub is a Project Context install.** The two
+  products share the record parser, the `project-context/1` schema, the doctor,
+  the reference-grammar checks, the stamp read/write, and the safe-write layer
+  (create-only plans, symlink refusal, no-follow directory writes). That is not
+  a builder-only concern and not an owner-only one: **both** sides validate the
+  same records with the same rules, and if the two copies drift the failure is
+  concrete — a record the repo's doctor accepts becomes one the Hub rejects, or
+  the Hub pushes a file the repo then refuses.
+
+  The resolution needs no new machinery, because that code already ships as an
+  installable: `skills/project-context/` (the doctor, the triggers, the index —
+  about 1,100 lines) is the protocol skill, and 2.10 already installs it into
+  **both** the repo and the Hub. So the Hub is a Project Context consumer like
+  any other repository — it gets the shared code through the ordinary
+  create-only install, refreshes it with `/projectcontext-update`, and never
+  edits it, which is the one-way flow the product already enforces. On top of
+  that sit the Hub's own three commands (`init`, `pull`, `push`) and its own
+  records, and those are all the `project-hub` repository actually contains.
+
+  This supersedes the earlier suggestion that `project-hub` vendor a synced
+  subset. Vendoring would have added a second copy, a sync script, and a drift
+  window to solve a problem the install path already solves. The alternatives
+  were worse for the same reason: a submodule breaks "clone the folder and run
+  it", and a published package breaks zero-install, since depending on our own
+  package is still a dependency.
 - **One version number.** Retire `TEMPLATE_VERSION` and `SCAFFOLD_VERSION`; both
   markers record the package version they came from. The `VERSION` file and
   `pyproject.toml` already agree; make the scripts read from them.
