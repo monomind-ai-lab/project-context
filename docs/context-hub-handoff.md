@@ -1,9 +1,17 @@
 # Context Hub — Review Handoff
 
-Status: draft implementation on `codex/context-hub-no-db`
-Baseline commit: `ec5db82`
-Repository state: uncommitted working-tree changes; no remote was created, no
-push was made, and no collaborator was invited.
+Status: shipped. The Context Hub described here was committed as `083572d`
+("feat: add database-free Context Hub") on the `strategy` branch, which is the
+0.6.0 baseline. The `codex/context-hub-no-db` branch no longer exists.
+Baseline commit: `083572d` on `strategy`; its parent is `ec5db82`.
+Repository state (verified 2026-09-03): the work is committed, the tree is
+clean apart from planning notes, and `origin/main` at `ec5db82` is one commit
+behind `strategy`. No remote was created, no push was made, and no collaborator
+was invited.
+Superseded by: `planning/project-context-design.md` (the unified design) and
+`planning/project-context-handoff-2026-09-03.md` (the current handoff). Read
+this file for the Context Hub's rationale and its designed-but-unbuilt list;
+read the plan for what replaces it.
 
 ## Purpose
 
