@@ -236,10 +236,19 @@ def main() -> int:
     guide = ROOT / "docs/project-context-complete-guide.html"
     if guide.is_file():
         guide_text = guide.read_text(encoding="utf-8")
-        for expected in ("<!doctype html>", "<title>Project Context · How It Works</title>"):
-            if expected not in guide_text:
-                errors.append(f"interactive guide missing expected content: {expected}")
-        if "file://" in guide_text:
+        if "<!doctype html>" not in guide_text:
+            errors.append("interactive guide missing expected content: <!doctype html>")
+        # The guide is now generated from the Hi Ted, Meet Lisa `monomind-deck`
+        # template rather than hand-maintained, so its title travels with the
+        # deck's own naming. Assert that it is still the right document, not
+        # that it kept one exact string a rename would break.
+        title = re.search(r"<title>([^<]*)</title>", guide_text)
+        if not title or "Project Context" not in title.group(1):
+            errors.append("interactive guide title no longer names Project Context")
+        # `file:///…` is an embedded local path and a real leak. A bare `file:`
+        # protocol test is not: the deck legitimately hides its self-download
+        # and language switch when opened from disk, and says so in a comment.
+        if "file:///" in guide_text:
             errors.append("interactive guide contains a local file URL")
         responsive_marker = "/* ── Responsive deck hardening"
         guide_layer_marker = "/* ═══════════════════════════════════════════════════════════════════\n   Guide layer"
