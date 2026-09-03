@@ -1227,7 +1227,7 @@ question. Show me the proposed plan and wait for my approval before making chang
         <div class="dg-frame-label">Installation creates two trigger paths</div>
         <div class="dg-chip-row">
           <div class="dg-chip" data-od-id="trigger-skills"><div class="nm">Agent Skills discovery</div><p class="ds">Harnesses that support the convention find the installed project-context skill directly.</p></div>
-          <div class="dg-chip" data-od-id="trigger-block"><div class="nm">Managed instruction block</div><p class="ds">A block added to AGENTS.md or CLAUDE.md routes any agent to project-context/SKILL.md — even with no skill launcher.</p></div>
+          <div class="dg-chip" data-od-id="trigger-block"><div class="nm">Managed instruction block</div><p class="ds">The same block is written into <b>both</b> AGENTS.md and CLAUDE.md, creating whichever is missing, so it routes any agent to project-context/ — even with no skill launcher.</p></div>
         </div>
       </div>
     </div>
@@ -1437,6 +1437,75 @@ question. Show me the proposed plan and wait for my approval before making chang
     </div>
   </section>
 
+  <!-- 13b The record model -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="13b The record model" data-od-id="slide-record-model" role="group" aria-label="Slide 13b The record model">
+    <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
+    <p class="eyebrow">Part 5 · Operate</p>
+    <h2 class="h-md">One record model</h2>
+    <p class="lead">Six required keys, and a status vocabulary that fits what the record actually is.</p>
+
+    <div class="dg-canvas">
+      <div class="grid-2">
+        <div class="dg-frame" data-od-id="node-frontmatter">
+          <div class="dg-frame-label">Detail records carry frontmatter</div>
+          <p class="code sm">---
+id: D-004
+kind: decision
+status: accepted
+title: Serve thumbnails from the CDN
+created: 2026-09-03
+asserted_by: person:ren
+---</p>
+          <p class="ds">Six keys, and nothing else is required. Registries — NOW, DECISIONS, LEARNINGS — carry no frontmatter and stay plain Markdown.</p>
+        </div>
+        <div class="dg-frame is-accent" data-od-id="node-lifecycle">
+          <div class="dg-frame-label">Status depends on the kind</div>
+          <table class="tbl">
+            <thead><tr><th style="width:38%">Kind</th><th>States</th></tr></thead>
+            <tbody>
+              <tr><td class="k">decision · learning · capsule</td><td>proposed → accepted → superseded | rejected</td></tr>
+              <tr><td class="k">question</td><td>open → answered → superseded</td></tr>
+              <tr><td class="k">task</td><td>proposed → active → done | dropped</td></tr>
+            </tbody>
+          </table>
+          <p class="ds">A question is not an assertion and a task is not a claim, so one vocabulary for all three was wrong twice over — it left a finished task with no terminal state. The doctor checks a status against its own kind.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13c Working with a Project Hub -->
+  <section class="slide dark dg-slide dg-center" data-screen-label="13c Project Hub" data-od-id="slide-hub" role="group" aria-label="Slide 13c Project Hub">
+    <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
+    <p class="eyebrow">Part 5 · Operate</p>
+    <h2 class="h-md">Optional: working with a Project&nbsp;Hub</h2>
+    <p class="lead">A repository with no Hub is a complete product. When an organisation runs one, two folders arrive that you do not author.</p>
+
+    <div class="dg-canvas">
+      <div class="grid-2">
+        <div class="dg-frame" data-od-id="node-authored-set">
+          <div class="dg-frame-label">You author these</div>
+          <ul class="bullets tight">
+            <li><b>NOW.md</b> · current state</li>
+            <li><b>DECISIONS.md</b> · <b>decisions/</b></li>
+            <li><b>LEARNINGS.md</b></li>
+            <li><b>tasks/</b> · <b>designs/</b> · <b>incidents/</b></li>
+          </ul>
+          <p class="ds">Yours to write. The Hub owner copies them upward when they want to look; nothing in this repository ever reaches out to them.</p>
+        </div>
+        <div class="dg-frame is-accent" data-od-id="node-pushed-set">
+          <div class="dg-frame-label">The owner pushes these — read-only here</div>
+          <ul class="bullets tight">
+            <li><b>global/</b> · guardrails, workflows, shared records</li>
+            <li><b>blueprint/EPIC.md</b> · the plan this project serves</li>
+            <li><b>blueprint/ARCHITECTURE.md</b> · the shape it must keep</li>
+          </ul>
+          <p class="ds">Stamped by hash in the marker. Editing one is a doctor error, because your change would be silently overwritten at the next sync and the owner would never learn you disagreed. Raise a question instead — it reaches them with the context that explains it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 14 Optional tools -->
   <section class="slide dark dg-slide dg-center" data-screen-label="14 Optional tools" data-od-id="slide-tools" role="group" aria-label="Slide 14 Optional tools">
     <a class="brand-mark" href="https://monomind.one" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
@@ -1476,7 +1545,7 @@ question. Show me the proposed plan and wait for my approval before making chang
       <div class="dg-frame is-accent" data-od-id="node-safety">
         <ul class="bullets">
           <li>Existing context files are preserved <b>byte-for-byte</b>.</li>
-          <li>Existing <b>AGENTS.md</b> and <b>CLAUDE.md</b> content is preserved outside one managed block — including file mode and CRLF endings.</li>
+          <li>Both <b>AGENTS.md</b> and <b>CLAUDE.md</b> receive the same managed block, and whichever is absent is created. Everything outside the block markers is preserved — including file mode and CRLF endings.</li>
           <li>Unknown or overlapping memory is reviewed and classified, <b>not migrated</b>.</li>
           <li>Malformed blocks, unsafe symlinks, non-file harness paths, and non-UTF-8 instructions <b>stop apply mode before any write</b>.</li>
           <li>Add-ons are filtered by repository type, then installed only after an independent informed opt-in.</li>
@@ -1523,7 +1592,9 @@ question. Show me the proposed plan and wait for my approval before making chang
             </ul>
           </li>
           <li><span class="nm">tests/</span><span class="dsc">Behavioral test suite</span></li>
-          <li><span class="nm">README.md · VERSION · LICENSE</span><span class="dsc">Documentation · template version · MIT</span></li>
+          <li><span class="nm">planning/</span><span class="dsc">Design plan · the v1 record-model contract</span></li>
+          <li><span class="nm">web/ · docs/</span><span class="dsc">Site source · GitHub Pages deploy root</span></li>
+          <li><span class="nm">README.md · VERSION · LICENSE</span><span class="dsc">Documentation · the one version number · MIT + Commons Clause v1.0</span></li>
         </ul>
       </div>
     </div>
@@ -1566,7 +1637,7 @@ question. Show me the proposed plan and wait for my approval before making chang
         <a class="is-accent" href="https://github.com/monomind-ai-lab/project-context" data-od-id="cta-repo">github.com/monomind-ai-lab/project-context</a>
         <a href="https://github.com/monomind-ai-lab/project-context/blob/main/prompts/install-project-context.md" data-od-id="link-install">Installation prompt</a>
         <a href="https://github.com/monomind-ai-lab/project-context/blob/main/examples/sample-project-context" data-od-id="link-example">Filled example</a>
-        <a href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" data-od-id="link-license">MIT</a>
+        <a href="https://github.com/monomind-ai-lab/project-context/blob/main/LICENSE" data-od-id="link-license">MIT + Commons Clause</a>
       </div>
     </div>
   </section>
