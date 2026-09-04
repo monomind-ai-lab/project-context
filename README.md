@@ -27,6 +27,12 @@ read the skills and Markdown instructions, run the tooling, maintain the context
 files, and verify the result. Humans can review or edit the Markdown at any time,
 but they are not expected to invoke skills or run Python commands themselves.
 
+Running several repositories and want one place to hold what applies across all
+of them? That is the other half of the pair,
+**[Project Hub](https://github.com/monomind-ai-lab/project-hub)** — optional, and
+[explained below](#project-hub--the-other-half-and-entirely-optional). A single
+repository needs nothing but what is on this page.
+
 
 
 ---
@@ -139,6 +145,54 @@ record can live:
   Markdown; the marker records its `sha256`, source commit, and push time, and
   the doctor reports a local edit as an error naming where the change belongs.
 
+### Project Hub — the other half, and entirely optional
+
+The pushed set arrives from **[Project Hub](https://github.com/monomind-ai-lab/project-hub)**,
+the second product in this pair. Nothing here requires it: a repository with no
+Hub has no `global/` and no `blueprint/`, and everything above still works
+offline. Read on only if your organisation runs one, or you are deciding whether
+to.
+
+**Two products, split by role rather than by format.** Project Context is
+installed in each project repository and serves the people building that
+project. A Hub is one private repository the organisation's owner administers.
+It authors the tier that applies everywhere — guardrails, workflows, shared
+records — and keeps a folder per project. Both sides validate records with the
+same parser, the same schema, and the same doctor, because a Hub is itself a
+Project Context install; the shared code arrives there by the ordinary
+create-only install rather than being vendored a second time.
+
+**Everything moves by the owner's hand, and only in the direction their access
+allows.**
+
+| Direction | Command | Who runs it | What moves |
+| --- | --- | --- | --- |
+| Hub → repo | `project-hub push <repo>` | The owner | `global/` and `blueprint/` land in `project-context/`, stamped |
+| Repo → Hub | `project-hub pull <repo>` | The owner | The repository's authored records are copied up |
+| Neither | `project-hub init <repo>` | The owner | Marks a repository, installs Project Context, then pushes |
+
+A push does not write to your default branch. It commits to a **`hub-sync`**
+branch and opens a pull request, so what an owner sends arrives as a change you
+review like any other. The branch is long-lived and reused, so repeated syncs
+stack commits on one pull request rather than scattering branches — and nothing
+in the tool force-pushes or merges.
+
+**Nothing in this repository ever reaches out to a Hub.** There is no call home,
+no registration, no credential. The direction is one way by construction: the
+owner has access to your repository because they administer it, and you have no
+access to theirs.
+
+**If you disagree with something pushed to you**, do not edit it — the doctor
+will flag it, and your change would be overwritten by the next sync without the
+owner ever learning you objected. Raise a question in your own
+`project-context/` instead. It reaches them the next time they pull, and it
+arrives with the project context that explains it.
+
+**What never reaches a project repository:** the Hub's `IDENTITY.md`, at any
+setting. A project repository may have collaborators outside the organisation,
+so identity stays with the owner. `GOALS.md`, `RESOURCES.md`, `people/` and
+`agents/` are opt-in per project for the same reason, rather than default.
+
 ### Context Hub is superseded
 
 Earlier releases shipped a second product, `skills/context-hub/`, with its own
@@ -151,6 +205,13 @@ One part of it ships forward: the doctor still recognises the old
 `<!-- context-hub:start -->` block and the `context-hub/1` schema string, and
 reports them, so a half-upgraded install is diagnosed instead of quietly
 certified healthy.
+
+Project Hub above is its descendant, not its continuation. The Context Hub tried
+to be a second knowledge base with actors, episodes, entities and relationships;
+Project Hub is a much smaller thing — a global tier, a folder per project, and
+three commands. What survived is not code but four ideas, now part of the one
+record model: the attribution triple, content-addressed receipts, `path@commit`
+anchors, and the safety engineering.
 
 
 
