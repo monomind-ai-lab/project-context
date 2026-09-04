@@ -1,6 +1,12 @@
 # Context Hub — Review Handoff
 
-Status: shipped. The Context Hub described here was committed as `083572d`
+> **Superseded 2026-09-03 — archived, not current.**
+> The Context Hub this handoff delivered was removed in the two-product
+> redesign. Read it as the record of a decision, not as instructions: its
+> internals name `context-hub/1`, `SCAFFOLD_VERSION` and a 0.6.0 baseline, all
+> retired. See [the archive note](README.md).
+
+Status (at the time of writing): shipped. The Context Hub described here was committed as `083572d`
 ("feat: add database-free Context Hub") on the `strategy` branch, which is the
 0.6.0 baseline. The `codex/context-hub-no-db` branch no longer exists.
 Baseline commit: `083572d` on `strategy`; its parent is `ec5db82`.
@@ -70,7 +76,7 @@ then only relevant detailed records and evidence.
 New material:
 
 - `skills/context-hub/` — agent skill, scaffold, templates, schemas, runtime.
-- `docs/context-hub-architecture.md` — architecture and research synthesis.
+- `docs/archive/context-hub-architecture.md` — architecture and research synthesis.
 - `prompts/create-context-hub.md` — agent-guided local onboarding.
 - `tests/test_context_hub.py` — behavior/security coverage.
 
@@ -415,9 +421,9 @@ Please assess these questions explicitly:
 
 ## Useful entry points
 
-- [Architecture](context-hub-architecture.md)
-- [Context Hub skill](../skills/context-hub/SKILL.md)
-- [Runtime](../skills/context-hub/scripts/context_hub.py)
-- [Copyable scaffold](../skills/context-hub/assets/context-hub/README.md)
-- [Context Hub tests](../tests/test_context_hub.py)
-- [User-facing README](../README.md)
+- [Architecture](context-hub-architecture.md) — also archived
+- Context Hub skill (`skills/context-hub/SKILL.md`, removed 2026-09-03)
+- Runtime (`skills/context-hub/scripts/context_hub.py`, removed 2026-09-03)
+- Copyable scaffold (`skills/context-hub/assets/context-hub/README.md`, removed 2026-09-03)
+- Context Hub tests (`tests/test_context_hub.py`, removed 2026-09-03)
+- [User-facing README](../../README.md)

@@ -602,9 +602,15 @@ class RecordModelTests(unittest.TestCase):
         self.assertFalse((ROOT / "tests" / "test_context_hub.py").exists())
         self.assertFalse((ROOT / "prompts" / "create-context-hub.md").exists())
         # Kept as historical record, headed as superseded.
-        architecture = ROOT / "docs" / "context-hub-architecture.md"
-        self.assertTrue(architecture.is_file())
-        self.assertIn("Superseded", architecture.read_text(encoding="utf-8").split("\n\n")[1])
+        # Kept as historical record, in an archive that says so structurally
+        # rather than only in a header — docs/ is the public Pages root.
+        self.assertFalse((ROOT / "docs" / "context-hub-architecture.md").exists())
+        archive = ROOT / "docs" / "archive"
+        for name in ("context-hub-architecture.md", "context-hub-handoff.md"):
+            doc = archive / name
+            self.assertTrue(doc.is_file(), name)
+            self.assertIn("Superseded", doc.read_text(encoding="utf-8")[:600])
+        self.assertTrue((archive / "README.md").is_file())
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ each repo's `blueprint/`; and install now writes the managed block into **both**
 still accurate. The names stay Project Context and, for the second product, Project
 Hub.
 Author: Claude (taking over from the Codex session recorded in
-`docs/context-hub-handoff.md`).
+`docs/archive/context-hub-handoff.md`).
 Lives in `planning/` because `docs/` is the GitHub Pages deploy root. Mirrored
 to the Notion page where Daren reviews it and answers the open decisions.
 Terms: *v1* is the first release of the two-product design (Part 4, slices 1 to
@@ -848,8 +848,8 @@ still changes:
   So the skill is removed rather than refactored, together with
   `tests/test_context_hub.py`, its `pyproject.toml` entry, its
   `scripts/validate_repository.py` entries, `prompts/create-context-hub.md`, and
-  the README section. `docs/context-hub-handoff.md` and
-  `docs/context-hub-architecture.md` stay as historical record, headed as
+  the README section. `docs/archive/context-hub-handoff.md` and
+  `docs/archive/context-hub-architecture.md` stay as historical record, headed as
   superseded. What survives is not code but four ideas, already carried into
   Part 2: the attribution triple, content-addressed receipts, `path@commit`
   anchors, and the safety engineering (create-only plans, one managed block per
@@ -908,7 +908,7 @@ what follows once v1 has been used and measured. Each slice is shippable on its
 own and keeps the test suite green.
 
 1. **Branch hygiene.** Local `main` fast-forwarded to `origin/main` (done
-   2026-09-03); the `docs/context-hub-handoff.md` header refreshed (done
+   2026-09-03); the `docs/archive/context-hub-handoff.md` header refreshed (done
    2026-09-03); the `feat/project-context-update-skill` branch resolved — it
    conflicts with `strategy` in four files and its merge base is 20 commits
    back, and slice 2 rewrites the same files, so the recommendation is to defer
