@@ -10,7 +10,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
-    "docs/context-hub-architecture.md",
+    "docs/archive/context-hub-architecture.md",
     "README.md",
     "LICENSE",
     "VERSION",

@@ -1,8 +1,14 @@
 # Context Hub Architecture
 
-Superseded 2026-09-03. `skills/context-hub/` was removed rather than migrated; this document is kept as historical record of the design that was dropped.
+> **Superseded 2026-09-03 — archived, not current.**
+> `skills/context-hub/` was removed rather than migrated: it implemented this
+> design, and this design was dropped. Kept as the record of what was tried.
+> Everything below still names `context-hub/1`, `SCAFFOLD_VERSION` and a 0.6.0
+> baseline; all three are retired. For how the product works now, read the
+> [README](../../README.md) or the [builder's guide](../builders-guide.md).
+> See [the archive note](README.md) for what survived into the current design.
 
-Status: experimental (`context-hub/1`)
+Status: superseded (was experimental, `context-hub/1`)
 Runtime premise: plain files, Markdown, Git, and Python's standard library
 Optional clients and indexes: Obsidian, filesystem MCP, Graphify
 

@@ -3,7 +3,7 @@
 Status: planning handoff, revised 2026-09-03 (second session of the day) after
 Daren gave the two-product direction and then answered D10 and D11. Baseline: `strategy` at `083572d`
 (0.6.0). Changed since the first revision: local `main` fast-forwarded to
-`origin/main` (`ec5db82`), the `docs/context-hub-handoff.md` header refreshed,
+`origin/main` (`ec5db82`), the `docs/archive/context-hub-handoff.md` header refreshed,
 and `planning/project-context-design.md` rewritten from Part 2 onward. No
 commit, push, remote, or invitation was made; the working tree carries those
 three edits uncommitted.
@@ -19,7 +19,7 @@ Read in this order:
    holds. It is mirrored to the Notion page "Project Context" (MonoMind
    Homebase / Projects & Tasks / Projects); find it with a Notion search on the
    title. Both copies were at the same revision when this was written.
-3. `docs/context-hub-handoff.md`, the previous Codex handoff for the Context
+3. `docs/archive/context-hub-handoff.md`, the previous Codex handoff for the Context
    Hub. Its header was refreshed 2026-09-03 and now points here; read it for the
    Context Hub's rationale and its designed-but-unbuilt list.
 4. The code only when a slice needs it: `src/project_context_cli/__init__.py`
@@ -227,8 +227,8 @@ is why the private thing is public.
 **`skills/context-hub/` is superseded** (Daren): it implemented the dropped
 design. Remove the skill, `tests/test_context_hub.py`, the `pyproject.toml`
 entry, the `scripts/validate_repository.py` entries, `prompts/create-context-hub.md`,
-and the README section, in slice 2. Keep `docs/context-hub-handoff.md` and
-`docs/context-hub-architecture.md` as historical record. Keep the doctor's
+and the README section, in slice 2. Keep `docs/archive/context-hub-handoff.md` and
+`docs/archive/context-hub-architecture.md` as historical record. Keep the doctor's
 recognition of the old marker for two releases.
 
 **No vendored plugins; an onboarding agent instead** (Daren). Plan 2.9 has the
