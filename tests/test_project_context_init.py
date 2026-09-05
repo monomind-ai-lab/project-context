@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
+MARKER = ".project-context.json"
 DOCTOR = ROOT / "skills" / "project-context" / "scripts" / "context_doctor.py"
 INSTALLER = ROOT / "scripts" / "install.py"
 
@@ -818,10 +820,24 @@ class ManagedBlockTests(unittest.TestCase):
         self.assertIn("Managed region", block)
         for promise in ("rewrites everything between these", "the rest of the file is yours"):
             self.assertIn(promise, block, promise)
-        # It names no command. `project-context update` is specified in the
-        # design (2.10) and is not built, so promising it here would put a
-        # command that does not exist into every repository that installs.
-        self.assertNotIn("project-context update", block)
+        self.assertIn("project-context update", block)
+
+    def test_every_command_the_block_names_actually_exists(self) -> None:
+        """The block is instructions to a session that will follow them.
+
+        It shipped naming `project-context capture` twice and, for a while,
+        `project-context update` — one built later, one not built at all. A
+        repository that installs gets told to run whatever this text says, so
+        the text is only allowed to name commands that answer.
+        """
+        block = self.module().MANAGED_BLOCK
+        named = set(re.findall(r"`project-context ([a-z-]+)", block))
+        self.assertTrue(named, "the block names no command at all")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--help"], check=True, capture_output=True, text=True
+        )
+        available = set(re.search(r"\{([a-z,-]+)\}", result.stdout).group(1).split(","))
+        self.assertEqual(set(), named - available, f"named but not implemented: {named - available}")
         # The warning is the first thing in the region, not a footnote.
         body = block.split("## Project Context", 1)[1]
         self.assertLess(body.index("Managed region"), 20)
@@ -885,6 +901,221 @@ class ManagedBlockTests(unittest.TestCase):
             block = self.module().MANAGED_BLOCK
             for name in ("AGENTS.md", "CLAUDE.md"):
                 self.assertIn(block, (target / name).read_text(encoding="utf-8"), name)
+
+
+class UpdateTests(unittest.TestCase):
+    """`update` carries an install forward without touching what it does not own.
+
+    Three authorships live under `project-context/`, and the command is only
+    correct if it treats each differently: ours is refreshed, the repository's
+    is left alone, and the Hub's is verified and reported. Install cannot do
+    this — it is create-only for everything, so it upgrades nothing.
+    """
+
+    def run_script(self, *args: str, expected: int = 0) -> dict:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), *args],
+            check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(expected, result.returncode, result.stderr or result.stdout)
+        return json.loads(result.stdout) if result.stdout.strip() else {}
+
+    def installed(self, *, skills: bool = True) -> Path:
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, True)
+        args = ["init", "--target", str(directory), "--profile", "full", "--apply"]
+        if skills:
+            args.insert(-1, "--install-skills")
+        self.run_script(*args)
+        return directory
+
+    def marker(self, target: Path) -> dict:
+        return json.loads((target / "project-context" / MARKER).read_text(encoding="utf-8"))
+
+    def write_marker(self, target: Path, marker: dict) -> None:
+        (target / "project-context" / MARKER).write_text(
+            json.dumps(marker, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+
+    def test_it_refuses_a_repository_with_no_install(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            report = self.run_script("update", "--target", directory, "--dry-run", expected=2)
+            self.assertTrue(report["has_conflicts"])
+            self.assertIn("run `init` first", report["actions"][0]["reason"])
+
+    def test_it_refuses_a_marker_it_cannot_read(self) -> None:
+        target = self.installed()
+        (target / "project-context" / MARKER).write_text("{ not json", encoding="utf-8")
+        report = self.run_script("update", "--target", str(target), "--dry-run", expected=2)
+        self.assertIn("not readable JSON", report["actions"][0]["reason"])
+
+    def test_a_dry_run_writes_nothing(self) -> None:
+        target = self.installed()
+        (target / "project-context" / "PLAN.md").unlink()
+        before = sorted(str(p.relative_to(target)) for p in target.rglob("*"))
+        self.run_script("update", "--target", str(target), "--dry-run")
+        self.assertEqual(before, sorted(str(p.relative_to(target)) for p in target.rglob("*")))
+
+    def test_it_creates_scaffold_files_the_install_predates(self) -> None:
+        target = self.installed()
+        for name in ("PLAN.md", "QUESTIONS.md"):
+            (target / "project-context" / name).unlink()
+        self.run_script("update", "--target", str(target), "--apply")
+        for name in ("PLAN.md", "QUESTIONS.md"):
+            self.assertTrue((target / "project-context" / name).is_file(), name)
+
+    def test_it_never_rewrites_a_record_the_repository_wrote(self) -> None:
+        """The one thing an upgrade must not do."""
+        target = self.installed()
+        decisions = target / "project-context" / "DECISIONS.md"
+        decisions.write_text(
+            decisions.read_text(encoding="utf-8")
+            + "\n## D-001: Use pnpm\n\n- Status: `accepted`\n- Decision: pnpm it is.\n",
+            encoding="utf-8",
+        )
+        now = target / "project-context" / "NOW.md"
+        now.write_text("# Current Project State\n\nLast reviewed: 2026-09-01\n\nOurs.\n", encoding="utf-8")
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertIn("D-001: Use pnpm", decisions.read_text(encoding="utf-8"))
+        self.assertIn("Ours.", now.read_text(encoding="utf-8"))
+
+    def test_it_refreshes_the_protocol_text_and_the_installed_scripts(self) -> None:
+        """An out-of-date copy of *our* file is the thing being fixed.
+
+        `add_file_action` preserves a file whose content differs, which is
+        right for a record and wrong for these — differing from the release is
+        exactly what a stale copy does.
+        """
+        target = self.installed()
+        (target / "project-context" / "SKILL.md").write_text("# stale\n", encoding="utf-8")
+        scripts = target / ".agents" / "skills" / "project-context" / "scripts"
+        (scripts / "context_packet.py").unlink()
+        (scripts / "context_doctor.py").write_text("# stale\n", encoding="utf-8")
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertTrue((target / "project-context" / "SKILL.md").read_text(encoding="utf-8").startswith("---"))
+        self.assertTrue((scripts / "context_packet.py").is_file())
+        self.assertNotEqual("# stale\n", (scripts / "context_doctor.py").read_text(encoding="utf-8"))
+
+    def test_it_does_not_install_skills_into_a_repository_that_declined_them(self) -> None:
+        target = self.installed(skills=False)
+        self.assertFalse((target / ".agents").exists())
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertFalse((target / ".agents").exists())
+
+    def test_it_keeps_the_push_stamps(self) -> None:
+        """`metadata_content` has no `pushed` key; writing it over would erase them.
+
+        The stamps are the only evidence that a pushed copy is still the copy
+        the Hub sent, so losing them would leave the doctor unable to tell an
+        edited guardrail from an untouched one.
+        """
+        target = self.installed()
+        context = target / "project-context"
+        (context / "global").mkdir(exist_ok=True)
+        guardrails = context / "global" / "GUARDRAILS.md"
+        guardrails.write_text("# Guardrails\n\nNo secrets.\n", encoding="utf-8")
+        digest = hashlib.sha256(guardrails.read_bytes()).hexdigest()
+        marker = self.marker(target)
+        marker["version"] = "0.5.0"
+        marker["pushed"] = {
+            "global/GUARDRAILS.md": {
+                "sha256": digest, "source_commit": "a" * 40, "pushed_at": "2026-08-01T00:00:00Z",
+            }
+        }
+        self.write_marker(target, marker)
+        self.run_script("update", "--target", str(target), "--apply")
+        after = self.marker(target)
+        self.assertEqual(marker["pushed"], after["pushed"])
+        self.assertNotEqual("0.5.0", after["version"])
+
+    def test_it_keeps_marker_keys_it_does_not_recognise(self) -> None:
+        """A later release may record something this one does not know to keep."""
+        target = self.installed()
+        marker = self.marker(target)
+        marker["something_a_later_release_wrote"] = {"keep": "me"}
+        self.write_marker(target, marker)
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertEqual({"keep": "me"}, self.marker(target)["something_a_later_release_wrote"])
+
+    def test_it_never_writes_to_the_pushed_set_and_reports_it_instead(self) -> None:
+        target = self.installed()
+        context = target / "project-context"
+        (context / "global").mkdir(exist_ok=True)
+        guardrails = context / "global" / "GUARDRAILS.md"
+        guardrails.write_text("# Guardrails\n\nNo secrets.\n", encoding="utf-8")
+        marker = self.marker(target)
+        marker["pushed"] = {
+            "global/GUARDRAILS.md": {
+                "sha256": "0" * 64, "source_commit": "a" * 40, "pushed_at": "2026-08-01T00:00:00Z",
+            }
+        }
+        self.write_marker(target, marker)
+        report = self.run_script("update", "--target", str(target), "--apply")
+        self.assertEqual(1, report["pushed"]["modified"])
+        self.assertIn(
+            "pushed-file-modified", {issue["code"] for issue in report["pushed_issues"]}
+        )
+        # Reported, not repaired: the change belongs in the Hub.
+        self.assertEqual("# Guardrails\n\nNo secrets.\n", guardrails.read_text(encoding="utf-8"))
+        self.assertNotIn(
+            str(guardrails), [action["path"] for action in report["actions"]]
+        )
+
+    def test_it_regenerates_the_registry_indexes(self) -> None:
+        target = self.installed()
+        decisions = target / "project-context" / "DECISIONS.md"
+        decisions.write_text(
+            decisions.read_text(encoding="utf-8")
+            + "\n## D-007: Ship on Tuesdays\n\n- Status: `accepted`\n",
+            encoding="utf-8",
+        )
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertIn("[`D-007`]", decisions.read_text(encoding="utf-8"))
+
+    def test_it_refreshes_a_stale_managed_block_in_both_files(self) -> None:
+        target = self.installed()
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            path = target / name
+            text = path.read_text(encoding="utf-8")
+            start = text.index("<!-- project-context:start -->")
+            end = text.index("<!-- project-context:end -->") + len("<!-- project-context:end -->")
+            path.write_text(
+                text[:start] + "<!-- project-context:start -->\nold text\n<!-- project-context:end -->" + text[end:],
+                encoding="utf-8",
+            )
+        self.run_script("update", "--target", str(target), "--apply")
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            body = (target / name).read_text(encoding="utf-8")
+            self.assertIn("Managed region", body, name)
+            self.assertNotIn("old text", body, name)
+
+    def test_running_it_twice_changes_nothing_the_second_time(self) -> None:
+        target = self.installed()
+        (target / "project-context" / "PLAN.md").unlink()
+        self.run_script("update", "--target", str(target), "--apply")
+        before = {
+            str(path.relative_to(target)): path.read_bytes()
+            for path in sorted(target.rglob("*")) if path.is_file()
+        }
+        report = self.run_script("update", "--target", str(target), "--apply")
+        after = {
+            str(path.relative_to(target)): path.read_bytes()
+            for path in sorted(target.rglob("*")) if path.is_file()
+        }
+        self.assertEqual(before, after)
+        for kind in ("create", "refresh", "regenerate_index", "update_managed_block"):
+            self.assertNotIn(kind, report["summary"], kind)
+
+    def test_it_reaches_no_network(self) -> None:
+        """"Local only" is a property of the code, not a line in the docs."""
+        source = SCRIPT.read_text(encoding="utf-8")
+        for module in ("socket", "urllib", "http.client", "requests", "ftplib", "smtplib"):
+            self.assertNotIn(f"import {module}", source, module)
+
+    def test_it_reports_health_after_writing(self) -> None:
+        target = self.installed()
+        report = self.run_script("update", "--target", str(target), "--apply")
+        self.assertEqual("healthy", report["doctor"]["status"], report["doctor"]["issues"])
 
 
 if __name__ == "__main__":

@@ -75,6 +75,28 @@ This subcommand was called `review` before the assembler landed. `review` now
 names the standing "what is waiting on a person?" report, which is a different
 question and one asked for the life of the project rather than once at adoption.
 
+## Carrying an existing install forward
+
+For a repository that already has Project Context and needs the current
+release — new scripts, a refreshed protocol text, scaffold files added since it
+was installed:
+
+```sh
+python3 PATH_TO_SKILL/scripts/project_context_init.py update --target . --dry-run
+python3 PATH_TO_SKILL/scripts/project_context_init.py update --target . --apply
+```
+
+Local only; nothing in it reaches a network. It refuses a repository with no
+install and tells you to run `init`.
+
+Read the dry run before applying, and read it by authorship. `refresh` and
+`regenerate_index` are files this product owns. `create` is a scaffold file the
+install predates. `preserve_existing` is a record the repository wrote, and
+seeing one is the command working correctly — never talk a user into
+overwriting it. The pushed set is reported, never planned: a
+`pushed-file-modified` entry means someone edited a copy the Hub sent, and the
+fix is a question in `QUESTIONS.md`, not an edit here.
+
 Names are discovery signals, not proof. Read only the candidate material needed
 to assess overlap. For each candidate:
 

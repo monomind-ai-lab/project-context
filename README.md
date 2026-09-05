@@ -59,7 +59,7 @@ project-context init --target . --install-skills --apply
 
 The CLI is deterministic: swap `--apply` for `--dry-run` to preview the exact
 file plan first. Zero runtime dependencies — stdlib Python 3.10+. Subcommands:
-`init`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
+`init`, `update`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
 
 ### Agent-guided install
 
@@ -566,6 +566,31 @@ The review **never moves, merges, rewrites, archives, or deletes automatically**
 This subcommand was called `review` until 0.8.0. `review` now names the
 standing report described under *Retrieval and review* below — a different
 question, asked for the life of the project rather than once at adoption.
+
+### Carrying an install forward (update)
+
+```sh
+project-context update --dry-run     # the exact plan
+project-context update --apply
+```
+
+`update` is local only — nothing in it reaches a network. It exists because
+`init` is create-only for everything and therefore upgrades nothing: a file
+already present is preserved, which is right for a record and wrong for an
+out-of-date copy of a script.
+
+Three authorships live under `project-context/`, and update treats each the way
+its authorship demands:
+
+| Whose it is | What it is | What update does |
+| --- | --- | --- |
+| Ours | `SKILL.md`, the installed skill and its scripts, the managed blocks, the marker's own fields, the generated indexes | Refreshes them — differing from the release is what a stale copy does |
+| The repository's | Every record: `NOW.md`, `PLAN.md`, the registries, `decisions/`, `questions/`, `tasks/`, `inbox/` | Creates a scaffold file this install predates; never touches one that exists |
+| The Hub's | `global/` and `blueprint/` | Verifies each copy against its stamp and reports. Never writes — the change belongs in the Hub, and the next push would overwrite it |
+
+It preserves the marker rather than rewriting it, so the push stamps and any
+key a later release wrote survive the upgrade. It runs the doctor at the end
+and reports the result. Running it twice changes nothing the second time.
 
 ### Retrieval and review
 
