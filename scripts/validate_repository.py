@@ -62,7 +62,31 @@ REQUIRED = (
     "skills/project-context-init/assets/project-context/tasks/TEMPLATE.md",
     "tests/test_project_context_init.py",
     "tests/test_record_model.py",
+    # The contract for anyone working on this product, and its host pointer.
+    # Both, because the rule the installer enforces in a consuming repository
+    # is one this repository should not be exempt from: a Claude session that
+    # opens a folder with no CLAUDE.md gets no contract at all.
+    "AGENTS.md",
+    "CLAUDE.md",
+    # Retrieval, conformance, and review (slice 7).
+    "skills/project-context/scripts/context_packet.py",
+    "skills/project-context/scripts/context_review.py",
+    "skills/project-context-init/assets/project-context/PLAN.md",
+    "skills/project-context-init/assets/project-context/QUESTIONS.md",
+    "skills/project-context-init/assets/project-context/questions/TEMPLATE.md",
+    "skills/project-context-init/assets/project-context/inbox/TEMPLATE.md",
+    "tests/test_context_doctor.py",
+    "tests/test_context_index.py",
+    "tests/test_context_triggers.py",
+    "tests/test_context_packet.py",
+    "tests/test_context_review.py",
 )
+
+# Host pointer files. A pointer that restates a rule from `AGENTS.md` is how the
+# two drift apart, so each one present is held to its shape: it must name the
+# contract and stay short enough that it cannot have become a second copy.
+POINTER_FILES = ("CLAUDE.md",)
+POINTER_MAX_LINES = 40
 
 TEXT_SUFFIXES = {
     ".html",
@@ -75,12 +99,37 @@ TEXT_SUFFIXES = {
     ".yml",
     "",
 }
+# Directories that are on disk but not in the repository. A local virtualenv is
+# full of absolute paths by construction, and reporting them as leaked
+# credentials trains a contributor to ignore this validator — which is the one
+# outcome a safety check cannot afford.
+SKIP_PARTS = {
+    ".git", "work", "outputs", "__pycache__",
+    ".venv", "venv", "node_modules", ".pytest_cache", ".mypy_cache",
+}
 PRIVATE_PATTERNS = (
     re.compile(r"/Users/(?!example|your-name|username)[^/\s]+"),
     re.compile(r"sk-(?:proj-|or-v1-)?[A-Za-z0-9_-]{16,}"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 )
+
+
+def validate_pointers() -> list[str]:
+    errors: list[str] = []
+    for relative in POINTER_FILES:
+        path = ROOT / relative
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        if "AGENTS.md" not in "\n".join(lines):
+            errors.append(f"{relative}: a host pointer must name AGENTS.md")
+        if len(lines) > POINTER_MAX_LINES:
+            errors.append(
+                f"{relative}: {len(lines)} lines; a pointer over {POINTER_MAX_LINES} is a second copy "
+                "of the contract, which is the bug two layers exist to prevent"
+            )
+    return errors
 
 
 def validate_skill(path: Path) -> list[str]:
@@ -139,9 +188,10 @@ def main() -> int:
 
     for skill in ROOT.glob("skills/*/SKILL.md"):
         errors.extend(validate_skill(skill))
+    errors.extend(validate_pointers())
 
     for path in ROOT.rglob("*"):
-        if not path.is_file() or any(part in {".git", "work", "outputs", "__pycache__"} for part in path.parts):
+        if not path.is_file() or any(part in SKIP_PARTS for part in path.parts):
             continue
         if path == Path(__file__).resolve():
             continue
