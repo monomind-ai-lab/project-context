@@ -383,6 +383,20 @@ class InitializerTests(unittest.TestCase):
             self.assertIn("echo mine", commands)
             self.assertTrue(any("context_triggers.py" in c and " report " in c for c in commands))
             self.assertTrue(any("context_triggers.py" in c and " gate " in c for c in commands))
+            # SessionStart carries two of ours: the packet the session should
+            # have read, then the triggers it still owes. Adding the second must
+            # not strip the first.
+            self.assertTrue(any("context_packet.py" in c and " onboard " in c for c in commands))
+            session_start = [
+                entry["command"]
+                for group in settings["hooks"]["SessionStart"]
+                for entry in group["hooks"]
+            ]
+            self.assertEqual(3, len(session_start), session_start)
+            self.assertLess(
+                next(i for i, c in enumerate(session_start) if "context_packet.py" in c),
+                next(i for i, c in enumerate(session_start) if "context_triggers.py" in c),
+            )
             # --install-hooks implies --install-skills: a hook whose script is
             # missing is a hook that silently never runs.
             self.assertTrue(
@@ -432,9 +446,9 @@ class InitializerTests(unittest.TestCase):
                 (target / relative).mkdir(parents=True, exist_ok=True)
             (target / "STATUS.md").write_text("# Status\n", encoding="utf-8")
             before = sorted(str(path.relative_to(target)) for path in target.rglob("*"))
-            review, _ = self.run_script("review", "--target", directory)
+            report, _ = self.run_script("consolidate", "--target", directory)
             after = sorted(str(path.relative_to(target)) for path in target.rglob("*"))
-            candidates = {item["path"]: item for item in review["consolidation"]["candidates"]}
+            candidates = {item["path"]: item for item in report["consolidation"]["candidates"]}
             self.assertEqual(before, after)
             self.assertEqual("general_memory", candidates["memory"]["role"])
             self.assertEqual("decisions", candidates["docs/decisions"]["role"])

@@ -59,7 +59,7 @@ project-context init --target . --install-skills --apply
 
 The CLI is deterministic: swap `--apply` for `--dry-run` to preview the exact
 file plan first. Zero runtime dependencies — stdlib Python 3.10+. Subcommands:
-`init`, `inspect`, `review`, `doctor`.
+`init`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
 
 ### Agent-guided install
 
@@ -550,7 +550,7 @@ content signals and looks for material that may already serve the same purpose:
 The agent can run the deterministic read-only review with:
 
 ```sh
-python3 skills/project-context-init/scripts/project_context_init.py review --target /path/to/repository --repo-type auto
+python3 skills/project-context-init/scripts/project_context_init.py consolidate --target /path/to/repository --repo-type auto
 ```
 
 Candidates are classified by likely role and confidence. The skill then reviews
@@ -562,6 +562,75 @@ before suggesting one of three approaches:
 - deliberately migrate into the canonical Project Context structure.
 
 The review **never moves, merges, rewrites, archives, or deletes automatically**.
+
+This subcommand was called `review` until 0.8.0. `review` now names the
+standing report described under *Retrieval and review* below — a different
+question, asked for the life of the project rather than once at adoption.
+
+### Retrieval and review
+
+Before substantial work, assemble the packet instead of reading the whole
+folder:
+
+```sh
+project-context context --task "add rate limiting" --files src/api/gateway.py
+```
+
+What comes back is ordered rather than ranked, and the order is the point:
+the owner's `global/` summary, identity, and guardrails; the `blueprint/`
+epic (and the architecture in `--mode plan` or `--mode review`); `NOW.md` and
+the active items of `PLAN.md`; then the decisions, learnings, and questions
+whose evidence anchors share a path prefix with the files you named, and after
+those the ones that merely share vocabulary with the task line. A packet that
+led with a builder's own notes would bury the constraint that was not
+negotiable.
+
+Matching is a path comparison and a token overlap over a few hundred small
+Markdown files. There are no embeddings, no index, and nothing to keep warm —
+the signal that decides relevance is already written down, because a decision
+cites the files it constrains and a task names the files it touches.
+
+Only `accepted` and `answered` records are loaded. Proposed ones are listed as
+links, as is anything that did not fit the token budget, so the packet never
+implies that what it left out does not exist. `--verified-only` drops the
+proposed list; `--mode review --diff` takes the file set from the working
+tree's own changes; `project-context onboard` is the preset for a first
+session, and is what the installed `SessionStart` hook emits.
+
+To see what is waiting on a person rather than what is wrong:
+
+```sh
+project-context review --open-days 14
+```
+
+It lists proposed records, questions open past their window, unpromoted
+capsules, assumptions nobody confirmed, drifted evidence anchors, a stale
+`NOW.md`, and a pushed snapshot the owner has not refreshed — oldest first,
+because latency is the failure mode of a system where nothing moves until
+someone looks. It exits zero whatever it finds: CI that breaks on an open
+question teaches people to stop filing them.
+
+### Plans, epics, and what "conforms" means
+
+`PLAN.md` is the milestone in front of the builders, authored in the
+repository. `blueprint/EPIC.md` is what the project is for, authored by a
+Project Hub owner and pushed down read-only. Each `## M-NNN:` item in the plan
+names the epic item it advances:
+
+```markdown
+## M-001: Ship the search endpoint
+
+- Status: `active`
+- Serves: E-002
+```
+
+The doctor enforces the pair, asymmetrically and deliberately. A plan item
+naming no epic item is an **error**: the project is spending effort the epic
+does not ask for, and the fix is to anchor it or raise a question. An epic item
+no plan item serves is a **warning**: an epic legitimately runs ahead of the
+current milestone, and erroring there would force a project to plan the whole
+epic at once. A repository with no `blueprint/` has no epic and `PLAN.md`
+stands alone — Project Context is a complete product without a Hub.
 
 ### Agent health checks (doctor)
 

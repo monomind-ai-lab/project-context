@@ -62,11 +62,22 @@ HARNESS_POINTER_ROOTS = ((".claude", "skills"),)
 # in this checkout: a consuming repository never needs to carry its own copy of
 # the installer, and shipping one duplicated the whole template tree.
 INSTALLED_SKILL_NAMES = ("project-context",)
-TRIGGER_SCRIPT_RELATIVE = ".agents/skills/project-context/scripts/context_triggers.py"
+SKILL_SCRIPTS_RELATIVE = ".agents/skills/project-context/scripts"
+TRIGGER_SCRIPT_RELATIVE = f"{SKILL_SCRIPTS_RELATIVE}/context_triggers.py"
+PACKET_SCRIPT_RELATIVE = f"{SKILL_SCRIPTS_RELATIVE}/context_packet.py"
+# `SessionStart` does two different jobs and they are separate hooks on
+# purpose. The packet is what the session should have read; the trigger report
+# is what the session still owes. Emitting the packet first means the state a
+# contributor would act on is in the window before anything else is said about
+# it. `onboard` rather than `context` because a session start has no task yet.
 HOOK_EVENTS = (
-    ("SessionStart", "report", "Checking project context"),
-    ("Stop", "gate", "Checking project context triggers"),
+    ("SessionStart", PACKET_SCRIPT_RELATIVE, "onboard", "Loading project context"),
+    ("SessionStart", TRIGGER_SCRIPT_RELATIVE, "report", "Checking project context"),
+    ("Stop", TRIGGER_SCRIPT_RELATIVE, "gate", "Checking project context triggers"),
 )
+# Hooks this installer owns, identified by the script they call so a repository's
+# own hooks are never dropped.
+OWNED_HOOK_SCRIPTS = ("context_triggers.py", "context_packet.py")
 # The core profile's files. SKILL.md is listed here but has no template under
 # assets/: build_plan writes it from the project-context skill's own SKILL.md.
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
@@ -227,25 +238,30 @@ def protocol_source() -> Path:
     return skill_root().parent / "project-context" / "SKILL.md"
 
 
-def doctor_script() -> Path:
-    """The health check, which ships with the installed skill rather than here.
+def protocol_script(filename: str) -> Path:
+    """A script that ships with the installed skill rather than with this one.
 
-    A consuming repository installs only `project-context`, so `doctor` has to
-    live there to be reachable from the repository it diagnoses.
+    A consuming repository installs only `project-context`, so anything it has
+    to be able to run against itself — the health check, the assembler, the
+    review — lives there and is reached from here.
     """
-    return skill_root().parent / "project-context" / "scripts" / "context_doctor.py"
+    return skill_root().parent / "project-context" / "scripts" / filename
 
 
-def load_doctor() -> Any:
-    """Import the doctor from its file, or return None if it cannot be loaded.
+def doctor_script() -> Path:
+    return protocol_script("context_doctor.py")
+
+
+def load_protocol(filename: str) -> Any:
+    """Import one of those scripts from its file, or None if it cannot be loaded.
 
     Delegation rather than a second implementation: one report shape, one set
     of issue codes. Fail-soft so a missing or broken sibling is reported as a
     wiring problem instead of a traceback.
     """
-    path = doctor_script()
+    path = protocol_script(filename)
     try:
-        spec = importlib.util.spec_from_file_location("context_doctor", path)
+        spec = importlib.util.spec_from_file_location(path.stem, path)
         if spec is None or spec.loader is None:
             return None
         module = importlib.util.module_from_spec(spec)
@@ -253,6 +269,10 @@ def load_doctor() -> Any:
     except (OSError, SyntaxError, ImportError):
         return None
     return module
+
+
+def load_doctor() -> Any:
+    return load_protocol("context_doctor.py")
 
 
 def template_files(profile: str) -> list[Path]:
@@ -827,14 +847,14 @@ def plan_harness_pointer(
 
 
 
-def hook_command(command: str) -> str:
+def hook_command(script_relative: str, command: str) -> str:
     """The shell for one hook event.
 
     Guarded with a file test so a repository that has not installed the skills,
     or a harness opened elsewhere, degrades to a no-op instead of erroring at
     session start.
     """
-    script = '"${CLAUDE_PROJECT_DIR:-$PWD}/' + TRIGGER_SCRIPT_RELATIVE + '"'
+    script = '"${CLAUDE_PROJECT_DIR:-$PWD}/' + script_relative + '"'
     return f's={script}; [ -f "$s" ] && python3 "$s" {command} || true'
 
 
@@ -857,7 +877,7 @@ def owned_hook(group: Any) -> bool:
     return isinstance(entries, list) and any(
         isinstance(entry, dict)
         and isinstance(entry.get("command"), str)
-        and "context_triggers.py" in entry["command"]
+        and any(script in entry["command"] for script in OWNED_HOOK_SCRIPTS)
         for entry in entries
     )
 
@@ -891,11 +911,14 @@ def plan_hooks(target: Path, actions: list[dict[str, Any]]) -> None:
         actions.append({"kind": "conflict", "path": str(settings), "reason": "hook settings 'hooks' is not an object"})
         return
     hooks = dict(hooks)
-    for event, command, status_message in HOOK_EVENTS:
+    # Two passes: every hook of ours is dropped from an event before any is
+    # re-added, so two SessionStart hooks do not have the first one stripped by
+    # the second's own cleanup.
+    for event, _script, _command, _status in HOOK_EVENTS:
         existing = hooks.get(event)
-        groups = [group for group in existing if not owned_hook(group)] if isinstance(existing, list) else []
-        groups.append(hook_group(hook_command(command), status_message))
-        hooks[event] = groups
+        hooks[event] = [group for group in existing if not owned_hook(group)] if isinstance(existing, list) else []
+    for event, script, command, status_message in HOOK_EVENTS:
+        hooks[event] = hooks[event] + [hook_group(hook_command(script, command), status_message)]
     payload["hooks"] = hooks
     # Insertion order, not sorted: dicts preserve the document's own key order,
     # so re-serialising leaves the rest of the user's settings where they were.
@@ -1006,13 +1029,39 @@ def apply_plan(report: dict[str, Any]) -> int:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for name, help_text in (("inspect", "inspect without writing"), ("review", "find consolidation candidates")):
+    # `consolidate` was called `review` before the assembler landed. The name
+    # moved because the two answer different questions and only one of them is
+    # ongoing: consolidation is an adoption-time sweep for pre-existing context
+    # to fold in, while `review` is the standing "what is waiting on a person?"
+    # report of 2.6, run for the life of the project.
+    for name, help_text in (
+        ("inspect", "inspect without writing"),
+        ("consolidate", "find consolidation candidates in an existing repository"),
+    ):
         subparser = subparsers.add_parser(name, help=help_text)
         subparser.add_argument("--target", default=".", type=Path)
         subparser.add_argument("--repo-type", choices=REPOSITORY_TYPES, default="auto")
     doctor_parser = subparsers.add_parser("doctor", help="validate project-context health")
     doctor_parser.add_argument("--target", default=".", type=Path)
     doctor_parser.add_argument("--stale-days", default=30, type=int)
+    review_parser = subparsers.add_parser("review", help="list what is waiting on a person")
+    review_parser.add_argument("--target", default=".", type=Path)
+    review_parser.add_argument("--open-days", default=14, type=int)
+    review_parser.add_argument("--snapshot-days", default=90, type=int)
+    review_parser.add_argument("--format", choices=("text", "json"), default="text")
+    context_parser = subparsers.add_parser("context", help="assemble the packet for a task")
+    context_parser.add_argument("--target", default=".", type=Path)
+    context_parser.add_argument("--task", default="")
+    context_parser.add_argument("--files", default="", help="comma-separated paths the task touches")
+    context_parser.add_argument("--mode", choices=("plan", "implement", "review"), default="implement")
+    context_parser.add_argument("--budget", default=4000, type=int)
+    context_parser.add_argument("--verified-only", action="store_true")
+    context_parser.add_argument("--diff", action="store_true")
+    context_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    onboard_parser = subparsers.add_parser("onboard", help="assemble the first-session packet")
+    onboard_parser.add_argument("--target", default=".", type=Path)
+    onboard_parser.add_argument("--budget", default=4000, type=int)
+    onboard_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
     init_parser = subparsers.add_parser("init", help="plan or apply initialization")
     init_parser.add_argument("--target", default=".", type=Path)
     init_parser.add_argument("--profile", choices=("core", "full"), default="core")
@@ -1043,7 +1092,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "inspect":
         print(json.dumps(inspect(target, args.repo_type), indent=2, sort_keys=True))
         return 0
-    if args.command == "review":
+    if args.command == "consolidate":
         report = inspect(target, args.repo_type)
         print(
             json.dumps(
@@ -1056,6 +1105,36 @@ def main(argv: list[str] | None = None) -> int:
                 sort_keys=True,
             )
         )
+        return 0
+    if args.command in {"context", "onboard"}:
+        module = load_protocol("context_packet.py")
+        if module is None:
+            print(f"Cannot load the assembler from {protocol_script('context_packet.py')}", file=sys.stderr)
+            return 2
+        if args.command == "onboard":
+            packet = module.build_packet(target, budget=args.budget, preset="onboard")
+        else:
+            files = [item for item in args.files.split(",") if item.strip()]
+            if args.diff:
+                files = sorted(set(files) | set(module.changed_paths(target)))
+            packet = module.build_packet(
+                target, args.task, files, args.mode, args.budget, args.verified_only
+            )
+        if args.format == "json":
+            print(json.dumps(packet, indent=2, sort_keys=True))
+        else:
+            print(module.render(packet), end="")
+        return 0
+    if args.command == "review":
+        module = load_protocol("context_review.py")
+        if module is None:
+            print(f"Cannot load the review from {protocol_script('context_review.py')}", file=sys.stderr)
+            return 2
+        report = module.review(target, args.open_days, args.snapshot_days)
+        if args.format == "json":
+            print(json.dumps(report, indent=2, sort_keys=True))
+        else:
+            print(module.render(report), end="")
         return 0
     if args.command == "doctor":
         module = load_doctor()

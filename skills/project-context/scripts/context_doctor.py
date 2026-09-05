@@ -83,7 +83,25 @@ REGISTRY_KINDS = {
     "DECISIONS.md": "decision",
     "LEARNINGS.md": "learning",
     "QUESTIONS.md": "question",
+    # A milestone item is work with an owner and an end, so it takes the task
+    # vocabulary rather than a fourth one of its own.
+    "PLAN.md": "task",
 }
+# Plan-to-epic conformance (2.4). `PLAN.md` is authored by builders in the
+# repository; `blueprint/EPIC.md` is authored by the owner in the Hub and
+# pushed down read-only. "Conforms" is checked here rather than exhorted in
+# prose: each milestone item names the epic item it advances.
+PLAN_FILE = "PLAN.md"
+EPIC_RELATIVE = "blueprint/EPIC.md"
+BLUEPRINT_DIRNAME = "blueprint"
+PLAN_ITEM_PATTERN = re.compile(r"^##\s+(M-\d{3,}):\s*(.+)$", re.M)
+SERVES_LINE_PATTERN = re.compile(r"^\s*-\s+Serves:\s*(.+)$", re.M)
+# The epic's own item shape, from its template: `- **E-001 — One store.**`
+EPIC_ITEM_PATTERN = re.compile(r"^\s*-\s+\*\*(E-\d{3,})\s*[—-]", re.M)
+EPIC_REFERENCE_PATTERN = re.compile(r"\bE-\d{3,}\b")
+# A dropped item is work that is not happening. Holding it to the epic would
+# report a gap that closing the item already resolved.
+UNANCHORED_EXEMPT_STATUSES = {"dropped"}
 ID_PATTERN = re.compile(r"^(?:[DLQT]-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+)$")
 ACTOR_PATTERN = re.compile(r"^(?:person|agent):[^\s:][^\s]*$")
 DATE_ONLY_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -674,6 +692,90 @@ def registry_issues(source: str, text: str) -> list[dict[str, str]]:
     return issues
 
 
+def plan_conformance(context: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Check every `PLAN.md` item against the epic it is supposed to advance.
+
+    The asymmetry between the two failures is the whole point. A plan item that
+    serves no epic item is an **error**: the project is spending effort on
+    something nobody asked for, and the fix is to anchor it or to raise a
+    question about whether the epic is still right. An epic item no plan item
+    serves is only a **warning**: an epic legitimately runs ahead of the
+    current milestone, and treating that as a failure would force a project to
+    plan its whole epic at once — the exact big-design-up-front the two-altitude
+    split exists to avoid.
+
+    A repository with no `blueprint/` has no epic, and `PLAN.md` stands alone.
+    Silence there is deliberate: Project Context is a complete product without
+    a Hub (2.8), and a doctor that nags for a file only a Hub can push would
+    make the standalone install feel broken.
+    """
+    summary: dict[str, Any] = {"plan_items": 0, "epic_items": 0, "anchored": 0, "unserved": 0}
+    issues: list[dict[str, str]] = []
+    plan_path = context / PLAN_FILE
+    epic_path = context / EPIC_RELATIVE
+    if not plan_path.is_file() or plan_path.is_symlink():
+        return summary, issues
+    plan_text = plan_path.read_text(encoding="utf-8", errors="replace")
+
+    epic_ids: set[str] = set()
+    has_epic = epic_path.is_file() and not epic_path.is_symlink()
+    if has_epic:
+        epic_ids = set(EPIC_ITEM_PATTERN.findall(epic_path.read_text(encoding="utf-8", errors="replace")))
+        summary["epic_items"] = len(epic_ids)
+    elif (context / BLUEPRINT_DIRNAME).is_dir():
+        # A blueprint that arrived without its epic is a broken push, not a
+        # repository that never had one — worth naming, but not an error a
+        # builder can fix from here.
+        issues.append(
+            {
+                "severity": "warning", "code": "missing-epic", "path": EPIC_RELATIVE,
+                "detail": "blueprint/ is present without an epic; the Hub owner pushes it",
+            }
+        )
+
+    served: set[str] = set()
+    heads = list(PLAN_ITEM_PATTERN.finditer(plan_text))
+    for index, head in enumerate(heads):
+        end = heads[index + 1].start() if index + 1 < len(heads) else len(plan_text)
+        body = plan_text[head.end():end]
+        summary["plan_items"] += 1
+        status_match = STATUS_LINE_PATTERN.search(body)
+        status = status_match.group(1).lower() if status_match else ""
+        serves = SERVES_LINE_PATTERN.search(body)
+        named = EPIC_REFERENCE_PATTERN.findall(serves.group(1)) if serves else []
+        if not has_epic:
+            continue
+        if not named:
+            if status not in UNANCHORED_EXEMPT_STATUSES:
+                issues.append(
+                    {
+                        "severity": "error", "code": "plan-item-unanchored", "path": PLAN_FILE,
+                        "detail": f"{head.group(1)} names no epic item; anchor it with a `- Serves:` line or raise a question",
+                    }
+                )
+            continue
+        summary["anchored"] += 1
+        for epic_id in named:
+            if epic_id in epic_ids:
+                served.add(epic_id)
+            else:
+                issues.append(
+                    {
+                        "severity": "error", "code": "plan-serves-unknown-epic-item", "path": PLAN_FILE,
+                        "detail": f"{head.group(1)} serves {epic_id}, which {EPIC_RELATIVE} does not define; a newer epic may have superseded it",
+                    }
+                )
+    for epic_id in sorted(epic_ids - served):
+        summary["unserved"] += 1
+        issues.append(
+            {
+                "severity": "warning", "code": "epic-item-unserved", "path": EPIC_RELATIVE,
+                "detail": f"{epic_id} is not served by any plan item; an epic may run ahead of the milestone",
+            }
+        )
+    return summary, issues
+
+
 def file_digest(path: Path) -> str | None:
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -916,6 +1018,8 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     issues.extend(evidence_issues)
     pushed, pushed_issues = pushed_set(context, marker)
     issues.extend(pushed_issues)
+    conformance, conformance_issues = plan_conformance(context)
+    issues.extend(conformance_issues)
     issues.extend(legacy_hub_issues(target, marker))
     delivery, delivery_issues = reachability(target)
     issues.extend(delivery_issues)
@@ -932,6 +1036,7 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
         "evidence": evidence,
         "records": records,
         "pushed": pushed,
+        "conformance": conformance,
         "issues": issues,
     }
 
