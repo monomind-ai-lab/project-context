@@ -900,6 +900,39 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .deck-colophon a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--glass-hair); }
 .deck-colophon a:hover { border-bottom-color: currentColor; }
 
+/* ── Stacked-card spacing and short-viewport rescue ─────────────────
+   Two layout bugs, one place. Both were visible on the shipped decks.
+
+   1. A .dg-canvas is a flex column, and several of the components that
+      sit directly in it — .dg-endbar, .dg-flag, a bare .dg-frame — carry
+      no vertical margin, because they were authored to sit inside a grid
+      that supplied the spacing. Stack two of them and they touch: on the
+      builder's deck "What it is" the card row sat flush on the endbar,
+      and on the owner's deck "The budgets" the table panel sat flush on
+      the pair below it. The gap belongs on the container, so it applies
+      however the slide is composed; the children's own top margins are
+      zeroed so nothing is spaced twice.
+
+   2. Above 1100px the slide is exactly 100vh and `body` is
+      `overflow-y: hidden`, so a slide taller than the viewport was not
+      merely cut — it was unreachable. At 1440x900 that hid the bottom of
+      eight slides on the owner's deck. Letting the slide scroll its own
+      overflow costs nothing when the content fits, and `safe center`
+      keeps the top reachable when it does not: a centred flex column
+      overflowing both ways cannot be scrolled back up to.
+   ────────────────────────────────────────────────────────────────── */
+.slide.dg-center .dg-canvas { gap: var(--space-4); }
+.slide.dg-center .dg-canvas > * { margin-top: 0; margin-bottom: 0; }
+
+@media (min-width: 1101px) {
+  .slide {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    justify-content: safe center;
+    scrollbar-width: thin;
+  }
+}
+
 /* ── Responsive deck hardening ─────────────────────────────────────
    These overrides intentionally live after the guide layer. The deck's
    component rules are shared with the desktop composition, so placing the
