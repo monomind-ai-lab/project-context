@@ -68,8 +68,12 @@ For an existing repository, or a new repository where inspection found prior
 material, run:
 
 ```sh
-python3 PATH_TO_SKILL/scripts/project_context_init.py review --target . --repo-type TYPE
+python3 PATH_TO_SKILL/scripts/project_context_init.py consolidate --target . --repo-type TYPE
 ```
+
+This subcommand was called `review` before the assembler landed. `review` now
+names the standing "what is waiting on a person?" report, which is a different
+question and one asked for the life of the project rather than once at adoption.
 
 Names are discovery signals, not proof. Read only the candidate material needed
 to assess overlap. For each candidate:

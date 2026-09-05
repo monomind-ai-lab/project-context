@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -253,6 +254,115 @@ class EvidenceAnchorTests(unittest.TestCase):
             self.assertEqual("healthy", report["status"], report["issues"])
             self.assertEqual({"anchors": 0, "drifted": 0, "unverifiable": 0}, report["evidence"])
             self.assertFalse([code for code in self.codes(report) if code.startswith("evidence-")])
+
+
+EPIC = """# Epic — notes-api
+
+## What must be true when it is done
+
+- **E-001 — One store.** Every note lives here.
+- **E-002 — Search that finds a note.** Ranked full-text search.
+"""
+
+
+class PlanConformanceTests(unittest.TestCase):
+    """`PLAN.md` against `blueprint/EPIC.md` (2.4).
+
+    The asymmetry is the design, not an oversight: unanchored plan work is an
+    error because the project is spending effort nobody asked for, while an
+    unserved epic item is a warning because an epic is allowed to run ahead of
+    the milestone in front of it.
+    """
+
+    def context(self, plan: str | None, epic: str | None = EPIC) -> Path:
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, True)
+        subprocess.run(
+            [sys.executable, str(INIT), "init", "--target", str(directory), "--apply"],
+            check=True, capture_output=True, text=True,
+        )
+        context = directory / "project-context"
+        if plan is not None:
+            (context / "PLAN.md").write_text(plan, encoding="utf-8")
+        if epic is not None:
+            (context / "blueprint").mkdir(exist_ok=True)
+            (context / "blueprint" / "EPIC.md").write_text(epic, encoding="utf-8")
+        return directory
+
+    def run_doctor(self, target: Path) -> dict:
+        result = subprocess.run(
+            [sys.executable, str(DOCTOR), "--target", str(target)],
+            check=False, capture_output=True, text=True,
+        )
+        return json.loads(result.stdout)
+
+    def codes(self, report: dict) -> set:
+        return {issue["code"] for issue in report["issues"]}
+
+    def test_an_anchored_plan_raises_nothing(self) -> None:
+        report = self.run_doctor(
+            self.context(
+                "# Plan\n\n## M-001: Ship search\n\n- Status: `active`\n- Serves: E-001, E-002\n"
+            )
+        )
+        self.assertNotIn("plan-item-unanchored", self.codes(report))
+        self.assertNotIn("epic-item-unserved", self.codes(report))
+        self.assertEqual({"plan_items": 1, "epic_items": 2, "anchored": 1, "unserved": 0}, report["conformance"])
+
+    def test_a_plan_item_naming_no_epic_item_is_an_error(self) -> None:
+        report = self.run_doctor(
+            self.context("# Plan\n\n## M-001: Ship search\n\n- Status: `active`\n")
+        )
+        self.assertIn("plan-item-unanchored", self.codes(report))
+        self.assertEqual("error", report["status"])
+
+    def test_a_dropped_item_is_not_held_to_the_epic(self) -> None:
+        """Closing the item already resolved the gap the error would report."""
+        report = self.run_doctor(
+            self.context("# Plan\n\n## M-001: Ship search\n\n- Status: `dropped`\n")
+        )
+        self.assertNotIn("plan-item-unanchored", self.codes(report))
+
+    def test_serving_an_epic_item_that_does_not_exist_is_an_error(self) -> None:
+        report = self.run_doctor(
+            self.context(
+                "# Plan\n\n## M-001: Ship search\n\n- Status: `active`\n- Serves: E-009\n"
+            )
+        )
+        self.assertIn("plan-serves-unknown-epic-item", self.codes(report))
+        detail = next(i["detail"] for i in report["issues"] if i["code"] == "plan-serves-unknown-epic-item")
+        self.assertIn("superseded", detail)
+
+    def test_an_epic_item_no_plan_item_serves_is_only_a_warning(self) -> None:
+        report = self.run_doctor(
+            self.context("# Plan\n\n## M-001: Ship search\n\n- Status: `active`\n- Serves: E-001\n")
+        )
+        unserved = [i for i in report["issues"] if i["code"] == "epic-item-unserved"]
+        self.assertEqual(1, len(unserved))
+        self.assertEqual("warning", unserved[0]["severity"])
+        self.assertIn("E-002", unserved[0]["detail"])
+
+    def test_a_repository_with_no_hub_is_left_alone(self) -> None:
+        """Project Context is a complete product without a Hub (2.8)."""
+        report = self.run_doctor(
+            self.context("# Plan\n\n## M-001: Ship search\n\n- Status: `active`\n", epic=None)
+        )
+        self.assertNotIn("plan-item-unanchored", self.codes(report))
+        self.assertNotIn("epic-item-unserved", self.codes(report))
+        self.assertNotIn("missing-epic", self.codes(report))
+
+    def test_a_blueprint_that_arrived_without_its_epic_is_named(self) -> None:
+        target = self.context("# Plan\n\n## M-001: Ship\n\n- Status: `active`\n", epic=None)
+        blueprint = target / "project-context" / "blueprint"
+        blueprint.mkdir(exist_ok=True)
+        (blueprint / "ARCHITECTURE.md").write_text("# Architecture\n", encoding="utf-8")
+        report = self.run_doctor(target)
+        self.assertIn("missing-epic", self.codes(report))
+        self.assertNotIn("plan-item-unanchored", self.codes(report))
+
+    def test_no_plan_file_means_nothing_to_check(self) -> None:
+        report = self.run_doctor(self.context(None))
+        self.assertEqual({"plan_items": 0, "epic_items": 0, "anchored": 0, "unserved": 0}, report["conformance"])
 
 
 if __name__ == "__main__":

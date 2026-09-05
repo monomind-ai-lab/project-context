@@ -17,12 +17,21 @@ things. Read whichever one you found; they are the same text.
 
 ## Start
 
-1. Read `project-context/NOW.md`.
-2. Search `project-context/DECISIONS.md` and `project-context/LEARNINGS.md` for
-   the current topic.
-3. Follow only relevant links into detailed decisions, designs, incidents,
+1. Run the assembler and read what it returns:
+
+        python3 .agents/skills/project-context/scripts/context_packet.py \
+            context --task "<one line>" --files <paths you will touch>
+
+   It puts the owner's constraints, the current state, and the records anchored
+   to those paths in front of you in that order. Steps 2 to 4 are what to do
+   when it is not available, and what to do next when it is.
+2. Read `project-context/NOW.md`, and `project-context/PLAN.md` for the
+   milestone in flight.
+3. Search `project-context/DECISIONS.md`, `project-context/LEARNINGS.md`, and
+   `project-context/QUESTIONS.md` for the current topic.
+4. Follow only relevant links into detailed decisions, designs, incidents,
    tasks, primary artifacts, and evidence.
-4. Treat entries marked `superseded` as historical evidence only.
+5. Treat entries marked `superseded` as historical evidence only.
 
 Do not load every historical task or generated page. Current primary artifacts
 and evidence—such as source and tests, approved documents, citations and data,
@@ -100,7 +109,7 @@ discovery systems; they do not replace tracked Markdown authority.
 
 ## Automation
 
-Three scripts support this protocol. Where the skill is installed here they live
+Five scripts support this protocol. Where the skill is installed here they live
 under `.agents/skills/project-context/scripts/`; if the skills are not installed
 in this repository, run the same commands from the Project Context checkout,
 passing this project folder wherever a target is required.
@@ -124,6 +133,29 @@ stale, so CI can hold the line.
 
     python3 .agents/skills/project-context/scripts/context_index.py --check
 
+`context_packet.py` assembles the packet described under **Start**. Matching is
+a path-prefix comparison against the evidence anchors a record already carries,
+plus a token overlap with the task line — no index, nothing to keep warm. What
+does not fit the budget is listed as a link rather than dropped, so the packet
+never implies that what it left out does not exist.
+
+    python3 .agents/skills/project-context/scripts/context_packet.py \
+        context --task "add rate limiting" --files src/api/gateway.py
+
+Use `--mode plan` when writing a plan (it leads with `blueprint/`), `--mode
+review --diff` to assemble the packet for what is currently changed, and
+`onboard` for the first session in a repository. Only `accepted` and `answered`
+records are loaded; proposed ones are listed as links, and `--verified-only`
+omits them.
+
+`context_review.py` lists what is waiting on a person — proposed records, open
+questions past their window, unpromoted capsules, assumptions nobody confirmed,
+drifted anchors, a stale `NOW.md`, a stale pushed snapshot — oldest first,
+because latency is the failure this system is exposed to. It never exits
+non-zero for a finding: a backlog is not a build failure.
+
+    python3 .agents/skills/project-context/scripts/context_review.py --target .
+
 ## Health
 
 When context appears stale, contradictory, or hard to navigate, run the
@@ -142,6 +174,15 @@ against its own kind's set: a `decision`, `learning`, or `capsule` is `proposed`
 `superseded`; a `task` is `proposed` → `active` → `done` | `dropped`. A state
 that belongs to another kind is an error, and `candidate` and `approved` are
 retired everywhere. A reference is validated by shape, never by resolving it.
+
+Where `PLAN.md` and a pushed `blueprint/EPIC.md` are both present it checks that
+they agree. Each `## M-NNN:` milestone item carries a `- Serves:` line naming
+the epic item it advances. An item that names none is an **error** — the
+project is spending effort the epic does not ask for, and the fix is to anchor
+it or to raise a question. An epic item no plan item serves is only a
+**warning**: an epic is allowed to run ahead of the milestone in front of it. A
+repository with no `blueprint/` has no epic, and `PLAN.md` stands alone with
+nothing checked against it.
 
 Where a Project Hub owner has pushed `global/` or `blueprint/` into this
 repository, those files are read-only here. The doctor recomputes each one's
