@@ -1,0 +1,720 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="bg.badge">Docs · Builder's guide</span></p>
+
+    <h1 class="hero-title" id="page-title" data-i18n="bg.hero.title">The page you reach for in <b>month two</b>.</h1>
+
+    <p class="hero-sub" data-i18n="bg.hero.sub">Everything the four pages before this one deliberately skip: what outranks what, the contract every record obeys, the grammar evidence is written in, how a packet is assembled, which files are not yours to edit — and an honest list of what is not built.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">0.10.0</li>
+      <li class="chip" data-i18n="bg.chip1">authority</li>
+      <li class="chip" data-i18n="bg.chip2">records</li>
+      <li class="chip" data-i18n="bg.chip3">retrieval</li>
+      <li class="chip" data-i18n="bg.chip4">the pushed set</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= 01 WHAT THIS PAGE IS ========================= -->
+<section class="section" id="scope" aria-labelledby="scope-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="bg.map.eyebrow">what this page is</span></span>
+      <h2 class="section-title" id="scope-title" data-i18n="bg.map.title">The reference layer, not the first read</h2>
+      <p class="section-lede" data-i18n="bg.map.lede">Four pages come before this one and this page repeats none of them. Read them first if you are new; come back here once the loop is habit and you need the contract underneath it.</p>
+    </div>
+
+    <div class="next-grid reveal">
+      <a class="card next-card" href="/docs/">
+        <span class="next-kicker" data-i18n="bg.map.k1">start here</span>
+        <span class="next-name" data-i18n="bg.map.c1">Quick guide — will it fit, and the 30-second install</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/install/">
+        <span class="next-kicker" data-i18n="bg.map.k2">install</span>
+        <span class="next-name" data-i18n="bg.map.c2">Install — what it does to your repo, and how to undo it</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/records/">
+        <span class="next-kicker" data-i18n="bg.map.k3">the three files</span>
+        <span class="next-name" data-i18n="bg.map.c3">The records — annotated, a good entry next to a bad one</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/operate/">
+        <span class="next-kicker" data-i18n="bg.map.k4">day 2</span>
+        <span class="next-name" data-i18n="bg.map.c4">Operate — the session loop, triggers, the doctor in brief</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.map.callout.label">scope</span>
+      <p data-i18n="bg.map.callout.body">Written against the code at <code>0.10.0</code>, not against a guide beside it. Everything here is built and tested unless it appears under <em>not built yet</em> near the end — which is honest about the gaps rather than quiet about them.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 02 THE AUTHORITY LADDER ======================= -->
+<section class="section" id="authority" aria-labelledby="auth-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="bg.auth.eyebrow">the authority ladder</span></span>
+      <h2 class="section-title" id="auth-title" data-i18n="bg.auth.title">What outranks what when two sources disagree</h2>
+      <p class="section-lede" data-i18n="bg.auth.lede">None of this is advisory. When a record and the code disagree, the code is right and the record is stale. When a generated view and a record disagree, the view is stale and there is nothing to reconcile.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr>
+          <th scope="col" data-i18n="bg.auth.th1">Rank</th>
+          <th scope="col" data-i18n="bg.auth.th2">Layer</th>
+          <th scope="col" data-i18n="bg.auth.th3">Authority</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">01</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r1n">Primary artifacts</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r1v">The code, the commit, the pull request, the test result. Highest for any factual claim.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">02</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r2n">Curated records</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r2v"><code>NOW.md</code>, <code>DECISIONS.md</code>, <code>LEARNINGS.md</code> and the detail records behind them. Canonical for continuity: what is in flight, what is settled, what was already paid for.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">03</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r3n">The pushed set</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r3v"><code>global/</code> and <code>blueprint/</code>, authored by a Project Hub owner and read-only here. Constraints you did not write and cannot change locally.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">04</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r4n">Proposed knowledge</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r4v">Anything still <code>proposed</code> or <code>open</code>. Visible on purpose, and not settled — the packet lists it as a link rather than loading it.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">05</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r5n">Agent instructions</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r5v">The managed block and <code>SKILL.md</code>. They say how to use the context; they are never a source of project fact.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">06</td>
+            <td data-label="Layer" data-i18n-attr="data-label:bg.auth.th2"><span data-i18n="bg.auth.r6n">Derived views</span></td>
+            <td data-label="Authority" data-i18n-attr="data-label:bg.auth.th3"><span data-i18n="bg.auth.r6v">The generated registry index tables, and any wiki or summary built on top of them. Never authority.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.auth.callout.label">regenerate, do not reconcile</span>
+      <p data-i18n="bg.auth.callout.body">If an index and a record disagree, the index is stale: run <code>context_index.py</code> and the disagreement is gone. Editing one by hand is worse than having none — a hand-edited index is trusted, and then overwritten.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 03 RECORD ANATOMY ========================== -->
+<section class="section" id="anatomy" aria-labelledby="anat-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="bg.rec.eyebrow">record anatomy</span></span>
+      <h2 class="section-title" id="anat-title" data-i18n="bg.rec.title">Six required keys, and nothing else required</h2>
+      <p class="section-lede" data-i18n="bg.rec.lede">Detail records in <code>decisions/</code>, <code>questions/</code>, <code>tasks/</code> and <code>inbox/</code> carry YAML frontmatter. The registries carry none — <code>NOW.md</code>, <code>PLAN.md</code>, <code>DECISIONS.md</code>, <code>LEARNINGS.md</code> and <code>QUESTIONS.md</code> stay plain Markdown a person can read in a pull request.</p>
+    </div>
+
+    <article class="panel card reveal">
+      <div class="panel-bar">
+        <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="panel-file notranslate" translate="no">project-context/decisions/D-004.md</span>
+        <span class="chip" style="margin-inline-start:auto" data-i18n="bg.rec.chip">frontmatter</span>
+      </div>
+      <div class="panel-body scrollx">
+<pre class="fm notranslate" translate="no" aria-label="Required frontmatter on a detail record"><span class="fm-rule">---</span>
+<span class="fm-key">id:</span> <span class="fm-val">D-004</span>
+<span class="fm-key">kind:</span> <span class="fm-val">decision</span>
+<span class="fm-key">status:</span> <span class="fm-val">accepted</span>
+<span class="fm-key">title:</span> <span class="fm-val">Serve thumbnails from the CDN, not the app</span>
+<span class="fm-key">created:</span> <span class="fm-val">2026-09-03</span>
+<span class="fm-key">asserted_by:</span> <span class="fm-val">person:ren</span>
+<span class="fm-rule">---</span></pre>
+      </div>
+      <p class="panel-foot notranslate" translate="no">id · kind · status · title · created · asserted_by</p>
+    </article>
+
+    <div class="checks after">
+      <article class="check reveal">
+        <h3 data-i18n="bg.rec.c1.title">Everything else is optional</h3>
+        <p data-i18n="bg.rec.c1.body"><code>approved_by</code>, <code>supersedes</code>, <code>superseded_by</code>, <code>evidence</code>, <code>files</code>, <code>valid_at</code>, <code>invalid_at</code>, <code>session</code>, <code>harness</code> and <code>model</code> are validated only when present. Absent means absent: the doctor warns on a <code>generated_at</code>, <code>confidence</code> or <code>aliases</code> key, and on an empty <code>supersedes: []</code> carried forward from the retired three-block format.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rec.c2.title">One schema string</h3>
+        <p data-i18n="bg.rec.c2.body"><code>project-context/1</code>, recorded in <code>project-context/.project-context.json</code>. The marker also names the product that wrote it, so a reader never compares one product's version number against the other's.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rec.c3.title">One version number per product</h3>
+        <p data-i18n="bg.rec.c3.body">Read from that product's <code>VERSION</code> file, and from nowhere else. <code>TEMPLATE_VERSION</code> and <code>SCAFFOLD_VERSION</code> are retired: a product does not version its templates or its scaffold separately from itself.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rec.c4.title">IDs have a shape</h3>
+        <p data-i18n="bg.rec.c4.body"><code>D-001</code>, <code>L-003</code>, <code>Q-002</code> and <code>T-012</code> for authored records; <code>C-2026-09-03-a1b2</code> for a capsule, whose suffix is derived from its own text. Anything else is reported as <code>invalid-record-id</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rec.c5.title">Correction, not edit</h3>
+        <p data-i18n="bg.rec.c5.body">When something turns out wrong, supersede it or add a correcting record. Never rewrite the meaning of a record someone may have acted on — the history of a decision is worth more than its tidiness.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 04 ONE LIFECYCLE PER KIND ======================= -->
+<section class="section" id="lifecycle" aria-labelledby="life-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="bg.life.eyebrow">one lifecycle per kind</span></span>
+      <h2 class="section-title" id="life-title" data-i18n="bg.life.title">A question is not an assertion, and a task is not a claim</h2>
+      <p class="section-lede" data-i18n="bg.life.lede">Each kind has exactly one status vocabulary, and the doctor checks a status against its own kind rather than a permissive union of all of them. A union would let two people write questions two different ways with nothing to catch it, which is the failure a single vocabulary exists to prevent.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr>
+          <th scope="col" data-i18n="bg.life.th1">Kind</th>
+          <th scope="col" data-i18n="bg.life.th2">States</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">decision · learning · capsule</td>
+            <td class="notranslate" translate="no" data-label="States" data-i18n-attr="data-label:bg.life.th2">proposed → accepted → superseded | rejected</td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">question</td>
+            <td class="notranslate" translate="no" data-label="States" data-i18n-attr="data-label:bg.life.th2">open → answered → superseded</td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">task</td>
+            <td class="notranslate" translate="no" data-label="States" data-i18n-attr="data-label:bg.life.th2">proposed → active → done | dropped</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.life.callout.label">retired everywhere</span>
+      <p data-i18n="bg.life.callout.body"><code>candidate</code> and <code>approved</code> are gone: read <code>proposed</code> and <code>accepted</code>. The doctor reports either as <code>retired-status</code> and names its replacement, whatever the kind. The <code>approved_by</code> <em>field</em> keeps its name — it records who accepted.</p>
+    </div>
+
+    <p class="pagenote reveal" data-i18n="bg.life.note">A state that belongs to another kind is as wrong as one that belongs to no kind: <code>accepted</code> on a question and <code>answered</code> on a decision are both errors. One exception is not a status at all — the activity column in <code>NOW.md</code> is prose about work, and stays as it is.</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 05 THE REFERENCE GRAMMAR ======================= -->
+<section class="section" id="references" aria-labelledby="ref-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="bg.ref.eyebrow">the reference grammar</span></span>
+      <h2 class="section-title" id="ref-title" data-i18n="bg.ref.title">Eight schemes, validated by shape and never by resolution</h2>
+      <p class="section-lede" data-i18n="bg.ref.lede">One grammar wherever a reference appears — a frontmatter <code>evidence:</code> list, an <code>Evidence:</code> line, a body. The doctor checks that a token claiming a scheme keeps that scheme's shape and stops there: nothing asks whether the commit, ticket or page on the other end exists. A token whose prefix is not one of these is ordinary prose and is left alone.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr>
+          <th scope="col" data-i18n="bg.ref.th1">Scheme</th>
+          <th scope="col" data-i18n="bg.ref.th2">Cites</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">session:&lt;harness&gt;:&lt;id&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r1">The session that asserted it.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">commit:&lt;binding&gt;:&lt;sha&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r2">A commit, by repository binding and 7 to 40 hex characters.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">pr:&lt;binding&gt;#&lt;number&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r3">A pull request.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">review:&lt;binding&gt;#&lt;pr&gt;/&lt;comment-id&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r4">One review comment on one pull request.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">ticket:&lt;tracker&gt;:&lt;key&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r5">An issue in whatever tracker the project already uses.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">doc:&lt;binding&gt;:&lt;path&gt;@&lt;commit&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r6">A document at the state it was read at.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">url:https://…</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r7">Anything outside the repository; the scheme must be <code>http</code> or <code>https</code>.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">capsule:&lt;id&gt;</td>
+            <td data-label="Cites" data-i18n-attr="data-label:bg.ref.th2"><span data-i18n="bg.ref.r8">A capsule in <code>inbox/</code>, by its <code>C-…</code> ID.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.ref.callout.label">angle brackets are never literal</span>
+      <p data-i18n="bg.ref.callout.body">They mark a metavariable. A URL reference is written <code>url:https://example.com/x</code>, not <code>url:&lt;https://example.com/x&gt;</code> — and a token with the brackets left in fails the shape check as <code>invalid-reference</code>.</p>
+    </div>
+
+    <p class="pagenote reveal"><span data-i18n="bg.ref.note">Inside the repository the short form is enough: pin a path to the state it cites, <code>src/auth/session.py@a1b2c3d</code>. A reference to a moving file is a reference to nothing, and the doctor reports <code>evidence-drift</code> once the cited path has changed since the commit it was pinned at.</span> <a class="inlink" href="/docs/records/#anchors" data-i18n="bg.ref.link">Evidence anchors, in full, on the records page →</a></p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =============================== 06 CAPTURE =============================== -->
+<section class="section" id="capture" aria-labelledby="cap-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="bg.cap.eyebrow">capture</span></span>
+      <h2 class="section-title" id="cap-title" data-i18n="bg.cap.title">Writing it down without stopping the work</h2>
+      <p class="section-lede" data-i18n="bg.cap.lede">A decision worth recording almost always surfaces mid-task, and stopping to write a registry entry with an ID, a rationale and consequences is exactly the interruption you decline — so the decision goes unrecorded and the reason is lost. Capture has to be cheap enough to happen <em>during</em> the work.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="bg.cap.w1.title">One note into the inbox, and nothing else</h3>
+      <p class="worked-body" data-i18n="bg.cap.w1.body">It writes one file. It never edits a registry, never touches a record, and never reaches a network. The judgement — decision, learning, or nothing — is deferred to promotion, where it is cheap.</p>
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.cap.w1.label">capture a capsule</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Capture command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_capture.py</span> <span class="t-flag">--kind</span> <span class="t-arg">decision</span> <span class="t-flag">--text</span> <span class="t-arg">"We standardise on pnpm; npm workspaces could not hoist the native deps."</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 .agents/skills/project-context/scripts/context_capture.py --kind decision --text &quot;We standardise on pnpm; npm workspaces could not hoist the native deps.&quot; --apply" aria-label="Copy the capture command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checks after">
+      <article class="check reveal">
+        <h3 data-i18n="bg.cap.c1.title">The kind is what the note is about</h3>
+        <p data-i18n="bg.cap.c1.body"><code>--kind</code> is one of <code>decision</code>, <code>learning</code>, <code>question</code>, <code>assumption</code>, <code>constraint</code> or <code>proposal</code>. It is not the record kind: everything in <code>inbox/</code> is <code>kind: capsule</code>. A <code>proposal</code> is how you ask for a change to something the Hub pushed, since you cannot edit those.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.cap.c2.title">Provenance is recorded without being asked for</h3>
+        <p data-i18n="bg.cap.c2.body">The actor comes from your git identity unless <code>--actor person:&lt;name&gt;</code> or <code>agent:&lt;name&gt;</code> says otherwise, plus <code>--session</code>, <code>--harness</code> and <code>--model</code> where the harness knows them — and the current commit is written in as a <code>commit:</code> evidence reference. Anything unknown is omitted rather than recorded as unknown.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.cap.c3.title">Two limits worth knowing</h3>
+        <p data-i18n="bg.cap.c3.body">A capsule is at most 200 words and a longer one is refused, because anything longer is the record it should become. And the same text on the same day writes once — the ID is derived from the text, so a <code>Stop</code> hook that fires twice does not leave two identical notes to triage.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.cap.c4.title">Promotion is yours</h3>
+        <p data-i18n="bg.cap.c4.body">Write the registry entry the capsule earns and set its <code>status</code> to <code>accepted</code> with a link to what it became, or <code>rejected</code> when it belongs nowhere. Either is a resolution; leaving it <code>proposed</code> is the only outcome that is not.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.cap.callout.label">why there is an inbox at all</span>
+      <p data-i18n="bg.cap.callout.body">The cost of a staging area is capsules nobody promotes — which is why the standing review reports an ageing one, by name and by age. The cost of not having one is decisions nobody records, and that cost is silent.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 07 RETRIEVAL ============================= -->
+<section class="section" id="retrieval" aria-labelledby="get-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="bg.get.eyebrow">retrieval</span></span>
+      <h2 class="section-title" id="get-title" data-i18n="bg.get.title">What a packet assembles, and why it is only a scan</h2>
+      <p class="section-lede" data-i18n="bg.get.lede">Before substantial work, assemble the packet instead of reading the folder. What comes back is ordered rather than ranked, and the order is the point.</p>
+    </div>
+
+    <div class="cmdwrap reveal">
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.get.label">assemble a packet · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Context packet command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_packet.py</span> <span class="t-sub">context</span> <span class="t-flag">--task</span> <span class="t-arg">"add rate limiting"</span> <span class="t-flag">--files</span> <span class="t-arg">src/api/gateway.py</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 .agents/skills/project-context/scripts/context_packet.py context --task &quot;add rate limiting&quot; --files src/api/gateway.py" aria-label="Copy the packet command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checks after">
+      <article class="check reveal">
+        <h3 data-i18n="bg.get.s1.title">The owner's global tier</h3>
+        <p data-i18n="bg.get.s1.body"><code>SUMMARY.md</code>, <code>IDENTITY.md</code> and <code>GUARDRAILS.md</code> from <code>global/</code>, where a Hub has pushed one. A file the owner published blank is skipped: it carries no information and costs budget.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.get.s2.title">The blueprint</h3>
+        <p data-i18n="bg.get.s2.body"><code>blueprint/EPIC.md</code> in every mode, because the epic is the constraint in every mode. <code>ARCHITECTURE.md</code> joins it under <code>--mode plan</code> and <code>--mode review</code> only — an implement packet carrying it would spend a quarter of the budget on a document the task at hand is not allowed to change.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.get.s3.title">Project state</h3>
+        <p data-i18n="bg.get.s3.body"><code>NOW.md</code>, and the active items of <code>PLAN.md</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.get.s4.title">Records anchored to your files</h3>
+        <p data-i18n="bg.get.s4.body">The decisions, learnings and questions whose evidence anchors share a path prefix with the paths you named in <code>--files</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.get.s5.title">Then records that merely share the vocabulary</h3>
+        <p data-i18n="bg.get.s5.body">A token overlap against the <code>--task</code> line, after the anchored ones. A packet that led with your own notes would bury the constraint that was not negotiable.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.get.callout1.label">no index, no database, no background service</span>
+      <p data-i18n="bg.get.callout1.body">Matching is a path-prefix comparison and a token overlap over a few hundred small Markdown files. There is nothing to keep warm and nothing to rebuild after a pull. The signal that decides relevance is already written down — a decision cites the files it constrains, and a task names the files it touches. This is a deliberate boundary, not a stage on the way to something bigger.</p>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.get.callout2.label">what is loaded, and what is only linked</span>
+      <p data-i18n="bg.get.callout2.body">Only settled records are loaded: <code>accepted</code> and <code>answered</code>, plus <code>active</code> and <code>done</code> for a task. Proposed ones are listed as links, so you can see they exist without being told they are settled, and <code>--verified-only</code> drops even the list. Whatever does not fit the budget — <code>--budget</code>, 4,000 estimated tokens by default — comes back as a link rather than being dropped, so the packet never implies that what it left out does not exist.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr>
+          <th scope="col" data-i18n="bg.get.th1">Invocation</th>
+          <th scope="col" data-i18n="bg.get.th2">When</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">context --mode implement</td>
+            <td data-label="When" data-i18n-attr="data-label:bg.get.th2"><span data-i18n="bg.get.m1">The default: anchored records first, then the ones that share the task line's vocabulary.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">context --mode plan</td>
+            <td data-label="When" data-i18n-attr="data-label:bg.get.th2"><span data-i18n="bg.get.m2">Writing a plan. The packet leads with <code>blueprint/</code>, architecture included.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">context --mode review --diff</td>
+            <td data-label="When" data-i18n-attr="data-label:bg.get.th2"><span data-i18n="bg.get.m3">Reviewing. The file set is taken from the working tree's own changes rather than from <code>--files</code>.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">onboard</td>
+            <td data-label="When" data-i18n-attr="data-label:bg.get.th2"><span data-i18n="bg.get.m4">A first session in a repository. There is no task yet, so nothing task-specific — and this is what the <code>SessionStart</code> hook emits.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">--format json</td>
+            <td data-label="When" data-i18n-attr="data-label:bg.get.th2"><span data-i18n="bg.get.m5">A machine is reading the packet instead of a session.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ================== 08 REVIEW, INDEXES, CONFORMANCE ================== -->
+<section class="section" id="standing" aria-labelledby="chk-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">08</span> <span data-i18n="bg.chk.eyebrow">review · indexes · conformance</span></span>
+      <h2 class="section-title" id="chk-title" data-i18n="bg.chk.title">Three questions the doctor does not answer</h2>
+      <p class="section-lede" data-i18n="bg.chk.lede">The doctor answers “is this correct?”. These answer three others: what is waiting on a person, whether the derived tables are current, and whether the plan still serves the epic.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="bg.chk.w1.title">The standing review — what is waiting on a person</h3>
+      <p class="worked-body" data-i18n="bg.chk.w1.body">Proposed records, questions open past <code>--open-days</code> (14 by default), unpromoted capsules, assumptions nobody confirmed, drifted evidence anchors, a stale <code>NOW.md</code>, and a pushed snapshot older than <code>--snapshot-days</code> (90). Oldest first, because latency is the failure this system is exposed to: a five-week-old question matters more than a fresh one whatever their subjects.</p>
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.chk.w1.label">the standing review · read-only</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Review command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_review.py</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--open-days</span> <span class="t-arg">14</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 .agents/skills/project-context/scripts/context_review.py --target . --open-days 14" aria-label="Copy the review command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.chk.callout.label">a backlog is not a build failure</span>
+      <p data-i18n="bg.chk.callout.body">The review exits zero whatever it finds. A proposed decision is a decision working as intended, and an unanswered question is the discuss step doing its job — they become a problem only by ageing. CI that broke on an open question would teach everyone to stop filing them.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="bg.chk.w2.title">The indexes — derived tables, regenerated</h3>
+      <p class="worked-body" data-i18n="bg.chk.w2.body"><code>DECISIONS.md</code> and <code>LEARNINGS.md</code> grow without bound and get read end to end. The generator rebuilds a marked table at the top of each, so a reader can answer “does anything here constrain what I am about to do?” without paying for the whole file. They are derived: a hand-edited one is overwritten by exactly the generator that owns it, and <code>--check</code> exits non-zero when they are stale, so CI can hold the line.</p>
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.chk.w2.label">verify the indexes are current</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Index check command"><span class="t-cmd">python3</span> <span class="t-url">.agents/skills/project-context/scripts/context_index.py</span> <span class="t-flag">--check</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 .agents/skills/project-context/scripts/context_index.py --check" aria-label="Copy the index check command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="bg.chk.w3.title">Plans and epics — what “conforms” means</h3>
+      <p class="worked-body" data-i18n="bg.chk.w3.body">Where a Hub owner has pushed <code>blueprint/EPIC.md</code> into your repository, each <code>## M-NNN:</code> item in your <code>PLAN.md</code> names the epic item it advances:</p>
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/PLAN.md</span>
+        </div>
+        <div class="panel-body scrollx">
+<pre class="fm notranslate" translate="no" aria-label="A plan item anchored to an epic item"><span class="fm-rule">## M-001: Ship the search endpoint</span>
+
+<span class="fm-key">- Status:</span> <span class="fm-val">`active`</span>
+<span class="fm-key">- Serves:</span> <span class="fm-val">E-002</span></pre>
+        </div>
+      </article>
+    </div>
+
+    <div class="checks after">
+      <article class="check reveal">
+        <h3 data-i18n="bg.chk.c1.title">A plan item naming no epic item is an error</h3>
+        <p data-i18n="bg.chk.c1.body">The project is spending effort the epic does not ask for, and the fix is to anchor it or raise a question. An item already <code>dropped</code> is exempt — work that is not happening does not owe the epic an anchor.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.chk.c2.title">An epic item nothing serves is only a warning</h3>
+        <p data-i18n="bg.chk.c2.body">An epic is allowed to run ahead of the milestone in front of you; erroring there would force a project to plan the whole epic at once. The review lists it so it is visible without blocking anything.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.chk.c3.title">No blueprint, no epic</h3>
+        <p data-i18n="bg.chk.c3.body">A repository with no <code>blueprint/</code> has nothing to conform to, and <code>PLAN.md</code> stands alone with nothing checked against it. Project Context is a complete product without a Hub.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 09 THE PUSHED SET =========================== -->
+<section class="section" id="pushed" aria-labelledby="push-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">09</span> <span data-i18n="bg.push.eyebrow">the pushed set</span></span>
+      <h2 class="section-title" id="push-title" data-i18n="bg.push.title">Two folders you must not edit</h2>
+      <p class="section-lede" data-i18n="bg.push.lede">If your organisation runs a Project Hub, two folders arrive in your repository from it. Everything else under <code>project-context/</code> is authored here and is yours. A repository with no Hub simply has neither folder, and nothing about that is degraded.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 class="notranslate" translate="no">project-context/global/</h3>
+        <p data-i18n="bg.push.c1.body">The organisation's summary, guardrails, workflows, shared skills and shared records. Owner-authored elsewhere, copied in, read-only here.</p>
+      </article>
+      <article class="check reveal">
+        <h3 class="notranslate" translate="no">project-context/blueprint/</h3>
+        <p data-i18n="bg.push.c2.body"><code>EPIC.md</code>, the high-level plan this project serves, and <code>ARCHITECTURE.md</code>, the shape it has to keep. Both are inputs to your packet; neither is yours to change.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.push.c3.title">Stamps live in the marker, never in the file</h3>
+        <p data-i18n="bg.push.c3.body">A pushed file stays clean Markdown with no injected metadata. <code>.project-context.json</code> records each one's <code>sha256</code>, its source commit and the time it was pushed; the doctor recomputes the digest and compares. A mismatch is <code>pushed-file-modified</code>, an error that names where the change belongs. A file under a pushed prefix with no stamp at all is only a warning — a hand-added file is worth naming but is not a broken install.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.push.c4.title">If you disagree, raise a question</h3>
+        <p data-i18n="bg.push.c4.body">Your edit would be silently overwritten by the next sync, and the owner would never learn that you disagreed. Raise a question in your own <code>project-context/</code>, or capture a <code>proposal</code>: it reaches the owner the next time they pull, and it arrives with the project context that explains it.</p>
+      </article>
+    </div>
+
+    <div class="next-grid next-grid-solo reveal">
+      <a class="card next-card" href="/project-hub/">
+        <span class="next-kicker" data-i18n="bg.push.kicker">the other half</span>
+        <span class="next-name" data-i18n="bg.push.card">Project Hub — who authors the pushed set, and how it travels</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================== 10 KEEPING UP TO DATE ======================== -->
+<section class="section" id="update" aria-labelledby="up-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">10</span> <span data-i18n="bg.up.eyebrow">keeping up to date</span></span>
+      <h2 class="section-title" id="up-title" data-i18n="bg.up.title">update, and how to read its dry run</h2>
+      <p class="section-lede" data-i18n="bg.up.lede">Install is create-only for everything, which is right for your records and means it carries nothing forward — re-running it upgrades nothing. <code>update</code> is the other half, and it is local only: nothing in it reaches a network.</p>
+    </div>
+
+    <div class="cmdwrap reveal">
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.up.label1">the exact plan · writes nothing</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Update dry run command"><span class="t-cmd">project-context</span> <span class="t-sub">update</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="project-context update --dry-run" aria-label="Copy the update dry-run command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head"><span class="cmd-label" data-i18n="bg.up.label2">apply it, once you have read the plan</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Update apply command"><span class="t-cmd">project-context</span> <span class="t-sub">update</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="project-context update --apply" aria-label="Copy the update apply command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="pagenote reveal" data-i18n="bg.up.read">Read the dry run by authorship. Every line names an action and a path, and the action tells you whose file it is:</p>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead><tr>
+          <th scope="col" data-i18n="bg.up.th1">Action</th>
+          <th scope="col" data-i18n="bg.up.th2">Whose</th>
+          <th scope="col" data-i18n="bg.up.th3">What it means</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">refresh</td>
+            <td data-label="Whose" data-i18n-attr="data-label:bg.up.th2"><span data-i18n="bg.up.own">ours</span></td>
+            <td data-label="What it means" data-i18n-attr="data-label:bg.up.th3"><span data-i18n="bg.up.r1"><code>SKILL.md</code>, the installed skill and its scripts, the managed blocks and the marker's own fields, brought to the current release. Differing from the release is exactly what a stale copy does.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">regenerate_index</td>
+            <td data-label="Whose" data-i18n-attr="data-label:bg.up.th2"><span data-i18n="bg.up.own">ours</span></td>
+            <td data-label="What it means" data-i18n-attr="data-label:bg.up.th3"><span data-i18n="bg.up.r2">A registry index rebuilt. Only the block between the index markers is replaced; the entries it is built from are the untouched part of the same file.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">unchanged</td>
+            <td data-label="Whose" data-i18n-attr="data-label:bg.up.th2"><span data-i18n="bg.up.own">ours</span></td>
+            <td data-label="What it means" data-i18n-attr="data-label:bg.up.th3"><span data-i18n="bg.up.r3">Already matches this release. Running update twice changes nothing the second time.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">create</td>
+            <td data-label="Whose" data-i18n-attr="data-label:bg.up.th2"><span data-i18n="bg.up.yours">yours</span></td>
+            <td data-label="What it means" data-i18n-attr="data-label:bg.up.th3"><span data-i18n="bg.up.r4">A scaffold file your install predates, added now. It is a new empty record, never a replacement for one.</span></td>
+          </tr>
+          <tr>
+            <td class="cmp-name notranslate" translate="no">preserve_existing</td>
+            <td data-label="Whose" data-i18n-attr="data-label:bg.up.th2"><span data-i18n="bg.up.yours">yours</span></td>
+            <td data-label="What it means" data-i18n-attr="data-label:bg.up.th3"><span data-i18n="bg.up.r5">A record you wrote, left exactly as it is. Seeing one is the command working correctly.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="bg.up.callout.label">the pushed set is reported, never planned</span>
+      <p data-i18n="bg.up.callout.body">Update never writes to <code>global/</code> or <code>blueprint/</code>. Each copy is verified against its stamp and reported: a <code>pushed-file-modified</code> entry means someone edited a file the Hub sent, and the fix is a question, not an edit. The marker is preserved rather than rewritten, so push stamps and any key a later release wrote survive the upgrade — and the doctor runs at the end and reports what it found.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 11 NOT BUILT YET =========================== -->
+<section class="section" id="gaps" aria-labelledby="gap-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">11</span> <span data-i18n="bg.gap.eyebrow">not built yet</span></span>
+      <h2 class="section-title" id="gap-title" data-i18n="bg.gap.title">Named here so you do not go looking</h2>
+      <p class="section-lede" data-i18n="bg.gap.lede">Four gaps, current against the code rather than against a wish list. Two are simply not written yet; two are deliberate and are not coming.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="bg.gap.c1.title">Automatic end-of-session capsules</h3>
+        <p data-i18n="bg.gap.c1.body">Writing a capsule automatically at the end of a session that produced none. <code>capture</code> is manual today: the <code>Stop</code> hook runs the trigger gate and offers it, rather than doing it for you.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.gap.c2.title">A promote command</h3>
+        <p data-i18n="bg.gap.c2.body">Promotion is editing — write the registry entry, then set the capsule's status. There is no one-liner for it yet, and the standing review is what keeps an unpromoted capsule visible in the meantime.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.gap.c3.title">An index over the questions registry</h3>
+        <p data-i18n="bg.gap.c3.body">The generator rebuilds tables for <code>DECISIONS.md</code> and <code>LEARNINGS.md</code> only. Questions are surfaced by the standing review instead, which is the right instrument: a question matters by its age, not by its position in a table.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.gap.c4.title">Cross-project retrieval</h3>
+        <p data-i18n="bg.gap.c4.body">Assembling context across several projects at once. That belongs to the Hub side and is deliberately not on the repository side: your packet sees this project and the pushed global snapshot, which is the correct blast radius.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ==================== 12 RULES THAT WILL NOT CHANGE ==================== -->
+<section class="section" id="rules" aria-labelledby="rules-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">12</span> <span data-i18n="bg.rules.eyebrow">rules that will not change</span></span>
+      <h2 class="section-title" id="rules-title" data-i18n="bg.rules.title">Four you can build on</h2>
+      <p class="section-lede" data-i18n="bg.rules.lede">Not preferences, and not a current release's behaviour. These are the constraints the product is built under, and a change to any of them would be a different product.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="bg.rules.c1.title">Create-only, and preview before apply</h3>
+        <p data-i18n="bg.rules.c1.body">Every command takes <code>--dry-run</code> and <code>--apply</code>, and the dry run prints the exact plan. Nothing overwrites a record. A file you may have edited is skipped, and the skip is reported rather than swallowed.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rules.c2.title">Records are never rewritten by tooling</h3>
+        <p data-i18n="bg.rules.c2.body">Correction happens through <code>status</code> and supersession links. Completed records are preserved, and history stays readable as historical evidence.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rules.c3.title">Standard library only</h3>
+        <p data-i18n="bg.rules.c3.body">Zero runtime dependencies, in any script, ever. A repository adopting this must not acquire a dependency by doing so — and nothing here reaches a network, creates a remote, pushes, or invites anyone.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="bg.rules.c4.title">We own our markers and nothing outside them</h3>
+        <p data-i18n="bg.rules.c4.body">The managed block between <code>&lt;!-- project-context:start --&gt;</code> and <code>&lt;!-- project-context:end --&gt;</code> is ours. The rest of your <code>CLAUDE.md</code> or <code>AGENTS.md</code> is none of our business, and an install that rewrote it would be a bug however good the intent.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================== NEXT STEP ============================== -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">13</span> <span data-i18n="bg.next.eyebrow">next</span></span>
+      <h2 class="section-title" id="next-title" data-i18n="bg.next.title">Where to go from here</h2>
+      <p class="section-lede" data-i18n="bg.next.lede">This page is the contract. The loop is what turns it into a habit, and the Hub is the other half for organisations that run one.</p>
+    </div>
+    <div class="next-grid reveal">
+      <a class="card next-card" href="/docs/operate/">
+        <span class="next-kicker" data-i18n="bg.next.kicker1">the habit</span>
+        <span class="next-name" data-i18n="bg.next.card1">Operate — the day-2 loop</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/">
+        <span class="next-kicker" data-i18n="bg.next.kicker2">back</span>
+        <span class="next-name" data-i18n="bg.next.card2">Docs — getting started</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

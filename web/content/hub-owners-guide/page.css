@@ -1,0 +1,195 @@
+/* Owner's guide — page-only CSS.
+
+   Everything this page can borrow from web/assets/site.css is borrowed:
+   .container .section .eyebrow .section-title .section-lede .hairline
+   .card .chip .checks/.check .cmp/.cmp-wrap the whole .cmd/.t-* command
+   block, .reveal and .grid-bg. What is below is either a house pattern
+   that still lives page-side on every docs page (hero, sec-head, panel,
+   tree, callout, anchor-note, prompt card, next grid) or the one new
+   component this page needed — the guides grid. */
+
+.section-lede{margin-top:16px;max-width:640px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+
+.nav-link[aria-current="page"]{color:var(--fg-bright);background:var(--surface-2);border:1px solid var(--border-strong);padding:6px 10px}
+
+.nav-mobile a[aria-current="page"]{color:var(--fg-bright)}
+
+
+/* ============================== PAGE HEAD ============================== */
+.hero{position:relative;padding-top:clamp(48px,8vw,88px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:19ch;font-size:clamp(1.95rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:20px;max-width:660px;font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:var(--fg-muted)}
+
+/* The one inline link in the hero. It points at the sibling product page,
+   so it has to read as a link without competing with the title above it. */
+.hero-sub a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--accent-line)}
+
+.hero-sub a:hover{text-decoration-color:var(--accent)}
+
+.hero-sub code{font-size:.92em;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+/* The two versions this page was written against. Deliberately quiet: it
+   is provenance, not a headline. */
+.hero-ver{margin-top:18px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;color:var(--fg-faint)}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+.section-lede code{font-size:.92em;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+/* A heading INSIDE a section, for the reference sections that carry more
+   than one block — push's gate, then its refusals, then its options. Sized
+   between .section-title and a .check's own h3 so the hierarchy still
+   reads at a glance. */
+.sub-title{margin-top:40px;margin-bottom:18px;max-width:var(--maxw-prose);font-size:1.22rem;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.sub-title code{font-size:.88em;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.sub-lede{margin-top:-6px;margin-bottom:18px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.95rem;line-height:1.65}
+
+.sub-lede code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;overflow-wrap:break-word}
+
+
+/* ----------------------------- COMMANDS ----------------------------- */
+.cmd-stack{display:flex;flex-direction:column;gap:20px;max-width:720px}
+
+
+/* ------------------------------ TABLES ------------------------------ */
+/* The shared .cmp keeps names on one line; here a "name" cell is often a
+   step label or a path phrase, so it wraps as prose instead. */
+.cmp-name{white-space:normal;overflow-wrap:break-word}
+
+.cmp td code{font-family:var(--font-mono);font-size:.86em;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;overflow-wrap:break-word;white-space:normal}
+
+
+/* ------------------------------ CHECKS ------------------------------ */
+/* Shared .check code is nowrap; several paths here are long enough to push
+   a narrow column sideways, so they wrap. */
+.check h3 code{font-size:.88em;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;white-space:normal;overflow-wrap:break-word}
+
+.check p code{white-space:normal;overflow-wrap:break-word}
+
+
+/* ------------------------------ CALLOUT ------------------------------ */
+.callout{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:18px 20px;border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:var(--r-md);max-width:var(--maxw-prose)}
+
+.callout-label{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+
+.callout p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+.callout p b{font-weight:500;color:var(--fg-bright)}
+
+
+/* ---------------------------- ANCHOR NOTE ---------------------------- */
+.anchor-note{margin-top:26px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:18px 20px;border:1px solid var(--border);border-inline-start:2px solid var(--accent);border-radius:var(--r-md);background:var(--surface);max-width:var(--maxw-prose)}
+
+.anchor-note p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+.anchor-note b{font-weight:500;color:var(--fg-bright)}
+
+.anchor-note p code,.callout p code,.treenote code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;overflow-wrap:break-word}
+
+
+/* ----------------------------- PROMPT CARD -----------------------------
+   The paste-in activation line is prose, not a command: it wraps instead
+   of scrolling, and the copy button rides in its own bar so the block
+   never fights the text for width at 375px. */
+.prompt-card{margin-top:26px;max-width:720px;overflow:hidden}
+
+.prompt-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 8px 9px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.prompt-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.prompt-text{padding:16px;font-family:var(--font-mono);font-size:12.5px;line-height:1.7;color:var(--fg);overflow-wrap:break-word}
+
+.prompt-text .tick{color:var(--accent)}
+
+
+/* ------------------------------- PANEL ------------------------------- */
+.panel{display:flex;flex-direction:column;overflow:hidden}
+
+.panel-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+
+.panel-body{padding:18px 16px;flex:1;min-width:0}
+
+.panel-foot{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint)}
+
+
+/* ------------------------------ FILE TREE ------------------------------ */
+/* The tree is wider than 375px by nature; it scrolls inside its own box
+   rather than ever widening the page. */
+.treewrap{overflow-x:auto}
+
+.tree{margin:0;font-family:var(--font-mono);font-size:12.5px;line-height:1.75;color:var(--fg-dim);white-space:pre}
+
+.tr-dir{color:var(--fg-bright)}
+
+.tr-file{color:var(--fg-muted)}
+
+.tr-rec{color:var(--accent);font-weight:500}
+
+.tr-note{color:var(--fg-faint)}
+
+.treenote{margin-top:18px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* ------------------------------ GUIDES ------------------------------
+   The one component this page adds. Six links out to Markdown files in
+   the scaffold: the file name is the identity, so it leads and stays in
+   the mono face; the question it answers is the body. */
+.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:var(--maxw-prose)}
+
+@media(max-width:640px){.guide-grid{grid-template-columns:1fr}}
+
+.guide-card{display:flex;flex-direction:column;gap:9px;padding:18px 20px;text-decoration:none;min-width:0}
+
+.guide-card:hover{border-color:var(--accent-line)}
+
+.guide-file{font-family:var(--font-mono);font-size:12.5px;color:var(--accent);overflow-wrap:break-word}
+
+.guide-q{color:var(--fg-muted);font-size:.94rem;line-height:1.55}
+
+.guide-card .next-arrow{margin-top:2px}
+
+
+/* ------------------------------- NEXT ------------------------------- */
+.next-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+
+@media(max-width:860px){.next-grid{grid-template-columns:1fr}}
+
+.next-card{display:flex;flex-direction:column;gap:8px;padding:20px;text-decoration:none;min-width:0}
+
+.next-card:hover{border-color:var(--accent-line)}
+
+.next-kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright);overflow-wrap:break-word}
+
+.next-arrow{color:var(--accent);font-size:1rem}

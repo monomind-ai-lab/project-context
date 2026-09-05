@@ -1,0 +1,395 @@
+
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="hub.badge">the second half of the pair</span></p>
+
+    <div class="hero-lockup">
+      <p class="hero-product notranslate" translate="no">Project Hub</p>
+      <p class="hero-kicker" data-i18n="hub.hero.kicker">one private repository for an owner — and entirely optional</p>
+    </div>
+
+    <h1 class="hero-title" id="page-title" data-i18n="hub.hero.title">Everything you oversee, in <b>one private repository</b>.</h1>
+
+    <p class="hero-sub" data-i18n="hub.hero.sub">Project Context installs in each project repository and belongs to the people building it. A Hub is the other side: one private repository where you author what applies everywhere, keep a folder per project, and read what the builders wrote — without ever handing them a permission on it.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">global/</li>
+      <li class="chip notranslate" translate="no">projects/&lt;id&gt;/</li>
+      <li class="chip notranslate" translate="no">owners_window/</li>
+      <li class="chip chip-open" data-i18n="hub.hero.chip">plain Markdown in Git — no service, no database</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ====================== 01 SCAFFOLD VERSUS INSTANCE ====================== -->
+<section class="section" id="scaffold" aria-labelledby="scaffold-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="hub.sc.eyebrow">what you are looking at</span></span>
+      <h2 class="section-title" id="scaffold-title" data-i18n="hub.sc.title">The public repository is a template. Your Hub is not.</h2>
+      <p class="section-lede" data-i18n="hub.sc.lede">Two different things share the name, and mixing them up is the misreading everyone makes first. Read this bit before anything else.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="hub.sc.c1.title">The scaffold is public, and holds nobody's records</h3>
+        <p data-i18n="hub.sc.c1.body">The scaffold holds the commands, the templates and the onboarding material. It contains no organisation's content, so reading it tells you nothing about anyone's projects.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.sc.c2.title">A Hub is an instance you make from it</h3>
+        <p data-i18n="hub.sc.c2.body">You copy the scaffold into a new <em>private</em> repository of your own, and that repository is your Hub. It is private, and it stays private. One Hub, one owner.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.sc.c3.title">A Hub is closed to builders — by construction, not by policy</h3>
+        <p data-i18n="hub.sc.c3.body">The people working in your project repositories hold no permission on your Hub — not write, not read. That is not a rule you have to enforce; it is what a private repository they were never invited to already does. It works on a free plan, where private repositories have no code owners, no protected branches and no required reviewers.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= 02 TWO PRODUCTS ========================= -->
+<section class="section" id="pair" aria-labelledby="pair-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="hub.two.eyebrow">two products, one record model</span></span>
+      <h2 class="section-title" id="pair-title" data-i18n="hub.two.title">Split by role, not by format</h2>
+      <p class="section-lede" data-i18n="hub.two.lede">Both halves are small Markdown records in Git. What separates them is who they serve — the people doing the work, or the person who oversees several repositories at once.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="hub.two.th.product">Product</th>
+            <th scope="col" data-i18n="hub.two.th.where">Where it lives</th>
+            <th scope="col" data-i18n="hub.two.th.who">Who it serves</th>
+            <th scope="col" data-i18n="hub.two.th.see">Who can see it</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Product" data-i18n-attr="data-label:hub.two.th.product"><span class="cmp-name notranslate" translate="no">Project Context</span></td>
+            <td data-label="Where it lives" data-i18n-attr="data-label:hub.two.th.where"><span data-i18n="hub.two.pc.where">Installed in each project repository, versioned beside the work it describes.</span></td>
+            <td data-label="Who it serves" data-i18n-attr="data-label:hub.two.th.who"><span data-i18n="hub.two.pc.who">The builders. The people doing the work own the record of the work.</span></td>
+            <td data-label="Who can see it" data-i18n-attr="data-label:hub.two.th.see"><span data-i18n="hub.two.pc.see">Anyone with access to that repository.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Product" data-i18n-attr="data-label:hub.two.th.product"><span class="cmp-name notranslate" translate="no">Project Hub</span></td>
+            <td data-label="Where it lives" data-i18n-attr="data-label:hub.two.th.where"><span data-i18n="hub.two.ph.where">One private repository of its own, administered by one person.</span></td>
+            <td data-label="Who it serves" data-i18n-attr="data-label:hub.two.th.who"><span data-i18n="hub.two.ph.who">The owner — the person who oversees several repositories and writes what applies to all of them.</span></td>
+            <td data-label="Who can see it" data-i18n-attr="data-label:hub.two.th.see"><span data-i18n="hub.two.ph.see">The owner. Builders hold no permission on it, not even read.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.two.callout.label">one parser, one schema, one doctor</span>
+      <p data-i18n="hub.two.callout.body">Both sides validate records with the same parser, the same schema and the same doctor — because a Hub is itself a Project Context install. The shared code arrives there by the ordinary create-only install rather than being vendored a second time, so there is no second record model to learn and no second thing to keep in step.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ====================== 03 THE DIRECTION OF TRAVEL ====================== -->
+<section class="section" id="travel" aria-labelledby="travel-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="hub.flow.eyebrow">the direction of travel</span></span>
+      <h2 class="section-title" id="travel-title" data-i18n="hub.flow.title">Two directions, and the owner starts both</h2>
+      <p class="section-lede" data-i18n="hub.flow.lede">Content moves between the two repositories in exactly two directions. There is no third path, and no builder-initiated one.</p>
+    </div>
+
+    <div class="hubmap reveal">
+      <div class="hubmap-side is-hub">
+        <span class="hubmap-role" data-i18n="hub.map.hubRole">private · one owner</span>
+        <span class="hubmap-name" data-i18n="hub.map.hubName">Your Hub</span>
+        <ul class="hubmap-files">
+          <li><span class="notranslate" translate="no">global/</span> <span class="hubmap-tag" data-i18n="hub.map.tagHere">authored here</span></li>
+          <li><span class="notranslate" translate="no">projects/&lt;id&gt;/blueprint/</span> <span class="hubmap-tag" data-i18n="hub.map.tagHere">authored here</span></li>
+          <li><span class="notranslate" translate="no">projects/&lt;id&gt;/pulled/</span> <span class="hubmap-tag" data-i18n="hub.map.tagCopy">a stamped copy</span></li>
+          <li class="is-never"><span class="notranslate" translate="no">owners_window/</span> <span class="hubmap-tag" data-i18n="hub.map.tagNever">never leaves</span></li>
+        </ul>
+        <p class="hubmap-note" data-i18n="hub.map.hubNote">Builders hold no permission here — not even read.</p>
+      </div>
+
+      <div class="hubmap-wire">
+        <div class="hubmap-move">
+          <span class="hubmap-cmd notranslate" translate="no">push</span>
+          <span class="hubmap-glyph" aria-hidden="true"><svg viewBox="0 0 56 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M1 5h51M47.5 1.2 51.8 5l-4.3 3.8"/></svg></span>
+          <span class="hubmap-what" data-i18n="hub.map.pushWhat">the global tier and that project's blueprint, onto a branch, as a pull request</span>
+        </div>
+        <div class="hubmap-move">
+          <span class="hubmap-cmd notranslate" translate="no">pull</span>
+          <span class="hubmap-glyph is-back" aria-hidden="true"><svg viewBox="0 0 56 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M1 5h51M47.5 1.2 51.8 5l-4.3 3.8"/></svg></span>
+          <span class="hubmap-what" data-i18n="hub.map.pullWhat">the repository's own authored records, copied up and stamped</span>
+        </div>
+      </div>
+
+      <div class="hubmap-side">
+        <span class="hubmap-role" data-i18n="hub.map.repoRole">one repository you oversee</span>
+        <span class="hubmap-name" data-i18n="hub.map.repoName">A project repository</span>
+        <ul class="hubmap-files">
+          <li><span class="notranslate" translate="no">project-context/global/</span> <span class="hubmap-tag" data-i18n="hub.map.tagPushed">pushed · read-only</span></li>
+          <li><span class="notranslate" translate="no">project-context/blueprint/</span> <span class="hubmap-tag" data-i18n="hub.map.tagPushed">pushed · read-only</span></li>
+          <li><span class="notranslate" translate="no">NOW.md · DECISIONS.md · QUESTIONS.md</span> <span class="hubmap-tag" data-i18n="hub.map.tagAuthored">builder-authored</span></li>
+        </ul>
+        <p class="hubmap-note" data-i18n="hub.map.repoNote">Everything outside the pushed set is theirs to write.</p>
+      </div>
+    </div>
+
+    <p class="hubmap-caption reveal" data-i18n="hub.map.caption">Both arrows are started by the owner, from the Hub, and only in the direction their access already allows.</p>
+
+    <div class="checks reveal">
+      <article class="check">
+        <h3 data-i18n="hub.flow.c1.title">push — Hub into a repository</h3>
+        <p data-i18n="hub.flow.c1.body"><code>global/</code> and that project's <code>blueprint/</code> land in the repository's <code>project-context/</code>, stamped. It does not write to your default branch: it commits to a long-lived <code>hub-sync</code> branch and opens a pull request, so what an owner sends arrives as a change the repository reviews like any other. Repeated syncs stack commits on the same branch and update the same request rather than scattering branches. Nothing force-pushes, and nothing merges — merging stays with the repository.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="hub.flow.c2.title">pull — a repository into the Hub</h3>
+        <p data-i18n="hub.flow.c2.body">The repository's authored records are copied up into <code>projects/&lt;id&gt;/pulled/</code>, stamped with repository, branch, commit and time. It is read-only against the repository — it reads the git object database and writes nothing there. This is also your inbox: a question or a proposal a builder raised arrives on this path, and nothing moves until you pull.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="hub.flow.c3.title">init — a repository the Hub does not know yet</h3>
+        <p data-i18n="hub.flow.c3.body">It marks the repository, writes a first summary of it, installs Project Context into it, and then pushes — the install and the push sharing one branch and one confirmation. Refused outright when Project Context is already installed; that repository wants <code>pull</code> or <code>push</code> instead.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.flow.callout.label">nothing calls home</span>
+      <p data-i18n="hub.flow.callout.body">Nothing in a project repository ever reaches out to a Hub. There is no call home, no registration, no credential. The direction is one way by construction: the owner has access to your repository because they administer it, and you have no access to theirs.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 04 WHAT NEVER TRAVELS ======================= -->
+<section class="section" id="never" aria-labelledby="never-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="hub.never.eyebrow">exposure, not convenience</span></span>
+      <h2 class="section-title" id="never-title" data-i18n="hub.never.title">Nothing travels that you did not name</h2>
+      <p class="section-lede" data-i18n="hub.never.lede">A project repository may have collaborators who are not in your organisation. So the question a push answers is never what would be convenient to share — it is what someone outside the organisation may end up reading.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="hub.never.w1.title">An allow-list, never a deny-list</h3>
+      <p class="worked-body" data-i18n="hub.never.w1.body">A push copies only what the Hub's own configuration names, and nothing else. Any folder you add to the Hub later is non-pushed by default and needs no special case to stay put. The asymmetry is the whole point: forgetting to add a deny rule leaks, and forgetting to add an allow rule does not.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="hub.never.w2.title">The shape of the list</h3>
+      <p class="worked-body" data-i18n="hub.never.w2.body">Most of the global tier travels — the summary, the guardrails, the workflows, the shared records a builder works against, and that project's blueprint. A few of the more sensitive files are opt-in per project rather than default, because objectives across every project, internal dashboards and a roster of people are each more sensitive than the guardrails a builder actually needs. And one file never travels at all.</p>
+      <p class="worked-link"><a href="/project-hub/owners-guide/#exposure" data-i18n="hub.never.w2.link">Owner's guide — the exact lists, and how to opt a file in →</a></p>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="hub.never.id.body"><b><code>IDENTITY.md</code> never reaches a project repository, at any setting.</b> Identity is the organisation's own voice, and it does not belong committed into someone else's checkout. It is the one rule the configuration cannot relax: a Hub whose allow-list names it does not get to push it — the entry is dropped, and you are told which one was refused.</p>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.never.callout.label">no transcripts, in either direction</span>
+      <p data-i18n="hub.never.callout.body">Sessions stay on the machine they happened on. What travels is a short capsule — at most 200 words — and only when the builder chose to write one.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ====================== 05 WHAT AN OWNER GETS ====================== -->
+<section class="section" id="owner" aria-labelledby="owner-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="hub.gets.eyebrow">what you actually get</span></span>
+      <h2 class="section-title" id="owner-title" data-i18n="hub.gets.title">One place to write, one place to look</h2>
+      <p class="section-lede" data-i18n="hub.gets.lede">Four things. They are the whole product, and everything else in the scaffold is machinery for getting content into them and out again safely.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="hub.gets.c1.title">One place the global tier is authored</h3>
+        <p data-i18n="hub.gets.c1.body">Identity, guardrails, workflows, goals, resources. You write them once, in <code>global/</code>, and push the shareable subset into the repositories that need it — instead of a near-copy per repository, quietly drifting apart.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.gets.c2.title">A folder per project</h3>
+        <p data-i18n="hub.gets.c2.body">Its mark — remote, default branch, visibility, who builds it — your own summary of it, and the blueprint you author for it: <code>blueprint/EPIC.md</code>, the goal the project serves, and <code>blueprint/ARCHITECTURE.md</code>, the shape it has to keep.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.gets.c3.title">The builders' own records, brought to you</h3>
+        <p data-i18n="hub.gets.c3.body">A pull copies each repository's plan, tasks, decisions, learnings and open questions into <code>projects/&lt;id&gt;/pulled/</code>. You read them here, side by side, without cloning anything. Do not edit that copy — the next pull overwrites it, and the record lives in the repository it came from.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.gets.c4.title">A window of your own</h3>
+        <p data-i18n="hub.gets.c4.body"><code>owners_window/</code> is where you write about what is coming: half-formed projects, reflections, an argument with yourself. Never pushed, never linted, never pulled into. An idea leaves it only by being promoted by hand — into a blueprint, a global record, or a mark for a repository that does not exist yet. Freeform in, structured out.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 06 OPTIONALITY ========================== -->
+<section class="section" id="optional" aria-labelledby="optional-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="hub.opt.eyebrow">optional, and that is the feature</span></span>
+      <h2 class="section-title" id="optional-title" data-i18n="hub.opt.title">A repository with no Hub is not a degraded one</h2>
+    </div>
+
+    <div class="strip reveal">
+      <div class="strip-chips">
+        <span class="chip notranslate" translate="no">global/</span>
+        <span class="chip notranslate" translate="no">blueprint/</span>
+        <span class="chip chip-open" data-i18n="hub.opt.chip">absent when there is no Hub — and nothing breaks</span>
+      </div>
+      <div class="strip-lines">
+        <p data-i18n="hub.opt.line1">A repository with no Hub simply has no pushed set. Every Project Context feature still works, <b>offline, with no network at all</b>.</p>
+        <p class="fine" data-i18n="hub.opt.line2">A Hub never appears on its own. It is created deliberately, by <b>someone who wants the aggregate view</b> — so the pair is two halves you can hold separately, and a single repository needs nothing but its own install.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ===================== 07 DISAGREEING WITH A PUSH ===================== -->
+<section class="section" id="disagree" aria-labelledby="disagree-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="hub.dis.eyebrow">on the receiving end</span></span>
+      <h2 class="section-title" id="disagree-title" data-i18n="hub.dis.title">If you disagree with something pushed to you</h2>
+      <p class="section-lede" data-i18n="hub.dis.lede">Worth knowing on both sides of the pair: the builder needs a way to object, and the owner needs to know where objections arrive.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="hub.dis.w1.title">Do not edit it</h3>
+      <p class="worked-body" data-i18n="hub.dis.w1.body">The pushed set is read-only where it lands. The doctor flags the edit, and the next sync overwrites it — without the owner ever learning that you objected. An edit is not a channel; it is a change that quietly disappears.</p>
+    </div>
+
+    <div class="worked reveal">
+      <h3 class="worked-title" data-i18n="hub.dis.w2.title">Raise a question in your own record instead</h3>
+      <p class="worked-body" data-i18n="hub.dis.w2.body">File it in your own <code>project-context/</code> — a question in <code>QUESTIONS.md</code>, or a <code>proposal</code> capsule in <code>inbox/</code>. Both belong to the authored set, so the owner's next pull brings them up alongside the project context that explains why. The owner changes the record at its source and pushes again.</p>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.dis.callout.label">the weak point, named</span>
+      <p data-i18n="hub.dis.callout.body">Nothing moves until the owner pulls. That is the honest cost of a Hub builders cannot reach — which is why pulling every repository has to be routine, and why the oldest unanswered question is the one to read first.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 08 THE COST ============================ -->
+<section class="section" id="cost" aria-labelledby="cost-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">08</span> <span data-i18n="hub.cost.eyebrow">the cost, stated plainly</span></span>
+      <h2 class="section-title" id="cost-title" data-i18n="hub.cost.title">What a Hub costs, and what it buys</h2>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="hub.cost.c1.title">A guardrail change means touching every repository</h3>
+        <p data-i18n="hub.cost.c1.body">Pushing to all of them is one command, but it is one branch and one pull request per repository, and each of those still has to be reviewed and merged by the people who own it. A repository nobody has pushed to lately goes stale — though the check reports how old each stamp is, so it does not go stale quietly.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.cost.c2.title">What you buy with it</h3>
+        <p data-i18n="hub.cost.c2.body">Builders hold no permission on the Hub — not even read — and a project repository needs no network at all to work. There is nothing to run, nothing to log into, and no dependency to install: it is plain Markdown in a Git repository, readable in any editor, on a machine with no agent on it.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.cost.callout.label">licence · worth knowing first</span>
+      <p data-i18n="hub.cost.callout.body">MIT with the Commons Clause v1.0 condition. You may use, copy, modify and distribute it, including inside your own organisation; you may not sell it, or sell a service whose value is substantially this software. The Commons Clause makes it <em>not</em> an OSI-approved open source licence, which is worth knowing before you build on it.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 09 GETTING STARTED ========================== -->
+<section class="section" id="start" aria-labelledby="start-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">09</span> <span data-i18n="hub.start.eyebrow">getting started</span></span>
+      <h2 class="section-title" id="start-title" data-i18n="hub.start.title">Make one, then ask it to set itself up</h2>
+      <p class="section-lede" data-i18n="hub.start.lede">The scaffold ships the agent that does the setup. It identifies your tool, asks you one round of questions, writes a thin pointer file for that tool, helps you seed <code>global/</code>, registers your first project, and reports what it wrote against what it skipped. Running it again is safe.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="hub.start.s1.title">Make a private repository from the scaffold</h3>
+        <p data-i18n="hub.start.s1.body">Copy or fork it into a repository of your own, keep it private, and clone it. Everything after this happens inside that folder.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.start.s2.title">Open it in the tool you already work in</h3>
+        <p data-i18n="hub.start.s2.body">Claude Code or Codex — that is where the onboarding agent runs. Obsidian is one way to look at the folder afterwards and is not needed to start.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="hub.start.s3.title">Ask for it</h3>
+        <p data-i18n="hub.start.s3.body">In Claude Code the scaffold ships the agent that does this, so any of these is enough:</p>
+        <ul class="askrow">
+          <li class="chip notranslate" translate="no">set this up</li>
+          <li class="chip notranslate" translate="no">activate the hub</li>
+          <li class="chip notranslate" translate="no">onboard me</li>
+        </ul>
+        <p class="asknote" data-i18n="hub.start.s3.note">In any other tool, paste this as your first message instead:</p>
+        <div class="cmd cmd-sm" data-cmd>
+          <div class="cmd-head"><span class="cmd-label" data-i18n="hub.start.cmd.label">activation · paste into any other tool</span><span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span></div>
+          <div class="cmd-body">
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Activation prompt"><span class="t-cmd">Read</span> <span class="t-url">ADAPTER-PROMPT.md</span> <span class="t-arg">at the root of this folder and follow it.</span></code>
+            <button type="button" class="cmd-btn" data-copy="Read ADAPTER-PROMPT.md at the root of this folder and follow it." aria-label="Copy the activation prompt" data-i18n-attr="aria-label:cta.copy">
+              <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+              <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="hub.start.callout.label">what the setup agent cannot do</span>
+      <p data-i18n="hub.start.callout.body">It runs with file tools only — no shell, no network. It cannot run <code>git init</code>, add a remote, or push, because it has nothing to run them with. That is a fact about what it is able to do, not a promise it makes. Anything touching Git is yours to run.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================== 10 NEXT ============================== -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">10</span> <span data-i18n="hub.next.eyebrow">next</span></span>
+      <h2 class="section-title" id="next-title" data-i18n="hub.next.title">Where to go from here</h2>
+      <p class="section-lede" data-i18n="hub.next.lede">This page is the argument. The owner's guide is the reference — the setup walkthrough, every command with its real flags and gates, the tree, the budgets, the two plans, and an honest list of what is not built yet.</p>
+    </div>
+    <div class="next-grid reveal">
+      <a class="card next-card" href="/project-hub/owners-guide/">
+        <span class="next-kicker" data-i18n="hub.next.kicker1">the reference</span>
+        <span class="next-name" data-i18n="hub.next.card1">Owner's guide — every command, every gate</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/">
+        <span class="next-kicker" data-i18n="hub.next.kicker2">the other half</span>
+        <span class="next-name" data-i18n="hub.next.card2">Docs — Project Context, from scratch</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="https://github.com/monomind-ai-lab/project-hub" target="_blank" rel="noopener noreferrer">
+        <span class="next-kicker" data-i18n="hub.next.kicker3">source</span>
+        <span class="next-name notranslate" translate="no">project-hub on GitHub</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

@@ -7,16 +7,25 @@
 #   build command:     bash scripts/sync.sh
 #   output directory:  site
 #
-# Routes served:  /             -> site/index.html           (generated)
-#                 /use-cases/   -> site/use-cases/index.html (generated)
-#                 /guide/       -> site/guide/index.html     (copied below)
-#                 /_assets/*    -> shared CSS/JS             (generated)
-#                 /clarity-bg.jpg, /favicon.svg              (from web/static/)
+# Routes served:  /                  -> site/index.html                (generated)
+#                 /use-cases/        -> generated
+#                 /project-hub/      -> generated
+#                 /docs/*            -> generated
+#                 /guide/            -> the deck chooser               (generated)
+#                 /guide/builders/   -> site/guide/builders/index.html (copied below)
+#                 /guide/owners/     -> site/guide/owners/index.html   (copied below)
+#                 /_assets/*         -> shared CSS/JS                  (generated)
+#                 /clarity-bg.jpg, /favicon.svg                        (from web/static/)
 #                 /og-image.jpg -> derived from assets/project-context-cover.jpg
 #
-# The interactive guide keeps its single source of truth:
-# docs/project-context-complete-guide.html is copied here at build time so git
-# never carries a second 320K copy that can quietly drift from the original.
+# The two decks keep their single source of truth: docs/guide-builders.html and
+# docs/guide-owners.html are copied here at build time so git never carries a
+# second copy of a 200K file that can quietly drift from the original. They are
+# standalone documents, not site pages — they carry their own design system and
+# do not go through build_site.py.
+#
+# Order matters: build_site.py generates site/guide/index.html (the chooser),
+# and the decks are copied into subdirectories beneath it afterwards.
 #
 # Run locally, then preview:  python3 -m http.server -d site 8791
 set -euo pipefail
@@ -24,8 +33,9 @@ cd "$(dirname "$0")/.."
 
 python3 scripts/build_site.py
 
-mkdir -p site/guide
-cp docs/project-context-complete-guide.html site/guide/index.html
+mkdir -p site/guide/builders site/guide/owners
+cp docs/guide-builders.html site/guide/builders/index.html
+cp docs/guide-owners.html   site/guide/owners/index.html
 
 # The social/SEO card, derived from the repository's own cover art (1200x675)
 # rather than committed twice; og:image:height in the layout matches that size.

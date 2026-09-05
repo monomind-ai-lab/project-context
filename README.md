@@ -750,11 +750,20 @@ project-context doctor --target /path/to/repository
 
 The doctor checks:
 
-- required core files;
-- installed scaffold version;
-- freshness of `NOW.md`;
-- duplicate decision and learning IDs;
-- broken relative Markdown links;
+- required core files, the marker, and the installed product version —
+  `template-update-available` names the version you have and the one available;
+- **record conformance** — the six required frontmatter keys, the status
+  vocabulary for that record's kind, and the shape of every reference;
+- registry navigability — freshness of `NOW.md`, duplicate decision and
+  learning IDs, and broken relative Markdown links;
+- **evidence anchors** — `evidence-drift` where a cited file moved on,
+  `evidence-unverifiable` where the commit is unknown;
+- **the pushed set** — each pushed file against its stamp in the marker;
+  `pushed-file-modified` is an error, and it names the Hub as the place to
+  make the change instead;
+- **plan conformance** — every `PLAN.md` item against the epic it names in
+  `blueprint/EPIC.md`. Silent in a repository with no Hub;
+- the legacy `context-hub/1` schema, wherever a superseded install left it;
 - **reachability** — whether anything still delivers this protocol to an agent:
   the managed instruction block, the harness skill pointers, and any declared
   session hooks whose commands must resolve to files that exist.

@@ -34,7 +34,7 @@
       </article>
       <article class="check reveal">
         <h3 data-i18n="prom.c3.title">Review, never migrate</h3>
-        <p data-i18n="prom.c3.body">Unknown or overlapping memory — old status files, ADRs, lessons folders — is reviewed and classified, never migrated behind your back.</p>
+        <p data-i18n="prom.c3.body">Unknown or overlapping memory — old status files, ADRs, lessons folders — is reviewed and classified, never migrated behind your back. <code>project-context consolidate</code> is that read-only sweep. It was called <code>review</code> until 0.8.0; <code>review</code> now names the standing report of what is waiting on a person.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="prom.c4.title">Halt before harm</h3>
@@ -46,7 +46,7 @@
       </article>
       <article class="check reveal">
         <h3 data-i18n="prom.c6.title">A small, inspectable footprint</h3>
-        <p data-i18n="prom.c6.body">13 files. One skill. Zero runtime dependencies — stdlib Python 3.10+. The installer itself is never copied into your repo.</p>
+        <p data-i18n="prom.c6.body">18 files. One skill. Zero runtime dependencies — stdlib Python 3.10+. The installer itself is never copied into your repo.</p>
       </article>
     </div>
   </div>
@@ -71,8 +71,8 @@
         </div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
-          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Preview command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
-          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --dry-run" aria-label="Copy the preview command" data-i18n-attr="aria-label:cta.copy">
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Preview command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--install-skills</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --dry-run" aria-label="Copy the preview command" data-i18n-attr="aria-label:cta.copy">
             <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
             <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -86,8 +86,8 @@
         </div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
-          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Apply command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
-          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the apply command" data-i18n-attr="aria-label:cta.copy">
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Apply command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--install-skills</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply" aria-label="Copy the apply command" data-i18n-attr="aria-label:cta.copy">
             <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
             <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -96,13 +96,13 @@
 
       <div class="cmd" data-cmd>
         <div class="cmd-head">
-          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once, keep init / inspect / review / doctor on your path</span>
+          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once and the whole CLI stays on your path — init, update, capture, inspect, context, onboard, review, consolidate, doctor</span>
           <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
         </div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
-          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-comment">&amp;&amp;</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
-          <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context && project-context init --target . --dry-run" aria-label="Copy the pipx command" data-i18n-attr="aria-label:cta.copy">
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="pipx command"><span class="t-cmd">pipx install</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-comment">&amp;&amp;</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--install-skills</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="pipx install git+https://github.com/monomind-ai-lab/project-context && project-context init --target . --install-skills --dry-run" aria-label="Copy the pipx command" data-i18n-attr="aria-label:cta.copy">
             <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
             <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -112,6 +112,10 @@
 
     <div class="anchor-note reveal">
       <p data-i18n="inst.onboard"><b>One question before anything else.</b> The initializer asks whether the repository is brand-new or existing — because an existing project may already hold status files, ADRs or lessons that deserve review, and a brand-new one has nothing to review. It then adapts to software, document, research, writing, mixed or general work, proposes the profile and the exact file changes, and waits for approval.</p>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p><span data-i18n="inst.nohub"><b>Nothing in this repository ever reaches out to a Hub.</b> There is no call home, no registration, no credential. Project Context is a complete, offline product on its own. Where an owner does run a Project Hub, the direction is one way by construction: what they send arrives as a pull request you review like any other, and you never gain — or need — access to theirs.</span> <a href="/project-hub/" data-i18n="inst.hubLink">What a Project Hub is →</a></p>
     </div>
   </div>
 </section>
@@ -124,7 +128,7 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="har.eyebrow">per harness</span></span>
       <h2 class="section-title" id="harnesses-title" data-i18n="har.title">How your agent finds it</h2>
-      <p class="section-lede" data-i18n="har.lede">Installation creates two complementary trigger paths, so no single harness is required: harnesses that support the Agent Skills convention discover the installed skill directly, and a managed block in the root agent instructions routes everything else. This is the whole block, verbatim:</p>
+      <p class="section-lede" data-i18n="har.lede">Installation creates two complementary trigger paths, so no single harness is required: harnesses that support the Agent Skills convention discover the installed skill directly, and a managed block in the root agent instructions routes everything else. The block now opens by declaring itself managed and naming <code>project-context update</code> as the thing that rewrites it, so nobody edits it in good faith. This is the whole block, verbatim:</p>
     </div>
 
     <div class="block-wrap reveal">
@@ -137,10 +141,14 @@
         <div class="panel-body md notranslate" translate="no">
           <p class="marker">&lt;!-- project-context:start --&gt;</p>
           <p class="h2"><span class="hash" aria-hidden="true">##</span> Project Context</p>
-          <p class="blk">Before substantial repository work, read <span class="tick">`project-context/SKILL.md`</span> and <span class="tick">`project-context/NOW.md`</span>, then search <span class="tick">`project-context/DECISIONS.md`</span> and <span class="tick">`project-context/LEARNINGS.md`</span> for relevant constraints and evidence. Update project context at meaningful milestones and handoffs. Confirm important claims against the repository's primary artifacts and evidence. Treat generated indexes and wikis as auxiliary views, not authority.</p>
+          <p class="blk"><b>Managed region.</b> <span class="tick">`project-context update`</span> rewrites everything between these markers and nothing outside them — the rest of the file is yours. Leave both markers in place; a broken pair stops the update rather than being repaired.</p>
+          <p class="blk">Before substantial work, run <span class="tick">`project-context context --task "&lt;one line&gt;"`</span>, or read <span class="tick">`project-context/NOW.md`</span> and <span class="tick">`project-context/PLAN.md`</span> if the CLI is not available. Search <span class="tick">`DECISIONS.md`</span>, <span class="tick">`LEARNINGS.md`</span>, and <span class="tick">`QUESTIONS.md`</span> for constraints touching the files you are about to change.</p>
+          <p class="blk">When planning, read <span class="tick">`project-context/blueprint/`</span> first: <span class="tick">`EPIC.md`</span> is the goal, <span class="tick">`ARCHITECTURE.md`</span> the shape to keep. Every <span class="tick">`PLAN.md`</span> item names the epic item it serves.</p>
+          <p class="blk"><span class="tick">`project-context/global/`</span> and <span class="tick">`project-context/blueprint/`</span> are owner-authored and read-only here. To change one, run <span class="tick">`project-context capture --kind proposal`</span> or file the question in <span class="tick">`QUESTIONS.md`</span>; it reaches the owner on their next pull.</p>
+          <p class="blk">Record decisions, learnings, and questions as they happen — in the registries, or with <span class="tick">`project-context capture`</span> when the judgement can wait.</p>
           <p class="marker">&lt;!-- project-context:end --&gt;</p>
         </div>
-        <p class="panel-foot" data-i18n="har.blockfoot">everything outside these two markers is never touched</p>
+        <p class="panel-foot" data-i18n="har.blockfoot">everything outside these two markers is never touched — where install had to create the file, even the short header above the block sits outside them, yours to rewrite</p>
       </article>
     </div>
 
@@ -229,7 +237,7 @@
 
     <ul class="proof reveal">
       <li data-i18n="ver.p1">required core files</li>
-      <li data-i18n="ver.p2">installed scaffold version</li>
+      <li data-i18n="ver.p2">the installed version against the current release</li>
       <li data-i18n="ver.p3">NOW.md freshness</li>
       <li data-i18n="ver.p4">duplicate decision and learning IDs</li>
       <li data-i18n="ver.p5">broken relative links</li>
@@ -244,11 +252,67 @@
 
 <hr class="hairline">
 
-<!-- =========================== 06 · UNINSTALL =========================== -->
+<!-- ============================ 06 · UPDATE ============================ -->
+<section class="section" id="update" aria-labelledby="update-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="upd.eyebrow">stay current</span></span>
+      <h2 class="section-title" id="update-title" data-i18n="upd.title">Installed months ago? That is what update is for</h2>
+      <p class="section-lede" data-i18n="upd.lede"><code>init</code> is create-only, so it upgrades nothing: a file already present is preserved, which is right for a record and wrong for an out-of-date copy of a script. <code>update</code> is the other half — and like everything else here, it is local only. Nothing in it reaches a network.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="upd.step1">1 · the exact plan — nothing is written</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Update preview command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context update</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context update --target . --dry-run" aria-label="Copy the update preview command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="upd.step2">2 · apply the plan you just read</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Update apply command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context update</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context update --target . --apply" aria-label="Copy the update apply command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ul class="proof reveal">
+      <li data-i18n="upd.p1">refreshes what the tool owns — the skill, its scripts, the managed blocks, the generated indexes</li>
+      <li data-i18n="upd.p2">creates a scaffold file your install predates; never touches a record that already exists</li>
+      <li data-i18n="upd.p3">verifies anything a Hub pushed against its stamp and reports — it never rewrites it</li>
+      <li data-i18n="upd.p4">runs the doctor at the end · running it twice changes nothing the second time</li>
+    </ul>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="upd.note"><b>The doctor is what tells you an update is waiting.</b> <code>template-update-available</code> is a warning, and its detail names both numbers and the command — installed X, available Y, run <code>project-context update</code>. There is one version number per product, read from its own <code>VERSION</code> file.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 07 · UNINSTALL =========================== -->
 <section class="section" id="uninstall" aria-labelledby="uninstall-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="un.eyebrow">uninstall</span></span>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="un.eyebrow">uninstall</span></span>
       <h2 class="section-title" id="uninstall-title" data-i18n="un.title">Leaving is four deletions</h2>
       <p class="section-lede" data-i18n="un.lede">There is no uninstall command because nothing needs one: everything the installer creates is a plain file in your repo. Removal is deleting them.</p>
     </div>
@@ -268,7 +332,7 @@
       </article>
       <article class="check reveal">
         <h3 data-i18n="un.c4.title">If you opted into hooks</h3>
-        <p data-i18n="un.c4.body">Remove the two Project Context entries from <code>.claude/settings.json</code> — they are the ones whose commands call <code>context_triggers.py</code>. Hooks exist only if you explicitly opted in.</p>
+        <p data-i18n="un.c4.body">Remove the three Project Context hook entries from <code>.claude/settings.json</code> — two on <code>SessionStart</code> and one on <code>Stop</code>. They are the ones whose commands call <code>context_packet.py</code> or <code>context_triggers.py</code>; every other hook in the file is yours and was never ours. Hooks exist only if you explicitly opted in.</p>
       </article>
     </div>
   </div>
@@ -288,6 +352,7 @@
       <div class="cta-actions">
         <a class="btn btn-primary" href="/docs/records/" data-i18n="next.cta">The three records, annotated</a>
         <a class="btn btn-secondary" href="/docs/operate/" data-i18n="next.cta2">The session loop</a>
+        <a class="btn btn-secondary" href="/project-hub/" data-i18n="next.cta3">Running several repositories? → Project Hub</a>
       </div>
     </div>
   </div>

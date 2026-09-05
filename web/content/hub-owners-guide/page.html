@@ -1,0 +1,864 @@
+<!-- ============================== PAGE HEAD ============================== -->
+<section class="hero" id="top" aria-labelledby="page-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span class="notranslate" translate="no">Project Hub</span>&nbsp;<span aria-hidden="true">·</span>&nbsp;<span data-i18n="og.badge">Owner's guide</span></p>
+
+    <h1 class="hero-title" id="page-title" data-i18n="og.hero.title">The <b>how</b>, from setup to every gate.</h1>
+
+    <p class="hero-sub" data-i18n="og.hero.sub"><a href="/project-hub/">What a Hub is and why it exists</a> is the product page next door. This one is the reference an administrator keeps open: the activation walkthrough, the annotated tree, every command with its real flags and refusals, the exact lists of what travels and what never does, and the budgets that stop a push.</p>
+
+    <ul class="hero-chips">
+      <li class="chip notranslate" translate="no">init</li>
+      <li class="chip notranslate" translate="no">pull</li>
+      <li class="chip notranslate" translate="no">push</li>
+      <li class="chip notranslate" translate="no">doctor</li>
+    </ul>
+
+    <p class="hero-ver notranslate" translate="no">Project Hub 0.2.0 · Project Context 0.10.0</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 01 · SET UP ============================ -->
+<section class="section" id="setup" aria-labelledby="setup-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="og.setup.eyebrow">setting one up</span></span>
+      <h2 class="section-title" id="setup-title" data-i18n="og.setup.title">Three moves, then one conversation</h2>
+      <p class="section-lede" data-i18n="og.setup.lede">You make the repository; an agent makes it yours. Nothing here needs a plugin, a service, or an account beyond the Git host you already use.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.setup.s1.title">Make a private repository from the scaffold, and clone it</h3>
+        <p data-i18n="og.setup.s1.body">Fork or copy the public scaffold into a <b>private</b> repository of your own. That repository is your Hub, and it stays private — builders are never invited to it, which is the entire governance model.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.setup.s2.title">Open the folder in the tool you already work in</h3>
+        <p data-i18n="og.setup.s2.body">Claude Code or Codex. Activation is a conversation with an agent that has file access to the folder — no Obsidian, no shell script, no build step.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.setup.s3.title">Ask for it</h3>
+        <p data-i18n="og.setup.s3.body">In Claude Code the scaffold ships the agent at <code>.claude/agents/hub-onboarding.md</code>, so <b>set this up</b>, <b>activate the hub</b>, or <b>onboard me</b> dispatches it. In any other tool, paste the one line below instead — it points at <code>ADAPTER-PROMPT.md</code>, which is the same seven steps.</p>
+      </article>
+    </div>
+
+    <div class="prompt-card card reveal">
+      <div class="prompt-bar">
+        <span class="prompt-label" data-i18n="og.setup.prompt.label">activation prompt · any tool with file access</span>
+        <button type="button" class="cmd-btn" data-copy="Read ADAPTER-PROMPT.md at the root of this folder and follow it." aria-label="Copy the activation prompt" data-i18n-attr="aria-label:cta.copy">
+          <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+          <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="prompt-text notranslate" translate="no">Read <span class="tick">`ADAPTER-PROMPT.md`</span> at the root of this folder and follow it.</p>
+    </div>
+
+    <h3 class="sub-title reveal" data-i18n="og.setup.what.title">What the activation agent actually does</h3>
+    <p class="sub-lede reveal" data-i18n="og.setup.what.lede">Seven steps, one pass. It asks at most one question per step, and only where a step calls for one.</p>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.setup.th.step">Step</th>
+            <th scope="col" data-i18n="og.setup.th.does">What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r1.step">1 · Identify the host</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r1.does">Works out which tool it is running in, then answers two capability questions in writing: can this host dispatch subagents from files on disk, and can it read and write files in this folder. A chat-only assistant is told to stop and ask for a tool with file access rather than pretending.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r2.step">2 · Personalise, once</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r2.does">Scans for <code>&#123;&#123;TOKEN&#125;&#125;</code> placeholders, asks for every value in one message, and records the answers in <code>HUB-OWNER.md</code> at the root. It lives at the root deliberately: the push allow-list covers <code>global/</code> and <code>blueprint/</code> only, so your own details cannot travel into a repository by accident.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r3.step">3 · Write the host pointer</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r3.does">One thin file pointing at <code>AGENTS.md</code> — <code>CLAUDE.md</code> for Claude Code, <code>GEMINI.md</code> for Gemini CLI, <code>.cursor/rules/project-hub.mdc</code> for Cursor. Codex gets nothing, because it reads <code>AGENTS.md</code> directly and that file is already the contract. A pointer never restates a rule.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r4.step">4 · Seed <code>global/</code></span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r4.does">Walks you through identity, guardrails and workflows in that order, then writes <code>global/SUMMARY.md</code> routing to whichever now has content. A file still carrying <code>&lt;!-- project-hub:unfilled --&gt;</code> is an untouched seed it may write; a file without that line is your work, and it is skipped.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r5.step">5 · Register the first project</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r5.does">Asks for one repository and whether Project Context is already installed there. No install yet means <code>init</code>; already installed means <code>pull</code>, then <code>push</code> when <code>global/</code> holds something worth sending. Not now is a fine answer — a Hub with no projects is a working Hub.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r6.step">6 · Offer Obsidian</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r6.does">Says first that it is optional, then what it adds. If you say yes it tells you how to open the folder as a vault and install plugins from Obsidian's own browser. It writes no plugin code and creates no <code>.obsidian/plugins/</code> directory.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Step" data-i18n-attr="data-label:og.setup.th.step"><span class="cmp-name" data-i18n="og.setup.r7.step">7 · Report back</span></td>
+            <td data-label="What it does" data-i18n-attr="data-label:og.setup.th.does"><span data-i18n="og.setup.r7.does">Numbers, not adjectives: host and model, subagent availability, tokens replaced, the pointer file written or skipped, each <code>global/</code> file written or skipped and which still carry the unfilled marker, the project registered, the Obsidian outcome, every path written, every path skipped with its reason, a confirmation that <code>AGENTS.md</code> was not touched, and the one command worth running next.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="og.setup.rerun"><b>Running it again is safe.</b> Every step checks before it writes, skips anything you have customised, and counts the skip. A second activation in a second tool on the same folder is an ordinary thing to do.</p>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="og.setup.callout.label">the honest version of “it never pushes”</span>
+      <p data-i18n="og.setup.callout.body">The activation agent runs with file tools only — no shell, no network. It can read, write and edit files in this folder and nothing else. So “never runs <code>git init</code>, never adds a remote, never pushes” is a fact about what it is <em>able</em> to do, not a promise it is keeping. Anything touching Git is yours to run, or belongs to the commands below.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 02 · TREE ============================= -->
+<section class="section" id="tree" aria-labelledby="tree-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="og.tree.eyebrow">the tree</span></span>
+      <h2 class="section-title" id="tree-title" data-i18n="og.tree.title">Every folder, and who owns it</h2>
+      <p class="section-lede" data-i18n="og.tree.lede">Three kinds of content live here, and knowing which one you are looking at tells you whether you may write it: authored here and pushed down, copied up and read-only, or yours alone and going nowhere.</p>
+    </div>
+
+    <article class="panel card reveal">
+      <div class="panel-bar">
+        <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="panel-file notranslate" translate="no">your-hub/ · private repository</span>
+      </div>
+      <div class="panel-body treewrap">
+<pre class="tree notranslate" translate="no" aria-label="File tree of a Project Hub"><span class="tr-dir">your-hub/</span>
+├── <span class="tr-file">AGENTS.md</span>                     <span class="tr-note" data-i18n="og.tree.n1">← the contract. One file, read first, never duplicated</span>
+├── <span class="tr-file">CLAUDE.md</span>                     <span class="tr-note" data-i18n="og.tree.n2">← a thin pointer to it. Never a copy</span>
+├── <span class="tr-file">ADAPTER-PROMPT.md</span>             <span class="tr-note" data-i18n="og.tree.n3">← the seven activation steps, for a host with no agent format</span>
+├── <span class="tr-dir">.claude/agents/</span>
+│   └── <span class="tr-file">hub-onboarding.md</span>         <span class="tr-note" data-i18n="og.tree.n4">← the same seven steps, dispatchable in Claude Code</span>
+├── <span class="tr-dir">global/</span>                       <span class="tr-note" data-i18n="og.tree.n5">← what you author; the pushed subset reaches repositories</span>
+│   ├── <span class="tr-rec">SUMMARY.md</span> <span class="tr-rec">GUARDRAILS.md</span> <span class="tr-rec">WORKFLOWS.md</span>
+│   ├── <span class="tr-file">IDENTITY.md</span> <span class="tr-file">GOALS.md</span> <span class="tr-file">RESOURCES.md</span> <span class="tr-file">OWNERS.md</span>
+│   └── <span class="tr-dir">people/ agents/ skills/ shared/</span>
+├── <span class="tr-dir">projects/</span>
+│   └── <span class="tr-dir">&lt;repo-id&gt;/</span>
+│       ├── <span class="tr-file">MARK.md</span>               <span class="tr-note" data-i18n="og.tree.n6">← remote, host, default branch, visibility, builders, links</span>
+│       ├── <span class="tr-file">SUMMARY.md</span>            <span class="tr-note" data-i18n="og.tree.n7">← your summary of it, ≤ 150 words</span>
+│       ├── <span class="tr-dir">blueprint/</span>
+│       │   ├── <span class="tr-rec">EPIC.md</span>           <span class="tr-note" data-i18n="og.tree.n8">← authored here, pushed down, read-only there</span>
+│       │   └── <span class="tr-rec">ARCHITECTURE.md</span>
+│       └── <span class="tr-dir">pulled/</span>               <span class="tr-note" data-i18n="og.tree.n9">← their records, stamped. Never edit; the next pull overwrites you</span>
+├── <span class="tr-dir">owners_window/</span>                <span class="tr-note" data-i18n="og.tree.n10">← yours. Never pushed, never linted, never pulled into</span>
+├── <span class="tr-file">registry.md</span>                   <span class="tr-note" data-i18n="og.tree.n11">← every known repository, its mark, its last pull and push</span>
+├── <span class="tr-dir">guides/</span>                       <span class="tr-note" data-i18n="og.tree.n12">← six short guides, one question each</span>
+├── <span class="tr-dir">skills/</span>                       <span class="tr-note" data-i18n="og.tree.n13">← the init, pull and push commands</span>
+├── <span class="tr-file">.project-hub.json</span>             <span class="tr-note" data-i18n="og.tree.n14">← the marker: schema, version, push allow-list, budgets</span>
+└── <span class="tr-dir">.obsidian/</span>                    <span class="tr-note" data-i18n="og.tree.n15">← configuration only. No plugin code</span></pre>
+      </div>
+      <p class="panel-foot" data-i18n="og.tree.foot">plain Markdown in Git · no database · no runtime dependency</p>
+    </article>
+
+    <p class="treenote reveal" data-i18n="og.tree.note"><code>owners_window/</code> is not in the read order at all — an agent reads it only when you name it. <code>projects/&lt;id&gt;/pulled/</code> is read when you need what the builders themselves wrote, and not before.</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 03 · COMMANDS =========================== -->
+<section class="section" id="commands" aria-labelledby="commands-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="og.cmd.eyebrow">the commands</span></span>
+      <h2 class="section-title" id="commands-title" data-i18n="og.cmd.title">Four commands, one shape</h2>
+      <p class="section-lede" data-i18n="og.cmd.lede">Run them from inside the Hub. <code>--hub</code> may be any path inside it — the tool walks upward looking for <code>.project-hub.json</code> and refuses to run if it never finds one. Both <code>--hub</code> and <code>--format</code> may be given before or after the subcommand.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.cmd.shape.label">the shape of every invocation</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Command shape"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-flag">[--hub PATH]</span> <span class="t-flag">[--format json|text]</span> <span class="t-sub">&lt;command&gt;</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py [--hub PATH] [--format json|text] &lt;command&gt;" aria-label="Copy the command shape" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.cmd.th.cmd">Command</th>
+            <th scope="col" data-i18n="og.cmd.th.moves">What moves</th>
+            <th scope="col" data-i18n="og.cmd.th.writes">Writes to</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Command" data-i18n-attr="data-label:og.cmd.th.cmd"><span class="cmp-name notranslate" translate="no">init &lt;repo&gt;</span></td>
+            <td data-label="What moves" data-i18n-attr="data-label:og.cmd.th.moves"><span data-i18n="og.cmd.r1.moves">Marks a repository, summarises it, installs Project Context into it, then pushes</span></td>
+            <td data-label="Writes to" data-i18n-attr="data-label:og.cmd.th.writes"><span data-i18n="og.cmd.r1.writes">The Hub, then the repository</span></td>
+          </tr>
+          <tr>
+            <td data-label="Command" data-i18n-attr="data-label:og.cmd.th.cmd"><span class="cmp-name notranslate" translate="no">pull [repo] [--all]</span></td>
+            <td data-label="What moves" data-i18n-attr="data-label:og.cmd.th.moves"><span data-i18n="og.cmd.r2.moves">That repository's authored set → <code>projects/&lt;id&gt;/pulled/</code></span></td>
+            <td data-label="Writes to" data-i18n-attr="data-label:og.cmd.th.writes"><span data-i18n="og.cmd.r2.writes">The Hub only — read-only against the repository</span></td>
+          </tr>
+          <tr>
+            <td data-label="Command" data-i18n-attr="data-label:og.cmd.th.cmd"><span class="cmp-name notranslate" translate="no">push [repo] [--all]</span></td>
+            <td data-label="What moves" data-i18n-attr="data-label:og.cmd.th.moves"><span data-i18n="og.cmd.r3.moves">The shareable <code>global/</code> subset and <code>projects/&lt;id&gt;/blueprint/</code> → the repository's <code>project-context/</code></span></td>
+            <td data-label="Writes to" data-i18n-attr="data-label:og.cmd.th.writes"><span data-i18n="og.cmd.r3.writes">The repository — on a branch, after you confirm</span></td>
+          </tr>
+          <tr>
+            <td data-label="Command" data-i18n-attr="data-label:og.cmd.th.cmd"><span class="cmp-name notranslate" translate="no">doctor</span></td>
+            <td data-label="What moves" data-i18n-attr="data-label:og.cmd.th.moves"><span data-i18n="og.cmd.r4.moves">Nothing. The shared Project Context doctor, run on the Hub</span></td>
+            <td data-label="Writes to" data-i18n-attr="data-label:og.cmd.th.writes"><span data-i18n="og.cmd.r4.writes">Nothing — read-only</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="checks reveal" style="margin-top:26px">
+      <article class="check">
+        <h3 data-i18n="og.cmd.c1.title">Nothing writes by accident</h3>
+        <p data-i18n="og.cmd.c1.body"><code>init</code>, <code>pull</code> and <code>push</code> each require exactly one of <code>--dry-run</code> or <code>--apply</code>; the pair is mutually exclusive and neither has a default, so an invocation that names neither is rejected by the parser. <code>doctor</code> takes neither, because it is read-only.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.cmd.c2.title">The plan is the report</h3>
+        <p data-i18n="og.cmd.c2.body"><code>--dry-run</code> prints exactly what would happen and writes nothing; <code>--apply</code> performs it and prints the same report refreshed. Re-runs are idempotent — a second <code>push</code> with nothing to send reports <code>unchanged</code> and creates no branch at all.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.cmd.c3.title">Read the exit code, not the tone</h3>
+        <p data-i18n="og.cmd.c3.body"><code>0</code> done, or nothing to do. <code>1</code> declined at the confirmation prompt, or the doctor found errors. <code>2</code> refused — a conflict, a blocked precondition, or a bad argument. <code>3</code> <code>init</code> got as far as it could and stopped at the install step.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 04 · PUSH ============================= -->
+<section class="section" id="push" aria-labelledby="push-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span class="notranslate" translate="no">push</span> <span data-i18n="og.push.eyebrow">— send your work down</span></span>
+      <h2 class="section-title" id="push-title" data-i18n="og.push.title">The only write into a repository the Hub does not live in</h2>
+      <p class="section-lede" data-i18n="og.push.lede">Which is why it is gated every single time. Read the plan first; the diff you approve on <code>--apply</code> is the one <code>--dry-run</code> already printed.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.push.step1">1 · plan and full diff — nothing is written</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Push dry-run command"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-sub">push</span> <span class="t-arg">notes-api</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py push notes-api --dry-run" aria-label="Copy the push dry-run command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.push.step2">2 · apply — writes, pushes the branch, opens a pull request</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Push apply command"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-sub">push</span> <span class="t-arg">notes-api</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py push notes-api --apply" aria-label="Copy the push apply command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title reveal" data-i18n="og.push.gate.title">The gate, in the order it runs</h3>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g1.title">Nothing to send stops here</h3>
+        <p data-i18n="og.push.g1.body">If the repository already matches the Hub, it says so and stops. No branch is created.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g2.title">The target's tree must be clean, and not the default branch</h3>
+        <p data-i18n="og.push.g2.body">Uncommitted changes in the repository are a refusal — commit or stash first. The default branch is refused outright. An existing sync branch is reused rather than rejected.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g3.title">The unified diff is printed, and you are asked</h3>
+        <p data-i18n="og.push.g3.body">The prompt says plainly that this writes into the repository, pushes the branch to the remote, and opens a pull request against the default branch — and that merging stays yours. <code>--yes</code> skips it; a non-interactive session without <code>--yes</code> is <b>declined</b>, never assumed.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g4.title">Switch, write, stage only its own paths, commit</h3>
+        <p data-i18n="og.push.g4.body">It switches to <code>hub-sync</code>, creating it only if absent, writes the files, stages exactly the paths it wrote, and makes one commit carrying <code>Source-Commit:</code> and <code>Project-Id:</code> trailers.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g5.title">The branch is pushed with <code>--set-upstream</code></h3>
+        <p data-i18n="og.push.g5.body">Never the default branch, never <code>--force</code>. If the push fails, the report says the branch is committed locally and hands you the exact command to retry.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.push.g6.title">A pull request is opened against the default branch</h3>
+        <p data-i18n="og.push.g6.body">An already-open request for that branch is <b>updated, not duplicated</b>. <code>gh</code> is optional: without it the push has still happened — the part that needs credentials — and the report hands back a compare URL to open the request by hand.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="og.push.callout.label">one long-lived branch, not one per push</span>
+      <p data-i18n="og.push.callout.body"><code>hub-sync</code> is reused. Repeated syncs stack a commit on it and update the same pull request — easier to review than a scatter of dated branches, and it is <em>why</em> nothing here force-pushes, so a reviewer's place in an open request survives. <code>--branch &lt;name&gt;</code> overrides for a one-off. <b>Merging stays with the repository</b>; the tool has no path to it, never merges, never creates a remote, and never runs <code>git init</code>.</p>
+    </div>
+
+    <h3 class="sub-title reveal" data-i18n="og.push.ref.title">Refusals, before a byte moves</h3>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.push.th.cond">Condition</th>
+            <th scope="col" data-i18n="og.push.th.why">Why, and what to do</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f1.cond">No <code>project-context/.project-context.json</code> in the repository</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f1.why">Project Context is not installed there. Run <code>init</code>.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f2.cond">A copy's hash does not match its stamp</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f2.why">It was edited where it landed. That is a conflict, not an overwrite — the place to change it is the Hub.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f3.cond">A file is already at the destination with no stamp</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f3.why">This push did not put it there, so it will not silently claim it.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f4.cond">The Hub has uncommitted changes in what would be sent</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f4.why">A stamp naming a commit that does not contain those bytes is a false provenance record. Commit the Hub, or pass <code>--allow-dirty</code>.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f5.cond">The shared doctor reports errors in the Hub</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f5.why">Fix them, or pass <code>--skip-doctor</code>.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f6.cond">Over budget</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f6.why">The file is named, with how many words to trim. See the budgets below.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f7.cond">The branch already exists under <code>--branch</code>, or is the default branch</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f7.why">Push works on a branch, always. Pass a different <code>--branch &lt;name&gt;</code>.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Condition" data-i18n-attr="data-label:og.push.th.cond"><span data-i18n="og.push.f8.cond">A destination is a symlink</span></td>
+            <td data-label="Why, and what to do" data-i18n-attr="data-label:og.push.th.why"><span data-i18n="og.push.f8.why">Never followed. Following a link is how a copy escapes the tree it was meant to stay inside.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title reveal" data-i18n="og.push.opt.title">Options</h3>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.push.th.opt">Option</th>
+            <th scope="col" data-i18n="og.push.th.does">Does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--all</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o1">Every registered repository with a readable working copy</span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--branch NAME</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o2">Use this branch in the target instead of <code>hub-sync</code></span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--yes</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o3">Skip the confirmation prompt</span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--allow-dirty</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o4">Push from a Hub with uncommitted changes in the sent set</span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--skip-doctor</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o5">Do not run the shared doctor on the Hub first</span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--doctor PATH</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o6">Where the shared Project Context doctor lives</span></td>
+          </tr>
+          <tr>
+            <td data-label="Option" data-i18n-attr="data-label:og.push.th.opt"><span class="cmp-name notranslate" translate="no">--prune</span></td>
+            <td data-label="Does" data-i18n-attr="data-label:og.push.th.does"><span data-i18n="og.push.o7">Remove copies the Hub no longer publishes</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 05 · PULL ============================= -->
+<section class="section" id="pull" aria-labelledby="pull-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span class="notranslate" translate="no">pull</span> <span data-i18n="og.pull.eyebrow">— bring their records up</span></span>
+      <h2 class="section-title" id="pull-title" data-i18n="og.pull.title">Read-only against the repository, and your inbox</h2>
+      <p class="section-lede" data-i18n="og.pull.lede">It reads the default branch through the git object database — never the working tree, never the index, never a branch. A test asserts the target's <code>HEAD</code>, its status, and every file's modification time are byte-identical before and after.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.pull.label">pull every registered repository</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Pull command"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-sub">pull</span> <span class="t-flag">--all</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py pull --all --apply" aria-label="Copy the pull command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checks reveal" style="margin-top:26px">
+      <article class="check">
+        <h3 data-i18n="og.pull.c1.title">The authored set is an allow-list</h3>
+        <p data-i18n="og.pull.c1.body"><code>SUMMARY.md</code>, <code>NOW.md</code>, <code>PLAN.md</code>, <code>DECISIONS.md</code>, <code>LEARNINGS.md</code>, <code>QUESTIONS.md</code>, <code>tasks/</code>, <code>decisions/</code>, <code>questions/</code>, <code>inbox/</code>, <code>indexes/</code>. Everything else is excluded because it is not on the list — which is why <code>sessions/</code>, the marker, the protocol text and the whole pushed set never arrive here. Symlinks and submodules are skipped and reported, never followed.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.pull.c2.title">Every mirror carries a stamp</h3>
+        <p data-i18n="og.pull.c2.body"><code>pulled/STAMP.json</code> records the repository, the branch, the commit, the time, the Hub's version, and a <code>sha256</code> per file. A pull that finds nothing new rewrites nothing — including the stamp.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.pull.c3.title">It keeps the Hub's own bookkeeping current</h3>
+        <p data-i18n="og.pull.c3.body">It writes <code>projects/&lt;id&gt;/MARK.md</code> if it is absent — a pulled project with no mark is unaddressable — refreshes the managed state line in <code>projects/&lt;id&gt;/SUMMARY.md</code> when that file has one, and updates the registry's last-pull column.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.pull.c4.title">Records that disappeared are reported, not deleted</h3>
+        <p data-i18n="og.pull.c4.body">A mirror file the repository no longer has is reported as <code>stale</code>. <code>--prune</code> deletes those instead. <code>--fetch</code> refreshes remote-tracking refs first and is the only thing here that reaches the network — it writes only remote-tracking refs in your own clone. <code>--branch</code> reads a branch other than the default.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="og.pull.callout.label">this is also your inbox</span>
+      <p data-i18n="og.pull.callout.body">Questions and proposals a builder raised arrive here, because it is the only channel they have — they cannot reach the Hub. Its one weakness is latency: nothing moves until you pull. Make <code>pull --all</code> routine.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================== 06 · INIT AND DOCTOR ======================== -->
+<section class="section" id="init" aria-labelledby="init-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span class="notranslate" translate="no">init</span> <span data-i18n="og.init.eyebrow">and</span> <span class="notranslate" translate="no">doctor</span></span>
+      <h2 class="section-title" id="init-title" data-i18n="og.init.title">Onboarding a repository, and checking your own</h2>
+      <p class="section-lede" data-i18n="og.init.lede"><code>init</code> is for a repository that has <b>no</b> Project Context yet. Five steps, in order, stopping at the first failure.</p>
+    </div>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.init.label">plan the onboarding — nothing is written</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Init command"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-sub">init</span> <span class="t-arg">../notes-api</span> <span class="t-flag">--dry-run</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py init ../notes-api --dry-run" aria-label="Copy the init command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checks reveal" style="margin-top:26px">
+      <article class="check">
+        <h3 data-i18n="og.init.c1.title">It derives an id, then writes the mark and the first summary</h3>
+        <p data-i18n="og.init.c1.body">The id is the remote's repository name slugified, or the directory name; <code>--id</code> overrides it. <code>projects/&lt;id&gt;/MARK.md</code> comes from the template with the remote, host, default branch, visibility, languages and entry points filled in. <code>SUMMARY.md</code> is a generated first draft you edit. Both are <b>create-only</b> — an existing one is reported as <code>preserve_existing</code> and left exactly as it was — and the project is registered in <code>registry.md</code>.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.init.c2.title">Install and push share one gate, one branch, one confirmation</h3>
+        <p data-i18n="og.init.c2.body">Steps 1 to 3 touch only the Hub. Steps 4 and 5 both write to someone else's repository, so they run on a single branch — <code>project-hub/init-&lt;id&gt;-&lt;YYYYMMDD&gt;</code> unless <code>--branch</code> names another. Installing on one branch and pushing on another would leave the install uncommitted and the push refusing the tree it had just dirtied. The install is committed as <code>chore(project-context): install Project Context</code>; the push is a second commit on the same branch, and then the ordinary push gate takes over. <code>--no-push</code> stops after the install.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.init.c3.title">It does not carry the initializer</h3>
+        <p data-i18n="og.init.c3.body">A Hub carries the Project Context <em>protocol</em> skill, not its installer. So <code>init</code> asks, in order: <code>--installer PATH</code>, the <code>PROJECT_CONTEXT_INIT</code> environment variable, <code>tools.project_context_init</code> in <code>.project-hub.json</code>, then <code>project-context</code> on <code>PATH</code>. If none answers it <b>exits 3 having written nothing into your repository</b> — the mark, the summary and the registry row are still there and still correct. Point it at the initializer and re-run; the create-only plan makes the second run safe.</p>
+      </article>
+      <article class="check">
+        <h3 data-i18n="og.init.c4.title">Refused when it should be</h3>
+        <p data-i18n="og.init.c4.body">When the repository already has <code>project-context/.project-context.json</code> — <code>push</code> is the right command then — when the target is not a git repository, when the derived id is not a slug, when the target's working tree is dirty, when the branch would be the default branch or already exists, and when a non-interactive session did not pass <code>--yes</code>. If the initializer itself fails it exits <code>3</code>: the repository is left on the branch holding whatever the initializer wrote, recoverable with one <code>git switch</code> and one branch delete.</p>
+      </article>
+    </div>
+
+    <h3 class="sub-title reveal"><span class="notranslate" translate="no">doctor</span> <span data-i18n="og.init.doc.title">— one doctor, not a second one</span></h3>
+    <p class="sub-lede reveal" data-i18n="og.init.doc.lede">A Hub is itself an ordinary Project Context install, so the health check it runs on itself is the same code every repository runs — called, never copied. The module is found at <code>.agents/skills/project-context/scripts/context_doctor.py</code>, or wherever <code>PROJECT_CONTEXT_DOCTOR</code> or <code>--doctor</code> says. If it is missing, the command tells you it is missing rather than guessing. Findings inside <code>owners_window/</code> are dropped before the count, and the command exits <code>1</code> if any error survives.</p>
+
+    <div class="cmd-stack reveal">
+      <div class="cmd cmd-sm" data-cmd>
+        <div class="cmd-head">
+          <span class="cmd-label" data-i18n="og.init.doc.label">run the doctor on the Hub · read-only</span>
+          <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
+        </div>
+        <div class="cmd-body">
+          <span class="cmd-prompt" aria-hidden="true">$</span>
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Hub doctor command"><span class="t-cmd">python3</span> <span class="t-url">skills/project-hub/scripts/project_hub.py</span> <span class="t-sub">doctor</span></code>
+          <button type="button" class="cmd-btn" data-copy="python3 skills/project-hub/scripts/project_hub.py doctor" aria-label="Copy the doctor command" data-i18n-attr="aria-label:cta.copy">
+            <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
+            <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 07 · EXPOSURE =========================== -->
+<section class="section" id="exposure" aria-labelledby="exposure-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="og.exp.eyebrow">what travels</span></span>
+      <h2 class="section-title" id="exposure-title" data-i18n="og.exp.title">What reaches a project repository, and what never does</h2>
+      <p class="section-lede" data-i18n="og.exp.lede">The decision worth understanding, because it is about exposure rather than convenience. A project repository may have collaborators who are not in your organisation.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.exp.th.class">Class</th>
+            <th scope="col" data-i18n="og.exp.th.files">Files</th>
+            <th scope="col" data-i18n="og.exp.th.why">Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Class" data-i18n-attr="data-label:og.exp.th.class"><span class="cmp-name" data-i18n="og.exp.r1.class">Pushed by default</span></td>
+            <td data-label="Files" data-i18n-attr="data-label:og.exp.th.files"><span class="notranslate" translate="no"><code>SUMMARY.md</code> · <code>GUARDRAILS.md</code> · <code>WORKFLOWS.md</code> · <code>skills/</code> · <code>shared/</code></span><span data-i18n="og.exp.r1.files"> — plus that project's <code>blueprint/</code></span></td>
+            <td data-label="Why" data-i18n-attr="data-label:og.exp.th.why"><span data-i18n="og.exp.r1.why">What a builder needs to do the work correctly. This is <code>push.global_include</code> in <code>.project-hub.json</code>, verbatim.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Class" data-i18n-attr="data-label:og.exp.th.class"><span class="cmp-name" data-i18n="og.exp.r2.class">Opt-in, per project</span></td>
+            <td data-label="Files" data-i18n-attr="data-label:og.exp.th.files"><span class="notranslate" translate="no"><code>GOALS.md</code> · <code>RESOURCES.md</code> · <code>people/</code> · <code>agents/</code></span></td>
+            <td data-label="Why" data-i18n-attr="data-label:og.exp.th.why"><span data-i18n="og.exp.r2.why">Objectives across every project, internal dashboards and environments, and a roster of people are each more sensitive than the guardrails a builder actually needs. Name one in that project's <code>push.global_include</code> when you want it there.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Class" data-i18n-attr="data-label:og.exp.th.class"><span class="cmp-name" data-i18n="og.exp.r3.class">Never, at any setting</span></td>
+            <td data-label="Files" data-i18n-attr="data-label:og.exp.th.files"><span class="notranslate" translate="no"><code>IDENTITY.md</code></span></td>
+            <td data-label="Why" data-i18n-attr="data-label:og.exp.th.why"><span data-i18n="og.exp.r3.why">Identity is the owner's or the organisation's voice and defaults, and it does not belong committed into someone else's checkout. A Hub whose configuration lists it does not get to push it: the entry is dropped from the allow-list and you are told which entry was refused.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Class" data-i18n-attr="data-label:og.exp.th.class"><span class="cmp-name" data-i18n="og.exp.r4.class">Filtered automatically</span></td>
+            <td data-label="Files" data-i18n-attr="data-label:og.exp.th.files"><span data-i18n="og.exp.r4.files">Any <code>README.md</code> under <code>global/</code>; any file still carrying <code>&lt;!-- project-hub:unfilled --&gt;</code></span></td>
+            <td data-label="Why" data-i18n-attr="data-label:og.exp.th.why"><span data-i18n="og.exp.r4.why">A README explains the Hub, not your organisation. An unfilled seed is a placeholder, and an empty guardrail in front of an agent is worse than no guardrail. Both are skipped <em>and reported</em>, so nothing goes missing quietly.</span></td>
+          </tr>
+          <tr>
+            <td data-label="Class" data-i18n-attr="data-label:og.exp.th.class"><span class="cmp-name" data-i18n="og.exp.r5.class">Not on the list at all</span></td>
+            <td data-label="Files" data-i18n-attr="data-label:og.exp.th.files"><span class="notranslate" translate="no"><code>global/OWNERS.md</code> · <code>owners_window/</code> · <code>templates/</code> · <code>docs/</code> · <code>skills/</code> · <code>guides/</code></span></td>
+            <td data-label="Why" data-i18n-attr="data-label:og.exp.th.why"><span data-i18n="og.exp.r5.why"><code>OWNERS.md</code> is deliberately excluded: it is a governance record for you and for <code>review</code>. The rest are Hub machinery. None of them needs a rule to stay put.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="og.exp.allow"><b>Push works from an allow-list, never a deny-list.</b> A path not named in <code>push.global_include</code> is not sent — so any folder you add to the Hub later is non-pushed by default and needs no special case to stay put. That asymmetry is the point: forgetting to add a deny rule leaks; forgetting to add an allow rule does not.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 08 · BUDGETS ============================ -->
+<section class="section" id="budgets" aria-labelledby="budgets-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">08</span> <span data-i18n="og.bud.eyebrow">the budgets</span></span>
+      <h2 class="section-title" id="budgets-title" data-i18n="og.bud.title">Checked before anything moves, not suggested</h2>
+      <p class="section-lede" data-i18n="og.bud.lede">The budget exists to keep what an agent loads small. Over budget is a refusal that names the file and how many words to trim — and when the whole subset is over, the report names the three widest files to start with.</p>
+    </div>
+
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="og.bud.th.path">Path</th>
+            <th scope="col" data-i18n="og.bud.th.words">Words</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Path" data-i18n-attr="data-label:og.bud.th.path"><span class="cmp-name notranslate" translate="no">global/SUMMARY.md</span></td>
+            <td data-label="Words" data-i18n-attr="data-label:og.bud.th.words"><span class="notranslate" translate="no">150</span></td>
+          </tr>
+          <tr>
+            <td data-label="Path" data-i18n-attr="data-label:og.bud.th.path"><span class="cmp-name" data-i18n="og.bud.r2.path">any other <code>global/</code> record</span></td>
+            <td data-label="Words" data-i18n-attr="data-label:og.bud.th.words"><span class="notranslate" translate="no">400</span></td>
+          </tr>
+          <tr>
+            <td data-label="Path" data-i18n-attr="data-label:og.bud.th.path"><span class="cmp-name" data-i18n="og.bud.r3.path">the whole pushed <code>global/</code> subset</span></td>
+            <td data-label="Words" data-i18n-attr="data-label:og.bud.th.words"><span class="notranslate" translate="no">2,000</span></td>
+          </tr>
+          <tr>
+            <td data-label="Path" data-i18n-attr="data-label:og.bud.th.path"><span class="cmp-name notranslate" translate="no">blueprint/EPIC.md</span></td>
+            <td data-label="Words" data-i18n-attr="data-label:og.bud.th.words"><span class="notranslate" translate="no">600</span></td>
+          </tr>
+          <tr>
+            <td data-label="Path" data-i18n-attr="data-label:og.bud.th.path"><span class="cmp-name notranslate" translate="no">blueprint/ARCHITECTURE.md</span></td>
+            <td data-label="Words" data-i18n-attr="data-label:og.bud.th.words"><span class="notranslate" translate="no">1,200</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="anchor-note reveal">
+      <p data-i18n="og.bud.count"><b>What counts as a word.</b> Frontmatter, fenced code blocks and HTML comments are stripped before counting — otherwise a record with one worked example would read as over budget while a wall of prose stayed under it. The numbers live in <code>.project-hub.json</code> under <code>push.budget_words</code>, and any positive integer you put there replaces the default. The identity rule is not overridable that way; the budgets are.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================= 09 · WINDOW ============================= -->
+<section class="section" id="window" aria-labelledby="window-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">09</span> <span class="notranslate" translate="no">owners_window/</span></span>
+      <h2 class="section-title" id="window-title" data-i18n="og.win.title">Your own room</h2>
+      <p class="section-lede" data-i18n="og.win.lede">Where you write about anything: future projects, reflections, ideas, a half-formed argument with yourself. Three negatives define it, and all three are structural rather than remembered.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.win.c1.title">Never pushed</h3>
+        <p data-i18n="og.win.c1.body">The allow-list guarantees it mechanically. <code>owners_window/</code> is not named in <code>push.global_include</code>, and push sends only what is named — so this is not a rule anyone has to remember to keep.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.win.c2.title">Never linted</h3>
+        <p data-i18n="og.win.c2.body">The doctor skips it — <code>lint.exclude</code> in <code>.project-hub.json</code> lists it, and every finding under that prefix is dropped before the error count. No frontmatter, no schema, no word budget. A place to think stops being one the moment it reports errors.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.win.c3.title">Never pulled into</h3>
+        <p data-i18n="og.win.c3.body">Nothing from a repository lands here. It is not in the read order either: an agent reads it only when you name it.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="og.win.callout.label">the way out</span>
+      <p data-i18n="og.win.callout.body">An idea that matures is <b>promoted</b> — a deliberate edit, an ordinary one, turning it into a <code>blueprint/EPIC.md</code> for a new project, a record in <code>global/</code>, or a <code>MARK.md</code> for a repository that does not exist yet. Freeform in, structured out. Nothing promotes itself.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================= 10 · PLANS AND COST ========================= -->
+<section class="section" id="plans" aria-labelledby="plans-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">10</span> <span data-i18n="og.plan.eyebrow">the two plans, and the cost</span></span>
+      <h2 class="section-title" id="plans-title" data-i18n="og.plan.title">Two records, two authors, two audiences</h2>
+      <p class="section-lede" data-i18n="og.plan.lede"><code>blueprint/EPIC.md</code> is yours: what the project is for and what must be true when it is done. <code>PLAN.md</code> in the repository is the builders': what this milestone does about it.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.plan.c1.title">A <code>Serves:</code> line connects them</h3>
+        <p data-i18n="og.plan.c1.body">Each <code>## M-NNN:</code> item in their <code>PLAN.md</code> carries a <code>- Serves:</code> line naming the epic item it advances. Keep an epic under 600 words and it stays the thing people actually read.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.plan.c2.title">A guardrail change means touching every repository</h3>
+        <p data-i18n="og.plan.c2.body"><code>push --all</code> makes it one command, but it is <em>N</em> branches and <em>N</em> pull requests. That is the honest cost, and there is no version of this design where it disappears.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.plan.c3.title">A repository nobody has pushed to lately goes stale</h3>
+        <p data-i18n="og.plan.c3.body">Though “quietly” overstates it: the doctor reads the push stamps and records how old the oldest one is, and the repository-side review raises <code>stale-snapshot</code> once that passes ninety days. The staleness is visible on their side before it is a surprise on yours.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.plan.c4.title">What you buy for it</h3>
+        <p data-i18n="og.plan.c4.body">Builders hold no permission on the Hub — not even read — and a project repository needs no network at all to work. There is no permission system to configure and no approval gate to trust.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 11 · BUILDERS ========================== -->
+<section class="section" id="builders" aria-labelledby="builders-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">11</span> <span data-i18n="og.bld.eyebrow">what your builders gained</span></span>
+      <h2 class="section-title" id="builders-title" data-i18n="og.bld.title">Three things that change what reaches you</h2>
+      <p class="section-lede" data-i18n="og.bld.lede">Your work in the Hub buys the people in the project repositories something concrete — and it changes what you can expect of a project before you pull it.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.bld.c1.title">They can answer a pushed record without being able to edit it</h3>
+        <p data-i18n="og.bld.c1.body">A builder who disagrees with a guardrail, an epic item, or an architecture record runs <code>project-context capture --kind proposal</code> or files a question in <code>QUESTIONS.md</code>. Either sits in their repository until your next pull — which is why <code>pull --all</code> needs to be routine. Nothing moves until you do it.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.bld.c2.title"><code>PLAN.md</code> is checked against the epic you pushed</h3>
+        <p data-i18n="og.bld.c2.body">A plan item that names no epic item is an <b>error</b> in their doctor. An epic item that no plan item serves is only a <b>warning</b> — the asymmetry is deliberate, because your epic is allowed to run ahead of the milestone in front of them. You see the error in <code>pulled/</code> before you see it in a pull request.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.bld.c3.title">They have a standing review of their own</h3>
+        <p data-i18n="og.bld.c3.body"><code>project-context review</code> lists what is waiting on a person in their repository, oldest first — including the <code>stale-snapshot</code> finding when the <code>global/</code> you pushed has not been refreshed in ninety days. That one is aimed at you.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ========================== 12 · NOT BUILT ========================== -->
+<section class="section" id="gaps" aria-labelledby="gaps-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">12</span> <span data-i18n="og.gap.eyebrow">not built yet</span></span>
+      <h2 class="section-title" id="gaps-title" data-i18n="og.gap.title">The honest gap list</h2>
+      <p class="section-lede" data-i18n="og.gap.lede">Everything above this section is built and tested. Everything in it is not, and naming it is cheaper than discovering it.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.gap.c1.title">The Hub's cross-project assembler</h3>
+        <p data-i18n="og.gap.c1.body">Asking the Hub a question that spans every project. Retrieval works inside a repository today, and a builder's packet sees their project and the global snapshot — which is the correct blast radius. Reading across <code>projects/</code> is the Hub's job, and it is not built.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.gap.c2.title">A Hub-side <code>review</code></h3>
+        <p data-i18n="og.gap.c2.body">The pending-items list sorted by oldest unanswered, across every project. The repository-side <code>project-context review</code> is built; the Hub does not yet aggregate them, so today you read what <code>pull</code> brought.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.gap.c3.title">A SQLite cache</h3>
+        <p data-i18n="og.gap.c3.body">Deliberately deferred until an automated query proves slow. Never in a project repository — Markdown and Git are the whole storage contract there.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 13 · GUIDES ============================ -->
+<section class="section" id="guides" aria-labelledby="guides-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">13</span> <span data-i18n="og.gd.eyebrow">the short route</span></span>
+      <h2 class="section-title" id="guides-title" data-i18n="og.gd.title">Six guides, one question each</h2>
+      <p class="section-lede" data-i18n="og.gd.lede">If you would rather read than talk, <code>guides/</code> in the scaffold answers one question per document. They live beside the code, so they cannot drift from it silently.</p>
+    </div>
+
+    <div class="guide-grid reveal">
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/what-the-hub-is.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">what-the-hub-is.md</span>
+        <span class="guide-q" data-i18n="og.gd.g1">What am I looking at — and what is it not?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/authored-and-pushed.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">authored-and-pushed.md</span>
+        <span class="guide-q" data-i18n="og.gd.g2">Which files may I edit, and where?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/add-a-project.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">add-a-project.md</span>
+        <span class="guide-q" data-i18n="og.gd.g3">How do I get a repository into the Hub?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/owners-window.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">owners-window.md</span>
+        <span class="guide-q" data-i18n="og.gd.g4">Where do I put an idea that is not a project yet?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/bring-in-a-builder.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">bring-in-a-builder.md</span>
+        <span class="guide-q" data-i18n="og.gd.g5">Someone else is joining a project — what do I do?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card guide-card" href="https://github.com/monomind-ai-lab/project-hub/blob/main/guides/obsidian.md" target="_blank" rel="noopener noreferrer">
+        <span class="guide-file notranslate" translate="no">obsidian.md</span>
+        <span class="guide-q" data-i18n="og.gd.g6">Should I open the Hub in Obsidian?</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- =========================== 14 · OBSIDIAN =========================== -->
+<section class="section" id="obsidian" aria-labelledby="obsidian-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">14</span> <span data-i18n="og.obs.eyebrow">optional, and meant it</span></span>
+      <h2 class="section-title" id="obsidian-title" data-i18n="og.obs.title">Obsidian is a way to look at the folder</h2>
+      <p class="section-lede" data-i18n="og.obs.lede">The Hub is a Git repository full of Markdown. Every command, every stamp and every check works with Obsidian never installed — nothing above depends on it.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="og.obs.c1.title">What it adds</h3>
+        <p data-i18n="og.obs.c1.body">Backlinks — a guardrail shows you every project record that mentions it. Graph and search across every project at once. And, with the Claudian plugin, an agent inside the vault, so you write and ask in the same window.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.obs.c2.title">Configuration only, no vendored plugin code</h3>
+        <p data-i18n="og.obs.c2.body">The scaffold ships <code>.obsidian/</code> configuration and nothing else. There is no <code>.obsidian/plugins/</code> directory and activation will not create one. Plugins are installed from Obsidian's community browser, updated by Obsidian, and licensed to you — not vendored here, where they would go stale and drag their licences into this distribution.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="og.obs.c3.title">The recommended list is a list, not an install</h3>
+        <p data-i18n="og.obs.c3.body">The plugin IDs this scaffold recommends are named in <code>.obsidian/community-plugins.json</code>, Claudian first. If a configuration file already exists, activation leaves it alone — your own settings win.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================== NEXT ============================== -->
+<section class="section" id="next" aria-labelledby="next-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">15</span> <span data-i18n="og.next.eyebrow">next</span></span>
+      <h2 class="section-title" id="next-title" data-i18n="og.next.title">Where to go from here</h2>
+      <p class="section-lede" data-i18n="og.next.lede">The argument for the Hub is next door; the scaffold itself is on GitHub; and the other half of the pair belongs to the people in the repositories.</p>
+    </div>
+    <div class="next-grid reveal">
+      <a class="card next-card" href="/project-hub/">
+        <span class="next-kicker" data-i18n="og.next.kicker1">the what and why</span>
+        <span class="next-name" data-i18n="og.next.card1">Project Hub — the product page</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="https://github.com/monomind-ai-lab/project-hub" target="_blank" rel="noopener noreferrer">
+        <span class="next-kicker" data-i18n="og.next.kicker2">the scaffold</span>
+        <span class="next-name notranslate" translate="no">monomind-ai-lab/project-hub</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="card next-card" href="/docs/builders-guide/">
+        <span class="next-kicker" data-i18n="og.next.kicker3">the other half</span>
+        <span class="next-name" data-i18n="og.next.card3">Builder's guide — working in a repository</span>
+        <span class="next-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
