@@ -39,9 +39,9 @@ MANAGED_BLOCK_WORD_BUDGET = 150
 MANAGED_BLOCK = """<!-- project-context:start -->
 ## Project Context
 
-**Managed region.** Project Context rewrites everything between these markers
-and nothing outside them — the rest of the file is yours. Leave both markers in
-place; a broken pair stops the update rather than being repaired.
+**Managed region.** `project-context update` rewrites everything between these
+markers and nothing outside them — the rest of the file is yours. Leave both
+markers in place; a broken pair stops the update rather than being repaired.
 
 Before substantial work, run `project-context context --task "<one line>"`, or
 read `project-context/NOW.md` and `project-context/PLAN.md` if the CLI is not
@@ -53,12 +53,11 @@ When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal,
 it serves.
 
 `project-context/global/` and `project-context/blueprint/` are owner-authored
-and read-only here. To change one, run `project-context capture --kind
-proposal` or file a question in `QUESTIONS.md`; it reaches the owner on their
-next pull.
+and read-only here. To change one, file the question in `QUESTIONS.md`; it
+reaches the owner on their next pull.
 
-Record decisions, learnings, and questions as they happen with `project-context
-capture`.
+Record decisions, learnings, and questions in the registries as they happen,
+and run `project-context review` to see what is waiting on a person.
 <!-- project-context:end -->"""
 
 # What a file we create opens with. An install that had to create `AGENTS.md`
@@ -548,6 +547,210 @@ def add_file_action(actions: list[dict[str, Any]], destination: Path, content: s
     )
 
 
+def refresh_file_action(actions: list[dict[str, Any]], destination: Path, content: str) -> None:
+    """For a file this product owns, where `add_file_action` is for the user's.
+
+    The difference is the whole of what `update` is. `add_file_action` preserves
+    an existing file whose content differs, which is right for a record — a
+    decision someone wrote is not ours to replace. It is wrong for our own
+    files: it means an installed copy of a script or of the protocol text can
+    never be carried forward, because differing from the release is exactly
+    what an out-of-date copy does. Install uses the create-only rule for
+    everything and therefore upgrades nothing; this is the other half.
+    """
+    if destination.is_symlink() or (destination.exists() and not destination.is_file()):
+        actions.append(
+            {"kind": "conflict", "path": str(destination), "reason": "managed path is not a regular file"}
+        )
+        return
+    if not destination.exists():
+        actions.append({"kind": "create", "path": str(destination), "content": content})
+        return
+    try:
+        current = destination.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        current = None
+    if current == content:
+        actions.append({"kind": "unchanged", "path": str(destination), "reason": "matches this release"})
+        return
+    actions.append({"kind": "refresh", "path": str(destination), "content": content})
+
+
+def merged_marker(context: Path, marker: dict[str, Any]) -> str:
+    """The marker carried forward, keeping everything this release did not write.
+
+    `metadata_content` builds a marker from scratch and has no `pushed` key,
+    because a fresh install has nothing pushed to it. Writing that over a
+    marker in a repository a Hub has pushed to would delete every stamp — and
+    the stamps are the only evidence that a pushed copy is still the copy that
+    was sent, so the doctor would stop being able to tell an edited guardrail
+    from an untouched one. Merge, and keep unknown keys too: a later release
+    may record something this one does not know to preserve.
+    """
+    carried = dict(marker)
+    carried.update(
+        {
+            "authority": "tracked-markdown",
+            "product": PRODUCT,
+            "schema": SCHEMA,
+            "version": package_version(),
+        }
+    )
+    return json.dumps(carried, indent=2, sort_keys=True) + "\n"
+
+
+def index_actions(context: Path, actions: list[dict[str, Any]]) -> None:
+    """Regenerate the registry index tables, which are derived and never authored.
+
+    Rewriting a registry sounds like rewriting a record, and it is not: only
+    the block between the index markers is replaced, by exactly the generator
+    that owns it, and the entries it is built from are the untouched part of
+    the same file. A stale index is worse than none because it is trusted.
+    """
+    module = load_protocol("context_index.py")
+    if module is None:
+        return
+    for spec in module.REGISTRIES:
+        path = context / spec["file"]
+        if not path.is_file() or path.is_symlink():
+            continue
+        current = path.read_text(encoding="utf-8")
+        rebuilt = module.rebuild(current, spec)
+        if rebuilt != current:
+            actions.append({"kind": "regenerate_index", "path": str(path), "content": rebuilt})
+
+
+def build_update_plan(target: Path) -> dict[str, Any]:
+    """Carry an installed repository forward. Local only; nothing here reaches a network.
+
+    Three kinds of file live under `project-context/`, and update treats each
+    the way its authorship demands:
+
+    * **Ours** — the protocol text, the installed skill and its scripts, the
+      managed blocks, the marker's own fields, the generated indexes. Refreshed,
+      because an out-of-date copy is the thing being fixed.
+    * **The repository's** — every record. Created if the scaffold has gained a
+      file this install predates, never touched if it already exists.
+    * **The Hub's** — `global/` and `blueprint/`. Verified against their stamps
+      and reported. Never written: the copy here is not where a change belongs,
+      and the next push would overwrite it anyway.
+    """
+    target = target.resolve()
+    context = target / "project-context"
+    actions: list[dict[str, Any]] = []
+    marker_path = context / MARKER_NAME
+
+    if not context.is_dir() or context.is_symlink() or not marker_path.is_file():
+        return {
+            "target": str(target),
+            "actions": [
+                {
+                    "kind": "conflict",
+                    "path": str(context),
+                    "reason": "no project-context install found here; run `init` first",
+                }
+            ],
+            "summary": {"conflict": 1},
+            "has_conflicts": True,
+            "pushed": {},
+            "installed_version": None,
+            "available_version": package_version(),
+        }
+    try:
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        marker = None
+    if not isinstance(marker, dict):
+        return {
+            "target": str(target),
+            "actions": [
+                {"kind": "conflict", "path": str(marker_path), "reason": "marker is not readable JSON"}
+            ],
+            "summary": {"conflict": 1},
+            "has_conflicts": True,
+            "pushed": {},
+            "installed_version": None,
+            "available_version": package_version(),
+        }
+
+    installed = marker.get("version") or marker.get("template_version")
+    profile = marker.get("profile") if marker.get("profile") in {"core", "full"} else "core"
+
+    # The repository's own records: create what this install predates, leave
+    # everything that exists exactly as it is.
+    for source in template_files(profile):
+        relative = source.relative_to(template_root())
+        content = source.read_text(encoding="utf-8")
+        if str(relative) == "NOW.md":
+            content = content.replace("YYYY-MM-DD", date.today().isoformat(), 1)
+        add_file_action(actions, context / relative, content)
+
+    # Ours.
+    refresh_file_action(actions, context / "SKILL.md", protocol_source().read_text(encoding="utf-8"))
+    refresh_file_action(actions, marker_path, merged_marker(context, marker))
+    # Only where the skills were installed in the first place. A repository that
+    # chose not to carry them does not acquire them by asking for an update.
+    if (target / ".agents" / "skills" / "project-context").is_dir():
+        plan_skill_install(target, actions, refresh_file_action)
+    harnesses = instruction_paths(target)
+    actions.extend(instruction_plan(path) for path in harnesses)
+    carried = {path.name.casefold() for path in harnesses}
+    for role in INSTRUCTION_ROLES:
+        if role.casefold() not in carried:
+            actions.append(
+                {
+                    "kind": "create",
+                    "path": str(target / role),
+                    "content": CREATED_INSTRUCTION_HEADER + MANAGED_BLOCK + "\n",
+                }
+            )
+    index_actions(context, actions)
+
+    # The Hub's. Reported, never planned.
+    doctor = load_doctor()
+    pushed: dict[str, Any] = {}
+    pushed_issues: list[dict[str, str]] = []
+    if doctor is not None:
+        pushed, pushed_issues = doctor.pushed_set(context, marker)
+
+    report = {
+        "target": str(target),
+        "profile": profile,
+        "installed_version": installed,
+        "available_version": package_version(),
+        "actions": actions,
+        "pushed": pushed,
+        "pushed_issues": pushed_issues,
+    }
+    report["summary"] = {
+        kind: sum(action["kind"] == kind for action in actions)
+        for kind in sorted({action["kind"] for action in actions})
+    }
+    report["has_conflicts"] = any(action["kind"] == "conflict" for action in actions)
+    return report
+
+
+def apply_update(report: dict[str, Any]) -> int:
+    if report["has_conflicts"]:
+        print(json.dumps(public_report(report), indent=2, sort_keys=True))
+        print("Refusing to write because the plan contains conflicts.", file=sys.stderr)
+        return 2
+    for action in report["actions"]:
+        if action["kind"] in {"create", "refresh", "regenerate_index", "append_managed_block", "update_managed_block"}:
+            atomic_write(Path(action["path"]), action["content"])
+    refreshed = build_update_plan(Path(report["target"]))
+    module = load_doctor()
+    if module is not None:
+        health = module.doctor(Path(report["target"]))
+        refreshed["doctor"] = {
+            "status": health["status"],
+            "summary": health["summary"],
+            "issues": health["issues"],
+        }
+    print(json.dumps(public_report(refreshed), indent=2, sort_keys=True))
+    return 0
+
+
 def instruction_plan(path: Path) -> dict[str, Any]:
     if path.is_symlink():
         return {"kind": "conflict", "path": str(path), "reason": "root harness instruction is a symlink"}
@@ -812,7 +1015,19 @@ def pointer_content(skill_name: str, description: str) -> str:
     return "\n".join(front + [""] + body) + "\n"
 
 
-def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
+def plan_skill_install(
+    target: Path,
+    actions: list[dict[str, Any]],
+    file_action: Any = None,
+) -> None:
+    """Plan the installed skill tree.
+
+    `file_action` is how an existing destination is treated, and it is the only
+    difference between installing and updating: install is create-only, so a
+    file already there is left alone; update refreshes it, because these are
+    our files and one that differs from the release is out of date.
+    """
+    file_action = file_action or add_file_action
     source_parent = skill_root().parent
     for skill_name in INSTALLED_SKILL_NAMES:
         source = source_parent / skill_name
@@ -826,7 +1041,7 @@ def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
         for source_file in sorted(path for path in source.rglob("*") if path.is_file()):
             if "__pycache__" in source_file.parts or source_file.name == ".DS_Store":
                 continue
-            add_file_action(
+            file_action(
                 actions,
                 destination_root / source_file.relative_to(source),
                 source_file.read_text(encoding="utf-8"),
@@ -836,12 +1051,16 @@ def plan_skill_install(target: Path, actions: list[dict[str, Any]]) -> None:
         # derived from the one `VERSION` file, never hand-maintained.
         version = package_version()
         if version != "unknown":
-            add_file_action(actions, destination_root / "VERSION", version + "\n")
-        plan_harness_pointer(target, skill_name, source / "SKILL.md", actions)
+            file_action(actions, destination_root / "VERSION", version + "\n")
+        plan_harness_pointer(target, skill_name, source / "SKILL.md", actions, file_action)
 
 
 def plan_harness_pointer(
-    target: Path, skill_name: str, source_skill: Path, actions: list[dict[str, Any]]
+    target: Path,
+    skill_name: str,
+    source_skill: Path,
+    actions: list[dict[str, Any]],
+    file_action: Any = None,
 ) -> None:
     """Write the Claude Code pointer that makes an installed skill discoverable.
 
@@ -863,7 +1082,7 @@ def plan_harness_pointer(
                 {"kind": "conflict", "path": str(pointer_root), "reason": "harness pointer destination is unsafe"}
             )
             continue
-        add_file_action(
+        (file_action or add_file_action)(
             actions,
             pointer_root / "SKILL.md",
             pointer_content(skill_name, skill_description(source_skill)),
@@ -1090,6 +1309,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     onboard_parser.add_argument("--target", default=".", type=Path)
     onboard_parser.add_argument("--budget", default=4000, type=int)
     onboard_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    update_parser = subparsers.add_parser(
+        "update", help="carry an installed repository forward; local only, no network"
+    )
+    update_parser.add_argument("--target", default=".", type=Path)
+    update_mode = update_parser.add_mutually_exclusive_group(required=True)
+    update_mode.add_argument("--dry-run", action="store_true")
+    update_mode.add_argument("--apply", action="store_true")
     init_parser = subparsers.add_parser("init", help="plan or apply initialization")
     init_parser.add_argument("--target", default=".", type=Path)
     init_parser.add_argument("--profile", choices=("core", "full"), default="core")
@@ -1164,6 +1390,12 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(module.render(report), end="")
         return 0
+    if args.command == "update":
+        report = build_update_plan(target)
+        if args.dry_run:
+            print(json.dumps(public_report(report), indent=2, sort_keys=True))
+            return 2 if report["has_conflicts"] else 0
+        return apply_update(report)
     if args.command == "doctor":
         module = load_doctor()
         if module is None:

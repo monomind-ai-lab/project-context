@@ -945,7 +945,7 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
             issues.append(
                 {
                     "severity": "warning", "code": "template-update-available", "path": str(metadata),
-                    "detail": f"installed {installed}; available {available}",
+                    "detail": f"installed {installed}; available {available} — run `project-context update`",
                 }
             )
     now_path = context / "NOW.md"
