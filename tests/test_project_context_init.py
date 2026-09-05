@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import stat
@@ -780,6 +781,110 @@ class InitializerTests(unittest.TestCase):
             )
             self.assertEqual("project-configured", configured["tools"]["graphify"]["state"])
             self.assertNotIn("graphify", configured["optional_tool_guidance"]["proposal_order"])
+
+
+class ManagedBlockTests(unittest.TestCase):
+    """The block is somebody else's file, and it says so.
+
+    Everything here is about the one region Project Context writes into a
+    repository it does not own: that it announces itself, that it stays inside
+    the budget it claims, and that a file we had to create is a file a person
+    can read from the top.
+    """
+
+    ROOT = Path(__file__).resolve().parents[1]
+
+    def module(self):
+        import importlib.util
+        script = self.ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
+        spec = importlib.util.spec_from_file_location("project_context_init", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def prose(self, block: str) -> list[str]:
+        body = re.sub(r"<!--.*?-->", "", block, flags=re.S)
+        return re.sub(r"^#+\s.*$", "", body, flags=re.M).split()
+
+    def test_the_block_announces_that_it_is_managed(self) -> None:
+        """A rule enforced silently is one that gets broken in good faith.
+
+        The markers make the region safe on our side — only what is between
+        them is replaced, and a malformed pair is refused rather than repaired.
+        Nothing said so to the person or agent reading the file, who saw prose
+        indistinguishable from what their own team wrote.
+        """
+        block = self.module().MANAGED_BLOCK
+        self.assertIn("Managed region", block)
+        for promise in ("rewrites everything between these", "the rest of the file is yours"):
+            self.assertIn(promise, block, promise)
+        # It names no command. `project-context update` is specified in the
+        # design (2.10) and is not built, so promising it here would put a
+        # command that does not exist into every repository that installs.
+        self.assertNotIn("project-context update", block)
+        # The warning is the first thing in the region, not a footnote.
+        body = block.split("## Project Context", 1)[1]
+        self.assertLess(body.index("Managed region"), 20)
+
+    def test_the_block_stays_inside_the_budget_it_claims(self) -> None:
+        """It was 153 words against a stated 150, checked by nothing."""
+        module = self.module()
+        words = self.prose(module.MANAGED_BLOCK)
+        self.assertLessEqual(
+            len(words), module.MANAGED_BLOCK_WORD_BUDGET,
+            f"the managed block is {len(words)} prose words; it loads into every session",
+        )
+
+    def test_a_created_file_does_not_open_mid_instruction(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            subprocess.run(
+                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                check=True, capture_output=True, text=True,
+            )
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                text = (target / name).read_text(encoding="utf-8")
+                self.assertTrue(text.startswith("# "), f"{name} opens with {text[:30]!r}")
+                self.assertLess(text.index("# "), text.index("<!-- project-context:start -->"))
+                self.assertIn("yours to write", text)
+
+    def test_the_header_we_write_is_outside_the_markers_and_never_touched(self) -> None:
+        """We write it once. Every word of it is the reader's to replace."""
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            subprocess.run(
+                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                check=True, capture_output=True, text=True,
+            )
+            agents = target / "AGENTS.md"
+            rewritten = agents.read_text(encoding="utf-8").replace(
+                "# Agent instructions", "# Acme API — how we work here", 1
+            )
+            agents.write_text(rewritten, encoding="utf-8")
+            subprocess.run(
+                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                check=True, capture_output=True, text=True,
+            )
+            after = agents.read_text(encoding="utf-8")
+            self.assertIn("# Acme API — how we work here", after)
+            self.assertNotIn("# Agent instructions", after)
+
+    def test_both_files_carry_the_same_block(self) -> None:
+        """Duplicated on purpose: every file is self-sufficient.
+
+        A pointer would be less text, but it makes one file's usefulness depend
+        on another being read, and the delivery failure this rule exists to
+        prevent is exactly a session that never read the other file.
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            subprocess.run(
+                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                check=True, capture_output=True, text=True,
+            )
+            block = self.module().MANAGED_BLOCK
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                self.assertIn(block, (target / name).read_text(encoding="utf-8"), name)
 
 
 if __name__ == "__main__":
