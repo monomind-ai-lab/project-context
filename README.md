@@ -59,7 +59,7 @@ project-context init --target . --install-skills --apply
 
 The CLI is deterministic: swap `--apply` for `--dry-run` to preview the exact
 file plan first. Zero runtime dependencies — stdlib Python 3.10+. Subcommands:
-`init`, `update`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
+`init`, `update`, `capture`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
 
 ### Agent-guided install
 
@@ -566,6 +566,39 @@ The review **never moves, merges, rewrites, archives, or deletes automatically**
 This subcommand was called `review` until 0.8.0. `review` now names the
 standing report described under *Retrieval and review* below — a different
 question, asked for the life of the project rather than once at adoption.
+
+### Capture, and why there is an inbox
+
+```sh
+project-context capture --kind decision \
+  --text "We standardise on pnpm; npm workspaces could not hoist the native deps." --apply
+```
+
+Capture has to be cheap enough to happen *during* the work, or it does not
+happen at all. A decision worth recording usually surfaces mid-task, and
+stopping to write a registry entry with an ID, a rationale and consequences is
+exactly the interruption a person declines. So `capture` writes one short,
+dated, fully attributed note into `project-context/inbox/` and stops. The
+judgement — decision, learning, or nothing — is deferred to promotion, where it
+is cheap.
+
+`--kind` is `decision`, `learning`, `question`, `assumption`, `constraint`, or
+`proposal`. It is the capsule's own type, not the record kind: every capsule is
+`kind: capsule` in the record model, and this says what the note is about. A
+`proposal` is how a builder asks for a change to something the Hub pushed —
+they cannot edit it, and it reaches the owner at the next `/hub-pull`.
+
+Provenance is recorded without being asked for: the actor from the git
+identity unless `--actor` says otherwise, plus `--session`, `--harness`,
+`--model`, and the current `commit:<binding>:<sha>` as evidence. A capsule is
+at most 200 words and the command refuses a longer one — anything longer is the
+record it should become. Capturing the same text twice on the same day is a
+no-op, because a `Stop` hook that fires twice should not leave two identical
+notes.
+
+The cost of a staging area is capsules nobody promotes, which is why
+`project-context review` reports an ageing one. The cost of not having one is
+decisions nobody records, and that cost is silent.
 
 ### Carrying an install forward (update)
 

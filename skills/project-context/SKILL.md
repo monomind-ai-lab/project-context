@@ -109,7 +109,7 @@ discovery systems; they do not replace tracked Markdown authority.
 
 ## Automation
 
-Five scripts support this protocol. Where the skill is installed here they live
+Six scripts support this protocol. Where the skill is installed here they live
 under `.agents/skills/project-context/scripts/`; if the skills are not installed
 in this repository, run the same commands from the Project Context checkout,
 passing this project folder wherever a target is required.
@@ -147,6 +147,28 @@ review --diff` to assemble the packet for what is currently changed, and
 `onboard` for the first session in a repository. Only `accepted` and `answered`
 records are loaded; proposed ones are listed as links, and `--verified-only`
 omits them.
+
+`context_capture.py` writes one capsule into `inbox/` and nothing else. Use it
+when something surfaces that is worth keeping but is not yet a registry entry —
+a choice you are unsure constrains anything, a result you have not generalised,
+an assumption you proceeded on. Capture now, judge later; the judgement is
+cheap once the note exists and impossible once it is lost.
+
+    python3 .agents/skills/project-context/scripts/context_capture.py \
+        --kind decision --text "<at most 200 words>" --apply
+
+`--kind` is `decision`, `learning`, `question`, `assumption`, `constraint`, or
+`proposal` — what the note is about, not the record kind, which is `capsule`
+for everything in `inbox/`. Pass `--actor agent:<name>` when an agent writes
+it, and `--session`, `--harness`, `--model` where the harness knows them; the
+current commit is recorded as evidence without being asked for. Longer than 200
+words is refused, because that is the record it should become. The same text on
+the same day writes once.
+
+Promote a capsule by writing the registry entry it earns and setting the
+capsule's `status` to `accepted` with a link to what it became, or `rejected`
+when it belongs nowhere. Leaving it `proposed` is the only outcome that is not
+a resolution.
 
 `context_review.py` lists what is waiting on a person — proposed records, open
 questions past their window, unpromoted capsules, assumptions nobody confirmed,

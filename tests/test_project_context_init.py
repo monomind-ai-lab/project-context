@@ -1118,5 +1118,86 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual("healthy", report["doctor"]["status"], report["doctor"]["issues"])
 
 
+class MarkerTests(unittest.TestCase):
+    """`metadata_content` is the only thing that builds a marker, and it merges.
+
+    It used to build one from scratch, which made it a footgun rather than a
+    bug: install never wrote it over an existing marker, so nothing broke, but
+    any future caller that did would silently delete the push stamps. `update`
+    was that caller. The fix belongs here rather than in the caller, so the
+    next one inherits it.
+    """
+
+    def module(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("project_context_init", SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_it_keeps_the_push_stamps(self) -> None:
+        module = self.module()
+        existing = {
+            "version": "0.5.0",
+            "pushed": {"global/GUARDRAILS.md": {"sha256": "a" * 64, "pushed_at": "2026-08-01T00:00:00Z"}},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(module.metadata_content(Path(directory), "full", "code", existing))
+        self.assertEqual(existing["pushed"], carried["pushed"])
+
+    def test_it_keeps_keys_it_has_never_heard_of(self) -> None:
+        """A later release may write something this one does not know to keep."""
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(
+                module.metadata_content(Path(directory), "full", "code", {"from_the_future": [1, 2]})
+            )
+        self.assertEqual([1, 2], carried["from_the_future"])
+
+    def test_it_does_not_re_key_a_repository_that_was_renamed(self) -> None:
+        """`project_id` is what a Hub's registry keys on.
+
+        Re-deriving it from the directory name would silently change a
+        project's identity the first time somebody renamed their checkout.
+        """
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(
+                module.metadata_content(
+                    Path(directory), "full", "code", {"project_id": "notes-api", "profile": "core"}
+                )
+            )
+        self.assertEqual("notes-api", carried["project_id"])
+        self.assertEqual("core", carried["profile"])
+
+    def test_it_always_writes_the_four_keys_this_release_owns(self) -> None:
+        module = self.module()
+        stale = {
+            "authority": "something-else", "product": "context-hub",
+            "schema": "context-hub/1", "version": "0.0.1",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(module.metadata_content(Path(directory), "core", "code", stale))
+        self.assertEqual("tracked-markdown", carried["authority"])
+        self.assertEqual(module.PRODUCT, carried["product"])
+        self.assertEqual(module.SCHEMA, carried["schema"])
+        self.assertEqual(module.package_version(), carried["version"])
+
+    def test_a_fresh_marker_has_no_pushed_key(self) -> None:
+        """A repository with no Hub is a complete product.
+
+        An empty stamp table would imply a Hub that has not pushed yet.
+        """
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            fresh = json.loads(module.metadata_content(Path(directory), "core", "code"))
+        self.assertNotIn("pushed", fresh)
+
+    def test_there_is_one_marker_builder(self) -> None:
+        source = SCRIPT.read_text(encoding="utf-8")
+        self.assertEqual(1, source.count("def metadata_content("))
+        self.assertNotIn("def merged_marker(", source)
+
+
 if __name__ == "__main__":
     unittest.main()
