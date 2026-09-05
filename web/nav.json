@@ -1,5 +1,5 @@
 {
-  "_comment": "Single source of truth for the global header nav and footer columns. A page's meta.json `nav` / `footer_links` still wins when present (legacy override, used by the docs pages until their migration). Hrefs are absolute so the same nav works from every route; `current` is derived from each page's output route at build time. Every `i18n` key named here must exist in EVERY page's dictionary, in all three locales — the nav renders into every page, so a key added here without being propagated fails the build.",
+  "_comment": "Single source of truth for the global header nav and footer columns. A page's meta.json `nav` / `footer_links` still wins when present (legacy override, used by the docs pages until their migration). Hrefs are absolute so the same nav works from every route; `current` is derived from each page's output route at build time. A dropdown item may be {\"heading\": ...} instead of a link, which renders as a group caption rather than a choice. Every `i18n` key named here must exist in EVERY page's dictionary, in all three locales — the nav renders into every page, so a key added here without being propagated fails the build.",
   "nav": [
     {
       "href": "/",
@@ -22,13 +22,32 @@
       "i18n": "nav.hub"
     },
     {
-      "label": "Guide",
-      "i18n": "nav.guide",
+      "label": "Docs",
+      "i18n": "nav.docs",
       "items": [
+        {
+          "heading": "For builders",
+          "i18n": "nav.grpBuilders"
+        },
         {
           "href": "/docs/",
           "label": "Quick guide",
           "i18n": "nav.guideQuick"
+        },
+        {
+          "href": "/docs/install/",
+          "label": "Install",
+          "i18n": "nav.install"
+        },
+        {
+          "href": "/docs/records/",
+          "label": "The three records",
+          "i18n": "footer.docsRecords"
+        },
+        {
+          "href": "/docs/operate/",
+          "label": "Operating the loop",
+          "i18n": "footer.docsOperate"
         },
         {
           "href": "/docs/builders-guide/",
@@ -36,9 +55,17 @@
           "i18n": "nav.guideBuilders"
         },
         {
+          "heading": "For owners",
+          "i18n": "nav.grpOwners"
+        },
+        {
           "href": "/project-hub/owners-guide/",
           "label": "Owner's guide",
           "i18n": "nav.guideOwners"
+        },
+        {
+          "heading": "Read or present",
+          "i18n": "nav.grpDecks"
         },
         {
           "href": "/guide/",
@@ -97,12 +124,12 @@
         },
         {
           "href": "/docs/records/",
-          "label": "The records",
+          "label": "The three records",
           "i18n": "footer.docsRecords"
         },
         {
           "href": "/docs/operate/",
-          "label": "Operating loop",
+          "label": "Operating the loop",
           "i18n": "footer.docsOperate"
         },
         {

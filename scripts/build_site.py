@@ -24,6 +24,7 @@ by hand or committed.
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import html
 import json
 import pathlib
@@ -41,6 +42,44 @@ NAVSPEC = SRC / "nav.json"
 OUT = ROOT / "site"
 
 PLACEHOLDER = re.compile(r"\{\{([a-z0-9_]+)\}\}")
+
+# The canonical origin. Every absolute URL the build emits — canonical links,
+# og:url, the sitemap, llms.txt, JSON-LD ids — is derived from this one string.
+SITE_URL = "https://projectcontext.monomind.one"
+
+# Routes served from site/ that build_site.py does not generate: the two decks
+# are standalone documents copied in by scripts/sync.sh. They still belong in
+# the sitemap and in llms.txt, so they are named here with the metadata a
+# generated page would have carried in its meta.json.
+EXTRA_ROUTES = (
+    {
+        "route": "/guide/builders/",
+        "title": "The builder's deck — Project Context",
+        "description": "A 19-slide deck for anyone working in a repository: the three records, "
+                       "the session loop, the record model and evidence anchors, installing it, "
+                       "and what the doctor checks afterwards.",
+    },
+    {
+        "route": "/guide/owners/",
+        "title": "The owner's deck — Project Hub",
+        "description": "A 17-slide deck for anyone overseeing several repositories: scaffold versus "
+                       "instance, the boundary between the two repositories, why a push arrives as a "
+                       "pull request, the budgets, and what a Hub costs.",
+    },
+)
+
+# The reading order llms.txt presents, which is a curated path rather than the
+# sitemap's flat list: an answer engine that follows it in order learns the two
+# products in the order a person would. A route absent here still reaches the
+# sitemap; it simply does not get a recommended position.
+LLMS_SECTIONS = (
+    ("Start here", ("/", "/docs/", "/use-cases/")),
+    ("Project Context — for builders working in a repository",
+     ("/docs/install/", "/docs/records/", "/docs/operate/", "/docs/builders-guide/")),
+    ("Project Hub — for owners overseeing several repositories",
+     ("/project-hub/", "/project-hub/owners-guide/")),
+    ("Slide decks", ("/guide/", "/guide/builders/", "/guide/owners/")),
+)
 
 # The global header nav and footer columns, defined ONCE in web/nav.json.
 # A page's meta.json `nav` / `footer_links` still wins when present — the
@@ -121,6 +160,14 @@ def nav_html(links: list[dict], route: str = "", mobile: bool = False) -> str:
             if mobile:
                 out.append(f'{indent}<span class="nav-mobile-hd"{i18n}>{label}</span>')
                 for item in link["items"]:
+                    if item.get("heading"):
+                        # A group label inside a dropdown. On mobile the whole
+                        # dropdown is already flattened under its own header, so
+                        # a group reads as a sub-header rather than a second nav.
+                        h = html.escape(item["heading"])
+                        hi = f' data-i18n="{html.escape(item["i18n"])}"' if item.get("i18n") else ""
+                        out.append(f'{indent}<span class="nav-mobile-sub"{hi}>{h}</span>')
+                        continue
                     out.append(nav_anchor(item, route, ["nav-sub"], indent))
             else:
                 bid, pid = f"navDropBtn{n}", f"navDropPanel{n}"
@@ -130,6 +177,16 @@ def nav_html(links: list[dict], route: str = "", mobile: bool = False) -> str:
                            f'<span{i18n}>{label}</span><span class="caret" aria-hidden="true"></span></button>')
                 out.append(f'{indent}  <div class="navdrop-panel" id="{pid}" hidden>')
                 for item in link["items"]:
+                    if item.get("heading"):
+                        # Not a link and not focusable: a caption for the group
+                        # under it, so a seven-item panel reads as three short
+                        # lists rather than one long one. `role="presentation"`
+                        # keeps it out of the menu's item count for a screen
+                        # reader, which would otherwise announce it as a choice.
+                        h = html.escape(item["heading"])
+                        hi = f' data-i18n="{html.escape(item["i18n"])}"' if item.get("i18n") else ""
+                        out.append(f'{indent}    <p class="navdrop-hd" role="presentation"{hi}>{h}</p>')
+                        continue
                     out.append(nav_anchor(item, route, [], indent + "    "))
                 out.append(f'{indent}  </div>')
                 out.append(f'{indent}</div>')
@@ -295,7 +352,158 @@ def orphan_keys(rendered: str, js: str, scripts: str) -> list[str]:
     return out
 
 
-def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int]:
+# Section names for breadcrumb trails, where the URL segment alone reads badly.
+SECTION_NAMES = {
+    "docs": "Docs",
+    "project-hub": "Project Hub",
+    "guide": "Guides & decks",
+}
+
+ORG = {
+    "@type": "Organization",
+    "@id": f"{SITE_URL}/#org",
+    "name": "MonoMind AI Lab",
+    "url": "https://monomind.one",
+}
+
+
+def jsonld_for(route: str, title: str, description: str) -> str:
+    """The structured data for one page.
+
+    A `@graph` rather than a bare object, so the publisher is stated once and
+    referenced: an answer engine asking "who says this" gets the same node from
+    every page. The home page additionally declares the SoftwareApplication the
+    whole site is about; inner pages declare a WebPage and a breadcrumb trail,
+    which is what turns a deep link into something an engine can place.
+
+    Nothing here is asserted that the page does not already say — title and
+    description come from the same meta.json the <title> and <meta> use.
+    """
+    page_id = f"{SITE_URL}{route}"
+    graph: list[dict] = [ORG]
+
+    if route == "/":
+        graph.append({
+            "@type": "WebSite",
+            "@id": f"{SITE_URL}/#website",
+            "url": SITE_URL,
+            "name": "Project Context",
+            "description": description,
+            "publisher": {"@id": f"{SITE_URL}/#org"},
+            "inLanguage": ["en", "ko", "zh-Hant"],
+        })
+        graph.append({
+            "@type": "SoftwareApplication",
+            "@id": f"{SITE_URL}/#software",
+            "name": "Project Context",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Any, with Python 3.10 or later",
+            "url": SITE_URL,
+            "codeRepository": "https://github.com/monomind-ai-lab/project-context",
+            "license": "https://opensource.org/license/mit",
+            "publisher": {"@id": f"{SITE_URL}/#org"},
+            "description": description,
+            # Free to use; stated because an answer engine asked "how much does
+            # it cost" should not have to infer it from the licence.
+            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        })
+    else:
+        crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE_URL}/"}]
+        parts = [seg for seg in route.strip("/").split("/") if seg]
+        for i, seg in enumerate(parts, start=2):
+            here = SITE_URL + "/" + "/".join(parts[: i - 1]) + "/"
+            # The last crumb is this page, so it gets the page's own name rather
+            # than its slug; an intermediate segment gets the section name a
+            # reader would recognise from the nav, not `project hub`.
+            if i - 1 == len(parts):
+                name = title.split(" — ")[0]
+            else:
+                name = SECTION_NAMES.get(seg, seg.replace("-", " ").title())
+            crumbs.append({"@type": "ListItem", "position": i, "name": name, "item": here})
+        graph.append({
+            "@type": "WebPage",
+            "@id": page_id,
+            "url": page_id,
+            "name": title,
+            "description": description,
+            "isPartOf": {"@id": f"{SITE_URL}/#website"},
+            "about": {"@id": f"{SITE_URL}/#software"},
+            "publisher": {"@id": f"{SITE_URL}/#org"},
+            "inLanguage": ["en", "ko", "zh-Hant"],
+            "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": crumbs},
+        })
+
+    payload = json.dumps({"@context": "https://schema.org", "@graph": graph},
+                         indent=2, ensure_ascii=False)
+    # `</script>` cannot appear inside a script element; nothing here should
+    # contain one, but escaping it is cheaper than trusting that forever.
+    payload = payload.replace("</", "<\\/")
+    return f'<script type="application/ld+json">\n{payload}\n</script>'
+
+
+def write_sitemap(pages: list[dict]) -> None:
+    """One entry per served route, newest-changed first is irrelevant to a
+    crawler, so they are emitted in reading order for a human opening the file."""
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    today = _dt.date.today().isoformat()
+    for page in pages:
+        lines.append("  <url>")
+        lines.append(f"    <loc>{html.escape(SITE_URL + page['route'])}</loc>")
+        lines.append(f"    <lastmod>{today}</lastmod>")
+        lines.append(f"    <priority>{'1.0' if page['route'] == '/' else '0.8'}</priority>")
+        lines.append("  </url>")
+    lines.append("</urlset>")
+    (OUT / "sitemap.xml").write_text("\n".join(lines) + "\n")
+
+
+def write_llms(pages: list[dict]) -> None:
+    """llms.txt — the site, in Markdown, for a model reading rather than
+    rendering it. The format is a H1, a blockquote summary, then link lists
+    under H2 sections. Ordered as a reading path, not as a file listing."""
+    by_route = {page["route"]: page for page in pages}
+    out = [
+        "# Project Context",
+        "",
+        "> Small Markdown records, versioned in a project's own repository, that outlive any "
+        "one person, agent, or chat. Project Context installs into a repository and serves the "
+        "people building it; Project Hub is its optional other half, one private repository where "
+        "an owner authors what applies across every project. Markdown and Git are the whole "
+        "storage contract: no database, no server, no runtime dependency, and no command that "
+        "reaches the network.",
+        "",
+    ]
+    for heading, routes in LLMS_SECTIONS:
+        listed = [by_route[r] for r in routes if r in by_route]
+        if not listed:
+            continue
+        out.append(f"## {heading}")
+        out.append("")
+        for page in listed:
+            out.append(f"- [{page['title']}]({SITE_URL}{page['route']}): {page['description']}")
+        out.append("")
+    remaining = [p for p in pages
+                 if p["route"] not in {r for _, rs in LLMS_SECTIONS for r in rs}]
+    if remaining:
+        out.append("## Other pages")
+        out.append("")
+        for page in remaining:
+            out.append(f"- [{page['title']}]({SITE_URL}{page['route']}): {page['description']}")
+        out.append("")
+    out += [
+        "## Source",
+        "",
+        "- [project-context on GitHub](https://github.com/monomind-ai-lab/project-context): "
+        "the product installed into a project repository — two skills and one CLI, standard "
+        "library only.",
+        "- [project-hub on GitHub](https://github.com/monomind-ai-lab/project-hub): the scaffold "
+        "an owner copies into a private repository of their own.",
+        "",
+    ]
+    (OUT / "llms.txt").write_text("\n".join(out))
+
+
+def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int, dict]:
     meta = json.loads((src / "meta.json").read_text())
     template = LAYOUT.read_text()
 
@@ -327,6 +535,8 @@ def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int]:
         "og_image": meta.get("og_image", "/og-image.jpg"),
         "og_image_alt": html.escape(meta.get("og_image_alt", f'{meta["title"]} — MonoMind AI Lab'), quote=True),
         "asset_version": version,
+        "canonical": SITE_URL + route,
+        "jsonld": jsonld_for(route, meta["title"], meta["description"]),
         "page_style": f"<style>\n{page_css}\n</style>" if page_css else "",
         "nav_desktop": nav_html(nav, route),
         "nav_mobile": nav_html(nav, route, mobile=True),
@@ -363,7 +573,8 @@ def build_page(src: pathlib.Path, version: str) -> tuple[pathlib.Path, int]:
     dest = OUT / meta["output"]
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(rendered)
-    return dest, len(rendered)
+    return dest, len(rendered), {"route": route, "title": meta["title"],
+                                 "description": meta["description"]}
 
 
 def main() -> int:
@@ -395,9 +606,24 @@ def main() -> int:
     if not pages:
         raise SystemExit("no pages found under web/content/")
 
+    entries: list[dict] = []
     for src in pages:
-        dest, size = build_page(src, version)
+        dest, size, entry = build_page(src, version)
+        entries.append(entry)
         print(f"  {dest.relative_to(OUT)!s:34} {size / 1024:6.1f}K   <- _content/{src.name}")
+
+    # The decks are copied in by sync.sh after this script runs, so they are
+    # named rather than discovered — see EXTRA_ROUTES.
+    entries.extend(EXTRA_ROUTES)
+    # Reading order, flattened from LLMS_SECTIONS, so the sitemap and llms.txt
+    # present the same path through the site. Anything unlisted sorts last.
+    order = {route: n for n, route in
+             enumerate(r for _, routes in LLMS_SECTIONS for r in routes)}
+    entries.sort(key=lambda e: order.get(e["route"], len(order)))
+    write_sitemap(entries)
+    write_llms(entries)
+    print(f"  {'sitemap.xml':34} {len(entries):6d} url(s)")
+    print(f"  {'llms.txt':34}")
     print(f"built {len(pages)} page(s), assets v{version}")
     if args.check:
         print(f"(check mode: output in {OUT})")

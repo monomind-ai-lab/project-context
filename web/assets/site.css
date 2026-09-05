@@ -239,6 +239,19 @@ code,kbd{font-family:var(--font-mono);font-size:.9em}
 .navdrop-panel a:hover{color:var(--fg-bright);background:var(--surface-3)}
 .navdrop-panel a[aria-current="page"]{color:var(--fg-bright)}
 
+/* Group captions inside a dropdown. The Docs panel lists every page under
+   /docs/ plus the owner's guide and the decks index, which is one list too
+   long to scan; three captions turn it into three short ones. Not links and
+   not focusable — role="presentation" keeps them out of the menu's item
+   count for a screen reader. */
+.navdrop-hd{padding:10px 12px 4px;font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-faint);white-space:nowrap}
+
+.navdrop-hd:first-child{padding-top:4px}
+
+/* The mobile nav flattens a dropdown under its own header, so a group inside
+   it needs to sit a step quieter than that header rather than compete with it. */
+.nav-mobile-sub{padding:10px 4px 2px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);opacity:.75}
+
 /* ---- Install CTA: a compact pill on the .btn-primary tokens. Dark theme:
    near-white pill, page-black text; light theme the tokens flip it to a
    near-black pill with white text. Tokens only. */
