@@ -4,7 +4,8 @@
        slides — the deck's slides, cover through closing (19 slides, incl. data-screen-label on each <section>)
        notes — the speaker-notes JSON
      Named edit points outside the fences:
-       <title> in <head>
+       <meta name="description" content="One small folder that keeps builders and agents on the same page over time. What Project Context is, what you get, how it works, and how to use it.">
+<title> in <head>
        the known-terms TERMS regex in the translation-guard script — this copy ships no
          translation guard and no language switch, so protected terms are marked inline
          with <span class="notranslate" translate="no"> instead
@@ -900,6 +901,35 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .deck-colophon a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--glass-hair); }
 .deck-colophon a:hover { border-bottom-color: currentColor; }
 
+/* ── Prose links inside a slide ─────────────────────────────────────
+   The chassis styles the two link sets it shipped with — `.close-links`
+   as pills, `.deck-colophon` as underlined-inherit — and nothing else.
+   A link written into slide prose therefore fell through to the browser
+   default, which paints a visited link purple: illegible on a dark slide
+   and off-brand on a light one. Inheriting the surrounding colour keeps
+   it readable wherever it lands, and the accent underline is what marks
+   it as a link. Scoped positively so the two component link sets keep
+   the styling they already have.
+   ────────────────────────────────────────────────────────────────── */
+.slide :is(.lead, .dg-loop, .dg-endbar, .dg-startbar, .bullets, .dg-frame,
+            .tbl, .dg-flag, .dg-step, .qcard, .dg-treeview) a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--accent-hair);
+  border-radius: 3px;
+}
+.slide :is(.lead, .dg-loop, .dg-endbar, .dg-startbar, .bullets, .dg-frame,
+            .tbl, .dg-flag, .dg-step, .qcard, .dg-treeview) a:hover {
+  text-decoration-color: currentColor;
+}
+.slide :is(.lead, .dg-loop, .dg-endbar, .dg-startbar, .bullets, .dg-frame,
+            .tbl, .dg-flag, .dg-step, .qcard, .dg-treeview) a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ── Stacked-card spacing and short-viewport rescue ─────────────────
    Two layout bugs, one place. Both were visible on the shipped decks.
 
@@ -1181,7 +1211,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
     </div>
     <div class="cover-title">
       <h1 class="h-hero"><span class="notranslate" translate="no">Project Context</span></h1>
-      <p class="lead">A folder of plain Markdown inside your repository, holding what a newcomer — human or agent — needs to know before changing anything. Three weeks away should not mean rebuilding the project from stale chats.</p>
+      <p class="lead">One small folder that keeps builders and agents on the same page over time. Don't work in moments — work in continuity: the state, the decisions and the lessons stay in the repository, in plain Markdown, long after the chat that produced them is gone.</p>
     </div>
     <div class="cover-meta">
       <span>v0.10.0</span>
@@ -1404,8 +1434,10 @@ https://github.com/monomind-ai-lab/project-context. Read and follow
 question. Show me the proposed plan and wait for my approval before making changes.</p>
         </div>
       </div>
-      <div class="dg-flag"><div class="fl notranslate" translate="no">--dry-run</div><div class="fd">Prints the exact file plan. Nothing is written — read it first, every time</div></div>
-      <div class="dg-flag"><div class="fl notranslate" translate="no">--apply</div><div class="fd">Creates only what the plan listed, and nothing else. Re-running is idempotent</div></div>
+      <div class="dg-flag-row">
+        <div class="dg-flag"><div class="fl notranslate" translate="no">--dry-run</div><div class="fd">Prints the exact file plan. Nothing is written — read it first, every time</div></div>
+        <div class="dg-flag"><div class="fl notranslate" translate="no">--apply</div><div class="fd">Creates only what the plan listed, and nothing else. Re-running is idempotent</div></div>
+      </div>
     </div>
   </section>
 
@@ -1682,16 +1714,6 @@ question. Show me the proposed plan and wait for my approval before making chang
       </button>
       <div class="deck-menu-sub" id="deck-contents" role="none" hidden></div>
 
-      <!-- menu.items: "theme" -->
-      <button type="button" role="menuitem" id="deck-menu-theme">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6"
-                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <span id="deck-theme-label">Light theme</span>
-      </button>
-
       <!-- menu.items: "html" — the deck saves a copy of itself. Hides itself
            on file://, where it would only hand you what you already have.
            "pdf" is deliberately absent: this chassis carries no handler for
@@ -1703,6 +1725,15 @@ question. Show me the proposed plan and wait for my approval before making chang
         </svg>
         Download the HTML
       </button>
+      <!-- menu.items: the other half of the pair -->
+      <a role="menuitem" href="https://projectcontext.monomind.one/guide/owners/">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 5.5h6a2 2 0 0 1 2 2V19a2 2 0 0 0-2-2H4Zm16 0h-6a2 2 0 0 0-2 2V19a2 2 0 0 1 2-2h6Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+        The owner&#39;s deck
+      </a>
+      <div class="deck-menu-sep" role="none"></div>
       <a role="menuitem" href="https://projectcontext.monomind.one/">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M4 10.6 12 4l8 6.6V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1v-8.4Z"
