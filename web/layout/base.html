@@ -7,7 +7,9 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="description" content="{{description}}">
 <meta name="theme-color" content="#000000">
+<link rel="canonical" href="{{canonical}}">
 <meta property="og:type" content="website">
+<meta property="og:url" content="{{canonical}}">
 <meta property="og:site_name" content="MonoMind AI Lab">
 <meta property="og:title" content="{{title}}">
 <meta property="og:description" content="{{description}}">
@@ -40,6 +42,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/_assets/site.css?v={{asset_version}}">
 {{page_style}}
+
+<!-- Structured data, generated per page in build_site.py from the same
+     meta.json the <title> and description come from, so the three cannot
+     disagree. A search engine reads this for rich results; an answer engine
+     reads it to decide what this page is and who published it. -->
+{{jsonld}}
 </head>
 <body>
 <a class="skip-link" href="#main" data-i18n="nav.skip">Skip to content</a>
