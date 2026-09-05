@@ -42,7 +42,7 @@
         },
         {
           "href": "/guide/",
-          "label": "Slide decks",
+          "label": "Guides & decks",
           "i18n": "nav.guideDecks"
         }
       ]
@@ -117,7 +117,7 @@
         },
         {
           "href": "/guide/",
-          "label": "Slide decks",
+          "label": "Guides & decks",
           "i18n": "nav.guideDecks"
         }
       ]

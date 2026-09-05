@@ -3,82 +3,144 @@
   <div class="grid-bg" aria-hidden="true"></div>
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="container hero-inner">
-    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="deck.badge">Guide · Slide decks</span></p>
+    <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="deck.badge">Guides &amp; decks</span></p>
 
-    <h1 class="hero-title" id="page-title" data-i18n="deck.hero.title">Two decks, <b>one for each side</b> of the pair.</h1>
+    <h1 class="hero-title" id="page-title" data-i18n="deck.hero.title">Everything written down, <b>in one place</b>.</h1>
 
-    <p class="hero-sub" data-i18n="deck.hero.sub">The same story told twice, because the two audiences do not overlap. A builder works inside one repository and never sees a Hub. An owner administers several and never opens the code. Each deck answers what it is, what you get, how it works, and how to use it — for exactly one of them.</p>
+    <p class="hero-sub" data-i18n="deck.hero.sub">Two products, two audiences, and nine documents between them. A builder works inside one repository and never sees a Hub; an owner administers several and never opens the code. Start from whichever describes you — the paths below are ordered, not just listed.</p>
 
     <ul class="hero-chips">
-      <li class="chip" data-i18n="deck.chip1">read across a room</li>
-      <li class="chip" data-i18n="deck.chip2">no install</li>
-      <li class="chip" data-i18n="deck.chip3">works offline</li>
+      <li class="chip" data-i18n="deck.chip1">2 decks</li>
+      <li class="chip" data-i18n="deck.chip2">7 written guides</li>
+      <li class="chip" data-i18n="deck.chip3">nothing to install</li>
     </ul>
   </div>
 </section>
 
 <hr class="hairline">
 
-<!-- ============================ 01 THE DECKS ============================ -->
-<section class="section" id="decks" aria-labelledby="decks-title">
+<!-- ============================ 01 THE TWO PATHS ============================ -->
+<section class="section" id="paths" aria-labelledby="paths-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="deck.pick.eyebrow">pick your side</span></span>
-      <h2 class="section-title" id="decks-title" data-i18n="deck.pick.title">Which one are you?</h2>
-      <p class="section-lede" data-i18n="deck.pick.lede">If you are about to change something in a repository, take the first. If you are deciding what applies across several repositories you do not work in daily, take the second. Reading both takes about twenty minutes and is the fastest way to understand how the two halves meet.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="deck.pick.eyebrow">start here</span></span>
+      <h2 class="section-title" id="paths-title" data-i18n="deck.pick.title">Which one are you?</h2>
+      <p class="section-lede" data-i18n="deck.pick.lede">If you are about to change something in a repository, take the first path. If you are deciding what applies across several repositories you do not work in daily, take the second. Each is three steps, and each ends where the reference material begins.</p>
     </div>
 
-    <div class="deck-grid">
-      <a class="card deck-card reveal" href="/guide/builders/">
-        <span class="deck-kicker notranslate" translate="no">project-context</span>
-        <h3 class="deck-name" data-i18n="deck.builders.name">The builder's deck</h3>
-        <p class="deck-who" data-i18n="deck.builders.who">For anyone working in a project repository — the person, or the agent, about to change something.</p>
-        <ul class="deck-list">
-          <li data-i18n="deck.builders.l1">What the three records are, and what each one refuses to hold</li>
-          <li data-i18n="deck.builders.l2">The session loop: read before work, detect during, update at the end</li>
-          <li data-i18n="deck.builders.l3">The record model, evidence anchors, and the reference grammar</li>
-          <li data-i18n="deck.builders.l4">Installing it, and what the doctor checks afterwards</li>
-        </ul>
-        <span class="deck-go"><span data-i18n="deck.open">Open the deck</span> <span class="next-arrow" aria-hidden="true">→</span></span>
-      </a>
+    <div class="path-grid">
+      <article class="card path reveal">
+        <span class="path-kicker notranslate" translate="no">project-context</span>
+        <h3 class="path-name" data-i18n="deck.builders.name">You build in a repository</h3>
+        <p class="path-who" data-i18n="deck.builders.who">The person, or the agent, about to change something in a project that has Project Context installed.</p>
+        <ol class="path-steps">
+          <li>
+            <a class="path-step" href="/docs/">
+              <span class="path-num notranslate" translate="no">1</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.b.s1.t">Quick guide</span>
+                <span class="path-desc" data-i18n="deck.b.s1.d">Whether it fits your project, a real <code class="notranslate" translate="no">NOW.md</code>, and the session loop. Fifteen minutes.</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="path-step" href="/docs/install/">
+              <span class="path-num notranslate" translate="no">2</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.b.s2.t">Install</span>
+                <span class="path-desc" data-i18n="deck.b.s2.d">What it does to your repo before it does it, the dry run, and how to leave.</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="path-step" href="/docs/operate/">
+              <span class="path-num notranslate" translate="no">3</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.b.s3.t">Operating the loop</span>
+                <span class="path-desc" data-i18n="deck.b.s3.d">The day-2 ritual, and the five things worth having written down by day 7.</span>
+              </span>
+            </a>
+          </li>
+        </ol>
+        <p class="path-then" data-i18n="deck.b.then">Then keep the <a class="inlink" href="/docs/builders-guide/">builder's guide</a> open in month two.</p>
+      </article>
 
-      <a class="card deck-card reveal" href="/guide/owners/">
-        <span class="deck-kicker notranslate" translate="no">project-hub</span>
-        <h3 class="deck-name" data-i18n="deck.owners.name">The owner's deck</h3>
-        <p class="deck-who" data-i18n="deck.owners.who">For anyone overseeing several repositories — the person who authors what applies across all of them.</p>
-        <ul class="deck-list">
-          <li data-i18n="deck.owners.l1">Scaffold versus instance, and why a Hub is closed to builders</li>
-          <li data-i18n="deck.owners.l2">The boundary: what a push sends, what a pull brings back, what never travels</li>
-          <li data-i18n="deck.owners.l3">Why a push arrives as a pull request on a <code class="notranslate" translate="no">hub-sync</code> branch</li>
-          <li data-i18n="deck.owners.l4">Setting a Hub up, the budgets, and what it costs you</li>
-        </ul>
-        <span class="deck-go"><span data-i18n="deck.open">Open the deck</span> <span class="next-arrow" aria-hidden="true">→</span></span>
-      </a>
+      <article class="card path reveal">
+        <span class="path-kicker notranslate" translate="no">project-hub</span>
+        <h3 class="path-name" data-i18n="deck.owners.name">You oversee several</h3>
+        <p class="path-who" data-i18n="deck.owners.who">The person who authors what applies across every repository, and administers the private one that holds it.</p>
+        <ol class="path-steps">
+          <li>
+            <a class="path-step" href="/project-hub/">
+              <span class="path-num notranslate" translate="no">1</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.o.s1.t">Project Hub</span>
+                <span class="path-desc" data-i18n="deck.o.s1.d">What a Hub is and is not, what never travels, and whether you need one at all.</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="path-step" href="/project-hub/owners-guide/">
+              <span class="path-num notranslate" translate="no">2</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.o.s2.t">Owner's guide</span>
+                <span class="path-desc" data-i18n="deck.o.s2.d">Setting one up, then every command with its real flags, gates and refusals.</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a class="path-step" href="/docs/records/">
+              <span class="path-num notranslate" translate="no">3</span>
+              <span class="path-body">
+                <span class="path-title" data-i18n="deck.o.s3.t">The three records</span>
+                <span class="path-desc" data-i18n="deck.o.s3.d">What your builders are actually keeping, so you can read a pull without guessing.</span>
+              </span>
+            </a>
+          </li>
+        </ol>
+        <p class="path-then" data-i18n="deck.o.then">A Hub is optional. <a class="inlink" href="/docs/">A single repository</a> needs none of it.</p>
+      </article>
     </div>
   </div>
 </section>
 
 <hr class="hairline">
 
-<!-- ============================ 02 HOW TO USE ============================ -->
-<section class="section" id="using" aria-labelledby="using-title">
+<!-- ============================ 02 THE DECKS ============================ -->
+<section class="section" id="decks" aria-labelledby="decks-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="deck.use.eyebrow">using a deck</span></span>
-      <h2 class="section-title" id="using-title" data-i18n="deck.use.title">One HTML file, nothing to install</h2>
-      <p class="section-lede" data-i18n="deck.use.lede">Each deck is a single page. Nothing is downloaded, nothing is tracked, and it works offline once the page has loaded. Present it, or read it at your desk — it is built to survive both.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="deck.decks.eyebrow">the slide decks</span></span>
+      <h2 class="section-title" id="decks-title" data-i18n="deck.decks.title">To show someone, rather than send them</h2>
+      <p class="section-lede" data-i18n="deck.decks.lede">A deck argues; a guide answers. These are built to be read across a room by someone who has not decided yet — and to hold up afterwards as a reference, since the menu lists every slide by name.</p>
     </div>
 
-    <div class="checks">
-      <article class="check reveal">
+    <div class="deck-grid">
+      <a class="card deck-card reveal" href="/guide/builders/">
+        <span class="deck-kicker notranslate" translate="no">19 slides · project-context</span>
+        <h3 class="deck-name" data-i18n="deck.d1.name">The builder's deck</h3>
+        <p class="deck-who" data-i18n="deck.d1.who">What the three records are, the session loop, the record model and evidence anchors, installing it, and what the doctor checks afterwards.</p>
+        <span class="deck-go"><span data-i18n="deck.open">Open the deck</span> <span class="next-arrow" aria-hidden="true">→</span></span>
+      </a>
+
+      <a class="card deck-card reveal" href="/guide/owners/">
+        <span class="deck-kicker notranslate" translate="no">17 slides · project-hub</span>
+        <h3 class="deck-name" data-i18n="deck.d2.name">The owner's deck</h3>
+        <p class="deck-who" data-i18n="deck.d2.who">Scaffold versus instance, the boundary between the two repositories, why a push arrives as a pull request, the budgets, and what a Hub costs you.</p>
+        <span class="deck-go"><span data-i18n="deck.open">Open the deck</span> <span class="next-arrow" aria-hidden="true">→</span></span>
+      </a>
+    </div>
+
+    <div class="checks reveal">
+      <article class="check">
         <h3 data-i18n="deck.use.c1.title">Move through it</h3>
-        <p data-i18n="deck.use.c1.body">Arrow keys, <b>Space</b>, <b>PageUp</b> / <b>PageDown</b>, <b>Home</b> and <b>End</b>. Scroll or swipe works too. On a phone the deck becomes a vertical read rather than a slideshow.</p>
+        <p data-i18n="deck.use.c1.body">Arrow keys, <b>Space</b>, <b>PageUp</b> / <b>PageDown</b>, <b>Home</b> and <b>End</b>. Scroll or swipe works too. On a phone a deck becomes a vertical read rather than a slideshow.</p>
       </article>
-      <article class="check reveal">
+      <article class="check">
         <h3 data-i18n="deck.use.c2.title">Jump anywhere</h3>
-        <p data-i18n="deck.use.c2.body">The <b>Contents</b> item in the menu lists every slide by name, built from the slides themselves so it cannot drift out of step. A deck stays useful as a reference after the talk is over, and your position is remembered if you close the tab and come back.</p>
+        <p data-i18n="deck.use.c2.body">The <b>Contents</b> item in the menu lists every slide by name, built from the slides themselves so it cannot drift out of step. Your position is remembered if you close the tab and come back.</p>
       </article>
-      <article class="check reveal">
+      <article class="check">
         <h3 data-i18n="deck.use.c3.title">Take it with you</h3>
         <p data-i18n="deck.use.c3.body">The menu will save the deck a copy of itself — one file, no assets folder, opening exactly as it does here. There is a light theme in there too. Both decks are English only; command text and file names would not survive translation anyway.</p>
       </article>
@@ -88,24 +150,88 @@
 
 <hr class="hairline">
 
-<!-- ============================ 03 OR READ IT ============================ -->
+<!-- ========================= 03 EVERYTHING WRITTEN ========================= -->
 <section class="section" id="written" aria-labelledby="written-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="deck.read.eyebrow">the written versions</span></span>
-      <h2 class="section-title" id="written-title" data-i18n="deck.read.title">A deck argues; a guide answers</h2>
-      <p class="section-lede" data-i18n="deck.read.lede">A deck is built to be shown to someone who has not decided yet. When you have decided and need the flags, the gates and the exact behaviour, the written guides are where those live.</p>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="deck.all.eyebrow">every written page</span></span>
+      <h2 class="section-title" id="written-title" data-i18n="deck.all.title">The whole set, and what each one is for</h2>
+      <p class="section-lede" data-i18n="deck.all.lede">Seven pages, each answering something the others deliberately leave alone. If two seem to overlap, the narrower one is right and the broader one should be linking to it.</p>
     </div>
 
+    <div class="cmp-wrap reveal">
+      <table class="cmp">
+        <caption class="visually-hidden" data-i18n="deck.all.caption">Every written guide, what it answers, and who it is for</caption>
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="deck.all.th1">Page</th>
+            <th scope="col" data-i18n="deck.all.th2">What it answers</th>
+            <th scope="col" data-i18n="deck.all.th3">For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/docs/" data-i18n="deck.all.r1.n">Quick guide</a></th>
+            <td data-i18n="deck.all.r1.w">Will this fit my project, what does a real record look like, and what happens in a session?</td>
+            <td data-i18n="deck.all.r1.f">Builders, first</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/docs/install/" data-i18n="deck.all.r2.n">Install</a></th>
+            <td data-i18n="deck.all.r2.w">What is written to my repository, what is never touched, and how do I undo it?</td>
+            <td data-i18n="deck.all.r2.f">Builders</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/docs/records/" data-i18n="deck.all.r3.n">The three records</a></th>
+            <td data-i18n="deck.all.r3.w">What goes in each file, what stays out, and what a good entry looks like beside a bad one.</td>
+            <td data-i18n="deck.all.r3.f">Builders</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/docs/operate/" data-i18n="deck.all.r4.n">Operating the loop</a></th>
+            <td data-i18n="deck.all.r4.w">What do I actually do from now on, and what should exist by the end of week one?</td>
+            <td data-i18n="deck.all.r4.f">Builders, day 2</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/docs/builders-guide/" data-i18n="deck.all.r5.n">Builder's guide</a></th>
+            <td data-i18n="deck.all.r5.w">The reference layer: authority, frontmatter, lifecycles, the reference grammar, capture, retrieval, the pushed set.</td>
+            <td data-i18n="deck.all.r5.f">Builders, month 2</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/project-hub/" data-i18n="deck.all.r6.n">Project Hub</a></th>
+            <td data-i18n="deck.all.r6.w">What a Hub is, what it is not, what never travels, and whether to run one.</td>
+            <td data-i18n="deck.all.r6.f">Owners, first</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-name"><a class="inlink" href="/project-hub/owners-guide/" data-i18n="deck.all.r7.n">Owner's guide</a></th>
+            <td data-i18n="deck.all.r7.w">Every command, flag, gate, refusal and budget, and an honest list of what is not built.</td>
+            <td data-i18n="deck.all.r7.f">Owners</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="pagenote reveal" data-i18n="deck.all.note"><a class="inlink" href="/use-cases">Use cases</a> sits outside this set on purpose: it is not a guide but an argument that the same three records work for a manuscript, a research corpus or a client engagement, not only for code.</p>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ============================ 04 THE SOURCE ============================ -->
+<section class="section" id="source" aria-labelledby="source-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">04</span> <span data-i18n="deck.src.eyebrow">the source</span></span>
+      <h2 class="section-title" id="source-title" data-i18n="deck.src.title">All of it is in the repositories too</h2>
+      <p class="section-lede" data-i18n="deck.src.lede">Nothing here is generated from something you cannot read. Every page on this site is written against the code it describes, and both products are plain Markdown and Python with no runtime dependency.</p>
+    </div>
     <div class="next-grid reveal">
-      <a class="card next-card" href="/docs/builders-guide/">
-        <span class="next-kicker" data-i18n="deck.read.kicker1">builders</span>
-        <span class="next-name" data-i18n="nav.guideBuilders">Builder's guide</span>
+      <a class="card next-card" href="https://github.com/monomind-ai-lab/project-context" target="_blank" rel="noopener noreferrer">
+        <span class="next-kicker notranslate" translate="no">github</span>
+        <span class="next-name notranslate" translate="no">monomind-ai-lab/project-context</span>
         <span class="next-arrow" aria-hidden="true">→</span>
       </a>
-      <a class="card next-card" href="/project-hub/owners-guide/">
-        <span class="next-kicker" data-i18n="deck.read.kicker2">owners</span>
-        <span class="next-name" data-i18n="nav.guideOwners">Owner's guide</span>
+      <a class="card next-card" href="https://github.com/monomind-ai-lab/project-hub" target="_blank" rel="noopener noreferrer">
+        <span class="next-kicker notranslate" translate="no">github</span>
+        <span class="next-name notranslate" translate="no">monomind-ai-lab/project-hub</span>
         <span class="next-arrow" aria-hidden="true">→</span>
       </a>
     </div>

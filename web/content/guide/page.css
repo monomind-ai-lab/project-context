@@ -80,3 +80,65 @@
 .next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
 
 .next-arrow{color:var(--accent);font-size:1rem}
+
+
+/* ----------------------------- THE TWO PATHS -----------------------------
+   Two ordered routes, not two lists: a reader should be able to follow the
+   numbers rather than choose between seven links. Each step is the whole
+   clickable target, so the hit area matches what looks pressable.
+   ------------------------------------------------------------------------ */
+.path-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+
+@media(max-width:880px){.path-grid{grid-template-columns:1fr}}
+
+.path{display:flex;flex-direction:column;gap:12px;padding:26px 24px 22px;min-width:0}
+
+.path-kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.path-name{font-size:1.28rem;font-weight:600;letter-spacing:-.025em;color:var(--fg-bright)}
+
+.path-who{color:var(--fg-muted);font-size:.94rem;line-height:1.6}
+
+.path-steps{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:none}
+
+.path-step{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);text-decoration:none;transition:border-color var(--t-fast,160ms) ease}
+
+.path-step:hover{border-color:var(--accent-line)}
+
+.path-num{flex:none;width:22px;height:22px;margin-top:1px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--border-strong);font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+
+.path-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+
+.path-title{font-size:.98rem;font-weight:600;letter-spacing:-.015em;color:var(--fg-bright)}
+
+.path-desc{color:var(--fg-muted);font-size:.88rem;line-height:1.55}
+
+.path-desc code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 5px}
+
+.path-then{margin-top:auto;padding-top:10px;color:var(--fg-muted);font-size:.88rem;line-height:1.6}
+
+
+/* ------------------------------ PROSE LINK ------------------------------
+   site.css sets `a{color:inherit;text-decoration:none}` for nav and cards, so
+   a link inside a sentence has to opt back in or it is invisible.
+   ------------------------------------------------------------------------ */
+.inlink{color:var(--accent);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+
+.inlink:hover{text-decoration-thickness:2px}
+
+
+/* ------------------------------- PAGE NOTE ------------------------------- */
+.pagenote{margin-top:22px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.92rem;line-height:1.65}
+
+
+/* ------------------------------ THE TABLE ------------------------------ */
+.cmp .cmp-name{white-space:normal}
+
+.cmp td{font-size:.92rem;line-height:1.55}
+
+
+/* --------------------------- DECK CARDS, TIGHTER ---------------------------
+   The decks are now one section among four rather than the page's only
+   action, so the cards carry a summary instead of a bullet list.
+   -------------------------------------------------------------------------- */
+.deck-grid+.checks{margin-top:26px}
