@@ -20,6 +20,11 @@ REQUIRED = (
     "assets/project-context-tools.jpg",
     "docs/guide-builders.html",
     "docs/guide-owners.html",
+    # A redirect stub, not a guide. GitHub Pages served the old complete
+    # guide at this path for months and has no redirect rules, so the hop
+    # lives in the document. Required here so a tidy-up does not reinstate
+    # the 404 it exists to prevent.
+    "docs/project-context-complete-guide.html",
     ".github/workflows/pages.yml",
     "examples/sample-project-context/README.md",
     "examples/sample-project-context/NOW.md",
