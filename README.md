@@ -412,11 +412,28 @@ At a milestone or handoff, the active agent:
 
 ## 💡 Interactive Guide & Examples
 
-Open the [Project Context complete guide](https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html)
-for a visual walkthrough of the system, installation flow, agent triggers,
-context records, and optional integrations. It is hosted from the repository's
-`docs/` folder by the GitHub Pages workflow; no download or local setup is
-required to view it.
+There are two slide decks, because the two audiences do not overlap. A builder
+works inside one repository and never sees a Hub; an owner administers several
+and never opens the code. Each answers what it is, what you get, how it works,
+and how to use it — for exactly one of them.
+
+- **[The builder's deck](https://projectcontext.monomind.one/guide/builders/)** —
+  the records, the session loop, the record model, evidence anchors, installing
+  it, and what the doctor checks afterwards. Mirrored at
+  [guide-builders.html](https://monomind-ai-lab.github.io/project-context/guide-builders.html).
+- **[The owner's deck](https://projectcontext.monomind.one/guide/owners/)** —
+  Project Hub: scaffold versus instance, what a push sends and a pull brings
+  back, what never travels, and what a Hub costs you. Mirrored at
+  [guide-owners.html](https://monomind-ai-lab.github.io/project-context/guide-owners.html).
+
+Both are single HTML files with no build step and nothing to install; the
+`docs/` folder is published by the GitHub Pages workflow, and
+[projectcontext.monomind.one](https://projectcontext.monomind.one) serves the
+same files alongside the written documentation. A deck argues; when you have
+decided and need the flags and the exact behaviour, the written
+[builder's guide](https://projectcontext.monomind.one/docs/builders-guide/) and
+[owner's guide](https://projectcontext.monomind.one/project-hub/owners-guide/)
+are where those live.
 
 See the [filled example](examples/sample-project-context/) for the complete
 core-profile experience, with realistic `NOW.md`, `DECISIONS.md`, and
