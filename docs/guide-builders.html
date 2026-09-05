@@ -5,7 +5,11 @@
        notes — the speaker-notes JSON
      Named edit points outside the fences:
        <title> in <head>
-       the known-terms TERMS regex in the translation-guard script (add product terms there)
+       the known-terms TERMS regex in the translation-guard script — this copy ships no
+         translation guard and no language switch, so protected terms are marked inline
+         with <span class="notranslate" translate="no"> instead
+     The deck menu carries: back to the start, contents, theme, self-download, and two
+     links. "Download as PDF" is deliberately absent — this chassis has no handler for it.
      Everything else (head, CSS, chrome markup, scripts, artwork) is load-bearing:
      copy this file with cp, never retype it, and edit only what is named here. -->
 <html lang="en"><head>
@@ -1199,13 +1203,13 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
            role="group" aria-label="Slide 04 Where context lives">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 2 · What it is</p>
-    <h2 class="h-md">Where the context lives, and who reads and writes it.</h2>
+    <h2 class="h-md">Where the context lives.</h2>
     <p class="lead">One durable layer inside the repository it describes. People and agents both read it before substantial work and write to it at a milestone; the artifacts it cites never move.</p>
     <div class="dg-canvas">
       <div class="dg-flow-h">
         <div class="dg-frame">
           <div class="dg-frame-label">People &amp; agents</div>
-          Read before substantial work. Write at a milestone or a handoff. Approve every change before it is written.
+          Read the records before substantial work. Write at a milestone or a handoff.
         </div>
 
         <div class="dg-arrow"><span class="cap">read first · write at milestones</span><span class="ln"></span></div>
@@ -1213,9 +1217,9 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
         <div class="dg-frame is-accent">
           <div class="dg-frame-label">project-context/ — inside your repository</div>
           <div class="dg-chip-row">
-            <div class="dg-chip"><div class="nm notranslate" translate="no">NOW.md</div><p class="ds">Current state &amp; blockers</p></div>
-            <div class="dg-chip"><div class="nm notranslate" translate="no">DECISIONS.md</div><p class="ds">Constraints &amp; rationale</p></div>
-            <div class="dg-chip"><div class="nm notranslate" translate="no">LEARNINGS.md</div><p class="ds">Verified, reusable lessons</p></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">NOW.md</div><p class="ds">Current state</p></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">DECISIONS.md</div><p class="ds">Constraints</p></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">LEARNINGS.md</div><p class="ds">Verified lessons</p></div>
           </div>
           <p class="dg-frame-note">Plain Markdown · Git-tracked · create-only · no network call</p>
         </div>
@@ -1224,10 +1228,10 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
 
         <div class="dg-frame">
           <div class="dg-frame-label">Primary artifacts</div>
-          Source, tests, documents, commits, reviews. Pinned as <span class="notranslate" translate="no">path@commit</span>, so a citation names the state it cites.
+          Source, tests, documents, commits, reviews — pinned as <span class="notranslate" translate="no">path@commit</span>, so a citation names the state it cites.
         </div>
       </div>
-      <div class="dg-loop">↻ <b>The records point at the evidence.</b> They never become a second copy of it — and the primary artifact always outranks the note about it.</div>
+      <div class="dg-loop">↻ <b>The records point at the evidence, never become a second copy of it</b> — and a primary artifact always outranks the note about it.</div>
     </div>
   </section>
 
@@ -1241,23 +1245,22 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
       <div class="dg-frame">
         <ul class="dg-treeview notranslate" translate="no">
           <li class="root"><span class="nm">your-repository/</span></li>
-          <li><span class="nm">AGENTS.md · CLAUDE.md</span><span class="dsc">The managed project-context block; everything outside it stays yours</span></li>
           <li>
             <span class="nm">project-context/</span>
             <ul>
               <li><span class="nm">.project-context.json</span><span class="dsc">The marker: schema, version, project id, pushed-set stamps</span></li>
-              <li><span class="nm">SKILL.md · README.md</span><span class="dsc">The protocol, and what this folder is for a human who found it</span></li>
+              <li><span class="nm">SKILL.md · README.md</span><span class="dsc">The protocol, and what this folder is</span></li>
               <li><span class="nm">NOW.md · DECISIONS.md · LEARNINGS.md</span><span class="dsc">The core profile — the three registries</span></li>
-              <li><span class="nm">PLAN.md · QUESTIONS.md</span><span class="dsc">The milestone in flight, and the open questions — full profile</span></li>
+              <li><span class="nm">PLAN.md · QUESTIONS.md</span><span class="dsc">The milestone in flight and the open questions — full profile</span></li>
               <li><span class="nm">decisions/ questions/ inbox/</span><span class="dsc">Detail records, and capsules waiting to be promoted</span></li>
               <li><span class="nm">tasks/ designs/ incidents/</span><span class="dsc">Full profile only</span></li>
               <li><span class="nm">indexes/</span><span class="dsc">Derived tables, regenerated — never authority</span></li>
-              <li><span class="nm">global/ blueprint/</span><span class="dsc">The pushed set — read-only here, and absent unless an owner runs a Hub</span></li>
+              <li><span class="nm">global/ blueprint/</span><span class="dsc">The pushed set — read-only, and absent unless an owner runs a Hub</span></li>
             </ul>
           </li>
         </ul>
       </div>
-      <div class="dg-loop">Everything above <span class="notranslate" translate="no">global/</span> is <b>authored here</b> — builders write it, and it is the repository's own record of itself. <span class="notranslate" translate="no">global/</span> and <span class="notranslate" translate="no">blueprint/</span> are <b>pushed</b> by an owner and read-only.</div>
+      <div class="dg-loop">Everything above <span class="notranslate" translate="no">global/</span> is <b>authored here</b>. <span class="notranslate" translate="no">global/</span> and <span class="notranslate" translate="no">blueprint/</span> are <b>pushed</b> by an owner, and read-only.</div>
     </div>
   </section>
 
@@ -1271,7 +1274,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
         <table class="tbl">
           <thead><tr><th style="width:24%">File</th><th style="width:38%">What it answers</th><th>When you write it</th></tr></thead>
           <tbody>
-            <tr><td class="k notranslate" translate="no">NOW.md</td><td>What is true now, what is active, and what happens next?</td><td>The state a next contributor would act on changed. Replace stale state rather than appending; keep it under 400 words, because it is read every session.</td></tr>
+            <tr><td class="k notranslate" translate="no">NOW.md</td><td>What is true now, what is active, and what happens next?</td><td>The state a next contributor would act on changed. Replace stale state rather than appending; keep it under 400 words.</td></tr>
             <tr><td class="k notranslate" translate="no">DECISIONS.md</td><td>Which accepted choices constrain future work, and why?</td><td>A choice now constrains future work. Reverse one by superseding it — never by rewriting what it meant.</td></tr>
             <tr><td class="k notranslate" translate="no">LEARNINGS.md</td><td>Which verified lessons should future collaborators reuse?</td><td>Evidence changed what is believed, and it will recur beyond this one task. Evidence is required.</td></tr>
           </tbody>
@@ -1295,7 +1298,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
             <span class="wf-link" aria-hidden="true"></span>
             <div class="wf-node"><span class="n">2</span><h4>The agent reviews and classifies</h4><p>Asks the onboarding question, identifies the project type, finds overlapping context.</p></div>
             <span class="wf-link" aria-hidden="true"></span>
-            <div class="wf-node"><span class="n">3</span><h4>The user approves the plan</h4><p>Profile, the exact file changes, and any optional tools — proposed before writing.</p></div>
+            <div class="wf-node"><span class="n">3</span><h4>The user approves the plan</h4><p>Profile and the exact file changes, proposed before a single write.</p></div>
             <span class="wf-link" aria-hidden="true"></span>
             <div class="wf-node"><span class="n">4</span><h4>The agent installs the pipeline</h4><p>Creates only approved files, preserves existing material, verifies idempotency.</p></div>
           </div>
@@ -1307,11 +1310,11 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
             <span class="wf-link" aria-hidden="true"></span>
             <div class="wf-node"><span class="n">6</span><h4>Agents promote at milestones</h4><p>Changed state, durable decisions, verified learnings — and nothing else.</p></div>
             <span class="wf-link" aria-hidden="true"></span>
-            <div class="wf-node"><span class="n">7</span><h4>The next collaborator inherits</h4><p>Any later person or agent reads the same plain Markdown and follows its evidence links.</p></div>
+            <div class="wf-node"><span class="n">7</span><h4>The next collaborator inherits</h4><p>Any later person or agent reads the same plain Markdown.</p></div>
           </div>
         </div>
       </div>
-      <div class="dg-endbar is-accent">Primary work produces evidence → milestones promote durable context → the next collaborator starts from shared context instead of reconstructing it.</div>
+      <div class="dg-endbar is-accent">Work produces evidence → milestones promote durable context → the next collaborator starts from it instead of reconstructing it.</div>
     </div>
   </section>
 
@@ -1388,12 +1391,12 @@ question. Show me the proposed plan and wait for my approval before making chang
           <tbody>
             <tr><td class="k notranslate" translate="no">--profile core</td><td>The default. <span class="notranslate" translate="no">NOW.md</span>, <span class="notranslate" translate="no">DECISIONS.md</span>, <span class="notranslate" translate="no">LEARNINGS.md</span>, <span class="notranslate" translate="no">decisions/</span>, plus the protocol and README in place</td></tr>
             <tr><td class="k notranslate" translate="no">--profile full</td><td>Adds <span class="notranslate" translate="no">PLAN.md</span>, <span class="notranslate" translate="no">QUESTIONS.md</span> and the <span class="notranslate" translate="no">tasks/</span>, <span class="notranslate" translate="no">designs/</span>, <span class="notranslate" translate="no">incidents/</span>, <span class="notranslate" translate="no">questions/</span>, <span class="notranslate" translate="no">inbox/</span> directories</td></tr>
-            <tr><td class="k notranslate" translate="no">--repo-type auto</td><td>Detected by default. Also <b>code</b>, <b>document</b>, <b>research</b>, <b>writing</b>, <b>mixed</b>, <b>general</b> — it shapes what the scaffold says, not what the tool does</td></tr>
+            <tr><td class="k notranslate" translate="no">--repo-type auto</td><td>Detected by default. Also <b>code</b>, <b>document</b>, <b>research</b>, <b>writing</b>, <b>mixed</b>, <b>general</b> — it shapes what the scaffold says</td></tr>
+            <tr><td class="k notranslate" translate="no">--install-skills</td><td>Installs the protocol skill so agents in this repository can find it</td></tr>
+            <tr><td class="k notranslate" translate="no">--install-hooks</td><td>Merges a SessionStart and a Stop hook into <span class="notranslate" translate="no">.claude/settings.json</span>. Opt-in, implies <span class="notranslate" translate="no">--install-skills</span>, and every other hook is preserved</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="dg-flag"><div class="fl notranslate" translate="no">--install-skills</div><div class="fd">Installs the protocol skill so agents in this repository can find it</div></div>
-      <div class="dg-flag"><div class="fl notranslate" translate="no">--install-hooks</div><div class="fd">Merges a SessionStart and a Stop hook into .claude/settings.json. Opt-in, implies --install-skills, and every other hook is preserved</div></div>
     </div>
   </section>
 
@@ -1428,16 +1431,16 @@ question. Show me the proposed plan and wait for my approval before making chang
            role="group" aria-label="Slide 12 The record model">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · The record model</p>
-    <h2 class="h-md">One schema, one version per product, one lifecycle per kind.</h2>
-    <p class="lead">A detail record in <span class="notranslate" translate="no">decisions/</span>, <span class="notranslate" translate="no">questions/</span>, <span class="notranslate" translate="no">tasks/</span> or <span class="notranslate" translate="no">inbox/</span> carries six required frontmatter keys and nothing else is required. The registries carry none and stay plain Markdown.</p>
+    <h2 class="h-md">One lifecycle per kind.</h2>
+    <p class="lead">One schema string, <span class="notranslate" translate="no">project-context/1</span>, and one version per product. A detail record in <span class="notranslate" translate="no">decisions/</span>, <span class="notranslate" translate="no">questions/</span>, <span class="notranslate" translate="no">tasks/</span> or <span class="notranslate" translate="no">inbox/</span> carries these six frontmatter keys and nothing more is required; registries carry none and stay plain Markdown.</p>
     <div class="dg-canvas">
       <div class="dg-chip-row">
-        <div class="dg-chip"><div class="nm notranslate" translate="no">id</div><p class="ds">D-004</p></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">kind</div><p class="ds">decision</p></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">status</div><p class="ds">accepted</p></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">title</div><p class="ds">Serve thumbnails from the CDN</p></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">created</div><p class="ds">2026-09-03</p></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">asserted_by</div><p class="ds">person:ren</p></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">id</div></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">kind</div></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">status</div></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">title</div></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">created</div></div>
+        <div class="dg-chip"><div class="nm notranslate" translate="no">asserted_by</div></div>
       </div>
 
       <div class="dg-map">
@@ -1450,7 +1453,7 @@ question. Show me the proposed plan and wait for my approval before making chang
         <div class="dg-map-row-l notranslate" translate="no">task</div><div class="dg-map-arrow">→</div><div class="dg-map-row-r notranslate" translate="no">proposed → active → done | dropped</div>
       </div>
 
-      <div class="dg-map-summary">A status is checked against its own kind, because a question is not an assertion and a task is not a claim — <b class="notranslate" translate="no">accepted</b> on a question is an error, and <b class="notranslate" translate="no">candidate</b> and <b class="notranslate" translate="no">approved</b> are retired everywhere.</div>
+      <div class="dg-map-summary">A status is checked against its own kind, because a question is not an assertion and a task is not a claim: <b class="notranslate" translate="no">accepted</b> on a question is an error.</div>
     </div>
   </section>
 
@@ -1459,24 +1462,33 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · The record model</p>
     <h2 class="h-md">Pin evidence to the state it cites.</h2>
-    <p class="lead">A repository path is anchored as <span class="notranslate" translate="no">src/auth/session.py@a1b2c3d</span>, plainly on an <span class="notranslate" translate="no">- Evidence:</span> line or as a link target. A reference to a moving file is a reference to nothing.</p>
+    <p class="lead">A repository path is anchored as <span class="notranslate" translate="no">src/auth/session.py@a1b2c3d</span>. A reference to a moving file is a reference to nothing.</p>
     <div class="dg-canvas">
-      <div class="dg-frame is-accent">
-        <table class="tbl">
-          <thead><tr><th style="width:42%">Reference form</th><th>What it names</th></tr></thead>
-          <tbody>
-            <tr><td class="k notranslate" translate="no">session:&lt;harness&gt;:&lt;id&gt;</td><td>The chat or agent run the claim came out of</td></tr>
-            <tr><td class="k notranslate" translate="no">commit:&lt;binding&gt;:&lt;sha&gt;</td><td>A commit in a named repository</td></tr>
-            <tr><td class="k notranslate" translate="no">pr:&lt;binding&gt;#&lt;number&gt;</td><td>A pull request</td></tr>
-            <tr><td class="k notranslate" translate="no">review:&lt;binding&gt;#&lt;pr&gt;/&lt;comment-id&gt;</td><td>One comment on one review</td></tr>
-            <tr><td class="k notranslate" translate="no">ticket:&lt;tracker&gt;:&lt;key&gt;</td><td>An issue in a tracker</td></tr>
-            <tr><td class="k notranslate" translate="no">doc:&lt;binding&gt;:&lt;path&gt;@&lt;commit&gt;</td><td>A document pinned to the commit it was read at</td></tr>
-            <tr><td class="k notranslate" translate="no">url:https://…</td><td>Anything that lives outside the repository</td></tr>
-            <tr><td class="k notranslate" translate="no">capsule:&lt;id&gt;</td><td>A capsule waiting in inbox/</td></tr>
-          </tbody>
-        </table>
+      <div class="grid-2">
+        <div class="dg-frame is-accent">
+          <table class="tbl">
+            <thead><tr><th style="width:54%">Reference form</th><th>What it names</th></tr></thead>
+            <tbody>
+              <tr><td class="k notranslate" translate="no">session:&lt;harness&gt;:&lt;id&gt;</td><td>The run it came from</td></tr>
+              <tr><td class="k notranslate" translate="no">commit:&lt;binding&gt;:&lt;sha&gt;</td><td>A commit</td></tr>
+              <tr><td class="k notranslate" translate="no">pr:&lt;binding&gt;#&lt;number&gt;</td><td>A pull request</td></tr>
+              <tr><td class="k notranslate" translate="no">review:&lt;binding&gt;#&lt;pr&gt;/&lt;comment-id&gt;</td><td>One review comment</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="dg-frame is-accent">
+          <table class="tbl">
+            <thead><tr><th style="width:54%">Reference form</th><th>What it names</th></tr></thead>
+            <tbody>
+              <tr><td class="k notranslate" translate="no">ticket:&lt;tracker&gt;:&lt;key&gt;</td><td>An issue in a tracker</td></tr>
+              <tr><td class="k notranslate" translate="no">doc:&lt;binding&gt;:&lt;path&gt;@&lt;commit&gt;</td><td>A pinned document</td></tr>
+              <tr><td class="k notranslate" translate="no">url:https://…</td><td>Anything outside the repo</td></tr>
+              <tr><td class="k notranslate" translate="no">capsule:&lt;id&gt;</td><td>A capsule in inbox/</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="dg-loop">Every form is <b>validated by shape, never by resolving it</b> — so checking a record costs nothing and reaches nothing. Anchors themselves are optional and Git-gated.</div>
+      <div class="dg-loop">Every form is <b>validated by shape, never by resolving it</b>. Anchors are optional and Git-gated: drift is a warning, never an error.</div>
     </div>
   </section>
 
@@ -1525,15 +1537,15 @@ question. Show me the proposed plan and wait for my approval before making chang
       <div class="grid-3">
         <div class="dg-frame">
           <div class="dg-frame-label">capture → inbox/</div>
-          <p class="ds">One short, dated, attributed note. <b class="notranslate" translate="no">At most 200 words</b>, and a longer one is refused because that is the record it should become. The same text twice on the same day writes once, so a hook that fires twice leaves one note. Provenance comes from your git identity; the current commit is recorded as evidence without being asked for.</p>
+          <p class="ds">One short, dated, attributed note. <b class="notranslate" translate="no">At most 200 words</b> — a longer one is refused, because that is the record it should become. The same text twice on the same day writes once. Provenance comes from your git identity, and the current commit is recorded for you.</p>
         </div>
         <div class="dg-frame is-accent">
           <div class="dg-frame-label">context → the packet</div>
-          <p class="ds">Ordered rather than ranked: the owner's guardrails, the <span class="notranslate" translate="no">blueprint/</span> epic, <span class="notranslate" translate="no">NOW.md</span> and the active plan items, then the records anchored to your files, then the ones that merely share vocabulary. Only <b class="notranslate" translate="no">accepted</b> and <b class="notranslate" translate="no">answered</b> records load; proposed ones are listed as links, as is anything that did not fit the budget.</p>
+          <p class="ds">Ordered rather than ranked: the owner's guardrails, the <span class="notranslate" translate="no">blueprint/</span> epic, <span class="notranslate" translate="no">NOW.md</span> and the active plan items, then the records anchored to your files. Only <b class="notranslate" translate="no">accepted</b> and <b class="notranslate" translate="no">answered</b> records load; proposed ones and anything over budget come back as links.</p>
         </div>
         <div class="dg-frame">
           <div class="dg-frame-label">review → what waits on a person</div>
-          <p class="ds">Proposed records, questions open past their window, capsules nobody promoted, assumptions nobody confirmed, drifted anchors, a stale <span class="notranslate" translate="no">NOW.md</span>. Oldest first, because latency is the failure this system is exposed to. It <b>exits zero whatever it finds</b> — CI that breaks on an open question teaches people to stop filing them.</p>
+          <p class="ds">Proposed records, questions open past their window, unpromoted capsules, drifted anchors, a stale <span class="notranslate" translate="no">NOW.md</span>. Oldest first, because latency is the failure this system is exposed to. It <b>exits zero whatever it finds</b>: a backlog is not a build failure.</p>
         </div>
       </div>
       <div class="dg-loop">↻ Retrieval is deliberately a <b>path-prefix comparison and a token overlap</b> over a few hundred small Markdown files. No embedding index, no database, no background service, nothing to keep warm.</div>
@@ -1563,7 +1575,7 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 8 · Beyond this repository</p>
     <h2 class="h-md">Optional: the other half, <span class="notranslate" translate="no">Project Hub</span>.</h2>
-    <p class="lead">A Hub is one private repository an owner administers, holding what applies across every project. Nothing in your repository requires it, and nothing here ever reaches out to it.</p>
+    <p class="lead">A Hub is one private repository an owner administers, holding what applies across every project. Nothing here requires it, and nothing here ever reaches out to it.</p>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame">
@@ -1572,15 +1584,15 @@ question. Show me the proposed plan and wait for my approval before making chang
             <li><span class="notranslate" translate="no">global/</span> — organisation guardrails, workflows, shared records.</li>
             <li><span class="notranslate" translate="no">blueprint/EPIC.md</span> — the high-level plan this project serves.</li>
             <li><span class="notranslate" translate="no">blueprint/ARCHITECTURE.md</span> — the shape it has to keep.</li>
-            <li>Everything moves by the owner's hand. A push lands on a long-lived <b class="notranslate" translate="no">hub-sync</b> branch as a pull request you review like any other — never on your default branch.</li>
+            <li>Everything moves by the owner's hand. A push lands on a long-lived <b class="notranslate" translate="no">hub-sync</b> branch as a pull request — never on your default branch.</li>
           </ul>
         </div>
         <div class="dg-frame is-accent">
           <div class="dg-frame-label">Read-only here — and what to do instead</div>
           <ul class="bullets tight">
-            <li>Each pushed file is stamped by hash in the marker, and the doctor reports an edit as <b class="notranslate" translate="no">pushed-file-modified</b>, naming the Hub as the place to change it.</li>
+            <li>Each pushed file is stamped by hash in the marker; the doctor reports an edit as <b class="notranslate" translate="no">pushed-file-modified</b>, naming the Hub as the place to change it.</li>
             <li>Disagree with something pushed? <b>Raise a question in your own records.</b> Your edit would be overwritten at the next sync and the owner would never learn you objected.</li>
-            <li>A <span class="notranslate" translate="no">proposal</span> capsule is how you ask for a change to something the Hub pushed; it reaches the owner at their next pull.</li>
+            <li>A <span class="notranslate" translate="no">proposal</span> capsule is how you ask for a change to something pushed; it reaches the owner at their next pull.</li>
           </ul>
         </div>
       </div>
@@ -1611,7 +1623,7 @@ question. Show me the proposed plan and wait for my approval before making chang
       <div>
         <p class="eyebrow">Get started</p>
         <h2 class="h-hero">Clarity comes with context.</h2>
-        <p class="lead">Install it in one repository, run the doctor, and read what it says. Nothing is written without a plan you approved.</p>
+        <p class="lead">Install it in one repository, run the doctor, and read what it says.</p>
         <p class="code sm notranslate" translate="no">uvx --from git+https://github.com/monomind-ai-lab/project-context \
   project-context init --target . --install-skills --dry-run</p>
       </div>
@@ -1648,6 +1660,59 @@ question. Show me the proposed plan and wait for my approval before making chang
            `menu.items` decides which of these survive. Deleting an item's
            markup is the supported way to turn it off — the script guards
            every one of them, so nothing breaks when it is gone. -->
+
+      <!-- menu.items: "contents" — the slide list, built at runtime from each
+           slide's data-screen-label, so it cannot drift out of step. -->
+      <button type="button" role="menuitem" id="deck-menu-contents" aria-expanded="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Contents
+      </button>
+      <div class="deck-menu-sub" id="deck-contents" role="none" hidden></div>
+
+      <!-- menu.items: "theme" -->
+      <button type="button" role="menuitem" id="deck-menu-theme">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span id="deck-theme-label">Light theme</span>
+      </button>
+
+      <!-- menu.items: "html" — the deck saves a copy of itself. Hides itself
+           on file://, where it would only hand you what you already have.
+           "pdf" is deliberately absent: this chassis carries no handler for
+           it, so the button would be dead. -->
+      <button type="button" role="menuitem" id="deck-menu-html">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download the HTML
+      </button>
+      <a role="menuitem" href="https://projectcontext.monomind.one/">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 10.6 12 4l8 6.6V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1v-8.4Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+        Project Context home
+      </a>
+      <div class="deck-menu-sep" role="none"></div>
+      <a role="menuitem" href="https://github.com/monomind-ai-lab/project-context"
+         target="_blank" rel="noopener noreferrer">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+          1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+          0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0
+          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0
+          3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01
+          8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+        View on GitHub
+      </a>
 
 
     </div>

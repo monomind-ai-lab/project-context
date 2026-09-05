@@ -8,6 +8,8 @@
        the known-terms TERMS regex in the translation-guard script — this copy ships no
          translation guard and no language switch, so protected terms are marked inline
          with <span class="notranslate" translate="no"> instead
+     The deck menu carries: back to the start, contents, theme, self-download, and two
+     links. "Download as PDF" is deliberately absent — this chassis has no handler for it.
      Everything else (head, CSS, chrome markup, scripts, artwork) is load-bearing:
      copy this file with cp, never retype it, and edit only what is named here. -->
 <html lang="en"><head>
@@ -1594,6 +1596,59 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
            `menu.items` decides which of these survive. Deleting an item's
            markup is the supported way to turn it off — the script guards
            every one of them, so nothing breaks when it is gone. -->
+
+      <!-- menu.items: "contents" — the slide list, built at runtime from each
+           slide's data-screen-label, so it cannot drift out of step. -->
+      <button type="button" role="menuitem" id="deck-menu-contents" aria-expanded="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Contents
+      </button>
+      <div class="deck-menu-sub" id="deck-contents" role="none" hidden></div>
+
+      <!-- menu.items: "theme" -->
+      <button type="button" role="menuitem" id="deck-menu-theme">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.6" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span id="deck-theme-label">Light theme</span>
+      </button>
+
+      <!-- menu.items: "html" — the deck saves a copy of itself. Hides itself
+           on file://, where it would only hand you what you already have.
+           "pdf" is deliberately absent: this chassis carries no handler for
+           it, so the button would be dead. -->
+      <button type="button" role="menuitem" id="deck-menu-html">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download the HTML
+      </button>
+      <a role="menuitem" href="https://projectcontext.monomind.one/project-hub/">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 10.6 12 4l8 6.6V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1v-8.4Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+        Project Hub home
+      </a>
+      <div class="deck-menu-sep" role="none"></div>
+      <a role="menuitem" href="https://github.com/monomind-ai-lab/project-hub"
+         target="_blank" rel="noopener noreferrer">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+          1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+          0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0
+          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0
+          3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01
+          8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+        View on GitHub
+      </a>
 
 
     </div>
