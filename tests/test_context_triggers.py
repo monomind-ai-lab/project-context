@@ -219,6 +219,32 @@ class TriggerTests(unittest.TestCase):
             )
             self.assertEqual("", second.stdout.strip())
 
+    def test_the_gate_offers_capture_as_well_as_ack(self) -> None:
+        """2.6: "context is behind; here are the triggers; here is the capture command".
+
+        The gate used to offer exactly two ways out — update a document, or
+        acknowledge that nothing fired. That leaves no move for the common
+        middle case: something surfaced that is worth keeping and is not yet a
+        registry entry. Without a third option the honest answer is `ack`, and
+        the thing is lost.
+        """
+        import contextlib
+
+        with contextlib.ExitStack() as stack:
+            target, script = self.repository(stack)
+            result = subprocess.run(
+                [sys.executable, str(script), "gate"], cwd=target,
+                input=json.dumps({"session_id": "s1", "cwd": str(target)}),
+                check=False, capture_output=True, text=True,
+            )
+            reason = json.loads(result.stdout)["reason"]
+            self.assertIn("context_capture.py", reason)
+            self.assertIn("--kind", reason)
+            self.assertIn("200 words", reason)
+            # All three ways out, still.
+            self.assertIn("Last reviewed", reason)
+            self.assertIn("ack --note", reason)
+
     def test_session_start_reports_the_open_window(self) -> None:
         import contextlib
 

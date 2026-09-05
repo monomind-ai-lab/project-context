@@ -53,11 +53,12 @@ When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal,
 it serves.
 
 `project-context/global/` and `project-context/blueprint/` are owner-authored
-and read-only here. To change one, file the question in `QUESTIONS.md`; it
-reaches the owner on their next pull.
+and read-only here. To change one, run `project-context capture --kind
+proposal` or file the question in `QUESTIONS.md`; it reaches the owner on their
+next pull.
 
-Record decisions, learnings, and questions in the registries as they happen,
-and run `project-context review` to see what is waiting on a person.
+Record decisions, learnings, and questions as they happen — in the registries,
+or with `project-context capture` when the judgement can wait.
 <!-- project-context:end -->"""
 
 # What a file we create opens with. An install that had to create `AGENTS.md`
@@ -471,26 +472,59 @@ def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str
     }
 
 
-def metadata_content(target: Path, profile: str, repo_type: str) -> str:
-    """The one marker both products write.
+# Fields this release owns and always writes. Everything else in a marker is
+# either set once at install or written by something other than this script.
+OWNED_MARKER_KEYS = ("authority", "product", "schema", "version")
+
+
+def read_marker(context: Path) -> dict[str, Any] | None:
+    path = context / MARKER_NAME
+    if not path.is_file() or path.is_symlink():
+        return None
+    try:
+        marker = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    return marker if isinstance(marker, dict) else None
+
+
+def metadata_content(
+    target: Path, profile: str, repo_type: str, existing: dict[str, Any] | None = None
+) -> str:
+    """The one marker both products write, carried forward rather than rebuilt.
 
     One schema string, one version number per product, and the project id.
     `pushed` is absent until a Hub owner pushes something: a repository with no
     Hub is a complete product, and an empty stamp table would imply otherwise.
+
+    `existing` is what makes that safe. A marker built from scratch has no
+    `pushed` key, so writing one over a marker in a repository a Hub has pushed
+    to would delete every stamp — and the stamps are the only evidence that a
+    pushed copy is still the copy that was sent, so the doctor would lose the
+    ability to tell an edited guardrail from an untouched one. Only the four
+    keys this release owns are overwritten. `project_id`, `profile` and
+    `repository_type` are set at install and then preserved: re-deriving the
+    project id would silently re-key a repository against its Hub's registry
+    the first time somebody renamed the checkout directory. Keys this release
+    has never heard of survive too, because a later one may write something
+    this one does not know to keep.
     """
-    return json.dumps(
+    carried: dict[str, Any] = dict(existing) if isinstance(existing, dict) else {}
+    for key, value in (
+        ("profile", profile),
+        ("project_id", project_id(target)),
+        ("repository_type", repo_type),
+    ):
+        carried.setdefault(key, value)
+    carried.update(
         {
             "authority": "tracked-markdown",
             "product": PRODUCT,
-            "profile": profile,
-            "project_id": project_id(target),
-            "repository_type": repo_type,
             "schema": SCHEMA,
             "version": package_version(),
-        },
-        indent=2,
-        sort_keys=True,
-    ) + "\n"
+        }
+    )
+    return json.dumps(carried, indent=2, sort_keys=True) + "\n"
 
 
 def instruction_paths(target: Path) -> list[Path]:
@@ -574,29 +608,6 @@ def refresh_file_action(actions: list[dict[str, Any]], destination: Path, conten
         actions.append({"kind": "unchanged", "path": str(destination), "reason": "matches this release"})
         return
     actions.append({"kind": "refresh", "path": str(destination), "content": content})
-
-
-def merged_marker(context: Path, marker: dict[str, Any]) -> str:
-    """The marker carried forward, keeping everything this release did not write.
-
-    `metadata_content` builds a marker from scratch and has no `pushed` key,
-    because a fresh install has nothing pushed to it. Writing that over a
-    marker in a repository a Hub has pushed to would delete every stamp — and
-    the stamps are the only evidence that a pushed copy is still the copy that
-    was sent, so the doctor would stop being able to tell an edited guardrail
-    from an untouched one. Merge, and keep unknown keys too: a later release
-    may record something this one does not know to preserve.
-    """
-    carried = dict(marker)
-    carried.update(
-        {
-            "authority": "tracked-markdown",
-            "product": PRODUCT,
-            "schema": SCHEMA,
-            "version": package_version(),
-        }
-    )
-    return json.dumps(carried, indent=2, sort_keys=True) + "\n"
 
 
 def index_actions(context: Path, actions: list[dict[str, Any]]) -> None:
@@ -687,7 +698,11 @@ def build_update_plan(target: Path) -> dict[str, Any]:
 
     # Ours.
     refresh_file_action(actions, context / "SKILL.md", protocol_source().read_text(encoding="utf-8"))
-    refresh_file_action(actions, marker_path, merged_marker(context, marker))
+    refresh_file_action(
+        actions,
+        marker_path,
+        metadata_content(target, profile, marker.get("repository_type", "general"), marker),
+    )
     # Only where the skills were installed in the first place. A repository that
     # chose not to carry them does not acquire them by asking for an update.
     if (target / ".agents" / "skills" / "project-context").is_dir():
@@ -1208,7 +1223,7 @@ def build_plan(
         add_file_action(
             actions,
             context / MARKER_NAME,
-            metadata_content(target, profile, repository["type"]),
+            metadata_content(target, profile, repository["type"], read_marker(context)),
         )
     harnesses = instruction_paths(target)
     actions.extend(instruction_plan(path) for path in harnesses)
@@ -1309,6 +1324,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     onboard_parser.add_argument("--target", default=".", type=Path)
     onboard_parser.add_argument("--budget", default=4000, type=int)
     onboard_parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    capture_parser = subparsers.add_parser("capture", help="write one capsule into inbox/")
+    capture_parser.add_argument("--target", default=".", type=Path)
+    capture_parser.add_argument("--kind", required=True)
+    capture_parser.add_argument("--text", required=True)
+    capture_parser.add_argument("--title")
+    capture_parser.add_argument("--evidence", action="append")
+    capture_parser.add_argument("--files", default="")
+    capture_parser.add_argument("--actor")
+    capture_parser.add_argument("--session")
+    capture_parser.add_argument("--harness")
+    capture_parser.add_argument("--model")
+    capture_mode = capture_parser.add_mutually_exclusive_group(required=True)
+    capture_mode.add_argument("--dry-run", action="store_true")
+    capture_mode.add_argument("--apply", action="store_true")
     update_parser = subparsers.add_parser(
         "update", help="carry an installed repository forward; local only, no network"
     )
@@ -1390,6 +1419,25 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(module.render(report), end="")
         return 0
+    if args.command == "capture":
+        module = load_protocol("context_capture.py")
+        if module is None:
+            print(f"Cannot load capture from {protocol_script('context_capture.py')}", file=sys.stderr)
+            return 2
+        if args.kind not in module.CAPSULE_KINDS:
+            print(f"--kind must be one of: {', '.join(module.CAPSULE_KINDS)}", file=sys.stderr)
+            return 2
+        forwarded = [
+            "--target", str(target), "--kind", args.kind, "--text", args.text,
+            "--dry-run" if args.dry_run else "--apply",
+        ]
+        for flag in ("title", "files", "actor", "session", "harness", "model"):
+            value = getattr(args, flag)
+            if value:
+                forwarded += [f"--{flag}", value]
+        for reference in args.evidence or []:
+            forwarded += ["--evidence", reference]
+        return int(module.main(forwarded))
     if args.command == "update":
         report = build_update_plan(target)
         if args.dry_run:
