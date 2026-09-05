@@ -28,28 +28,52 @@ END = "<!-- project-context:end -->"
 # repository, so it is held to the L0 budget and says what to do, never what
 # the product is. A repository with no Hub simply has no `blueprint/` and no
 # `global/`, and those two paragraphs are inert rather than wrong.
+#
+# It opens with the guardrail because the region is the one part of somebody
+# else's file that we rewrite. The markers already make that safe on our side —
+# only what sits between them is ever replaced, and a malformed pair is refused
+# rather than repaired — but nothing said so to the person or the agent reading
+# the file, who saw prose indistinguishable from what their team wrote. A rule
+# enforced silently is one that gets broken in good faith.
+MANAGED_BLOCK_WORD_BUDGET = 150
 MANAGED_BLOCK = """<!-- project-context:start -->
 ## Project Context
+
+**Managed region.** Project Context rewrites everything between these markers
+and nothing outside them — the rest of the file is yours. Leave both markers in
+place; a broken pair stops the update rather than being repaired.
 
 Before substantial work, run `project-context context --task "<one line>"`, or
 read `project-context/NOW.md` and `project-context/PLAN.md` if the CLI is not
 available. Search `DECISIONS.md`, `LEARNINGS.md`, and `QUESTIONS.md` for
-constraints that touch the files you are about to change.
+constraints touching the files you are about to change.
 
-When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal
-this project serves, `ARCHITECTURE.md` is the shape it has to keep. Every
-`PLAN.md` item names the epic item it serves.
+When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal,
+`ARCHITECTURE.md` the shape to keep. Every `PLAN.md` item names the epic item
+it serves.
 
 `project-context/global/` and `project-context/blueprint/` are owner-authored
-and read-only here. Do not edit them. To change one, run `project-context
-capture --kind proposal` or file the question in `QUESTIONS.md`; it reaches the
-owner on their next pull.
+and read-only here. To change one, run `project-context capture --kind
+proposal` or file a question in `QUESTIONS.md`; it reaches the owner on their
+next pull.
 
 Record decisions, learnings, and questions as they happen with `project-context
-capture`. Confirm important claims against the repository's primary artifacts.
-Treat generated indexes and wikis as auxiliary views, not authority.
+capture`.
 <!-- project-context:end -->"""
 
+# What a file we create opens with. An install that had to create `AGENTS.md`
+# or `CLAUDE.md` used to write the managed block and nothing else, so the
+# repository gained a file that begins mid-instruction, with no title, no
+# statement of what it is for, and no sign that the rest of it is the team's to
+# write. This header sits *outside* the markers, which means we write it once
+# and never touch it again — the reader can rewrite every word of it.
+CREATED_INSTRUCTION_HEADER = """# Agent instructions
+
+Instructions for anyone working in this repository, person or agent. Project
+Context created this file because the repository had none; everything outside
+the managed block below is yours to write, and no update will touch it.
+
+"""
 INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
 # Install ensures *both* root instruction files carry the block, creating
 # whichever is missing. Updating only the files that happened to exist left a
@@ -975,7 +999,11 @@ def build_plan(
     for role in INSTRUCTION_ROLES:
         if role.casefold() not in carried:
             actions.append(
-                {"kind": "create", "path": str(target / role), "content": MANAGED_BLOCK + "\n"}
+                {
+                    "kind": "create",
+                    "path": str(target / role),
+                    "content": CREATED_INSTRUCTION_HEADER + MANAGED_BLOCK + "\n",
+                }
             )
     if install_skills:
         plan_skill_install(target, actions)
