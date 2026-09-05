@@ -46,8 +46,8 @@ Read what it plans. Then swap `--dry-run` for `--apply`.
 
 | Flag | Does |
 | --- | --- |
-| `--profile core` (default) | `NOW.md`, `DECISIONS.md`, `LEARNINGS.md`, `decisions/`. Enough for most repositories. |
-| `--profile full` | Adds `tasks/`, `designs/`, `incidents/`. Take this when the project already has that much going on. |
+| `--profile core` (default) | `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, `LEARNINGS.md` — the three registries and the protocol, and no subfolders. Enough for most repositories. |
+| `--profile full` | Adds `PLAN.md` and `QUESTIONS.md`, and the `decisions/`, `questions/`, `tasks/`, `inbox/`, `designs/` and `incidents/` subfolders. Take this when the project already has that much going on. |
 | `--repo-type` | `auto` by default. Also `code`, `document`, `research`, `writing`, `mixed`, `general`. |
 | `--install-skills` | Installs the protocol skill so agents in this repo can find it. |
 | `--install-hooks` | Wires the session hooks into `.claude/settings.json`. Opt-in, never assumed. |
@@ -65,7 +65,6 @@ project-context/
   questions/              a question that needs more room than the registry gives
   inbox/                  capsules from `capture`, waiting to be promoted
   tasks/ designs/ incidents/     full profile only
-  indexes/                derived tables, regenerated
   README.md               what this folder is, for a human who found it
   SKILL.md                the protocol, readable in place
   .project-context.json   the marker: product, schema, version, stamps

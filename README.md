@@ -105,10 +105,10 @@ Context lives in the project it describes:
     ├── NOW.md                     # current state, active work, blockers, next action
     ├── DECISIONS.md               # the decision registry
     ├── LEARNINGS.md               # verified, reusable lessons
-    ├── decisions/  tasks/         # detail records, full profile
-    ├── designs/    incidents/     # supporting evidence, full profile
-    ├── global/  blueprint/        # owner-authored, read-only, present only when pushed
-    └── indexes/                   # derived tables, regenerated
+    ├── decisions/  questions/     # detail records, full profile
+    ├── tasks/  designs/  incidents/  # supporting evidence, full profile
+    ├── inbox/                     # capsules from capture, awaiting promotion
+    └── global/  blueprint/        # owner-authored, read-only, present only when pushed
 ```
 
 Everything above the `global/` line is **authored** here: builders write it, and
