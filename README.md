@@ -276,13 +276,25 @@ The resulting directory acts as a routing and continuity layer:
 
 Alongside those records, the **core profile** also writes
 `project-context/SKILL.md` and `project-context/README.md` so both agents and
-people can read the operating protocol in place. The **full profile** adds
-`decisions/`, `designs/`, `incidents/`, and `tasks/` subfolders with templates
-for projects that need the complete evidence structure. Installation also places
-the `project-context` skill under `.agents/skills/project-context/`, writes a
-pointer under `.claude/skills/project-context/SKILL.md` so Claude Code can
-discover it, and adds or refreshes only the managed Project Context block in
-existing root agent instructions.
+people can read the operating protocol in place. The **full profile** adds the
+milestone and question registries and the record directories:
+
+```text
+project-context/
+├── PLAN.md         (The current milestone; each item names the epic item it serves)
+├── QUESTIONS.md    (Open questions and the assumptions work proceeds on)
+├── decisions/      designs/      incidents/      tasks/
+├── questions/      (A question that needs more room than the registry gives it)
+└── inbox/          (Capsules from `capture`, waiting to be promoted or dropped)
+```
+
+Installation also places the `project-context` skill under
+`.agents/skills/project-context/`, writes a pointer under
+`.claude/skills/project-context/SKILL.md` so Claude Code can discover it, and
+carries the managed Project Context block into **both** `AGENTS.md` and
+`CLAUDE.md` — appending to whichever exists and creating whichever does not.
+Only the region between the two markers is ever ours; the rest of those files
+is yours and is never touched.
 
 Project Context does not copy the whole project into a second knowledge base.
 Primary artifacts stay where they belong. The context files summarize only the
@@ -322,8 +334,10 @@ primary materials or existing instructions.
 
 - **`project-context` skill** — installed at `.agents/skills/project-context/`,
   reads and maintains durable project-folder context, runs verification checks,
-  and travels with installed repositories. Includes context triggers (`context_triggers.py`),
-  registry indexes (`context_index.py`), and a standalone doctor (`context_doctor.py`).
+  and travels with installed repositories. Six scripts: the retrieval assembler
+  (`context_packet.py`), capture (`context_capture.py`), the standing review
+  (`context_review.py`), context triggers (`context_triggers.py`), registry
+  indexes (`context_index.py`), and a standalone doctor (`context_doctor.py`).
 - **`project-context-init` installer** — stays upstream (in the scaffold checkout
   or pip package); onboards new or existing projects, suggests safe consolidation,
   initializes the right profile, and validates context health. The `init`
@@ -331,9 +345,13 @@ primary materials or existing instructions.
 - **Deterministic tooling** — dry-run/apply initialization, idempotency,
   one version number read from `VERSION`, and health verification that also
   checks whether the protocol can still reach an agent.
-- **Two profiles** — lightweight core (NOW, DECISIONS, LEARNINGS) or full with
-  decisions/, designs/, incidents/, and tasks/ subfolders for projects needing
-  complete evidence structure.
+- **Two profiles** — lightweight core (NOW, DECISIONS, LEARNINGS) or full,
+  which adds `PLAN.md`, `QUESTIONS.md`, and the `decisions/`, `designs/`,
+  `incidents/`, `tasks/`, `questions/`, and `inbox/` directories for projects
+  needing the complete evidence structure.
+- **A local upgrade path** — `project-context update` carries an installed
+  repository forward: refreshes what this product owns, creates scaffold files
+  the install predates, and never touches a record.
 - **Ready-to-copy prompts** — install or maintain the pipeline with any AI
   agent that can read and edit the repository.
 - **CLI and agent-guided paths** — run `project-context init`, or paste a
@@ -365,10 +383,18 @@ In short: **primary work produces evidence → milestones promote durable contex
 
 At the start of meaningful work, the active agent:
 
-1. Reads `project-context/NOW.md`.
-2. Searches `DECISIONS.md` and `LEARNINGS.md` for the task topic.
+1. Runs `project-context context --task "<one line>" --files <paths>` and reads
+   the packet it returns — the owner's constraints, the current state, and the
+   records anchored to those paths, in that order.
+2. Falls back to reading `NOW.md` and `PLAN.md` and searching the registries
+   where the CLI is not available.
 3. Follows only relevant links into detailed evidence.
 4. Confirms important claims against current primary artifacts and evidence.
+
+During the work, whenever something surfaces that is worth keeping but is not
+yet a registry entry, the agent runs `project-context capture` rather than
+stopping to decide what it is. The judgement is deferred to promotion, where it
+is cheap.
 
 At a milestone or handoff, the active agent:
 
@@ -376,7 +402,9 @@ At a milestone or handoff, the active agent:
 2. Promotes changed current state into `NOW.md`.
 3. Records only decisions that constrain future work.
 4. Promotes only evidence-backed, reusable learnings.
-5. Supersedes stale knowledge instead of silently rewriting history.
+5. Promotes or drops the capsules in `inbox/`; `project-context review` lists
+   what is still waiting on a person.
+6. Supersedes stale knowledge instead of silently rewriting history.
 
 
 
