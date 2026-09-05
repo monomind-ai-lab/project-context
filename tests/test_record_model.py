@@ -613,5 +613,50 @@ class RecordModelTests(unittest.TestCase):
         self.assertTrue((archive / "README.md").is_file())
 
 
+class RepositoryInstructionTests(unittest.TestCase):
+    """This repository is held to the rule its own installer enforces.
+
+    `INSTRUCTION_ROLES` makes every consuming repository carry the contract in
+    both `AGENTS.md` and `CLAUDE.md`, because a Claude-only repository with
+    rules in `AGENTS.md` alone has rules no Claude session ever reads. This
+    tree shipped with neither for its whole life — the product's own source was
+    the one repository its central delivery rule did not reach.
+    """
+
+    ROOT = Path(__file__).resolve().parents[1]
+
+    def test_both_instruction_files_exist(self) -> None:
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            self.assertTrue((self.ROOT / name).is_file(), name)
+
+    def test_the_contract_is_the_one_with_the_rules_in_it(self) -> None:
+        contract = (self.ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        for topic in ("Read order", "Canonical paths", "The rules"):
+            self.assertIn(topic, contract, topic)
+
+    def test_the_pointer_points_and_does_not_copy(self) -> None:
+        """Two layers, never three — the rule the Hub states and this obeys."""
+        pointer = (self.ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+        self.assertIn("AGENTS.md", pointer)
+        self.assertLess(len(pointer.splitlines()), 40, "a pointer this long is a second contract")
+        for rule in ("Read order", "Canonical paths", "One protocol text"):
+            self.assertNotIn(rule, pointer, f"the pointer restates {rule!r}")
+
+    def test_neither_carries_a_managed_block(self) -> None:
+        """This repository is not an install of the product it ships.
+
+        There is no `project-context/` here, so a managed block would promise a
+        protocol that no file in this tree delivers.
+        """
+        self.assertFalse((self.ROOT / "project-context").exists())
+        # A block's markers sit on their own lines, which is how the installer
+        # writes them and how it finds them again. Naming a marker inside a
+        # sentence — as the contract does when it explains what we own — is
+        # prose, so the check is anchored to the line rather than the file.
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            lines = [line.strip() for line in (self.ROOT / name).read_text(encoding="utf-8").splitlines()]
+            self.assertNotIn("<!-- project-context:start -->", lines, name)
+
+
 if __name__ == "__main__":
     unittest.main()

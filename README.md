@@ -747,6 +747,13 @@ running `init --install-skills` writes the pointers that make it so, and
 
 ## 🧪 Testing & License
 
+### Working on this repository
+
+`AGENTS.md` at the root is the contract for anyone — person or agent — working
+on the product itself: the read order, the canonical paths, the rules that hold
+across the tree, and what is deliberately out of scope. `CLAUDE.md` is a thin
+pointer to it, never a copy.
+
 ### Development and validation
 
 ```sh
