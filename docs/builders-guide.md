@@ -264,7 +264,7 @@ resolution — and `project-context review` will keep raising it until you pick.
 ### The doctor
 
 ```bash
-python3 skills/project-context/scripts/context_doctor.py --target /path/to/your/repo
+python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 ```
 
 Read-only. Exits 1 if anything is an error, 0 otherwise — so CI and a git hook
@@ -285,7 +285,7 @@ What it catches, among others:
 ### The trigger gate
 
 ```bash
-python3 skills/project-context/scripts/context_triggers.py status
+python3 .agents/skills/project-context/scripts/context_triggers.py status
 ```
 
 It detects that work has landed since project context was last touched, and nags
@@ -294,7 +294,7 @@ choice constrained future work. When you have genuinely evaluated and there is
 nothing to record:
 
 ```bash
-python3 skills/project-context/scripts/context_triggers.py ack --note "reviewed; nothing constraining"
+python3 .agents/skills/project-context/scripts/context_triggers.py ack --note "reviewed; nothing constraining"
 ```
 
 The acknowledgement is bound to the commit it evaluated, so it cannot be used to
@@ -303,7 +303,7 @@ wave away later work.
 ### The indexes
 
 ```bash
-python3 skills/project-context/scripts/context_index.py --check
+python3 .agents/skills/project-context/scripts/context_index.py --check
 ```
 
 `DECISIONS.md` and `LEARNINGS.md` grow without bound and get read end to end.

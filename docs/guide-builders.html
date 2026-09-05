@@ -1217,11 +1217,10 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
         <div class="dg-frame is-accent">
           <div class="dg-frame-label">project-context/ — inside your repository</div>
           <div class="dg-chip-row">
-            <div class="dg-chip"><div class="nm notranslate" translate="no">NOW.md</div><p class="ds">Current state</p></div>
-            <div class="dg-chip"><div class="nm notranslate" translate="no">DECISIONS.md</div><p class="ds">Constraints</p></div>
-            <div class="dg-chip"><div class="nm notranslate" translate="no">LEARNINGS.md</div><p class="ds">Verified lessons</p></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">NOW.md</div></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">DECISIONS.md</div></div>
+            <div class="dg-chip"><div class="nm notranslate" translate="no">LEARNINGS.md</div></div>
           </div>
-          <p class="dg-frame-note">Plain Markdown · Git-tracked · create-only · no network call</p>
         </div>
 
         <div class="dg-arrow"><span class="cap">cites, never copies</span><span class="ln"></span></div>
@@ -1231,7 +1230,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
           Source, tests, documents, commits, reviews — pinned as <span class="notranslate" translate="no">path@commit</span>, so a citation names the state it cites.
         </div>
       </div>
-      <div class="dg-loop">↻ <b>The records point at the evidence, never become a second copy of it</b> — and a primary artifact always outranks the note about it.</div>
+      <div class="dg-loop">↻ <b>The records point at the evidence, never become a second copy of it</b> — and a primary artifact always outranks the note about it. Plain Markdown · Git-tracked · create-only · no network call.</div>
     </div>
   </section>
 
@@ -1248,19 +1247,18 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
           <li>
             <span class="nm">project-context/</span>
             <ul>
-              <li><span class="nm">.project-context.json</span><span class="dsc">The marker: schema, version, project id, pushed-set stamps</span></li>
+              <li><span class="nm">.project-context.json</span><span class="dsc">The marker: schema, version, project id, stamps</span></li>
               <li><span class="nm">SKILL.md · README.md</span><span class="dsc">The protocol, and what this folder is</span></li>
-              <li><span class="nm">NOW.md · DECISIONS.md · LEARNINGS.md</span><span class="dsc">The core profile — the three registries</span></li>
-              <li><span class="nm">PLAN.md · QUESTIONS.md</span><span class="dsc">The milestone in flight and the open questions — full profile</span></li>
-              <li><span class="nm">decisions/ questions/ inbox/</span><span class="dsc">Detail records, and capsules waiting to be promoted</span></li>
+              <li><span class="nm">NOW.md · DECISIONS.md · LEARNINGS.md</span><span class="dsc">The core profile</span></li>
+              <li><span class="nm">PLAN.md · QUESTIONS.md</span><span class="dsc">The milestone in flight — full profile</span></li>
+              <li><span class="nm">decisions/ questions/ inbox/</span><span class="dsc">Detail records, and capsules awaiting promotion</span></li>
               <li><span class="nm">tasks/ designs/ incidents/</span><span class="dsc">Full profile only</span></li>
-              <li><span class="nm">indexes/</span><span class="dsc">Derived tables, regenerated — never authority</span></li>
               <li><span class="nm">global/ blueprint/</span><span class="dsc">The pushed set — read-only, and absent unless an owner runs a Hub</span></li>
             </ul>
           </li>
         </ul>
       </div>
-      <div class="dg-loop">Everything above <span class="notranslate" translate="no">global/</span> is <b>authored here</b>. <span class="notranslate" translate="no">global/</span> and <span class="notranslate" translate="no">blueprint/</span> are <b>pushed</b> by an owner, and read-only.</div>
+      <div class="dg-loop">Everything above <span class="notranslate" translate="no">global/</span> is <b>authored here</b>; the last row is <b>pushed</b> by an owner and read-only.</div>
     </div>
   </section>
 
@@ -1389,8 +1387,8 @@ question. Show me the proposed plan and wait for my approval before making chang
         <table class="tbl">
           <thead><tr><th style="width:26%">Flag</th><th>What it does</th></tr></thead>
           <tbody>
-            <tr><td class="k notranslate" translate="no">--profile core</td><td>The default. <span class="notranslate" translate="no">NOW.md</span>, <span class="notranslate" translate="no">DECISIONS.md</span>, <span class="notranslate" translate="no">LEARNINGS.md</span>, <span class="notranslate" translate="no">decisions/</span>, plus the protocol and README in place</td></tr>
-            <tr><td class="k notranslate" translate="no">--profile full</td><td>Adds <span class="notranslate" translate="no">PLAN.md</span>, <span class="notranslate" translate="no">QUESTIONS.md</span> and the <span class="notranslate" translate="no">tasks/</span>, <span class="notranslate" translate="no">designs/</span>, <span class="notranslate" translate="no">incidents/</span>, <span class="notranslate" translate="no">questions/</span>, <span class="notranslate" translate="no">inbox/</span> directories</td></tr>
+            <tr><td class="k notranslate" translate="no">--profile core</td><td>The default. <span class="notranslate" translate="no">NOW.md</span>, <span class="notranslate" translate="no">DECISIONS.md</span>, <span class="notranslate" translate="no">LEARNINGS.md</span>, <span class="notranslate" translate="no">decisions/</span>, plus the protocol in place</td></tr>
+            <tr><td class="k notranslate" translate="no">--profile full</td><td>Adds <span class="notranslate" translate="no">PLAN.md</span>, <span class="notranslate" translate="no">QUESTIONS.md</span> and the <span class="notranslate" translate="no">tasks/</span>, <span class="notranslate" translate="no">designs/</span>, <span class="notranslate" translate="no">incidents/</span>, <span class="notranslate" translate="no">inbox/</span> directories</td></tr>
             <tr><td class="k notranslate" translate="no">--repo-type auto</td><td>Detected by default. Also <b>code</b>, <b>document</b>, <b>research</b>, <b>writing</b>, <b>mixed</b>, <b>general</b> — it shapes what the scaffold says</td></tr>
             <tr><td class="k notranslate" translate="no">--install-skills</td><td>Installs the protocol skill so agents in this repository can find it</td></tr>
             <tr><td class="k notranslate" translate="no">--install-hooks</td><td>Merges a SessionStart and a Stop hook into <span class="notranslate" translate="no">.claude/settings.json</span>. Opt-in, implies <span class="notranslate" translate="no">--install-skills</span>, and every other hook is preserved</td></tr>
@@ -1432,17 +1430,8 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · The record model</p>
     <h2 class="h-md">One lifecycle per kind.</h2>
-    <p class="lead">One schema string, <span class="notranslate" translate="no">project-context/1</span>, and one version per product. A detail record in <span class="notranslate" translate="no">decisions/</span>, <span class="notranslate" translate="no">questions/</span>, <span class="notranslate" translate="no">tasks/</span> or <span class="notranslate" translate="no">inbox/</span> carries these six frontmatter keys and nothing more is required; registries carry none and stay plain Markdown.</p>
+    <p class="lead">One schema string, <span class="notranslate" translate="no">project-context/1</span>, and one version per product. A detail record carries six frontmatter keys and nothing more is required — <span class="notranslate" translate="no">id</span>, <span class="notranslate" translate="no">kind</span>, <span class="notranslate" translate="no">status</span>, <span class="notranslate" translate="no">title</span>, <span class="notranslate" translate="no">created</span>, <span class="notranslate" translate="no">asserted_by</span>. Registries carry none and stay plain Markdown.</p>
     <div class="dg-canvas">
-      <div class="dg-chip-row">
-        <div class="dg-chip"><div class="nm notranslate" translate="no">id</div></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">kind</div></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">status</div></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">title</div></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">created</div></div>
-        <div class="dg-chip"><div class="nm notranslate" translate="no">asserted_by</div></div>
-      </div>
-
       <div class="dg-map">
         <div class="dg-map-h">Kind</div>
         <div></div>
@@ -1462,12 +1451,12 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 6 · The record model</p>
     <h2 class="h-md">Pin evidence to the state it cites.</h2>
-    <p class="lead">A repository path is anchored as <span class="notranslate" translate="no">src/auth/session.py@a1b2c3d</span>. A reference to a moving file is a reference to nothing.</p>
+    <p class="lead">A repository path is anchored as <span class="notranslate" translate="no">src/auth/session.py@a1b2c3d</span> — a reference to a moving file is a reference to nothing. Every form below is validated by shape, never by resolving it. Anchors are optional and Git-gated: drift is a warning, never an error.</p>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame is-accent">
+          <div class="dg-frame-label">Reference form → what it names</div>
           <table class="tbl">
-            <thead><tr><th style="width:54%">Reference form</th><th>What it names</th></tr></thead>
             <tbody>
               <tr><td class="k notranslate" translate="no">session:&lt;harness&gt;:&lt;id&gt;</td><td>The run it came from</td></tr>
               <tr><td class="k notranslate" translate="no">commit:&lt;binding&gt;:&lt;sha&gt;</td><td>A commit</td></tr>
@@ -1477,8 +1466,8 @@ question. Show me the proposed plan and wait for my approval before making chang
           </table>
         </div>
         <div class="dg-frame is-accent">
+          <div class="dg-frame-label">…and the other four</div>
           <table class="tbl">
-            <thead><tr><th style="width:54%">Reference form</th><th>What it names</th></tr></thead>
             <tbody>
               <tr><td class="k notranslate" translate="no">ticket:&lt;tracker&gt;:&lt;key&gt;</td><td>An issue in a tracker</td></tr>
               <tr><td class="k notranslate" translate="no">doc:&lt;binding&gt;:&lt;path&gt;@&lt;commit&gt;</td><td>A pinned document</td></tr>
@@ -1488,7 +1477,6 @@ question. Show me the proposed plan and wait for my approval before making chang
           </table>
         </div>
       </div>
-      <div class="dg-loop">Every form is <b>validated by shape, never by resolving it</b>. Anchors are optional and Git-gated: drift is a warning, never an error.</div>
     </div>
   </section>
 
@@ -1496,35 +1484,26 @@ question. Show me the proposed plan and wait for my approval before making chang
            role="group" aria-label="Slide 14 Checking your work">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 7 · Keeping it honest</p>
-    <h2 class="h-md">Three families of checks, all read-only.</h2>
-    <p class="lead"><span class="notranslate" translate="no">python3 skills/project-context/scripts/context_doctor.py --target .</span> — exits 1 if anything is an error and 0 otherwise, so CI and a git hook can both use the exit status without parsing the JSON.</p>
+    <h2 class="h-md">Eight families of checks, all read-only.</h2>
+    <p class="lead"><span class="notranslate" translate="no">python3 .agents/skills/project-context/scripts/context_doctor.py --target .</span> — it exits 1 on any error and 0 otherwise, so CI and a git hook can both use the exit status. Anchor findings are warnings; a modified pushed file is an error.</p>
     <div class="dg-canvas">
-      <div class="grid-3">
-        <div class="dg-frame">
-          <div class="dg-frame-label">Documents</div>
-          <ul class="bullets tight">
-            <li>Core files present, and the package version recorded in the marker.</li>
-            <li>Six required keys, and a status checked against its own kind.</li>
-            <li>Duplicate decision and learning IDs, broken relative links, a stale <span class="notranslate" translate="no">NOW.md</span>.</li>
-          </ul>
-        </div>
-        <div class="dg-frame">
-          <div class="dg-frame-label">Evidence anchors</div>
-          <ul class="bullets tight">
-            <li><b class="notranslate" translate="no">evidence-drift</b> — the cited path changed after the commit it was pinned at, so the justification may no longer hold. Re-read it, then re-anchor or supersede.</li>
-            <li><b class="notranslate" translate="no">evidence-unverifiable</b> — the commit is unknown here.</li>
-            <li>Both are warnings, never errors.</li>
-          </ul>
-        </div>
-        <div class="dg-frame is-accent">
-          <div class="dg-frame-label">Reachability</div>
-          <ul class="bullets tight">
-            <li><b class="notranslate" translate="no">no-delivery-path</b> — the records are intact but nothing loads them into a session.</li>
-            <li>It names whichever of <span class="notranslate" translate="no">CLAUDE.md</span> / <span class="notranslate" translate="no">AGENTS.md</span> is missing the block, and checks the skill pointer and any declared hook.</li>
-            <li>A perfect record set no session reads is worth nothing. Fix this before trusting the rest.</li>
-          </ul>
+      <div class="dg-frame is-accent">
+        <div class="grid-2">
+          <div>
+            <div class="dg-leader-row"><span class="dg-leader-name">1 · Core files &amp; marker</span><span class="dg-leader-desc">present, and the installed version</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">2 · Record conformance</span><span class="dg-leader-desc">six keys, one status set per kind</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">3 · Registry navigability</span><span class="dg-leader-desc">duplicate IDs, dead links, staleness</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">4 · Evidence anchors</span><span class="dg-leader-desc">evidence-drift, evidence-unverifiable</span></div>
+          </div>
+          <div>
+            <div class="dg-leader-row"><span class="dg-leader-name">5 · The pushed set</span><span class="dg-leader-desc">each file against its stamp</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">6 · Plan conformance</span><span class="dg-leader-desc">PLAN.md against EPIC.md, if pushed</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">7 · Legacy schema</span><span class="dg-leader-desc">a superseded context-hub/1 install</span></div>
+            <div class="dg-leader-row"><span class="dg-leader-name">8 · Reachability</span><span class="dg-leader-desc">whether anything still loads them</span></div>
+          </div>
         </div>
       </div>
+      <div class="dg-loop">Two are worth memorising. <b class="notranslate" translate="no">no-delivery-path</b> — the records are intact but nothing loads them into a session, so fix that before trusting the rest. <b class="notranslate" translate="no">pushed-file-modified</b> — the one error you can cause by editing a file you were handed; raise a question instead.</div>
     </div>
   </section>
 
@@ -1575,28 +1554,28 @@ question. Show me the proposed plan and wait for my approval before making chang
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 8 · Beyond this repository</p>
     <h2 class="h-md">Optional: the other half, <span class="notranslate" translate="no">Project Hub</span>.</h2>
-    <p class="lead">A Hub is one private repository an owner administers, holding what applies across every project. Nothing here requires it, and nothing here ever reaches out to it.</p>
+    <p class="lead">A Hub is one private repository an owner administers, holding what applies across every project. Nothing here requires it, or ever reaches out to it.</p>
     <div class="dg-canvas">
       <div class="grid-2">
         <div class="dg-frame">
           <div class="dg-frame-label">What arrives, and how</div>
           <ul class="bullets tight">
-            <li><span class="notranslate" translate="no">global/</span> — organisation guardrails, workflows, shared records.</li>
+            <li><span class="notranslate" translate="no">global/</span> — guardrails, workflows, shared records.</li>
             <li><span class="notranslate" translate="no">blueprint/EPIC.md</span> — the high-level plan this project serves.</li>
-            <li><span class="notranslate" translate="no">blueprint/ARCHITECTURE.md</span> — the shape it has to keep.</li>
-            <li>Everything moves by the owner's hand. A push lands on a long-lived <b class="notranslate" translate="no">hub-sync</b> branch as a pull request — never on your default branch.</li>
+            <li><span class="notranslate" translate="no">blueprint/ARCHITECTURE.md</span> — the shape it keeps.</li>
+            <li>A push lands on a long-lived <b class="notranslate" translate="no">hub-sync</b> branch as a pull request — never on your default branch.</li>
           </ul>
         </div>
         <div class="dg-frame is-accent">
           <div class="dg-frame-label">Read-only here — and what to do instead</div>
           <ul class="bullets tight">
-            <li>Each pushed file is stamped by hash in the marker; the doctor reports an edit as <b class="notranslate" translate="no">pushed-file-modified</b>, naming the Hub as the place to change it.</li>
-            <li>Disagree with something pushed? <b>Raise a question in your own records.</b> Your edit would be overwritten at the next sync and the owner would never learn you objected.</li>
+            <li>Each pushed file is stamped by hash, and the doctor reports an edit as <b class="notranslate" translate="no">pushed-file-modified</b>.</li>
+            <li>Disagree with something pushed? <b>Raise a question in your own records.</b> An edit would be overwritten at the next sync, and the owner would never learn you objected.</li>
             <li>A <span class="notranslate" translate="no">proposal</span> capsule is how you ask for a change to something pushed; it reaches the owner at their next pull.</li>
           </ul>
         </div>
       </div>
-      <div class="dg-loop">A repository with no Hub simply has neither folder, and nothing about that is degraded. The owner's side has its own deck — the repository is at <span class="notranslate" translate="no">github.com/monomind-ai-lab/project-hub</span>.</div>
+      <div class="dg-loop">No Hub means neither folder, and nothing about that is degraded. The owner's side has its own deck — <span class="notranslate" translate="no">github.com/monomind-ai-lab/project-hub</span>.</div>
     </div>
   </section>
 
@@ -1623,9 +1602,8 @@ question. Show me the proposed plan and wait for my approval before making chang
       <div>
         <p class="eyebrow">Get started</p>
         <h2 class="h-hero">Clarity comes with context.</h2>
-        <p class="lead">Install it in one repository, run the doctor, and read what it says.</p>
-        <p class="code sm notranslate" translate="no">uvx --from git+https://github.com/monomind-ai-lab/project-context \
-  project-context init --target . --install-skills --dry-run</p>
+        <p class="lead">Install it in one repository and read what the doctor says.</p>
+        <p class="code sm notranslate" translate="no">project-context init --target . --install-skills --dry-run</p>
       </div>
       <div class="close-links">
         <a class="is-accent" href="https://projectcontext.monomind.one/docs/">The documentation</a>
@@ -1925,7 +1903,7 @@ question. Show me the proposed plan and wait for my approval before making chang
   {
     "slide": 14,
     "label": "14 Checking your work",
-    "note": "Everything here is read-only, and the exit code is the whole integration story for CI and git hooks. The check worth memorising is no-delivery-path: a perfect record set that no session ever loads is worth nothing, so fix that before anything else. Evidence warnings are warnings on purpose — drift is a prompt to re-verify, not a build failure."
+    "note": "Everything here is read-only, and the exit code is the whole integration story for CI and git hooks — run it from the installed path, .agents/skills/..., not from a checkout of the product. Do not read all eight families aloud; name the count, then dwell on the two a builder actually meets: no-delivery-path, because a perfect record set that no session loads is worth nothing, and pushed-file-modified, the one error you cause by editing a file the Hub handed you. Evidence warnings stay warnings on purpose — drift is a prompt to re-verify, not a build failure."
   },
   {
     "slide": 15,
