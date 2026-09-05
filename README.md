@@ -182,10 +182,14 @@ no registration, no credential. The direction is one way by construction: the
 owner has access to your repository because they administer it, and you have no
 access to theirs.
 
-**If you disagree with something pushed to you**, do not edit it — the doctor
-will flag it, and your change would be overwritten by the next sync without the
-owner ever learning you objected. Raise a question in your own
-`project-context/` instead. It reaches them the next time they pull, and it
+**If you disagree with something pushed to you**, do not edit it. Your edit is
+not overwritten — the Hub records each pushed file's hash in the marker, so the
+next push sees the change and refuses. One edited file is a conflict that stops
+the owner's entire push to your repository, naming your file and saying the
+place to change it is the Hub. So the edit does not win the argument; it just
+stops the sync, and the owner still never learns what you objected to. Raise a
+question in your own `project-context/` instead, or run `project-context
+capture --kind proposal`. It reaches them the next time they pull, and it
 arrives with the project context that explains it.
 
 **What never reaches a project repository:** the Hub's `IDENTITY.md`, at any

@@ -211,10 +211,14 @@ the doctor errors if one is edited, naming the Hub as the place to change it:
 Hub and push again, or raise a question here
 ```
 
-That is not bureaucracy. Your edit would be silently overwritten by the next
-sync, and the owner would never learn you disagreed. **Raise a question in your
-own `project-context/` instead** — it reaches the owner the next time they pull,
-and it arrives with the project context that explains it.
+That is not bureaucracy, and the edit is not quietly reverted either. The Hub
+records each pushed file's hash when it sends it, so the next push notices the
+change and treats it as a conflict — which stops that push to your repository
+entirely, not just for the file you touched. Your edit blocks the owner instead
+of persuading them, and they still never learn what you disagreed with.
+**Raise a question in your own `project-context/` instead**, or run
+`project-context capture --kind proposal` — it reaches the owner the next time
+they pull, and it arrives with the project context that explains it.
 
 An owner's push does not land on your default branch. It arrives on a
 `hub-sync` branch as a pull request you review like any other.
