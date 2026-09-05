@@ -18,6 +18,12 @@ REQUIRED = (
     "src/project_context_cli/__init__.py",
     "assets/project-context-cover.jpg",
     "assets/project-context-tools.jpg",
+    "docs/guide-builders.html",
+    "docs/guide-owners.html",
+    # A redirect stub, not a guide. GitHub Pages served the old complete
+    # guide at this path for months and has no redirect rules, so the hop
+    # lives in the document. Required here so a tidy-up does not reinstate
+    # the 404 it exists to prevent.
     "docs/project-context-complete-guide.html",
     ".github/workflows/pages.yml",
     "examples/sample-project-context/README.md",
@@ -43,6 +49,23 @@ REQUIRED = (
     "web/content/use-cases/page.css",
     "web/content/use-cases/i18n.js",
     "web/content/use-cases/page.js",
+    "web/content/guide/meta.json",
+    "web/content/guide/page.html",
+    "web/content/guide/page.css",
+    "web/content/guide/i18n.js",
+    "web/content/project-hub/meta.json",
+    "web/content/project-hub/page.html",
+    "web/content/project-hub/page.css",
+    "web/content/project-hub/i18n.js",
+    "web/content/docs-builders/meta.json",
+    "web/content/docs-builders/page.html",
+    "web/content/docs-builders/page.css",
+    "web/content/docs-builders/i18n.js",
+    "web/content/hub-owners-guide/meta.json",
+    "web/content/hub-owners-guide/page.html",
+    "web/content/hub-owners-guide/page.css",
+    "web/content/hub-owners-guide/i18n.js",
+    "web/nav.json",
     "skills/project-context/SKILL.md",
     "skills/project-context/agents/openai.yaml",
     "skills/project-context/scripts/context_triggers.py",
@@ -272,7 +295,8 @@ def main() -> int:
         "Context Hub is superseded",
         "assets/project-context-cover.jpg",
         "assets/project-context-tools.jpg",
-        "https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html",
+        "https://projectcontext.monomind.one/guide/builders/",
+        "https://projectcontext.monomind.one/guide/owners/",
         "Attribution and independence",
         "affiliated with, sponsored by, or endorsed by",
         "prompts/install-project-context.md",
@@ -285,29 +309,42 @@ def main() -> int:
         if expected not in readme:
             errors.append(f"README missing expected positioning: {expected}")
 
-    guide = ROOT / "docs/project-context-complete-guide.html"
-    if guide.is_file():
+    # Two decks now, one per audience, on the same Hi Ted, Meet Lisa
+    # `monomind-deck` chassis. They are checked identically because the thing
+    # worth guarding is the chassis, not the copy: every responsive fix below
+    # was paid for once and is trivially lost when a deck is regenerated.
+    for filename, must_name in (
+        ("docs/guide-builders.html", "Project Context"),
+        ("docs/guide-owners.html", "Project Hub"),
+    ):
+        guide = ROOT / filename
+        if not guide.is_file():
+            continue
         guide_text = guide.read_text(encoding="utf-8")
         if "<!doctype html>" not in guide_text:
-            errors.append("interactive guide missing expected content: <!doctype html>")
-        # The guide is now generated from the Hi Ted, Meet Lisa `monomind-deck`
-        # template rather than hand-maintained, so its title travels with the
-        # deck's own naming. Assert that it is still the right document, not
-        # that it kept one exact string a rename would break.
+            errors.append(f"{filename} missing expected content: <!doctype html>")
+        # The decks are generated from the template rather than hand-maintained,
+        # so a title travels with the deck's own naming. Assert that each is
+        # still the right document, not that it kept one string a rename breaks.
         title = re.search(r"<title>([^<]*)</title>", guide_text)
-        if not title or "Project Context" not in title.group(1):
-            errors.append("interactive guide title no longer names Project Context")
+        if not title or must_name not in title.group(1):
+            errors.append(f"{filename} title no longer names {must_name}")
         # `file:///…` is an embedded local path and a real leak. A bare `file:`
         # protocol test is not: the deck legitimately hides its self-download
         # and language switch when opened from disk, and says so in a comment.
         if "file:///" in guide_text:
-            errors.append("interactive guide contains a local file URL")
-        responsive_marker = "/* ── Responsive deck hardening"
-        guide_layer_marker = "/* ═══════════════════════════════════════════════════════════════════\n   Guide layer"
+            errors.append(f"{filename} contains a local file URL")
+        # A shipped placeholder is the failure mode of a template-filled deck.
+        for placeholder in ("[DECK TITLE]", "[FIGURE]", "[SQUARE BRACKETS]"):
+            if placeholder in guide_text:
+                errors.append(f"{filename} still carries the placeholder {placeholder}")
+        responsive_marker = "/* \u2500\u2500 Responsive deck hardening"
+        guide_layer_marker = "/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   Guide layer"
         if responsive_marker not in guide_text:
-            errors.append("interactive guide is missing responsive deck hardening")
-        elif guide_layer_marker in guide_text and guide_text.rfind(responsive_marker) < guide_text.find(guide_layer_marker):
-            errors.append("interactive guide responsive overrides must follow the guide layer")
+            errors.append(f"{filename} is missing responsive deck hardening")
+        elif (guide_layer_marker in guide_text
+              and guide_text.rfind(responsive_marker) < guide_text.find(guide_layer_marker)):
+            errors.append(f"{filename} responsive overrides must follow the guide layer")
         for expected in (
             "viewport-fit=cover",
             "overflow-y: auto",
@@ -318,7 +355,7 @@ def main() -> int:
             "function resetVerticalScroll()",
         ):
             if expected not in guide_text:
-                errors.append(f"interactive guide missing responsive behavior: {expected}")
+                errors.append(f"{filename} missing responsive behavior: {expected}")
 
     pages_workflow = ROOT / ".github/workflows/pages.yml"
     if pages_workflow.is_file():

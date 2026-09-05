@@ -46,8 +46,8 @@ Read what it plans. Then swap `--dry-run` for `--apply`.
 
 | Flag | Does |
 | --- | --- |
-| `--profile core` (default) | `NOW.md`, `DECISIONS.md`, `LEARNINGS.md`, `decisions/`. Enough for most repositories. |
-| `--profile full` | Adds `tasks/`, `designs/`, `incidents/`. Take this when the project already has that much going on. |
+| `--profile core` (default) | `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, `LEARNINGS.md` — the three registries and the protocol, and no subfolders. Enough for most repositories. |
+| `--profile full` | Adds `PLAN.md` and `QUESTIONS.md`, and the `decisions/`, `questions/`, `tasks/`, `inbox/`, `designs/` and `incidents/` subfolders. Take this when the project already has that much going on. |
 | `--repo-type` | `auto` by default. Also `code`, `document`, `research`, `writing`, `mixed`, `general`. |
 | `--install-skills` | Installs the protocol skill so agents in this repo can find it. |
 | `--install-hooks` | Wires the session hooks into `.claude/settings.json`. Opt-in, never assumed. |
@@ -65,7 +65,6 @@ project-context/
   questions/              a question that needs more room than the registry gives
   inbox/                  capsules from `capture`, waiting to be promoted
   tasks/ designs/ incidents/     full profile only
-  indexes/                derived tables, regenerated
   README.md               what this folder is, for a human who found it
   SKILL.md                the protocol, readable in place
   .project-context.json   the marker: product, schema, version, stamps
@@ -212,10 +211,14 @@ the doctor errors if one is edited, naming the Hub as the place to change it:
 Hub and push again, or raise a question here
 ```
 
-That is not bureaucracy. Your edit would be silently overwritten by the next
-sync, and the owner would never learn you disagreed. **Raise a question in your
-own `project-context/` instead** — it reaches the owner the next time they pull,
-and it arrives with the project context that explains it.
+That is not bureaucracy, and the edit is not quietly reverted either. The Hub
+records each pushed file's hash when it sends it, so the next push notices the
+change and treats it as a conflict — which stops that push to your repository
+entirely, not just for the file you touched. Your edit blocks the owner instead
+of persuading them, and they still never learn what you disagreed with.
+**Raise a question in your own `project-context/` instead**, or run
+`project-context capture --kind proposal` — it reaches the owner the next time
+they pull, and it arrives with the project context that explains it.
 
 An owner's push does not land on your default branch. It arrives on a
 `hub-sync` branch as a pull request you review like any other.
@@ -265,7 +268,7 @@ resolution — and `project-context review` will keep raising it until you pick.
 ### The doctor
 
 ```bash
-python3 skills/project-context/scripts/context_doctor.py --target /path/to/your/repo
+python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 ```
 
 Read-only. Exits 1 if anything is an error, 0 otherwise — so CI and a git hook
@@ -286,7 +289,7 @@ What it catches, among others:
 ### The trigger gate
 
 ```bash
-python3 skills/project-context/scripts/context_triggers.py status
+python3 .agents/skills/project-context/scripts/context_triggers.py status
 ```
 
 It detects that work has landed since project context was last touched, and nags
@@ -295,7 +298,7 @@ choice constrained future work. When you have genuinely evaluated and there is
 nothing to record:
 
 ```bash
-python3 skills/project-context/scripts/context_triggers.py ack --note "reviewed; nothing constraining"
+python3 .agents/skills/project-context/scripts/context_triggers.py ack --note "reviewed; nothing constraining"
 ```
 
 The acknowledgement is bound to the commit it evaluated, so it cannot be used to
@@ -304,7 +307,7 @@ wave away later work.
 ### The indexes
 
 ```bash
-python3 skills/project-context/scripts/context_index.py --check
+python3 .agents/skills/project-context/scripts/context_index.py --check
 ```
 
 `DECISIONS.md` and `LEARNINGS.md` grow without bound and get read end to end.

@@ -1,0 +1,133 @@
+/* Page-only CSS. Everything shared — tokens, buttons, .card, .chip, .cmd and
+   its copy button, .checks/.check, the .cmp comparison table, the nav's
+   aria-current styling — lives once in web/assets/site.css and is NOT
+   repeated here. What follows is only what the shared sheet does not have. */
+
+/* The shared .section-lede caps at 620px; the docs pages run one notch wider
+   so a reference lede does not break every second line. Same override the
+   records and operate pages carry. */
+.section-lede{margin-top:16px;max-width:640px;color:var(--fg-muted);font-size:clamp(1rem,1.6vw,1.125rem);line-height:1.6}
+
+
+/* ============================== PAGE HEAD ============================== */
+.hero{position:relative;padding-top:clamp(48px,8vw,88px);padding-bottom:clamp(36px,6vw,64px);overflow:hidden}
+
+.hero-glow{position:absolute;top:-200px;left:50%;width:min(900px,140vw);height:560px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,var(--glow),transparent 70%);filter:blur(20px);pointer-events:none}
+
+.hero-inner{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:5px 14px;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface);font-size:.82rem;color:var(--fg-muted);text-align:start}
+
+.hero-badge .dot{width:7px;height:7px;border-radius:999px;background:var(--success);box-shadow:0 0 8px var(--success);flex:none}
+
+/* Gradient text: the fill IS the gradient, so `color` is transparent and a
+   colour set on a child will not show. The <b> gets its own gradient. */
+.hero-title{margin-top:22px;max-width:19ch;font-size:clamp(1.95rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.hero-title b{font-weight:inherit;background:var(--title-grad-em);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:700px){.hero-title{max-width:100%}}
+
+.hero-sub{margin-top:20px;max-width:640px;font-size:clamp(1rem,1.8vw,1.15rem);line-height:1.6;color:var(--fg-muted)}
+
+.hero-chips{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+
+/* ============================ SECTIONS ============================ */
+.sec-head{max-width:760px;margin-bottom:36px}
+
+.sec-head .section-title{margin-top:14px}
+
+
+/* --------------------------- WORKED EXAMPLE --------------------------- */
+.worked{max-width:var(--maxw-prose)}
+
+.worked+.worked{margin-top:28px}
+
+.worked-title{font-size:1.06rem;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.worked-body{margin-top:8px;margin-bottom:14px;color:var(--fg-muted);font-size:.95rem;line-height:1.65}
+
+.worked-body code,.callout p code,.pagenote code{color:var(--accent);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.worked .cmd{max-width:640px}
+
+
+/* ------------------------------ CALLOUT ------------------------------ */
+.callout{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:18px 20px;border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:var(--r-md);max-width:var(--maxw-prose)}
+
+.callout-label{flex:none;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+
+.callout p{flex:1 1 260px;min-width:0;color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+
+/* ------------------------- PROSE NOTE + LINK ------------------------- */
+.pagenote{margin-top:20px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.94rem;line-height:1.65}
+
+/* An inline cross-link inside a paragraph. It carries its own data-i18n key
+   rather than living inside a translated sentence, because a dictionary value
+   may only hold trusted inline <b>/<code>/<em> — never an anchor. */
+.inlink{color:var(--accent);border-bottom:1px solid var(--accent-line);transition:border-color .15s var(--ease),color .15s var(--ease)}
+
+.inlink:hover{color:var(--fg-bright);border-bottom-color:var(--fg-bright)}
+
+
+/* ------------------------- COMMAND WRAPPERS ------------------------- */
+.cmdwrap{margin-top:24px;max-width:640px}
+
+/* Two commands in one wrapper (dry-run, then apply) read as one pair. */
+.cmdwrap .cmd+.cmd{margin-top:14px}
+
+/* A .checks list that follows a panel, a command, or a callout rather than
+   opening its section — the shared .checks carries no leading margin because
+   it usually sits directly under .sec-head. */
+.checks.after{margin-top:26px}
+
+
+/* ------------------- LITERAL FILE PANEL (frontmatter) -------------------
+   The chrome is the records page's panel, kept in step with it: same bar,
+   same body, same foot. The body holds a literal file excerpt rather than a
+   rendered record, so it scrolls inside its own box rather than ever
+   widening the page. */
+.panel{display:flex;flex-direction:column;overflow:hidden;max-width:var(--maxw-prose)}
+
+.panel-bar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--bg-subtle);min-width:0}
+
+.panel-file{font-family:var(--font-mono);font-size:12.5px;color:var(--fg-bright);letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+.panel-dots{display:inline-flex;gap:5px;flex:none;margin-inline-end:2px}
+
+.panel-dots i{width:8px;height:8px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hover)}
+
+.panel-body{padding:18px 16px;flex:1;min-width:0}
+
+.panel-body.scrollx{overflow-x:auto}
+
+.panel-foot{padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-subtle);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint)}
+
+.fm{margin:0;font-family:var(--font-mono);font-size:12.5px;line-height:1.75;color:var(--fg-muted);white-space:pre}
+
+.fm-rule{color:var(--fg-faint)}
+
+.fm-key{color:var(--fg-dim)}
+
+.fm-val{color:var(--fg-bright)}
+
+
+/* ------------------------------- NEXT ------------------------------- */
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:var(--maxw-prose)}
+
+@media(max-width:700px){.next-grid{grid-template-columns:1fr}}
+
+/* One card on its own row still wants a card's width, not half the page. */
+.next-grid-solo{grid-template-columns:1fr;max-width:440px;margin-top:28px}
+
+.next-card{display:flex;flex-direction:column;gap:8px;padding:20px;text-decoration:none;min-width:0}
+
+.next-card:hover{border-color:var(--accent-line)}
+
+.next-kicker{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.next-arrow{color:var(--accent);font-size:1rem}

@@ -62,7 +62,9 @@
 
 
 /* ------------------------------- NEXT ------------------------------- */
-.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:var(--maxw-prose)}
+.next-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:var(--maxw-prose)}
+
+@media(max-width:900px){.next-grid{grid-template-columns:1fr 1fr}}
 
 @media(max-width:700px){.next-grid{grid-template-columns:1fr}}
 

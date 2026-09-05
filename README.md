@@ -105,10 +105,10 @@ Context lives in the project it describes:
     ├── NOW.md                     # current state, active work, blockers, next action
     ├── DECISIONS.md               # the decision registry
     ├── LEARNINGS.md               # verified, reusable lessons
-    ├── decisions/  tasks/         # detail records, full profile
-    ├── designs/    incidents/     # supporting evidence, full profile
-    ├── global/  blueprint/        # owner-authored, read-only, present only when pushed
-    └── indexes/                   # derived tables, regenerated
+    ├── decisions/  questions/     # detail records, full profile
+    ├── tasks/  designs/  incidents/  # supporting evidence, full profile
+    ├── inbox/                     # capsules from capture, awaiting promotion
+    └── global/  blueprint/        # owner-authored, read-only, present only when pushed
 ```
 
 Everything above the `global/` line is **authored** here: builders write it, and
@@ -182,10 +182,14 @@ no registration, no credential. The direction is one way by construction: the
 owner has access to your repository because they administer it, and you have no
 access to theirs.
 
-**If you disagree with something pushed to you**, do not edit it — the doctor
-will flag it, and your change would be overwritten by the next sync without the
-owner ever learning you objected. Raise a question in your own
-`project-context/` instead. It reaches them the next time they pull, and it
+**If you disagree with something pushed to you**, do not edit it. Your edit is
+not overwritten — the Hub records each pushed file's hash in the marker, so the
+next push sees the change and refuses. One edited file is a conflict that stops
+the owner's entire push to your repository, naming your file and saying the
+place to change it is the Hub. So the edit does not win the argument; it just
+stops the sync, and the owner still never learns what you objected to. Raise a
+question in your own `project-context/` instead, or run `project-context
+capture --kind proposal`. It reaches them the next time they pull, and it
 arrives with the project context that explains it.
 
 **What never reaches a project repository:** the Hub's `IDENTITY.md`, at any
@@ -412,11 +416,28 @@ At a milestone or handoff, the active agent:
 
 ## 💡 Interactive Guide & Examples
 
-Open the [Project Context complete guide](https://monomind-ai-lab.github.io/project-context/project-context-complete-guide.html)
-for a visual walkthrough of the system, installation flow, agent triggers,
-context records, and optional integrations. It is hosted from the repository's
-`docs/` folder by the GitHub Pages workflow; no download or local setup is
-required to view it.
+There are two slide decks, because the two audiences do not overlap. A builder
+works inside one repository and never sees a Hub; an owner administers several
+and never opens the code. Each answers what it is, what you get, how it works,
+and how to use it — for exactly one of them.
+
+- **[The builder's deck](https://projectcontext.monomind.one/guide/builders/)** —
+  the records, the session loop, the record model, evidence anchors, installing
+  it, and what the doctor checks afterwards. Mirrored at
+  [guide-builders.html](https://monomind-ai-lab.github.io/project-context/guide-builders.html).
+- **[The owner's deck](https://projectcontext.monomind.one/guide/owners/)** —
+  Project Hub: scaffold versus instance, what a push sends and a pull brings
+  back, what never travels, and what a Hub costs you. Mirrored at
+  [guide-owners.html](https://monomind-ai-lab.github.io/project-context/guide-owners.html).
+
+Both are single HTML files with no build step and nothing to install; the
+`docs/` folder is published by the GitHub Pages workflow, and
+[projectcontext.monomind.one](https://projectcontext.monomind.one) serves the
+same files alongside the written documentation. A deck argues; when you have
+decided and need the flags and the exact behaviour, the written
+[builder's guide](https://projectcontext.monomind.one/docs/builders-guide/) and
+[owner's guide](https://projectcontext.monomind.one/project-hub/owners-guide/)
+are where those live.
 
 See the [filled example](examples/sample-project-context/) for the complete
 core-profile experience, with realistic `NOW.md`, `DECISIONS.md`, and
@@ -733,11 +754,20 @@ project-context doctor --target /path/to/repository
 
 The doctor checks:
 
-- required core files;
-- installed scaffold version;
-- freshness of `NOW.md`;
-- duplicate decision and learning IDs;
-- broken relative Markdown links;
+- required core files, the marker, and the installed product version —
+  `template-update-available` names the version you have and the one available;
+- **record conformance** — the six required frontmatter keys, the status
+  vocabulary for that record's kind, and the shape of every reference;
+- registry navigability — freshness of `NOW.md`, duplicate decision and
+  learning IDs, and broken relative Markdown links;
+- **evidence anchors** — `evidence-drift` where a cited file moved on,
+  `evidence-unverifiable` where the commit is unknown;
+- **the pushed set** — each pushed file against its stamp in the marker;
+  `pushed-file-modified` is an error, and it names the Hub as the place to
+  make the change instead;
+- **plan conformance** — every `PLAN.md` item against the epic it names in
+  `blueprint/EPIC.md`. Silent in a repository with no Hub;
+- the legacy `context-hub/1` schema, wherever a superseded install left it;
 - **reachability** — whether anything still delivers this protocol to an agent:
   the managed instruction block, the harness skill pointers, and any declared
   session hooks whose commands must resolve to files that exist.

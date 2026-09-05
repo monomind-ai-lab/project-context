@@ -13,7 +13,7 @@
 
     <h1 class="hero-title" id="hero-title" data-i18n="hero.title">Weeks away should never mean rebuilding the project from <b>stale chats</b>.</h1>
 
-    <p class="hero-sub" data-i18n="hero.sub">Small Markdown records, versioned beside the work or in a private Context Hub, that outlive any one person, agent, or chat.</p>
+    <p class="hero-sub" data-i18n="hero.sub">Small Markdown records, versioned beside the work, that outlive any one person, agent, or chat. A single repository needs nothing but what is on this page; Project Hub is there when you run several.</p>
 
     <ul class="hero-chips">
       <li class="chip notranslate" translate="no">NOW.md</li>
@@ -30,8 +30,8 @@
         </div>
         <div class="cmd-body">
           <span class="cmd-prompt" aria-hidden="true">$</span>
-          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Install command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
-          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+          <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="Install command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--install-skills</span> <span class="t-flag">--apply</span></code>
+          <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
             <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
             <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="hero-cta">
-      <button type="button" class="btn btn-primary" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply">
+      <button type="button" class="btn btn-primary" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span data-i18n="cta.copy">Copy the install command</span>
       </button>
@@ -58,14 +58,14 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="what.index">01</span></span>
       <h2 class="section-title" id="what-title" data-i18n="what.title">What Project Context actually is</h2>
-      <p class="section-lede" data-i18n="what.lede">A handful of small Markdown records that live beside one project or in a separate private Context Hub. They hold current state, constraining decisions, and verified learnings. The agents doing the work maintain them; the next agent — or person — reads them first.</p>
+      <p class="section-lede" data-i18n="what.lede">A handful of small Markdown records that live beside one project. They hold current state, constraining decisions, and verified learnings. The agents doing the work maintain them; the next agent — or person — reads them first. An organisation running several projects can add a private Project Hub; a single repository needs nothing but this.</p>
     </div>
 
     <div class="cards-grid">
       <article class="card icard reveal">
         <span class="card-tag" data-i18n="what.c1.tag">the files</span>
         <h3 data-i18n="what.c1.title">Small Markdown, under your control</h3>
-        <p class="body" data-i18n="what.c1.body">No database, server, or vendor memory store. Keep the files with one project, or use a private Git-backed Hub across projects and open it in Obsidian or any editor.</p>
+        <p class="body" data-i18n="what.c1.body">No database, server, or vendor memory store. Keep the files with one project, or run a private Git-backed Project Hub across projects and open either in Obsidian or any editor.</p>
       </article>
       <article class="card icard reveal">
         <span class="card-tag" data-i18n="what.c2.tag">what they hold</span>
@@ -90,8 +90,9 @@
       </ul>
       <div class="strip-lines">
         <p data-i18n="what.line1"><b>Not only software, and not only GitHub.</b> Software, document, research, writing and mixed projects all keep the same kind of record.</p>
-        <p class="fine" data-i18n="what.line2">Keep context beside one project, or move it into a private Context Hub when a team works across repositories and folders.</p>
-        <p class="fine" data-i18n="what.line3">Git is optional for an embedded project and the collaboration layer for a Hub. Either way, Markdown stays canonical and no database or server is required.</p>
+        <p class="fine" data-i18n="what.line2">An optional private Project Hub authors the tier that applies across all your repositories — guardrails, workflows, the epic each project serves — and pushes it down. A repository with no Hub simply has no <code>global/</code> and no <code>blueprint/</code>, and everything on this page still works.</p>
+        <p class="fine" data-i18n="what.line3">Git is optional for a project record and the transport for a Hub push, which lands on a <code>hub-sync</code> branch as a pull request you review. Either way, Markdown stays canonical and no database or server is required.</p>
+        <p class="fine"><a href="/project-hub/" data-i18n="what.line2more">How the two products split, and what a push actually sends → Project Hub</a></p>
       </div>
     </div>
   </div>
@@ -170,7 +171,7 @@
           <p class="h2"><span class="hash" aria-hidden="true">##</span> <span class="rid notranslate" translate="no">D-014</span>: <span data-i18n="sample.dec.title">Short-lived JWTs over session cookies</span></p>
           <p class="kv"><span class="key" data-i18n="sample.dec.kStatus">Status:</span> <span class="pill pill-ok notranslate" translate="no">accepted</span></p>
           <p class="kv"><span class="key" data-i18n="sample.dec.kDate">Date:</span> <span class="val notranslate" translate="no">2026-08-24</span></p>
-          <p class="kv"><span class="key" data-i18n="sample.dec.kStatement">Statement:</span> <span data-i18n="sample.dec.vStatement">API auth uses 15-minute JWTs with refresh, not server-side sessions.</span></p>
+          <p class="kv"><span class="key" data-i18n="sample.dec.kStatement">Decision:</span> <span data-i18n="sample.dec.vStatement">API auth uses 15-minute JWTs with refresh, not server-side sessions.</span></p>
           <p class="kv"><span class="key" data-i18n="sample.dec.kRationale">Rationale:</span> <span data-i18n="sample.dec.vRationale">The mobile client cannot share a cookie jar with the web app.</span></p>
           <p class="kv"><span class="key" data-i18n="sample.dec.kConsequences">Consequences:</span> <span data-i18n="sample.dec.vConsequences">Every service needs clock sync; revocation is now a denylist.</span></p>
           <p class="kv"><span class="key" data-i18n="sample.dec.kEvidence">Evidence:</span>
@@ -262,8 +263,8 @@
           <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
           <div class="cmd-body">
             <span class="cmd-prompt" aria-hidden="true">$</span>
-            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="uvx command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--apply</span></code>
-            <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
+            <code class="cmd-text notranslate" translate="no" data-scroller tabindex="0" role="region" aria-label="uvx command"><span class="t-cmd">uvx</span> <span class="t-flag">--from</span> <span class="t-url">git+https://github.com/monomind-ai-lab/project-context</span> <span class="t-sub">project-context init</span> <span class="t-flag">--target</span> <span class="t-arg">.</span> <span class="t-flag">--install-skills</span> <span class="t-flag">--apply</span></code>
+            <button type="button" class="cmd-btn" data-copy="uvx --from git+https://github.com/monomind-ai-lab/project-context project-context init --target . --install-skills --apply" aria-label="Copy the install command" data-i18n-attr="aria-label:cta.copy">
               <svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke-width="1.3"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke-width="1.3"/></svg>
               <svg class="i-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
@@ -273,7 +274,7 @@
 
       <article class="card icard reveal">
         <span class="card-tag notranslate" translate="no">pipx</span>
-        <p class="body" data-i18n="install.pipx.body">Keeps <code>init</code>, <code>inspect</code>, <code>review</code> and <code>doctor</code> on your path.</p>
+        <p class="body" data-i18n="install.pipx.body">Keeps all nine subcommands on your path: <code>init</code>, <code>update</code>, <code>capture</code>, <code>inspect</code>, <code>context</code>, <code>onboard</code>, <code>review</code>, <code>consolidate</code> and <code>doctor</code>.</p>
         <div class="cmd cmd-sm" data-cmd>
           <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
           <div class="cmd-body">
@@ -301,7 +302,7 @@
 
     <ul class="proof reveal">
       <li data-i18n="install.proof1">zero runtime dependencies · stdlib Python 3.10+</li>
-      <li data-i18n="install.proof2">a stock install lands 13 files</li>
+      <li data-i18n="install.proof2">a stock install lands 18 files</li>
       <li data-i18n="install.proof3">the installer is never copied into your repo</li>
     </ul>
   </div>
@@ -339,17 +340,37 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="doctor.index">05</span></span>
       <h2 class="section-title" id="doctor-title" data-i18n="doctor.title">How it stays true</h2>
-      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor checks three things.</p>
+      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor runs eight families of checks and writes nothing. Some are silent on a repository that has no Hub — a standalone install is a complete product, not a broken one.</p>
     </div>
 
     <div class="checks">
       <article class="check reveal">
-        <h3 data-i18n="doctor.c1.title">The documents hold up</h3>
-        <p data-i18n="doctor.c1.body">Required files, version, NOW.md freshness, duplicate IDs, broken links.</p>
+        <h3 data-i18n="doctor.c1.title">Core files, marker and version</h3>
+        <p data-i18n="doctor.c1.body">Every required file is present and the marker parses. A schema this doctor does not read is an error; a marker another product wrote is named rather than compared; an installed version behind the available one asks for <code>project-context update</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c4.title">Record conformance</h3>
+        <p data-i18n="doctor.c4.body">Each detail record carries the six required frontmatter keys, a status drawn from its own kind's vocabulary, and references whose shape matches the one reference grammar — validated by shape, never by resolving them.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c5.title">Freshness, duplicate IDs, broken links</h3>
+        <p data-i18n="doctor.c5.body">A <code>Last reviewed:</code> date older than the threshold, one record ID claimed by two files, and a relative link that resolves to nothing.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="doctor.c2.title">Evidence anchors</h3>
         <p data-i18n="doctor.c2.body"><code>path@commit</code> pins a citation. <code>evidence-drift</code> warns when the cited file changed since — meaning the justification may no longer hold.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c6.title">The pushed set is still what was sent</h3>
+        <p data-i18n="doctor.c6.body">A pushed file stays clean Markdown, so the only evidence it is unaltered is the digest the push recorded in the marker. A local edit is reported as an error naming the Hub, because that is where the change belongs — editing it back here would only be undone by the next sync.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c7.title">PLAN.md against the epic</h3>
+        <p data-i18n="doctor.c7.body">A plan item that serves no item in <code>blueprint/EPIC.md</code> is an error: effort is going somewhere nobody asked for. An epic item no plan item serves is only a warning, because an epic legitimately runs ahead of the current milestone.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.c8.title">Legacy Context Hub artefacts</h3>
+        <p data-i18n="doctor.c8.body">The superseded <code>context-hub/1</code> schema string and its old scaffold are still recognised and reported, so a half-upgraded install is diagnosed instead of quietly certified healthy.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="doctor.c3.title">Reachability</h3>
@@ -392,7 +413,7 @@
           <tr>
             <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">GitNexus</span></td>
             <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gn.what">Code symbols, their relationships, impact analysis and execution flows.</span></td>
-            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gn.when">Source that needs structural or impact analysis. Suppressed for writing projects; on mixed ones it is scoped to a meaningful code subtree.</span></td>
+            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gn.when">A code-centered repository, where symbol and impact analysis can add value. On a mixed repository it is offered as optional rather than recommended, when there is enough code for structural analysis to be useful. Not proposed for document, research or writing projects.</span></td>
             <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gn.rel">A derived read of the code. The decisions about that code still live in the tracked Markdown.</span></td>
           </tr>
           <tr>
@@ -413,13 +434,16 @@
 
     <h3 class="addons-sub reveal" data-i18n="addons.types.title">What gets offered, by project type</h3>
     <ul class="typelist reveal">
-      <li><span class="chip notranslate" translate="no">Code</span><p data-i18n="addons.type.code">GitNexus when the source needs structural or impact analysis. OpenWiki only for stable, complex projects with a real audience for derived navigation. Graphify when the useful corpus extends beyond code.</p></li>
+      <li><span class="chip notranslate" translate="no">Code</span><p data-i18n="addons.type.code">GitNexus is recommended: the repository is code-centered, so symbol and impact analysis can add value. OpenWiki is deferred until a clear audience and a stable need for generated navigation are established. Graphify is not proposed.</p></li>
       <li><span class="chip notranslate" translate="no">Documents</span><p data-i18n="addons.type.docs">Graphify for a substantial interlinked corpus. OpenWiki only when collaborators need a maintained browse layer.</p></li>
       <li><span class="chip notranslate" translate="no">Research</span><p data-i18n="addons.type.research">Graphify for cross-source, data and evidence relationships. OpenWiki is deferred until claims and structure are stable.</p></li>
       <li><span class="chip notranslate" translate="no">Writing</span><p data-i18n="addons.type.writing">GitNexus and OpenWiki are suppressed. Graphify only for a large relational manuscript or story world.</p></li>
-      <li><span class="chip notranslate" translate="no">Mixed</span><p data-i18n="addons.type.mixed">GitNexus, scoped to a meaningful code subtree.</p></li>
+      <li><span class="chip notranslate" translate="no">Mixed</span><p data-i18n="addons.type.mixed">Graphify is recommended when the repository spans two or more artifact types that benefit from cross-file relationships. GitNexus is optional, offered when the mixed repository contains enough code for structural analysis to be useful. OpenWiki is deferred until collaborators demonstrate a need for maintained generated navigation.</p></li>
       <li><span class="chip notranslate" translate="no">General</span><p data-i18n="addons.type.general">Nothing is offered until inspection finds a concrete need — the same answer while the type is still uncertain.</p></li>
     </ul>
+
+    <p class="addons-detect reveal" data-i18n="addons.hubvs"><b>Project Hub is not a fourth add-on.</b> These three are <b>derived views</b>: rebuildable from material you already have, and never the thing being cited. A Hub is <b>another authored tier</b> — records an owner writes in one separate private repository and pushes down into yours, where they arrive read-only and stamped so the doctor can tell an untouched copy from an edited one.</p>
+    <p class="addons-detect reveal"><a href="/project-hub/" data-i18n="addons.hubvs.more">What a Hub authors, and what a push may never send → Project Hub</a></p>
 
     <div class="anchor-note reveal">
       <p data-i18n="addons.authority"><b>Project Context stays the authority.</b> The tracked Markdown is what the project is committed to; these three are optional derived systems built from it. None of them becomes the source of truth, and the record works fully with none of them installed.</p>

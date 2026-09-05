@@ -25,7 +25,7 @@
   <div class="container">
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="records.tree.eyebrow">what a stock install lands</span></span>
-      <h2 class="section-title" id="tree-title" data-i18n="records.tree.title">Thirteen files, three of which you will ever edit</h2>
+      <h2 class="section-title" id="tree-title" data-i18n="records.tree.title">Eighteen files, three of which you will ever edit</h2>
       <p class="section-lede" data-i18n="records.tree.lede">A core install adds one readable directory, the protocol that maintains it, and the wiring that delivers the protocol into a session. The three records at the top are the whole point; everything below them exists so agents keep the records honest.</p>
     </div>
 
@@ -33,7 +33,7 @@
       <div class="panel-bar">
         <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="panel-file notranslate" translate="no">your-project/</span>
-        <span class="chip" style="margin-inline-start:auto" data-i18n="records.tree.chip">13 files</span>
+        <span class="chip" style="margin-inline-start:auto" data-i18n="records.tree.chip">18 files</span>
       </div>
       <div class="panel-body treewrap">
 <pre class="tree notranslate" translate="no" aria-label="File tree of a stock core install"><span class="tr-dir">your-project/</span>
@@ -48,18 +48,22 @@
 │   └── <span class="tr-file">.project-context.json</span>
 ├── <span class="tr-dir">.agents/skills/project-context/</span>
 │   ├── <span class="tr-file">SKILL.md</span>                     <span class="tr-note" data-i18n="records.tree.n3">← same protocol text; the two can never disagree</span>
+│   ├── <span class="tr-file">VERSION</span>                      <span class="tr-note" data-i18n="records.tree.n3b">← the one version number, read by the doctor</span>
 │   ├── <span class="tr-file">agents/openai.yaml</span>
 │   └── <span class="tr-dir">scripts/</span>
-│       ├── <span class="tr-file">context_triggers.py</span>
-│       ├── <span class="tr-file">context_index.py</span>
-│       └── <span class="tr-file">context_doctor.py</span>
+│       ├── <span class="tr-file">context_packet.py</span>        <span class="tr-note" data-i18n="records.tree.s1">← assembles the packet an agent reads first</span>
+│       ├── <span class="tr-file">context_capture.py</span>       <span class="tr-note" data-i18n="records.tree.s2">← writes one capsule into inbox/, nothing else</span>
+│       ├── <span class="tr-file">context_review.py</span>        <span class="tr-note" data-i18n="records.tree.s3">← lists what is waiting on a person</span>
+│       ├── <span class="tr-file">context_triggers.py</span>      <span class="tr-note" data-i18n="records.tree.s4">← detects the window where a record is owed</span>
+│       ├── <span class="tr-file">context_index.py</span>         <span class="tr-note" data-i18n="records.tree.s5">← regenerates the derived registry indexes</span>
+│       └── <span class="tr-file">context_doctor.py</span>        <span class="tr-note" data-i18n="records.tree.s6">← the read-only health check</span>
 └── <span class="tr-dir">.claude/skills/project-context/</span>
     └── <span class="tr-file">SKILL.md</span>                     <span class="tr-note" data-i18n="records.tree.n4">← pointer so Claude Code discovers the skill</span></pre>
       </div>
       <p class="panel-foot" data-i18n="records.tree.foot">core profile · zero runtime dependencies · stdlib Python 3.10+</p>
     </article>
 
-    <p class="treenote reveal" data-i18n="records.tree.note">The full profile adds <code>decisions/</code>, <code>designs/</code>, <code>incidents/</code>, and <code>tasks/</code> subfolders with templates, for projects that need the complete evidence structure. The three records stay the same either way.</p>
+    <p class="treenote reveal"><span data-i18n="records.tree.note">The full profile adds <code>PLAN.md</code> and <code>QUESTIONS.md</code>, and the <code>decisions/</code>, <code>questions/</code>, <code>tasks/</code>, <code>inbox/</code>, <code>designs/</code> and <code>incidents/</code> subfolders, each with a README and a template — thirty-two files in all. <code>inbox/</code> is where <code>capture</code> parks capsules waiting to be promoted or dropped. The three records stay the same either way.</span> <span data-i18n="records.tree.pushed">Two more folders appear only when an owner pushes to you — <code>global/</code> and <code>blueprint/</code>, the read-only pushed set, authored elsewhere and never edited here.</span> <a href="/project-hub/" data-i18n="records.tree.hubLink">Project Hub →</a></p>
   </div>
 </section>
 
@@ -105,11 +109,13 @@
               <th scope="col" data-i18n="records.th.initiative">Initiative</th>
               <th scope="col" data-i18n="records.th.status">Status</th>
               <th scope="col" data-i18n="records.th.next">Next action</th>
+              <th scope="col" data-i18n="records.th.evidence">Evidence</th>
             </tr></thead>
             <tbody><tr>
               <td data-label="Initiative" data-i18n-attr="data-label:records.th.initiative"><span data-i18n="records.now.init1">Findings synthesis</span></td>
               <td data-label="Status" data-i18n-attr="data-label:records.th.status"><span class="pill pill-work notranslate" translate="no">in-progress</span></td>
-              <td data-label="Next action" data-i18n-attr="data-label:records.th.next"><span data-i18n="records.now.next1">Resolve three claims that lack page-level citations.</span> <span class="rid notranslate" translate="no">L-001</span></td>
+              <td data-label="Next action" data-i18n-attr="data-label:records.th.next"><span data-i18n="records.now.next1">Resolve three claims that lack page-level citations.</span></td>
+              <td data-label="Evidence" data-i18n-attr="data-label:records.th.evidence"><span class="rid notranslate" translate="no">L-001</span></td>
             </tr></tbody>
           </table>
 
@@ -187,7 +193,7 @@
             </span>
           </p>
         </div>
-        <p class="panel-foot" data-i18n="records.dec.foot">ID · status · date · statement · rationale · consequences · evidence</p>
+        <p class="panel-foot" data-i18n="records.dec.foot">ID · status · date · decision · rationale · consequences · evidence</p>
       </article>
 
       <div class="rec-side">
@@ -291,11 +297,54 @@
 
 <hr class="hairline">
 
-<!-- ======================= 05 EVIDENCE ANCHORS ======================= -->
+<!-- ====================== 05 CAPTURE AND THE INBOX ====================== -->
+<section class="section" id="inbox" aria-labelledby="inbox-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="records.cap.eyebrow">capture and the inbox</span></span>
+      <h2 class="section-title" id="inbox-title" data-i18n="records.cap.title">When you are not yet sure which of the three it is</h2>
+      <p class="section-lede" data-i18n="records.cap.lede">A choice worth recording almost always surfaces mid-task, and stopping to write an entry with an ID, a rationale and consequences is exactly the interruption a person declines. So <code>project-context capture</code> writes one short, dated note into <code>project-context/inbox/</code> and stops. Deciding what it is happens at promotion, where it is cheap.</p>
+    </div>
+
+    <div class="rec-grid reveal">
+      <article class="panel card">
+        <div class="panel-bar">
+          <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="panel-file notranslate" translate="no">project-context/inbox/</span>
+          <span class="chip" style="margin-inline-start:auto" data-i18n="records.cap.chip">one capsule</span>
+        </div>
+        <div class="panel-body md">
+          <p class="kv"><span class="key notranslate" translate="no">kind:</span> <span class="val notranslate" translate="no">capsule</span></p>
+          <p class="kv"><span class="key notranslate" translate="no">status:</span> <span class="pill pill-work notranslate" translate="no">proposed</span></p>
+          <p class="kv"><span class="key notranslate" translate="no">created:</span> <span class="val notranslate" translate="no">2026-08-26</span></p>
+          <p class="kv"><span class="key notranslate" translate="no">asserted_by:</span> <span class="val notranslate" translate="no">agent:claude-code</span></p>
+          <p class="bullet" data-i18n="records.cap.s.text">We standardise on pnpm; npm workspaces could not hoist the native dependencies.</p>
+          <p class="kv"><span class="key" data-i18n="records.k.evidence">Evidence:</span> <span class="val notranslate" translate="no">commit:git:8c41f2e</span></p>
+        </div>
+        <p class="panel-foot" data-i18n="records.cap.foot">at most 200 words · the command refuses a longer one</p>
+      </article>
+
+      <div class="rec-side">
+        <div class="callout">
+          <span class="callout-label" data-i18n="records.cap.callout.label">not a fourth registry</span>
+          <p data-i18n="records.cap.callout.body">Every capsule is <code>kind: capsule</code>; <code>--kind</code> — <code>decision</code>, <code>learning</code>, <code>question</code>, <code>assumption</code>, <code>constraint</code>, <code>proposal</code> — only says what the note is about. Provenance is recorded without being asked for: the actor from your git identity, the harness and model where the tool knows them, and the current commit as evidence. The same text twice on the same day writes once.</p>
+        </div>
+        <div class="overtime">
+          <h3 data-i18n="records.overtime.title">How it changes over time</h3>
+          <p data-i18n="records.cap.overtime">A capsule is promoted or dropped, never left. Write the registry entry it earns and set the capsule to <code>accepted</code> with a link to what it became, or <code>rejected</code> when it belongs nowhere. Leaving it <code>proposed</code> is the only outcome that is not a resolution — and <code>project-context review</code> keeps raising it until somebody decides.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ======================= 06 EVIDENCE ANCHORS ======================= -->
 <section class="section" id="anchors" aria-labelledby="anchor-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="records.anc.eyebrow">evidence anchors</span></span>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="records.anc.eyebrow">evidence anchors</span></span>
       <h2 class="section-title" id="anchor-title" data-i18n="records.anc.title">Pinning a citation to a point in history</h2>
       <p class="section-lede" data-i18n="records.anc.lede">Decisions and learnings cite evidence. When that evidence lives in the repository, the citation can be pinned to the exact commit it was verified at — so a later session can tell whether the justification still holds.</p>
     </div>
@@ -305,7 +354,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
         <span class="a-path">docs/research-protocol.md</span><span class="a-at">@</span><span class="a-sha">8c41f2e</span>
       </span>
-      <p data-i18n="records.anc.form">The anchor form is <code>path/to/file@commit</code> — a repository-root-relative path at the commit where the evidence was verified. It goes on an <code>Evidence:</code> line inside the entry it supports.</p>
+      <p data-i18n="records.anc.form">The anchor form is <code>path/to/file@commit</code> — a repository-root-relative path at the commit where the evidence was verified. It goes on an <code>Evidence:</code> line inside the entry it supports, or as the target of a Markdown link; the doctor reads both, and checks a linked path with the pin stripped off.</p>
     </div>
 
     <div class="callout reveal">
@@ -321,7 +370,7 @@
 <section class="section" id="next" aria-labelledby="next-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="records.next.eyebrow">next</span></span>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="records.next.eyebrow">next</span></span>
       <h2 class="section-title" id="next-title" data-i18n="records.next.title">Now make it a habit</h2>
       <p class="section-lede" data-i18n="records.next.lede">You know what the three files hold. The next page is the day-2 ritual: what agents read before work, what triggers a durable record, and the five things worth having written down by the end of week one.</p>
     </div>
