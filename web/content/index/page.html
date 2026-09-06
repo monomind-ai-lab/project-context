@@ -217,36 +217,6 @@
 
 <hr class="hairline">
 
-<!-- ============================== THESIS ============================== -->
-<section class="section" id="thesis" aria-labelledby="thesis-title">
-  <div class="container">
-    <div class="thesis reveal">
-      <h2 class="thesis-eyebrow" id="thesis-title" data-i18n="thesis.eyebrow">The distinction</h2>
-      <div class="thesis-lines">
-        <p data-i18n="thesis.line1">Project Context records what the code <b>cannot</b> say — the decisions, the learnings, the current handoff.</p>
-        <p class="dim" data-i18n="thesis.line2">A generated wiki regenerates what the code <b>does</b> say.</p>
-        <p data-i18n="thesis.line3">They compose: Project Context is the <b>authority layer</b>; a generated wiki is an optional derived view.</p>
-      </div>
-    </div>
-
-    <div class="compose reveal">
-      <div class="compose-cell is-primary">
-        <span class="compose-role" data-i18n="thesis.card1.label">authority layer</span>
-        <span class="compose-name" data-i18n="thesis.card1.title">Project Context</span>
-        <p class="compose-note" data-i18n="thesis.card1.body">Decisions, learnings, the current handoff — written by hand or by an agent, versioned with the code.</p>
-      </div>
-      <span class="compose-link" aria-hidden="true" data-i18n="thesis.compose">compose</span>
-      <div class="compose-cell">
-        <span class="compose-role" data-i18n="thesis.card2.label">derived view · optional</span>
-        <span class="compose-name" data-i18n="thesis.card2.title">A generated wiki</span>
-        <p class="compose-note" data-i18n="thesis.card2.body">Regenerates what the code already says. Useful, replaceable, and not the source of truth.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="hairline">
-
 <!-- ============================= 03 INSTALL ============================= -->
 <section class="section" id="install" aria-labelledby="install-title">
   <div class="container">
@@ -379,7 +349,6 @@
     </div>
   </div>
 </section>
-
 <hr class="hairline">
 
 <!-- ============================= 06 ADD-ONS ============================= -->
@@ -388,66 +357,28 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="addons.index">06</span></span>
       <h2 class="section-title" id="addons-title" data-i18n="addons.title">Add-ons, only where they earn it</h2>
-      <p class="section-lede" data-i18n="addons.lede">Three independent open-source tools can sit alongside the record. Project Context does not just list them: it inspects the project, recommends only what fits, and installs or configures nothing until you have said yes.</p>
+      <p class="section-lede" data-i18n="addons.teaser">Three independent open-source tools can sit alongside the record. Project Context does not just list them: it inspects the project, recommends only what fits, and installs or configures nothing until you have said yes. The record works fully with none of them.</p>
     </div>
 
-    <ol class="flow reveal">
-      <li><span class="flow-label" data-i18n="addons.step1">it inspects the project</span></li>
-      <li><span class="flow-label" data-i18n="addons.step2">it recommends only what fits</span></li>
-      <li class="is-on"><span class="flow-label" data-i18n="addons.step3">nothing lands until you opt in</span></li>
-    </ol>
-
-    <p class="addons-detect reveal" data-i18n="addons.detect">Per tool, the initializer separates two states that look identical from the outside: merely available on your <code>PATH</code>, and actually configured for this repository. Something already installed but unconfigured gets an offer to configure it, not a pointless reinstall. It asks only about unconfigured tools that match the confirmed project type and a need it has actually observed — and it installs only after an explicit answer.</p>
-
-    <div class="cmp-wrap reveal">
-      <table class="cmp">
-        <thead>
-          <tr>
-            <th scope="col" data-i18n="addons.th.tool">Tool</th>
-            <th scope="col" data-i18n="addons.th.what">What it is</th>
-            <th scope="col" data-i18n="addons.th.when">When it fits</th>
-            <th scope="col" data-i18n="addons.th.rel">Relation to Project Context</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">GitNexus</span></td>
-            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gn.what">Code symbols, their relationships, impact analysis and execution flows.</span></td>
-            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gn.when">A code-centered repository, where symbol and impact analysis can add value. On a mixed repository it is offered as optional rather than recommended, when there is enough code for structural analysis to be useful. Not proposed for document, research or writing projects.</span></td>
-            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gn.rel">A derived read of the code. The decisions about that code still live in the tracked Markdown.</span></td>
-          </tr>
-          <tr>
-            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">Graphify</span></td>
-            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.gf.what">Relationships across code, documents, research artifacts and media.</span></td>
-            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.gf.when">When the useful corpus reaches past code — a substantial interlinked document set, cross-source research and evidence, or a large relational manuscript or story world.</span></td>
-            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.gf.rel">A derived index over your material. Rebuildable, and never the thing being cited.</span></td>
-          </tr>
-          <tr>
-            <td data-label="Tool" data-i18n-attr="data-label:addons.th.tool"><span class="cmp-name notranslate" translate="no">OpenWiki</span></td>
-            <td data-label="What it is" data-i18n-attr="data-label:addons.th.what"><span data-i18n="addons.ow.what">Ongoing generated documentation and navigation for stable projects.</span></td>
-            <td data-label="When it fits" data-i18n-attr="data-label:addons.th.when"><span data-i18n="addons.ow.when">Stable, complex projects with a real audience for derived navigation. Deferred while claims or structure are still moving; suppressed for writing projects.</span></td>
-            <td data-label="Relation to Project Context" data-i18n-attr="data-label:addons.th.rel"><span data-i18n="addons.ow.rel">Regenerated from what already exists — including the record it is generated against.</span></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="teaser-grid reveal">
+      <div class="teaser-tool">
+        <span class="teaser-name notranslate" translate="no">GitNexus</span>
+        <p data-i18n="addons.gn.short">Code symbols, their relationships, and impact analysis.</p>
+      </div>
+      <div class="teaser-tool">
+        <span class="teaser-name notranslate" translate="no">Graphify</span>
+        <p data-i18n="addons.gf.short">Relationships across code, documents, research and media.</p>
+      </div>
+      <div class="teaser-tool">
+        <span class="teaser-name notranslate" translate="no">OpenWiki</span>
+        <p data-i18n="addons.ow.short">Generated documentation and navigation for stable projects.</p>
+      </div>
     </div>
-
-    <h3 class="addons-sub reveal" data-i18n="addons.types.title">What gets offered, by project type</h3>
-    <ul class="typelist reveal">
-      <li><span class="chip notranslate" translate="no">Code</span><p data-i18n="addons.type.code">GitNexus is recommended: the repository is code-centered, so symbol and impact analysis can add value. OpenWiki is deferred until a clear audience and a stable need for generated navigation are established. Graphify is not proposed.</p></li>
-      <li><span class="chip notranslate" translate="no">Documents</span><p data-i18n="addons.type.docs">Graphify for a substantial interlinked corpus. OpenWiki only when collaborators need a maintained browse layer.</p></li>
-      <li><span class="chip notranslate" translate="no">Research</span><p data-i18n="addons.type.research">Graphify for cross-source, data and evidence relationships. OpenWiki is deferred until claims and structure are stable.</p></li>
-      <li><span class="chip notranslate" translate="no">Writing</span><p data-i18n="addons.type.writing">GitNexus and OpenWiki are suppressed. Graphify only for a large relational manuscript or story world.</p></li>
-      <li><span class="chip notranslate" translate="no">Mixed</span><p data-i18n="addons.type.mixed">Graphify is recommended when the repository spans two or more artifact types that benefit from cross-file relationships. GitNexus is optional, offered when the mixed repository contains enough code for structural analysis to be useful. OpenWiki is deferred until collaborators demonstrate a need for maintained generated navigation.</p></li>
-      <li><span class="chip notranslate" translate="no">General</span><p data-i18n="addons.type.general">Nothing is offered until inspection finds a concrete need — the same answer while the type is still uncertain.</p></li>
-    </ul>
-
-    <p class="addons-detect reveal" data-i18n="addons.hubvs"><b>Project Hub is not a fourth add-on.</b> These three are <b>derived views</b>: rebuildable from material you already have, and never the thing being cited. A Hub is <b>another authored tier</b> — records an owner writes in one separate private repository and pushes down into yours, where they arrive read-only and stamped so the doctor can tell an untouched copy from an edited one.</p>
-    <p class="addons-detect reveal"><a href="/project-hub/" data-i18n="addons.hubvs.more">What a Hub authors, and what a push may never send → Project Hub</a></p>
 
     <div class="anchor-note reveal">
       <p data-i18n="addons.authority"><b>Project Context stays the authority.</b> The tracked Markdown is what the project is committed to; these three are optional derived systems built from it. None of them becomes the source of truth, and the record works fully with none of them installed.</p>
     </div>
-    <p class="addons-note reveal" data-i18n="addons.note">independent open-source tools · optional · installed or configured only after you opt in</p>
+
+    <p class="addons-more reveal"><a href="/add-ons/" data-i18n="addons.more">What each one does, when it is offered, and how it relates to the record → Add-ons</a></p>
   </div>
 </section>

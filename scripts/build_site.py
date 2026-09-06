@@ -73,11 +73,16 @@ EXTRA_ROUTES = (
 # products in the order a person would. A route absent here still reaches the
 # sitemap; it simply does not get a recommended position.
 LLMS_SECTIONS = (
-    ("Start here", ("/", "/docs/", "/use-cases/")),
-    ("Project Context — for builders working in a repository",
-     ("/docs/install/", "/docs/records/", "/docs/operate/", "/docs/builders-guide/")),
-    ("Project Hub — for owners overseeing several repositories",
-     ("/project-hub/", "/project-hub/owners-guide/")),
+    ("Start here", ("/",)),
+    ("The other half, and what can sit alongside it",
+     ("/project-hub/", "/add-ons/")),
+    ("Use cases — what kind of project this suits",
+     ("/use-cases/",)),
+    ("Docs — for builders working in a repository",
+     ("/docs/", "/docs/install/", "/docs/records/", "/docs/operate/",
+      "/docs/builders-guide/")),
+    ("Docs — for owners overseeing several repositories",
+     ("/project-hub/owners-guide/",)),
     ("Slide decks", ("/guide/", "/guide/builders/", "/guide/owners/")),
 )
 
