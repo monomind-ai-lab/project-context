@@ -400,6 +400,7 @@ class RecordModelTests(unittest.TestCase):
                     "doc:origin:docs/a.md@a1b2c3d",
                     "url:https://example.invalid/a",
                     "capsule:C-2026-01-01-a1b2",
+                    "hub:acme@a1b2c3d",
                 )
             )
             self.record(
@@ -413,6 +414,22 @@ class RecordModelTests(unittest.TestCase):
                 target,
                 "2026-01-01-good.md",
                 RECORD.replace("---\n\n# D-001", "evidence:\n  - pr:origin#not-a-number\n---\n\n# D-001"),
+            )
+            report = self.run_doctor(target, expected=1)
+            self.assertIn("invalid-reference", self.codes(report))
+
+    def test_a_hub_reference_needs_an_id_and_a_commit(self) -> None:
+        """`hub:<hub-id>@<commit>` exists because `doc:` needs a binding name a
+        private Hub has none of (record-model-v1, 2026-09-03). A bare hub id
+        cites no state, so it is not a reference — the commit is the half that
+        makes it one."""
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.install(target)
+            self.record(
+                target,
+                "2026-01-01-bare.md",
+                RECORD.replace("---\n\n# D-001", "evidence:\n  - hub:acme\n---\n\n# D-001"),
             )
             report = self.run_doctor(target, expected=1)
             self.assertIn("invalid-reference", self.codes(report))
