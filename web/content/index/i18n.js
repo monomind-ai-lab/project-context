@@ -8,10 +8,8 @@
    ===================================================================== */
 const I18N = {
 "en": {
-"nav.home": "Home",
 "nav.what": "What it is?",
 "nav.install": "Install",
-"nav.guide": "Guide",
 "nav.guideQuick": "Quick guide",
 "nav.guideBuilders": "Builder&#39;s guide",
 "nav.guideOwners": "Owner&#39;s guide",
@@ -19,6 +17,7 @@ const I18N = {
 "nav.addons": "Add-ons",
 "nav.usecases": "Use cases",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "Docs",
 "nav.grpBuilders": "For builders",
 "nav.grpOwners": "For owners",
@@ -191,10 +190,8 @@ const I18N = {
 },
 /* I18N:KO:START */
 "ko": {
-"nav.home": "홈",
 "nav.what": "무엇인가요?",
 "nav.install": "설치",
-"nav.guide": "가이드",
 "nav.guideQuick": "빠른 가이드",
 "nav.guideBuilders": "빌더 가이드",
 "nav.guideOwners": "오너 가이드",
@@ -202,6 +199,7 @@ const I18N = {
 "nav.addons": "애드온",
 "nav.usecases": "활용 사례",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "문서",
 "nav.grpBuilders": "빌더용",
 "nav.grpOwners": "오너용",
@@ -375,10 +373,8 @@ const I18N = {
 /* I18N:KO:END */
 /* I18N:ZH:START */
 "zh-TW": {
-"nav.home": "首頁",
 "nav.what": "這是什麼？",
 "nav.install": "安裝",
-"nav.guide": "指南",
 "nav.guideQuick": "快速指南",
 "nav.guideBuilders": "建置者指南",
 "nav.guideOwners": "擁有者指南",
@@ -386,6 +382,7 @@ const I18N = {
 "nav.addons": "延伸工具",
 "nav.usecases": "應用情境",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "文件",
 "nav.grpBuilders": "給建置者",
 "nav.grpOwners": "給擁有者",

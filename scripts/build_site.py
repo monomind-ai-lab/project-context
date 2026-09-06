@@ -249,6 +249,11 @@ def footer_columns_html(columns: list[dict], route: str) -> str:
                 attrs.append('translate="no"')
                 attrs.append('rel="noopener"')
                 attrs.append('target="_blank"')
+            elif link.get("notranslate"):
+                # A same-origin link whose label is a literal — a filename, a
+                # product name — rather than a phrase to be translated.
+                cls.append("notranslate")
+                attrs.append('translate="no"')
             if link.get("current") or is_current(link["href"], route):
                 attrs.append('aria-current="page"')
             if link.get("i18n"):

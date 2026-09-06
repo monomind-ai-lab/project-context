@@ -8,13 +8,13 @@
 
     <h1 class="hero-title" id="page-title" data-i18n="hero.title">Any project where the work <b>outlives the session</b>.</h1>
 
-    <p class="hero-sub" data-i18n="hero.sub">Three small Markdown records kept beside the work: the current state, the decisions that constrain what comes next, and the learnings that were verified. Two very different kinds of project, one record — the familiar repository, and everything else a group builds together.</p>
+    <p class="hero-sub" data-i18n="hero.sub">Three small Markdown records kept beside the work: the current state, the decisions that constrain what comes next, and the learnings that were verified. Coding, writing, research, planning — any project you run with agents. One project needs nothing but the folder it already has. Several projects can share one private Hub above them.</p>
 
     <ul class="hero-chips">
       <li class="chip notranslate" translate="no">NOW.md</li>
       <li class="chip notranslate" translate="no">DECISIONS.md</li>
       <li class="chip notranslate" translate="no">LEARNINGS.md</li>
-      <li class="chip chip-open" data-i18n="hero.chips">the same three records either way</li>
+      <li class="chip chip-open" data-i18n="hero.chips">the same records, one project or many</li>
     </ul>
   </div>
 </section>
@@ -24,14 +24,14 @@
      landmark, which keeps the tablist's own name from being announced twice. -->
 <section class="tabs-shell">
   <div class="container">
-    <div class="tablist" id="ucTabs" role="tablist" aria-label="Use case categories" data-i18n-attr="aria-label:tabs.label">
-      <button type="button" class="tab" role="tab" id="tab-coding" aria-controls="panel-coding" aria-selected="true" tabindex="0" data-hash="coding">
+    <div class="tablist" id="ucTabs" role="tablist" aria-label="How many projects you are running" data-i18n-attr="aria-label:tabs.label">
+      <button type="button" class="tab" role="tab" id="tab-single" aria-controls="panel-single" aria-selected="true" tabindex="0" data-hash="single">
         <span class="tab-num notranslate" translate="no" aria-hidden="true">01</span>
-        <span data-i18n="tabs.t1">For coding projects</span>
+        <span data-i18n="tabs.t1">For a single project</span>
       </button>
-      <button type="button" class="tab" role="tab" id="tab-collaborative" aria-controls="panel-collaborative" aria-selected="false" tabindex="-1" data-hash="collaborative">
+      <button type="button" class="tab" role="tab" id="tab-multiple" aria-controls="panel-multiple" aria-selected="false" tabindex="-1" data-hash="multiple">
         <span class="tab-num notranslate" translate="no" aria-hidden="true">02</span>
-        <span data-i18n="tabs.t2">For any collaborative project</span>
+        <span data-i18n="tabs.t2">For multiple projects</span>
       </button>
     </div>
   </div>
@@ -39,45 +39,140 @@
 
 <hr class="hairline">
 
-<!-- ========================= TAB 1 · CODING ========================= -->
-<div class="tabpanel" id="panel-coding" role="tabpanel" aria-labelledby="tab-coding" tabindex="0">
-  <section class="section" aria-labelledby="coding-title">
+<!-- ====================== TAB 1 · A SINGLE PROJECT ====================== -->
+<div class="tabpanel" id="panel-single" role="tabpanel" aria-labelledby="tab-single" tabindex="0">
+  <section class="section" aria-labelledby="single-title">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="code.eyebrow">for coding projects</span></span>
-        <h2 class="section-title" id="coding-title" data-i18n="code.title">A repository many agents work in</h2>
-        <p class="section-lede" data-i18n="code.lede">The familiar case: a software repository where AI coding agents do real work across many sessions, weeks apart, in different tools, on different machines.</p>
+        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="one.eyebrow">project context, on its own</span></span>
+        <h2 class="section-title" id="single-title" data-i18n="one.title">One project, one folder, and nothing else to run</h2>
+        <p class="section-lede" data-i18n="one.lede">Project Context installs into the repository or project folder you already have. Coding, writing, research, planning — any project you run with agents keeps the same three records, in the same place, read before the work and written after it.</p>
+      </div>
+
+      <div class="strip reveal">
+        <ul class="strip-chips">
+          <li class="chip" data-i18n="one.type1">software</li>
+          <li class="chip" data-i18n="one.type2">document</li>
+          <li class="chip" data-i18n="one.type3">research</li>
+          <li class="chip" data-i18n="one.type4">writing</li>
+          <li class="chip chip-open" data-i18n="one.type5">mixed</li>
+        </ul>
+        <div class="strip-lines">
+          <p data-i18n="one.fit1">Nothing about the three records is specific to code. <b>Coding, writing, research, planning</b> — any project a group of people and agents runs together has a current state, decisions that constrain what comes next, and learnings that were verified.</p>
+          <p data-i18n="one.fit2">Project Context works with <b>software, document, research, writing and mixed</b> projects. The install asks which one this is and adapts the pipeline to it.</p>
+        </div>
+      </div>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="one.map.title">Where it sits, and who touches it</h3>
+        <p data-i18n="one.map.lede">One folder beside the project's own materials, and a block in the file your agent already reads. That is the whole footprint.</p>
+      </div>
+
+      <!-- ---------------------- DIAGRAM · one project ---------------------- -->
+      <div class="ucmap reveal">
+        <div class="ucmap-folder">
+          <span class="ucmap-folder-name notranslate" translate="no">your-project/</span>
+          <div class="ucmap-pair">
+
+            <div class="ucmap-box">
+              <span class="ucmap-role" data-i18n="one.map.workRole">the project's own materials</span>
+              <p class="ucmap-lead" data-i18n="one.map.work1">Source files, chapters, sources, notes, plans, slides — whatever this particular project is made of. Project Context does not move or rewrite any of it.</p>
+              <ul class="ucmap-files">
+                <li><span class="notranslate" translate="no">AGENTS.md</span> <span class="ucmap-tag" data-i18n="one.map.tagBlock">managed block</span></li>
+                <li><span class="notranslate" translate="no">CLAUDE.md</span> <span class="ucmap-tag" data-i18n="one.map.tagBlock">managed block</span></li>
+              </ul>
+              <p class="ucmap-note" data-i18n="one.map.workNote">Install creates whichever of the two is missing. That block is how the protocol reaches an agent at all.</p>
+            </div>
+
+            <div class="ucmap-box is-ctx">
+              <span class="ucmap-role" data-i18n="one.map.ctxRole">the record, versioned beside the work</span>
+              <span class="ucmap-name notranslate" translate="no">project-context/</span>
+              <ul class="ucmap-files">
+                <li><span class="notranslate" translate="no">NOW.md</span> <span class="ucmap-tag" data-i18n="one.map.tagNow">current state</span></li>
+                <li><span class="notranslate" translate="no">DECISIONS.md</span> <span class="ucmap-tag" data-i18n="one.map.tagDec">what constrains next</span></li>
+                <li><span class="notranslate" translate="no">LEARNINGS.md</span> <span class="ucmap-tag" data-i18n="one.map.tagLearn">verified lessons</span></li>
+                <li><span class="notranslate" translate="no">decisions/ questions/ inbox/</span> <span class="ucmap-tag" data-i18n="one.map.tagDetail">detail records</span></li>
+                <li class="is-absent"><span class="notranslate" translate="no">global/ blueprint/</span> <span class="ucmap-tag" data-i18n="one.map.tagAbsent">absent — no Hub here</span></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="ucmap-wire">
+          <div class="ucmap-move">
+            <span class="ucmap-cmd" data-i18n="one.map.readCmd">before work</span>
+            <span class="ucmap-glyph" aria-hidden="true"><svg viewBox="0 0 56 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M1 5h51M47.5 1.2 51.8 5l-4.3 3.8"/></svg></span>
+            <span class="ucmap-what" data-i18n="one.map.readWhat">the record is read first — the constraints, the current state, then the decisions, learnings and questions anchored to the files at hand</span>
+          </div>
+          <div class="ucmap-move">
+            <span class="ucmap-cmd" data-i18n="one.map.writeCmd">after work</span>
+            <span class="ucmap-glyph is-back" aria-hidden="true"><svg viewBox="0 0 56 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M1 5h51M47.5 1.2 51.8 5l-4.3 3.8"/></svg></span>
+            <span class="ucmap-what" data-i18n="one.map.writeWhat">what is now true is written back — and only what was earned: a real constraint with its reason, a lesson with its evidence</span>
+          </div>
+        </div>
+
+        <div class="ucmap-actors">
+          <span class="ucmap-role" data-i18n="one.map.actorRole">who reads and writes it</span>
+          <ul class="ucmap-actor-list">
+            <li data-i18n="one.map.actor1"><b>People</b> — providing intent, answering the onboarding question, approving what is proposed.</li>
+            <li data-i18n="one.map.actor2"><b>Agents</b> — reading the record, running the tooling, maintaining the files, verifying the result.</li>
+          </ul>
+          <p class="ucmap-note" data-i18n="one.map.actorNote">Claude Code today, Codex tomorrow, a different machine next month. The record travels with the project rather than living in one vendor's memory store.</p>
+        </div>
+      </div>
+
+      <p class="ucmap-caption reveal" data-i18n="one.map.caption">That is the whole system for one project. No Hub, no server, no database, no vector store, no account — and no command that reaches the network.</p>
+
+      <div class="subhead reveal">
+        <h3 data-i18n="one.kinds.title">The same three records, whatever the project is</h3>
+        <p data-i18n="one.kinds.lede">Four projects, four shapes of work, one record model. None of them needs anything beyond the folder it already lives in.</p>
       </div>
 
       <div class="cards-grid two">
         <article class="card icard reveal">
-          <span class="card-tag" data-i18n="code.c1.tag">continuity</span>
-          <h3 data-i18n="code.c1.title">Picking up mid-refactor</h3>
-          <p class="body" data-i18n="code.c1.body">A session ends halfway through splitting the auth module. Days later the next agent — often a different agent entirely — opens the current-state record and finds what was decided, what already landed, and what is still open. It does not re-derive the plan from a diff, and it does not start a fourth parallel approach.</p>
+          <span class="card-tag" data-i18n="one.k1.tag">coding</span>
+          <h4 data-i18n="one.k1.title">Picking up mid-refactor</h4>
+          <p class="body" data-i18n="one.k1.body">A session ends halfway through splitting the auth module. Days later the next agent — often a different agent entirely — opens the current-state record and finds what was decided, what already landed, and what is still open. It does not re-derive the plan from a diff, and it does not start a fourth parallel approach.</p>
         </article>
 
         <article class="card icard reveal">
-          <span class="card-tag" data-i18n="code.c2.tag">decisions</span>
-          <h3 data-i18n="code.c2.title">Constraints that survive the session</h3>
-          <p class="body" data-i18n="code.c2.body">Why short-lived JWTs rather than server-side sessions. Which conventions are settled and not up for reopening. Written down as decisions with the reasoning attached, so a later agent does not silently reverse a choice it never saw being made.</p>
+          <span class="card-tag" data-i18n="one.k2.tag">writing</span>
+          <h4 data-i18n="one.k2.title">A manuscript that has to stay consistent</h4>
+          <p class="body" data-i18n="one.k2.body">Long-form work is mostly continuity: what the reader already knows by chapter nine, which voice was agreed for the second act, the terminology call that has to hold across four hundred pages. Editorial decisions live as decisions with their reasoning, rather than as somebody's memory of a conversation in a chat window nobody can find.</p>
         </article>
 
         <article class="card icard reveal">
-          <span class="card-tag" data-i18n="code.c3.tag">learnings</span>
-          <h3 data-i18n="code.c3.title">The mistake you only make once</h3>
-          <p class="body" data-i18n="code.c3.body">A root cause the code does not make obvious. An approach that was tried, failed, and would fail the same way again. Verified learnings are how that loop stops repeating every few weeks at the cost of another afternoon.</p>
+          <span class="card-tag" data-i18n="one.k3.tag">research</span>
+          <h4 data-i18n="one.k3.title">A literature review that spans months</h4>
+          <p class="body" data-i18n="one.k3.body">Screening criteria were settled in March. The dataset was swapped in May for a reason nobody wrote down. Three different agents have since summarised the same twenty papers. The decision record holds why the inclusion criteria are what they are; the learnings record holds which extraction pass produced unusable output — so the next pass starts where the last one stopped.</p>
         </article>
 
         <article class="card icard reveal">
-          <span class="card-tag" data-i18n="code.c4.tag">handoff</span>
-          <h3 data-i18n="code.c4.title">Across agents, tools and machines</h3>
-          <p class="body" data-i18n="code.c4.body">Claude Code today, Codex tomorrow, Cursor on the laptop. Because the records are committed alongside the code, the context travels with the project instead of living in one vendor's memory store.</p>
+          <span class="card-tag" data-i18n="one.k4.tag">planning</span>
+          <h4 data-i18n="one.k4.title">A plan that outlives whoever wrote it</h4>
+          <p class="body" data-i18n="one.k4.body">Scope, constraints and the commitments made in week two are exactly the things that walk out of the door with whoever leaves. Held as records in the project folder, they survive a handover: the person who joins in month five, and the agent drafting the next update, can both see what was promised and on what basis.</p>
         </article>
       </div>
 
       <div class="subhead reveal">
-        <h3 data-i18n="code.honest.title">How the record stays honest</h3>
-        <p data-i18n="code.honest.lede">Records go stale quietly, and a stale record is worse than none. A read-only doctor is what keeps the difference visible.</p>
+        <h3 data-i18n="one.alone.title">What a single project needs — and what it does not</h3>
+        <p data-i18n="one.alone.lede">Records go stale quietly, and a stale record is worse than none. A read-only doctor is what keeps the difference visible.</p>
+      </div>
+
+      <div class="checks">
+        <article class="check reveal">
+          <h4 data-i18n="one.chk1.title">Nothing above it is required</h4>
+          <p data-i18n="one.chk1.body">Markdown and Git are the whole storage contract. A project with no owner pushing to it simply has no <code>global/</code> and no <code>blueprint/</code>, and everything on this tab still works offline. Project Hub is the other half of the pair and it is entirely optional — the next tab is for when you want it.</p>
+        </article>
+        <article class="check reveal">
+          <h4 data-i18n="one.chk2.title">The protocol has to be able to reach a session</h4>
+          <p data-i18n="one.chk2.body">The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error, because perfect files that nothing ever loads otherwise report healthy.</p>
+        </article>
+        <article class="check reveal">
+          <h4 data-i18n="one.chk3.title">The doctor flags; it never rewrites</h4>
+          <p data-i18n="one.chk3.body">A decision pins its justification to <code>path/to/file@commit</code>. The doctor reports <code>evidence-drift</code> when that file has changed since — meaning the justification may no longer hold, and the decision is worth a second look before anyone builds on it. It is read-only, always: a doctor that edited your judgement would defeat the point of having one.</p>
+        </article>
       </div>
 
       <div class="anchor-note reveal">
@@ -85,139 +180,140 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
           <span class="a-path">src/auth/jwt.py</span><span class="a-at">@</span><span class="a-sha">a1b2c3d</span>
         </span>
-        <p data-i18n="code.anchor.explain">The evidence anchor. A decision pins its justification to a path at a commit, so a later session can check whether the reason still holds.</p>
+        <p data-i18n="one.anchor.explain">The evidence anchor. A decision pins its justification to a path at a commit, so a later session can check whether the reason still holds.</p>
       </div>
 
-      <div class="checks" style="margin-top:20px">
-        <article class="check reveal">
-          <h4 data-i18n="code.chk1.title">Evidence anchors and drift</h4>
-          <p data-i18n="code.chk1.body">A decision pins its justification to <code>path/to/file@commit</code>. The doctor reports <code>evidence-drift</code> when that file has changed since — meaning the justification may no longer hold, and the decision is worth a second look before anyone builds on it.</p>
-        </article>
-        <article class="check reveal">
-          <h4 data-i18n="code.chk2.title">Reachability</h4>
-          <p data-i18n="code.chk2.body">The managed instruction block, a harness pointer or a working hook must still deliver the protocol into a session. <code>no-delivery-path</code> is an error, because perfect files that nothing ever loads otherwise report healthy.</p>
-        </article>
+      <div class="subhead reveal">
+        <h3 data-i18n="one.git.title">Git is not required</h3>
+        <p data-i18n="one.git.body">Version control is the best case, not a prerequisite. Without it, the tooling falls back to file-modification times to detect that work has landed since the context was last updated.</p>
+      </div>
+
+      <div class="callout reveal">
+        <span class="callout-label" data-i18n="one.tradeoff.label">the trade-off</span>
+        <p data-i18n="one.tradeoff.body">Without git you lose the commit-anchored evidence trail and the drift detection that depends on it. The records still work. The verification is weaker.</p>
       </div>
     </div>
   </section>
 </div>
 
-<!-- ====================== TAB 2 · COLLABORATIVE ====================== -->
-<div class="tabpanel" id="panel-collaborative" role="tabpanel" aria-labelledby="tab-collaborative" tabindex="0" hidden>
-  <section class="section" aria-labelledby="collab-title">
+<!-- ==================== TAB 2 · MULTIPLE PROJECTS ==================== -->
+<div class="tabpanel" id="panel-multiple" role="tabpanel" aria-labelledby="tab-multiple" tabindex="0" hidden>
+  <section class="section" aria-labelledby="multiple-title">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="any.eyebrow">for any collaborative project</span></span>
-        <h2 class="section-title" id="collab-title" data-i18n="any.title">Not only software, and not only GitHub</h2>
-        <p class="section-lede" data-i18n="any.lede">Project Context works for any project a group of people and agents work on together, whose materials live in one folder they can all reach. Supported project types are software, document, research, writing, and mixed.</p>
+        <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="many.eyebrow">project context + project hub</span></span>
+        <h2 class="section-title" id="multiple-title" data-i18n="many.title">Several projects, and one private Hub above them</h2>
+        <p class="section-lede" data-i18n="many.lede">Each project keeps its own <span class="notranslate" translate="no">project-context/</span>, exactly as on the first tab. What they share — the guardrails, the workflows, and the goal each project serves — belongs in one place rather than copied into four. The projects under one Hub need not be the same kind: a coding repository, a research folder, a manuscript and a planning folder sit side by side, because the records are the same either way.</p>
       </div>
 
-      <div class="strip reveal">
-        <ul class="strip-chips">
-          <li class="chip" data-i18n="any.type1">software</li>
-          <li class="chip" data-i18n="any.type2">document</li>
-          <li class="chip" data-i18n="any.type3">research</li>
-          <li class="chip" data-i18n="any.type4">writing</li>
-          <li class="chip chip-open" data-i18n="any.type5">mixed</li>
-        </ul>
-        <div class="strip-lines">
-          <p data-i18n="any.fit1">Best suited to <b>repo-bound collaborative work</b>, where version control makes shared context easy to review and evolve.</p>
-          <p data-i18n="any.fit2">It also works for any project whose working materials are organized in <b>one folder</b> that people and AI agents can access consistently.</p>
+      <!-- --------------------- DIAGRAM · many projects --------------------- -->
+      <div class="fanmap reveal">
+        <div class="fanmap-hub">
+          <span class="fanmap-role" data-i18n="many.map.hubRole">one private repository · one owner · builders hold no permission on it</span>
+          <span class="fanmap-name notranslate" translate="no">Project Hub</span>
+          <ul class="fanmap-files">
+            <li><span class="notranslate" translate="no">global/</span> <span class="fanmap-tag" data-i18n="many.map.tagAuthored">authored here</span></li>
+            <li><span class="notranslate" translate="no">projects/&lt;id&gt;/blueprint/</span> <span class="fanmap-tag" data-i18n="many.map.tagAuthored">authored here</span></li>
+            <li><span class="notranslate" translate="no">projects/&lt;id&gt;/pulled/</span> <span class="fanmap-tag" data-i18n="many.map.tagCopy">a stamped copy, read side by side</span></li>
+            <li class="is-never"><span class="notranslate" translate="no">owners_window/</span> <span class="fanmap-tag" data-i18n="many.map.tagNever">never leaves</span></li>
+          </ul>
         </div>
+
+        <span class="fanmap-wire" aria-hidden="true"></span>
+
+        <ul class="fanmap-moves">
+          <li><span class="fanmap-cmd notranslate" translate="no">push</span><span data-i18n="many.map.push">the owner sends the shared tier down — onto a <span class="notranslate" translate="no">hub-sync</span> branch, as a pull request the repository reviews</span></li>
+          <li><span class="fanmap-cmd notranslate" translate="no">pull</span><span data-i18n="many.map.pull">the owner brings each repository's authored records up — read-only against the repository, writing nothing there</span></li>
+        </ul>
+
+        <span class="fanmap-wire" aria-hidden="true"></span>
+
+        <ul class="fanmap-repos">
+          <li class="fanmap-repo">
+            <span class="fanmap-repo-kind" data-i18n="many.map.r1">a coding repository</span>
+            <span class="fanmap-repo-ctx notranslate" translate="no">project-context/</span>
+            <span class="fanmap-chips">
+              <span class="fanmap-chip" data-i18n="many.map.tagBuilt">builder-authored</span>
+              <span class="fanmap-chip is-pushed" data-i18n="many.map.tagPushed">pushed · read-only</span>
+            </span>
+          </li>
+          <li class="fanmap-repo">
+            <span class="fanmap-repo-kind" data-i18n="many.map.r2">a research folder</span>
+            <span class="fanmap-repo-ctx notranslate" translate="no">project-context/</span>
+            <span class="fanmap-chips">
+              <span class="fanmap-chip" data-i18n="many.map.tagBuilt">builder-authored</span>
+              <span class="fanmap-chip is-pushed" data-i18n="many.map.tagPushed">pushed · read-only</span>
+            </span>
+          </li>
+          <li class="fanmap-repo">
+            <span class="fanmap-repo-kind" data-i18n="many.map.r3">a manuscript or a plan</span>
+            <span class="fanmap-repo-ctx notranslate" translate="no">project-context/</span>
+            <span class="fanmap-chips">
+              <span class="fanmap-chip" data-i18n="many.map.tagBuilt">builder-authored</span>
+              <span class="fanmap-chip is-pushed" data-i18n="many.map.tagPushed">pushed · read-only</span>
+            </span>
+          </li>
+        </ul>
+
+        <p class="fanmap-foot" data-i18n="many.map.foot"><b>Both halves are the same records under the same rules</b> — one parser, one schema, one doctor, because a Hub is itself a Project Context install. Nothing moves between them except by a command the owner runs.</p>
       </div>
 
+      <p class="fanmap-caption reveal" data-i18n="many.map.caption">Both arrows start with the owner, from the Hub, and only in the direction their access already allows. Nothing in a project repository ever reaches out to a Hub: no call home, no registration, no credential.</p>
+
+      <!-- ------------------------- BUILDER'S VIEW ------------------------- -->
       <div class="subhead reveal">
-        <h3 data-i18n="any.records.title">The same three records, everywhere</h3>
-        <p data-i18n="any.records.lede">Nothing about them is specific to code. A literature review, a manuscript and a client engagement all have a current state, decisions that constrain what comes next, and learnings that were verified rather than assumed.</p>
+        <h3 data-i18n="many.b.title">The builder's view — what changes in your repository</h3>
+        <p data-i18n="many.b.lede">You are working in one project, on the first tab's arrangement. An owner runs a Hub above it. Here is everything that is different for you.</p>
       </div>
 
-      <div class="cards-grid">
-        <article class="card icard reveal">
-          <span class="card-tag notranslate" translate="no">NOW.md</span>
-          <p class="rec-label" data-i18n="any.rec1.label">current state</p>
-          <p class="body" data-i18n="any.rec1.body">Where the project actually stands today, what is in flight, and what is blocked — the first thing the next person or agent reads.</p>
+      <div class="checks">
+        <article class="check reveal">
+          <h4 data-i18n="many.b1.title">Two folders appear, and they are not yours to edit</h4>
+          <p data-i18n="many.b1.body"><code>global/</code> and <code>blueprint/</code> show up inside your <code>project-context/</code>. They are the pushed set: authored elsewhere, copied in, and read-only here. The stamp lives in the marker and never in the file — a pushed file stays clean Markdown, while <code>.project-context.json</code> records its <code>sha256</code>, the source commit and the push time.</p>
         </article>
-        <article class="card icard reveal">
-          <span class="card-tag notranslate" translate="no">DECISIONS.md</span>
-          <p class="rec-label" data-i18n="any.rec2.label">decisions that constrain future work</p>
-          <p class="body" data-i18n="any.rec2.body">The choices already made and the reasoning behind them, so later work builds on them instead of quietly undoing them.</p>
+        <article class="check reveal">
+          <h4 data-i18n="many.b2.title">A push arrives as a pull request, never on your default branch</h4>
+          <p data-i18n="many.b2.body">A push does not write to your default branch. It commits to a long-lived <code>hub-sync</code> branch and opens a pull request, so what an owner sends arrives as a change you review like any other. Repeated syncs stack commits on that one branch and update the same request rather than scattering branches. Nothing force-pushes, and nothing merges — merging stays with you.</p>
         </article>
-        <article class="card icard reveal">
-          <span class="card-tag notranslate" translate="no">LEARNINGS.md</span>
-          <p class="rec-label" data-i18n="any.rec3.label">verified learnings</p>
-          <p class="body" data-i18n="any.rec3.body">What was tried and what it actually taught you — kept separate from what everyone merely believes to be true.</p>
+        <article class="check reveal">
+          <h4 data-i18n="many.b3.title">You push back by raising something, not by editing</h4>
+          <p data-i18n="many.b3.body">If you disagree with something pushed to you, raise a question in your own <code>project-context/</code>, or run <code>project-context capture --kind proposal</code>. It reaches the owner the next time they pull, and it arrives with the project context that explains it. That is the only path back up — nothing in your repository ever contacts the Hub by itself.</p>
         </article>
-      </div>
-
-      <div class="subhead reveal">
-        <h3 data-i18n="any.vig.title">Four projects that are not code</h3>
-        <p data-i18n="any.vig.lede">Same records, same folder, no repository of source files in sight.</p>
-      </div>
-
-      <div class="panels">
-        <article class="panel card reveal">
-          <div class="panel-bar">
-            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel-file notranslate" translate="no">research/lit-review/</span>
-            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v1.tag">research</span>
-          </div>
-          <div class="vig-body">
-            <h4 data-i18n="any.v1.title">A literature review that spans months</h4>
-            <p data-i18n="any.v1.body">Screening criteria were settled in March. The dataset was swapped in May for a reason nobody wrote down. Three different agents have since summarised the same twenty papers. The decision record holds why the inclusion criteria are what they are; the learnings record holds which extraction pass produced unusable output — so the next pass starts where the last one stopped, not where the last one started.</p>
-          </div>
-        </article>
-
-        <article class="panel card reveal">
-          <div class="panel-bar">
-            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel-file notranslate" translate="no">manuscript/</span>
-            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v2.tag">writing</span>
-          </div>
-          <div class="vig-body">
-            <h4 data-i18n="any.v2.title">A book, a screenplay, a documentation set</h4>
-            <p data-i18n="any.v2.body">Long-form work is mostly continuity: what the reader already knows by chapter nine, which voice was agreed for the second act, the terminology call that has to hold across four hundred pages. Editorial decisions live as decisions with their reasoning, rather than as somebody's memory of a conversation in a chat window nobody can find.</p>
-          </div>
-        </article>
-
-        <article class="panel card reveal">
-          <div class="panel-bar">
-            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel-file notranslate" translate="no">engagements/acme/</span>
-            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v3.tag">consulting</span>
-          </div>
-          <div class="vig-body">
-            <h4 data-i18n="any.v3.title">A client engagement that outlives its staffing</h4>
-            <p data-i18n="any.v3.body">Deliverables, constraints and the commitments made in week two are exactly the things that walk out of the door with whoever leaves. Held as records in the engagement folder, they survive a handover: the analyst who joins in month five, and the agent drafting the next deck, can both see what was promised and on what basis.</p>
-          </div>
-        </article>
-
-        <article class="panel card reveal">
-          <div class="panel-bar">
-            <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="panel-file notranslate" translate="no">handbook/</span>
-            <span class="chip" style="margin-inline-start:auto" data-i18n="any.v4.tag">operations</span>
-          </div>
-          <div class="vig-body">
-            <h4 data-i18n="any.v4.title">A handbook a mixed team maintains</h4>
-            <p data-i18n="any.v4.body">An operations or policy handbook edited by people and agents together drifts quietly. A rule changes, the reason never gets recorded, and six months later nobody can say whether it still applies. The decision record carries the reasoning; the current-state record says which version is in force today and what is still under review.</p>
-          </div>
-        </article>
-      </div>
-
-      <div class="subhead reveal">
-        <h3 data-i18n="any.hub.title">And the organisation running several of them at once</h3>
-        <p data-i18n="any.hub.body">A literature review, a manuscript, an engagement folder and a handbook in the same organisation each keep their own record. What they share — the guardrails, the workflows, and the epic every project serves — belongs in one place rather than copied into four. That is Project Hub: one private repository an owner administers, which authors that shared tier and pushes it down into each project, where it lands on a review branch, read-only and stamped. A single project needs nothing but what is on this page.</p>
-        <p><a href="/project-hub/" data-i18n="any.hub.more">How a Hub authors the shared tier, and what a push may never send → Project Hub</a></p>
-      </div>
-
-      <div class="subhead reveal">
-        <h3 data-i18n="any.git.title">Git is not required</h3>
-        <p data-i18n="any.git.body">Version control is the best case, not a prerequisite. Without it, the tooling falls back to file-modification times to detect that work has landed since the context was last updated.</p>
       </div>
 
       <div class="callout reveal">
-        <span class="callout-label" data-i18n="any.tradeoff.label">the trade-off</span>
-        <p data-i18n="any.tradeoff.body">Without git you lose the commit-anchored evidence trail and the drift detection that depends on it. The records still work. The verification is weaker.</p>
+        <span class="callout-label" data-i18n="many.refuse.label">an edit is refused, not overwritten</span>
+        <p data-i18n="many.refuse.body">Editing a pushed file does not win the argument, and it does not get overwritten either. The Hub recorded that file's hash, so the next push sees the change and <b>refuses</b>. One edited file is a conflict that stops the owner's <b>entire</b> push to your repository, naming your file and saying the place to change it is the Hub. So the edit just stops the sync — and the owner still never learns what you objected to.</p>
+      </div>
+
+      <!-- -------------------------- OWNER'S VIEW -------------------------- -->
+      <div class="subhead reveal">
+        <h3 data-i18n="many.o.title">The owner's view — one place, a folder per project</h3>
+        <p data-i18n="many.o.lede">A Hub is one private repository you make from the public scaffold and administer yourself. It is plain Markdown in Git: no database, no service to log into, no runtime dependency.</p>
+      </div>
+
+      <div class="checks">
+        <article class="check reveal">
+          <h4 data-i18n="many.o1.title">One place the global tier is authored</h4>
+          <p data-i18n="many.o1.body">Identity, guardrails, workflows, goals and resources. You write them once, in <code>global/</code>, and push them into the projects that need them — rather than copying the same guardrail into four repositories and watching three of them drift.</p>
+        </article>
+        <article class="check reveal">
+          <h4 data-i18n="many.o2.title">A folder per project</h4>
+          <p data-i18n="many.o2.body"><code>projects/&lt;id&gt;/</code> holds that project's mark — remote, branch, visibility, who builds it — your summary of it, and the blueprint you author for it: <code>EPIC.md</code>, the goal the project serves, and <code>ARCHITECTURE.md</code>, the shape it has to keep.</p>
+        </article>
+        <article class="check reveal">
+          <h4 data-i18n="many.o3.title">pull brings the builders' own records up to you</h4>
+          <p data-i18n="many.o3.body"><code>pull</code> copies each repository's plan, tasks, decisions, learnings and open questions into <code>projects/&lt;id&gt;/pulled/</code>, stamped with repository, branch, commit and time. You read them here, together, without cloning anything. It is also your inbox: a question or a proposal a builder raised arrives on this path, and nothing moves until you pull.</p>
+        </article>
+      </div>
+
+      <div class="callout reveal">
+        <span class="callout-label" data-i18n="many.never.label">what never travels</span>
+        <p data-i18n="many.never.body">The Hub's <code>IDENTITY.md</code> never reaches a project repository, at any setting — a project may have collaborators outside your organisation, so identity stays with you. <code>GOALS.md</code>, <code>RESOURCES.md</code>, <code>people/</code> and <code>agents/</code> are opt-in per project rather than default. And <code>owners_window/</code>, where you write about what is coming, is never pushed anywhere at all.</p>
+      </div>
+
+      <div class="subhead reveal">
+        <p><a href="/project-hub/" data-i18n="many.more">How a Hub authors the shared tier, and what a push may never send → Project Hub</a></p>
       </div>
     </div>
   </section>

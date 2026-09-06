@@ -13,14 +13,13 @@
 const I18N = {
 "en": {
 "nav.skip": "Skip to content",
-"nav.home": "Home",
 "nav.usecases": "Use cases",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "Docs",
 "nav.grpBuilders": "For builders",
 "nav.grpOwners": "For owners",
 "nav.grpDecks": "Read or present",
-"nav.guide": "Guide",
 "nav.what": "What it is?",
 "nav.addons": "Add-ons",
 "nav.guideQuick": "Quick guide",
@@ -300,14 +299,13 @@ const I18N = {
 /* I18N:KO:START */
 "ko": {
 "nav.skip": "본문 바로가기",
-"nav.home": "홈",
 "nav.usecases": "활용 사례",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "문서",
 "nav.grpBuilders": "빌더용",
 "nav.grpOwners": "오너용",
 "nav.grpDecks": "읽기 또는 발표",
-"nav.guide": "가이드",
 "nav.what": "무엇인가요?",
 "nav.addons": "애드온",
 "nav.guideQuick": "빠른 가이드",
@@ -588,14 +586,13 @@ const I18N = {
 /* I18N:ZH:START */
 "zh-TW": {
 "nav.skip": "跳至主要內容",
-"nav.home": "首頁",
 "nav.usecases": "應用情境",
 "nav.hub": "Project Hub",
+"nav.pc": "Project Context",
 "nav.docs": "文件",
 "nav.grpBuilders": "給建置者",
 "nav.grpOwners": "給擁有者",
 "nav.grpDecks": "閱讀或簡報",
-"nav.guide": "指南",
 "nav.what": "這是什麼？",
 "nav.addons": "延伸工具",
 "nav.guideQuick": "快速指南",

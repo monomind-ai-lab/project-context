@@ -2,9 +2,10 @@
    10. TABS
    Real tab semantics: roving tabindex, arrow/Home/End navigation, and the
    selection mirrored into the URL hash so a tab is linkable and survives a
-   reload. The hash values (`#coding`, `#collaborative`) deliberately do NOT
-   match any element id — a matching id would make the browser jump-scroll
-   to the panel on load, which is not what a linked tab should do.
+   reload. The hash values (`#single`, `#multiple`) deliberately do NOT match
+   any element id — the panels are `panel-single` / `panel-multiple`, because a
+   matching id would make the browser jump-scroll to the panel on load, which
+   is not what a linked tab should do.
    ===================================================================== */
 (function(){
   var tablist = document.getElementById('ucTabs');

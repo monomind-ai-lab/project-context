@@ -210,3 +210,62 @@
 .next-name{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
 
 .next-arrow{color:var(--accent);font-size:1rem}
+
+
+/* ─────────────────────────── AT A GLANCE ───────────────────────────
+   A reader who lands on this page has usually just heard the word "Hub"
+   and wants to know what it sits next to. This is that answer before any
+   prose: one private repository above, the project repositories below,
+   and the only two ways anything crosses between them. The full version
+   with the file lists and what never travels is section 03; this one is
+   deliberately smaller than that and says less.
+
+   Tokens only, so it inverts with `data-theme`. Every label is real HTML
+   rather than SVG text, so the language switch reaches all of it.
+   ─────────────────────────────────────────────────────────────────── */
+.glance{padding:clamp(28px,4vw,44px) 0 clamp(8px,2vw,20px)}
+
+.pairmap{display:grid;grid-template-columns:minmax(0,1fr);gap:0;justify-items:center;max-width:900px;margin:0 auto;text-align:center}
+
+.pairmap-hub{display:flex;flex-direction:column;gap:6px;width:100%;max-width:460px;padding:20px 22px;border:1px solid var(--accent-line);border-radius:var(--r-md);background:var(--surface-2)}
+
+.pairmap-role,.pairmap-repo-who{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-dim)}
+
+.pairmap-name{font-size:1.12rem;font-weight:600;letter-spacing:-.02em;color:var(--fg-bright)}
+
+.pairmap-desc{color:var(--fg-muted);font-size:.9rem;line-height:1.55}
+
+/* The flow reads top to bottom: the Hub, a stem, the only two ways anything
+   crosses, another stem, the repositories. Drawn with borders rather than an
+   SVG so it takes the theme's line colour for free and needs no viewBox maths
+   when the row rewraps. An earlier version fanned the second stem out to the
+   three cards and the moves band sat on top of the curve; two plain stems with
+   the band between them says the same thing and stays legible. */
+.pairmap-stem{width:1px;height:22px;background:var(--border-strong)}
+
+.pairmap-moves{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0;padding:16px 20px;list-style:none;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface)}
+
+.pairmap-moves li{display:flex;align-items:baseline;gap:10px;color:var(--fg-muted);font-size:.86rem;line-height:1.5;text-align:start}
+
+.pairmap-cmd{flex:none;min-width:44px;text-align:center;font-family:var(--font-mono);font-size:11.5px;color:var(--accent);border:1px solid var(--accent-line);border-radius:999px;padding:2px 9px}
+
+.pairmap-repos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
+
+.pairmap-repo{display:flex;flex-direction:column;gap:5px;padding:15px 14px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);min-width:0}
+
+.pairmap-repo-name{font-family:var(--font-mono);font-size:.84rem;color:var(--fg-bright)}
+
+.pairmap-repo-ctx{font-family:var(--font-mono);font-size:.78rem;color:var(--accent);word-break:break-all}
+
+.pairmap-foot{margin-top:20px;max-width:var(--maxw-prose);color:var(--fg-muted);font-size:.9rem;line-height:1.65}
+
+.pairmap-foot b{color:var(--fg-bright);font-weight:600}
+
+@media(max-width:820px){
+  .pairmap-repos{grid-template-columns:1fr}
+  /* With the repositories stacked the fan has nothing to fan out to, so it
+     becomes a plain stem — a curve pointing at one column would be a lie. */
+  .pairmap-wire{height:30px}
+  .pairmap-fan{display:none}
+  .pairmap-line{height:30px}
+}
