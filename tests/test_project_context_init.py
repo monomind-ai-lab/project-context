@@ -704,6 +704,58 @@ class InitializerTests(unittest.TestCase):
             self.assertEqual(0.0, report["repository"]["scores"]["code"])
             self.assertEqual({}, report["repository"]["signals"])
 
+    def test_openwiki_is_proposed_where_one_of_its_two_modes_fits(self) -> None:
+        """OpenWiki writes a wiki in `code` mode for a repository and in
+        `personal` mode over a body of knowledge, so a code-centered repository
+        and a document or research corpus are both places it belongs. It was
+        deferred everywhere while it was taken for a documentation generator;
+        this test exists so that assumption cannot come back silently."""
+        fixtures = {
+            "code": ["pyproject.toml", *[f"src/module-{i}.py" for i in range(4)]],
+            "document": [f"docs/section-{i}.md" for i in range(6)],
+            "research": ["research/one.bib", "research/two.bib"],
+        }
+        clean_env = dict(os.environ)
+        clean_env["PATH"] = ""
+        for repo_type, files in fixtures.items():
+            with self.subTest(repo_type=repo_type), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory)
+                for relative in files:
+                    path = target / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text("# fixture\n", encoding="utf-8")
+                report, _ = self.run_script(
+                    "inspect", "--target", directory, "--repo-type", repo_type, env=clean_env,
+                )
+                guidance = report["optional_tool_guidance"]
+                self.assertIn("openwiki", guidance["proposal_order"])
+                entry = guidance["tools"]["openwiki"]
+                self.assertEqual("optional", entry["relevance"])
+                # The reason is what the user is answering, so it has to name
+                # the mode rather than assert a bare fit.
+                self.assertRegex(entry["reason"], r"\b(code|personal) mode\b")
+
+    def test_openwiki_is_not_proposed_for_a_manuscript(self) -> None:
+        """A manuscript is read in order, not browsed, so `personal` mode does
+        not follow from "writing" the way it follows from a research corpus.
+        It stays deferred with a reason that names the one case that would
+        change the answer."""
+        clean_env = dict(os.environ)
+        clean_env["PATH"] = ""
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            for index in range(3):
+                path = target / f"chapters/chapter-{index}.md"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("# fixture\n", encoding="utf-8")
+            report, _ = self.run_script(
+                "inspect", "--target", directory, "--repo-type", "writing", env=clean_env,
+            )
+            guidance = report["optional_tool_guidance"]
+            self.assertNotIn("openwiki", guidance["proposal_order"])
+            self.assertEqual("deferred", guidance["tools"]["openwiki"]["status"])
+            self.assertIn("story world", guidance["tools"]["openwiki"]["reason"])
+
     def test_mixed_repository_considers_cross_artifact_and_code_tools(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
@@ -719,19 +771,23 @@ class InitializerTests(unittest.TestCase):
             report, _ = self.run_script("inspect", "--target", directory, env=clean_env)
             self.assertEqual("mixed", report["repository"]["type"])
             self.assertEqual(
-                {"gitnexus", "graphify"},
+                {"gitnexus", "graphify", "openwiki"},
                 set(report["optional_tool_guidance"]["proposal_order"]),
             )
+            # Mixed is the one type where every tool has a case, so each is
+            # offered with its own reason rather than as a block.
             self.assertEqual(
-                "deferred",
-                report["optional_tool_guidance"]["tools"]["openwiki"]["status"],
+                "optional",
+                report["optional_tool_guidance"]["tools"]["openwiki"]["relevance"],
             )
 
     def test_optional_tools_are_filtered_by_repository_type(self) -> None:
         fixtures = {
-            "code": (["pyproject.toml", *[f"src/module-{index}.py" for index in range(4)]], {"gitnexus"}),
-            "document": ([f"docs/section-{index}.md" for index in range(6)], {"graphify"}),
-            "research": (["research/one.bib", "research/two.bib"], {"graphify"}),
+            "code": (["pyproject.toml", *[f"src/module-{index}.py" for index in range(4)]],
+                     {"gitnexus", "openwiki"}),
+            "document": ([f"docs/section-{index}.md" for index in range(6)],
+                         {"graphify", "openwiki"}),
+            "research": (["research/one.bib", "research/two.bib"], {"graphify", "openwiki"}),
             "writing": ([f"chapters/chapter-{index}.md" for index in range(3)], {"graphify"}),
             "general": ([], set()),
         }
@@ -756,7 +812,10 @@ class InitializerTests(unittest.TestCase):
                     proposed,
                     set(report["optional_tool_guidance"]["proposal_order"]),
                 )
-                self.assertNotIn("openwiki", report["optional_tool_guidance"]["proposal_order"])
+                # A writing project and a general one still get no OpenWiki
+                # offer; the other three do. See the two tests above.
+                if repo_type in ("writing", "general"):
+                    self.assertNotIn("openwiki", report["optional_tool_guidance"]["proposal_order"])
 
     def test_cli_availability_is_distinct_from_project_configuration(self) -> None:
         with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as bin_directory:
