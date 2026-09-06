@@ -61,6 +61,35 @@ handoff, and before ending a session.
   platform behaving unlike its documentation; a rule that would have prevented a
   review finding. Evidence is required, and it must apply beyond this one task.
 
+### Before you record a decision
+
+Thirty decisions in, nobody remembers all of them, and that is the point at
+which two accepted entries start quietly disagreeing with each other. Before
+appending to `DECISIONS.md`, ask what already stands on the same ground:
+
+    python3 .agents/skills/project-context/scripts/context_review.py \
+        --target . --new-decision "<the decision in one line>" \
+        --new-decision-files <paths it will constrain>
+
+It reports *candidates* — accepted decisions whose files or vocabulary overlap
+yours — and it cannot tell you whether any of them contradicts what you are
+about to write. That judgement is yours, the same way the trigger window is.
+Read each candidate it names, then take one of exactly two outcomes:
+
+- **The old decision is superseded.** Say so on both records: `supersedes:` on
+  the new decision, `status: superseded` and `superseded_by:` on the old one.
+  Never edit the old statement into agreement with the new one — what it said,
+  and why, is the evidence for the reversal.
+- **Both stand.** Say in the new decision why, naming the other by ID: the
+  boundary between them, or the condition that selects one over the other. One
+  sentence is enough, and it is what stops the next author reopening the
+  question you just closed.
+
+Appending a decision that contradicts an accepted one without doing either is
+the failure this check exists to close. Where the script is not available,
+search `DECISIONS.md` for the paths and the terms your decision is about, and
+record in the entry what you compared it against.
+
 ### When nothing fired
 
 Say so and move on. Silence is a valid outcome. Padding the registries with
@@ -99,6 +128,29 @@ become a standing way to skip one.
   evidence will help future work.
 - Preserve completed historical records. Correct interpretation through status
   and supersession links instead of rewriting history.
+
+## Citing a decision to a person
+
+`per D-012` is not a citation. It names a record the reader would have to go
+and open, so they do not, and the decision stops constraining the conversation
+it was quoted into.
+
+When you bring a decision to a person, give the ID **and** the decision's
+title. When the decision is doing real work in the argument — it is why you are
+refusing something, changing an approach, or saying a thing cannot be done —
+give its one-line reason as well:
+
+> D-012 (cap API retries at three, after unbounded retries took staging down)
+
+not:
+
+> per D-012
+
+The packet already hands you all three. `context_packet.py` emits each matched
+record as `Decision D-012: <title>` followed by its body, and the body carries
+the `- Decision:` and `- Rationale:` lines. Cite only a decision you have read:
+an ID copied out of an index, with a title you did not check against the entry,
+is the failure this rule exists to prevent rather than a shortcut past it.
 
 ## Safety
 
@@ -177,6 +229,17 @@ because latency is the failure this system is exposed to. It never exits
 non-zero for a finding: a backlog is not a build failure.
 
     python3 .agents/skills/project-context/scripts/context_review.py --target .
+
+It also reports `conflict-candidate`: a pair of accepted decisions whose scope
+overlaps, named on both sides with what they share — the paths both constrain,
+or the terms both are about. It cannot tell that two decisions contradict, only
+that two standing rules point at the same thing; the judgement is yours, as it
+is for the triggers. A pair already resolved by a supersession is not reported,
+because that disagreement has been settled. `--new-decision` runs the same
+comparison for a decision not yet written, which is the check under **Before
+you record a decision**; `--max-conflicts` widens the list, and
+`--min-shared-terms` sets how much vocabulary two decisions must share before a
+topic overlap is worth reading.
 
 ## Health
 
