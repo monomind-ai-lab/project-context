@@ -3,23 +3,18 @@
   "nav": [
     {
       "href": "/",
-      "label": "Home",
-      "i18n": "nav.home"
-    },
-    {
-      "href": "/#what",
-      "label": "What it is?",
-      "i18n": "nav.what"
-    },
-    {
-      "href": "/use-cases",
-      "label": "Use cases",
-      "i18n": "nav.usecases"
+      "label": "Project Context",
+      "i18n": "nav.pc"
     },
     {
       "href": "/project-hub/",
       "label": "Project Hub",
       "i18n": "nav.hub"
+    },
+    {
+      "href": "/use-cases",
+      "label": "Use cases",
+      "i18n": "nav.usecases"
     },
     {
       "label": "Docs",
@@ -155,15 +150,20 @@
       "links": [
         {
           "href": "https://github.com/monomind-ai-lab/project-context",
-          "label": "GitHub",
+          "label": "Project Context",
           "external": true,
           "icon": "github"
         },
         {
           "href": "https://github.com/monomind-ai-lab/project-hub",
-          "label": "Project Hub on GitHub",
+          "label": "Project Hub",
           "external": true,
           "icon": "github"
+        },
+        {
+          "href": "/llms.txt",
+          "label": "llms.txt",
+          "notranslate": true
         },
         {
           "href": "https://monomind.one",
