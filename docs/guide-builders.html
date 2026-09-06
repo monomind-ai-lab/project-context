@@ -930,6 +930,42 @@ a.brand-mark:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   outline-offset: 2px;
 }
 
+/* ── Mid-size laptop scale ──────────────────────────────────────────
+   The deck jumped straight from its desktop composition to the mobile
+   rules at 1100px, so nothing adapted between a 13-inch laptop and a
+   1080p screen — and a slide built to fit 1080p simply overflowed at
+   1366x768 and 1280x800, the two commonest laptop sizes.
+
+   Since these decks are read from a link rather than presented, that
+   overflow scrolls and loses nothing. This band exists so it is needed
+   less often: the type scale and the vertical rhythm tighten by about a
+   tenth, which recovers roughly 60-150px per slide. It changes no
+   words, so no claim on any slide gets shorter to make it fit.
+   ────────────────────────────────────────────────────────────────── */
+@media (min-width: 1101px) and (max-width: 1600px) {
+  :root {
+    --text-2xl: 41px;
+    --text-3xl: 60px;
+    --text-4xl: 86px;
+    --text-xl: 25px;
+    --text-lg: 18.5px;
+    --text-base: 17px;
+    --text-sm: 14.5px;
+    --section-y-desktop: 84px;
+    --space-12: 54px;
+    --space-8: 38px;
+    --space-6: 30px;
+  }
+
+  /* The slide's own padding is the bigger lever, and it was the wrong
+     measure: `clamp(56px, 8vw, 120px)` sizes vertical padding from the
+     viewport's WIDTH, so a wide-but-short laptop screen — 1366x768 is the
+     classic one — spends over 200px of its 768 on top and bottom margin.
+     Tying it to height instead gives that space back to the content. */
+  .slide.dg-slide { padding-block: clamp(34px, 4.6vh, 70px); }
+  .slide.hero { padding-block: clamp(48px, 7vh, 136px); }
+}
+
 /* ── Stacked-card spacing and short-viewport rescue ─────────────────
    Two layout bugs, one place. Both were visible on the shipped decks.
 

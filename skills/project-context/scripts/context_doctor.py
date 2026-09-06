@@ -120,6 +120,11 @@ REFERENCE_PATTERNS = {
     "doc": re.compile(r"^doc:[A-Za-z0-9._/-]+:\S+@[0-9a-f]{7,40}$"),
     "url": re.compile(r"^url:https?://\S+$"),
     "capsule": re.compile(r"^capsule:[A-Za-z0-9._-]+$"),
+    # A record cites the Hub state it came from. `doc:` cannot serve here: it
+    # needs a binding name, and a private Hub has none a project repository is
+    # in a position to declare. Shape only, like every scheme above — a builder
+    # holds no permission on the Hub and could not resolve it if we tried.
+    "hub": re.compile(r"^hub:[A-Za-z0-9._-]+@[0-9a-f]{7,40}$"),
 }
 REFERENCE_TOKEN_PATTERN = re.compile(
     r"(?<![\w:/-])(" + "|".join(REFERENCE_PATTERNS) + r"):\S+"
