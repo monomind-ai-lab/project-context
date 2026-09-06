@@ -415,9 +415,14 @@ def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str
     The matrix is deliberately simple, and driven by the classified type rather
     than by a second set of per-branch score thresholds:
 
-    - **GitNexus** and **OpenWiki** are recommended for a code repository and
-      proposed nowhere else. Both read source: GitNexus for symbols and impact,
-      OpenWiki to write the repository's wiki in its `code` mode.
+    - **GitNexus** is recommended for a code repository and proposed nowhere
+      else. It reads source, for symbols, relationships, impact and execution
+      flows, and has nothing to say about a corpus that is not code.
+    - **OpenWiki** follows its two modes. `code` writes a wiki for a repository,
+      so it is recommended for a code project; `personal` writes one over a body
+      of knowledge, so it is recommended for a document or research corpus too.
+      A manuscript is read in order rather than browsed, and a mixed or
+      unclassified tree has no single body for it to cover, so neither is asked.
     - **Graphify** is recommended for a code repository, and everywhere else it
       depends on size — recommended for a sizable project of any type, optional
       for a smaller one. It is the only add-on that applies to every type,
@@ -453,6 +458,11 @@ def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str
                 ("optional", "A relationship graph may help, though the project is small enough to navigate without one.")
             ),
         }
+        if repo_type in ("document", "research"):
+            relevance["openwiki"] = (
+                "recommended",
+                "OpenWiki's personal mode writes and maintains a wiki over a body of knowledge, which is what this corpus is.",
+            )
 
     entries: dict[str, dict[str, Any]] = {}
     proposal_order: list[str] = []

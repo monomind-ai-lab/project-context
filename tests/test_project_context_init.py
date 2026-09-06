@@ -728,16 +728,18 @@ class InitializerTests(unittest.TestCase):
                 with self.subTest(tool=tool):
                     self.assertEqual("recommended", guidance["tools"][tool]["relevance"])
 
-    def test_only_graphify_is_offered_outside_a_code_repository(self) -> None:
-        """GitNexus and OpenWiki are proposed for code and nowhere else.
-        Graphify is the exception because relationships across files are not a
-        property of what those files contain."""
+    def test_gitnexus_is_offered_for_code_and_nowhere_else(self) -> None:
+        """GitNexus reads source for symbols, relationships and impact, and has
+        nothing to say about a corpus that is not code. It is the one add-on
+        with a single repository type."""
         clean_env = dict(os.environ)
         clean_env["PATH"] = ""
         fixtures = {
             "document": [f"docs/section-{i}.md" for i in range(6)],
             "research": ["research/one.bib", "research/two.bib"],
             "writing": [f"chapters/chapter-{i}.md" for i in range(3)],
+            "mixed": ["pyproject.toml", *[f"src/module-{i}.py" for i in range(4)],
+                      *[f"docs/section-{i}.md" for i in range(6)]],
             "general": ["notes.txt"],
         }
         for repo_type, files in fixtures.items():
@@ -751,9 +753,50 @@ class InitializerTests(unittest.TestCase):
                     "inspect", "--target", directory, "--repo-type", repo_type, env=clean_env,
                 )
                 guidance = report["optional_tool_guidance"]
-                self.assertEqual({"graphify"}, set(guidance["proposal_order"]))
-                for tool in ("gitnexus", "openwiki"):
-                    self.assertEqual("do-not-propose", guidance["tools"][tool]["status"])
+                self.assertNotIn("gitnexus", guidance["proposal_order"])
+                self.assertEqual("do-not-propose", guidance["tools"]["gitnexus"]["status"])
+
+    def test_openwiki_follows_its_two_modes(self) -> None:
+        """`code` mode writes a wiki for a repository and `personal` mode writes
+        one over a body of knowledge, so a code project and a document or
+        research corpus are all recommended. A manuscript is read in order
+        rather than browsed, and a mixed or unclassified tree has no single
+        body for it to cover, so neither is asked."""
+        clean_env = dict(os.environ)
+        clean_env["PATH"] = ""
+        recommended = {
+            "code": ["pyproject.toml", *[f"src/module-{i}.py" for i in range(4)]],
+            "document": [f"docs/section-{i}.md" for i in range(6)],
+            "research": ["research/one.bib", "research/two.bib"],
+        }
+        not_asked = {
+            "writing": [f"chapters/chapter-{i}.md" for i in range(3)],
+            "mixed": ["pyproject.toml", *[f"src/module-{i}.py" for i in range(4)],
+                      *[f"docs/section-{i}.md" for i in range(6)]],
+            "general": ["notes.txt"],
+        }
+        for expected, fixtures in (("recommended", recommended), (None, not_asked)):
+            for repo_type, files in fixtures.items():
+                with self.subTest(repo_type=repo_type), tempfile.TemporaryDirectory() as directory:
+                    target = Path(directory)
+                    for relative in files:
+                        path = target / relative
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_text("# fixture\n", encoding="utf-8")
+                    report, _ = self.run_script(
+                        "inspect", "--target", directory, "--repo-type", repo_type, env=clean_env,
+                    )
+                    guidance = report["optional_tool_guidance"]
+                    entry = guidance["tools"]["openwiki"]
+                    if expected:
+                        self.assertIn("openwiki", guidance["proposal_order"])
+                        self.assertEqual(expected, entry["relevance"])
+                        # The reason is what the user answers, so it names the
+                        # mode rather than asserting a bare fit.
+                        self.assertRegex(entry["reason"], r"\b(code|personal) mode\b")
+                    else:
+                        self.assertNotIn("openwiki", guidance["proposal_order"])
+                        self.assertEqual("do-not-propose", entry["status"])
 
     def test_graphify_strength_outside_code_follows_project_size(self) -> None:
         """Outside a code repository the question Graphify answers is whether
@@ -805,8 +848,9 @@ class InitializerTests(unittest.TestCase):
         fixtures = {
             "code": (["pyproject.toml", *[f"src/module-{index}.py" for index in range(4)]],
                      {"gitnexus", "graphify", "openwiki"}),
-            "document": ([f"docs/section-{index}.md" for index in range(6)], {"graphify"}),
-            "research": (["research/one.bib", "research/two.bib"], {"graphify"}),
+            "document": ([f"docs/section-{index}.md" for index in range(6)],
+                         {"graphify", "openwiki"}),
+            "research": (["research/one.bib", "research/two.bib"], {"graphify", "openwiki"}),
             "writing": ([f"chapters/chapter-{index}.md" for index in range(3)], {"graphify"}),
             "general": ([], {"graphify"}),
         }
@@ -831,10 +875,10 @@ class InitializerTests(unittest.TestCase):
                     proposed,
                     set(report["optional_tool_guidance"]["proposal_order"]),
                 )
-                # Only a code repository is offered GitNexus or OpenWiki.
+                # GitNexus is code-only; OpenWiki reaches a knowledge corpus
+                # too. See the two tests above for both rules.
                 if repo_type != "code":
-                    for tool in ("gitnexus", "openwiki"):
-                        self.assertNotIn(tool, report["optional_tool_guidance"]["proposal_order"])
+                    self.assertNotIn("gitnexus", report["optional_tool_guidance"]["proposal_order"])
 
     def test_cli_availability_is_distinct_from_project_configuration(self) -> None:
         with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as bin_directory:
