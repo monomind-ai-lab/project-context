@@ -21,7 +21,10 @@ recreate the templates or workflow from memory.
 
 ## 1. Start with the repository conversation
 
-Before profiles, commands, or add-ons, ask exactly one question and wait:
+Before profiles, commands, or add-ons, ask the questions below — one at a time,
+waiting for each answer before asking the next. Nothing else is asked here.
+
+**First:**
 
 > Is this a brand-new repository?
 
@@ -37,18 +40,58 @@ Before profiles, commands, or add-ons, ask exactly one question and wait:
 Repository type guides recommendations, not authority. A mixed repository may
 need different evidence paths for different artifact families.
 
+### Then ask where the records should live
+
+> Should these records be committed to this repository?
+
+This decides `--placement`, and it is the only question in the install whose
+wrong answer cannot be fixed by re-running anything: records that were never
+committed have no history to recover. Put the trade in front of the user rather
+than reading them three nouns.
+
+| Answer | `--placement` | When it is right |
+| --- | --- | --- |
+| Yes — this is the normal case | `in-repo` (**default**) | Almost always. The records are versioned, reviewable in a pull request, and every collaborator and agent gets them by cloning. This is the product working as designed |
+| No, and they do not need to be shared | `local-only` | A public repository whose context is genuinely internal, or a spike not ready to share. The folder is created in the working tree and `/project-context/` is added to `.gitignore` |
+| No, but they must still be versioned and shared | `private-sibling` | The folder is gitignored here and kept as its own git repository with its own private remote. Context that must stay off a public history and still have a history of its own |
+
+If the user has no opinion, use `in-repo` and say that is what you are doing.
+
+Say the cost of `local-only` plainly, every time it is chosen: no version
+history, no sharing, no backup, and a fresh clone starts cold. If the reason
+given is that the repository is public, recommend `private-sibling` directly —
+it is usually what the person actually wants, and it keeps everything
+`local-only` gives up.
+
+`private-sibling` manages no remote. The installer does not run `git init`, does
+not add a remote, and does not clone; it records the choice and writes the
+ignore rule. Tell the user the remaining steps are theirs: `git -C
+project-context init`, commit the scaffold, then add the private remote. Do not
+create that repository or configure a remote without separate explicit
+authorization.
+
+A repository installed before this choice existed has no `placement` key in its
+marker; that means `in-repo`, and neither `init` nor `update` rewrites it.
+
 ## 2. Inspect before proposing changes
 
 When Python 3 is available, use the deterministic read-only inspection:
 
 ```sh
 python3 PATH_TO_SKILL/scripts/project_context_init.py inspect --target . --repo-type auto
-python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --repo-type TYPE --repository-stage STAGE --dry-run
+python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --repo-type TYPE --repository-stage STAGE --placement PLACEMENT --dry-run
 ```
 
 For a new repository, pass the type derived from the purpose and
 `--repository-stage brand-new`. For an existing repository, pass the confirmed
-or inferred type and `--repository-stage existing`.
+or inferred type and `--repository-stage existing`. Pass the placement the user
+chose; omitting it means `in-repo`.
+
+The dry run enumerates the `.gitignore` edit like every other planned change,
+so show it before applying. `already_ignored` means an existing rule already
+covers the folder and nothing will be added. The report's `placement` block
+carries the choice, its cost, and — for `private-sibling` — the steps the
+installer deliberately leaves to the user.
 
 If Python is unavailable, perform the same workflow manually: inventory only
 root instructions and likely context material, compare against
@@ -122,11 +165,12 @@ archive, or delete without separate explicit authorization.
 After approval of the exact plan:
 
 ```sh
-python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile core --repo-type TYPE --repository-stage STAGE --apply
+python3 PATH_TO_SKILL/scripts/project_context_init.py init --target . --profile core --repo-type TYPE --repository-stage STAGE --placement PLACEMENT --apply
 ```
 
 The script creates only missing files, records the schema, the package version,
-the project id, and the repository type in `project-context/.project-context.json`,
+the project id, the repository type, and the placement in
+`project-context/.project-context.json`,
 preserves differing files, and updates only its managed block in existing root
 `AGENTS.md`, `agents.md`, `CLAUDE.md`, or `claude.md`. It ensures **both** root
 instruction files carry that block, creating whichever is missing, so a
@@ -225,6 +269,11 @@ configuration and verify presence without printing values.
   repository can also run directly once the skill is installed. Confirm `reachability`
   reports at least one delivery path; a `no-delivery-path` error means the
   context files are intact but nothing will load them into a session.
+- Read `placement` in the same report. A `local-only` install always warns with
+  `context-not-versioned` — that is the choice being reported honestly, not a
+  fault to repair. A `private-sibling` install warns with
+  `sibling-not-a-repository` until `project-context/` is its own git work tree;
+  that one is a real gap, and the fix is the user's `git init` and remote.
 - Confirm only approved add-ons or configurations changed.
 - Inspect the complete diff for private paths, credentials, sensitive data, and
   type-specific assumptions presented as universal rules.

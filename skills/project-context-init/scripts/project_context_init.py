@@ -111,6 +111,71 @@ EXCLUDED_SCAN_PARTS = {
     ".mypy_cache", ".pytest_cache", ".next", "target", "out", "work", "outputs",
 }
 REPOSITORY_TYPES = ("auto", "code", "document", "research", "writing", "mixed", "general")
+# Where `project-context/` sits relative to version control. Tracked in the
+# repository is the product working as designed and stays the default; the
+# other two exist because the alternative people actually reached for was
+# deleting the folder from history, ignoring it by hand, and symlinking to an
+# untracked directory outside the checkout — which works on one machine and
+# throws away the version history, the review, and the sharing that are the
+# whole point.
+PLACEMENTS = ("in-repo", "local-only", "private-sibling")
+# A marker written before this key existed describes an install that was
+# created in the repository and tracked, because that was the only thing the
+# installer could do. Absent therefore means `in-repo`, and nothing rewrites an
+# old marker to say so.
+DEFAULT_PLACEMENT = "in-repo"
+PLACEMENT_GUIDANCE = {
+    "in-repo": {
+        "summary": "project-context/ is created in the repository and tracked, like any other source file.",
+        "notes": [
+            "The records are versioned, reviewable in a pull request, and every collaborator and agent gets them.",
+        ],
+    },
+    "local-only": {
+        "summary": "project-context/ is created in the working tree and ignored by this repository.",
+        "notes": [
+            "The cost is real and permanent: no version history, no sharing, no backup, and a fresh clone starts with none of these records.",
+            "If the reason is that this repository is public, private-sibling is usually what you actually want: it keeps the records off this history and still versioned and shared.",
+        ],
+    },
+    "private-sibling": {
+        "summary": (
+            "project-context/ is ignored by this repository and is expected to be its own git "
+            "repository with its own private remote."
+        ),
+        "notes": [
+            "This command does not run `git init`, does not add a remote, and does not clone. It records the choice and writes the ignore rule; nothing else.",
+            "To finish it yourself: `git -C project-context init`, commit the scaffold, then add the private remote you want it pushed to.",
+        ],
+    },
+}
+# The `.gitignore` block is fenced the same way the instruction-file block is,
+# with the only comment syntax the format has. Same contract: everything
+# between the markers is ours to write and rewrite, and no line outside them is
+# ever touched.
+GITIGNORE_NAME = ".gitignore"
+GITIGNORE_START = "# project-context:start"
+GITIGNORE_END = "# project-context:end"
+GITIGNORE_ENTRY = "/project-context/"
+# Anchored at the root, with a trailing slash: this ignores the context folder
+# at the top of the repository and nothing that merely shares its name deeper
+# in the tree.
+GITIGNORE_NOTES = {
+    "local-only": (
+        "# Placement: local-only. These records live in the working tree and stay\n"
+        "# out of this repository's history — not versioned, not shared, not backed\n"
+        "# up. Delete this block to start tracking them.\n"
+    ),
+    "private-sibling": (
+        "# Placement: private-sibling. These records are versioned in their own git\n"
+        "# repository with its own private remote, not in this one.\n"
+    ),
+}
+# Rules that already ignore the folder, written the four ways a person writes
+# them. Only consulted when git cannot answer, which it usually can.
+GITIGNORE_EQUIVALENTS = {
+    "project-context", "project-context/", "/project-context", "/project-context/",
+}
 CODE_EXTENSIONS = {
     ".c", ".cc", ".cpp", ".cs", ".css", ".ex", ".exs", ".go", ".h", ".hpp",
     ".html", ".java", ".js", ".jsx", ".kt", ".kts", ".lua", ".php", ".py",
@@ -520,8 +585,24 @@ def read_marker(context: Path) -> dict[str, Any] | None:
     return marker if isinstance(marker, dict) else None
 
 
+def marker_placement(marker: Any) -> str:
+    """The placement this install chose, defaulting for a marker written before it.
+
+    Every marker that predates the choice describes a folder created in the
+    repository and tracked, because that was the only placement there was. It
+    is read as `in-repo` and never rewritten to say so: an install that has
+    been working since before this release keeps working, untouched.
+    """
+    value = marker.get("placement") if isinstance(marker, dict) else None
+    return value if value in PLACEMENTS else DEFAULT_PLACEMENT
+
+
 def metadata_content(
-    target: Path, profile: str, repo_type: str, existing: dict[str, Any] | None = None
+    target: Path,
+    profile: str,
+    repo_type: str,
+    existing: dict[str, Any] | None = None,
+    placement: str | None = None,
 ) -> str:
     """The one marker both products write, carried forward rather than rebuilt.
 
@@ -540,13 +621,20 @@ def metadata_content(
     the first time somebody renamed the checkout directory. Keys this release
     has never heard of survive too, because a later one may write something
     this one does not know to keep.
+
+    `placement` joins that set-once group, and `None` means "do not write one".
+    `update` passes `None` so a marker from before the choice existed is left
+    exactly as it is rather than being annotated with a decision nobody made.
     """
     carried: dict[str, Any] = dict(existing) if isinstance(existing, dict) else {}
     for key, value in (
         ("profile", profile),
+        ("placement", placement),
         ("project_id", project_id(target)),
         ("repository_type", repo_type),
     ):
+        if value is None:
+            continue
         carried.setdefault(key, value)
     carried.update(
         {
@@ -739,6 +827,13 @@ def build_update_plan(target: Path) -> dict[str, Any]:
     # chose not to carry them does not acquire them by asking for an update.
     if (target / ".agents" / "skills" / "project-context").is_dir():
         plan_skill_install(target, actions, refresh_file_action)
+    # The ignore block is ours too, and driven by the placement the marker
+    # already records. A marker written before the choice existed reads as
+    # `in-repo`, which plans nothing — an install from an earlier release is
+    # carried forward without acquiring a `.gitignore` edit it never asked for.
+    gitignore = gitignore_plan(target, marker_placement(marker))
+    if gitignore is not None:
+        actions.append(gitignore)
     harnesses = instruction_paths(target)
     actions.extend(instruction_plan(path) for path in harnesses)
     carried = {path.name.casefold() for path in harnesses}
@@ -763,6 +858,7 @@ def build_update_plan(target: Path) -> dict[str, Any]:
     report = {
         "target": str(target),
         "profile": profile,
+        "placement": placement_report(marker_placement(marker), gitignore),
         "installed_version": installed,
         "available_version": package_version(),
         "actions": actions,
@@ -830,6 +926,127 @@ def instruction_plan(path: Path) -> dict[str, Any]:
         "kind": "update_managed_block",
         "path": str(path),
         "content": original[:start_index] + managed_block + original[end_index:],
+    }
+
+
+def gitignore_block(placement: str) -> str:
+    """The managed `.gitignore` region for a placement that is not tracked here.
+
+    The note is inside the block on purpose. A bare `/project-context/` in a
+    `.gitignore` is indistinguishable from a build artifact somebody ignored
+    years ago; the reader of the file deserves to know which choice put it
+    there and what it costs.
+    """
+    return GITIGNORE_START + "\n" + GITIGNORE_NOTES[placement] + GITIGNORE_ENTRY + "\n" + GITIGNORE_END
+
+
+def existing_ignore_rule(target: Path, gitignore_text: str) -> str | None:
+    """A rule that already ignores `project-context/`, described, or None.
+
+    Asked only when this product's block is absent, so anything found is
+    somebody else's rule and duplicating it would be noise in a file nobody
+    wants noise in.
+
+    `git check-ignore` is the honest answer where git can run: it sees a parent
+    `.gitignore`, `.git/info/exclude`, and the user's global excludes, none of
+    which reading this one file would find. `--no-index` asks the question we
+    are actually asking — is this path covered by an ignore rule — rather than
+    the one git answers by default, which folds in whether it is already
+    tracked. The text scan is the fallback for a plain folder or a machine
+    with no git, and it recognises only the four ways a person writes this
+    rule; missing an exotic one costs a duplicate line, not a wrong file.
+    """
+    doctor = load_doctor()
+    if doctor is not None:
+        checked = doctor.run_git(
+            target, "check-ignore", "--no-index", "-v", "--", "project-context/"
+        )
+        if checked is not None and checked.returncode == 0 and checked.stdout.strip():
+            source, _, rest = checked.stdout.splitlines()[0].partition(":")
+            line, _, pattern = rest.partition(":")
+            pattern = pattern.split("\t", 1)[0]
+            return f"already ignored by `{pattern}` in {source} line {line}"
+    for number, line_text in enumerate(gitignore_text.splitlines(), 1):
+        if line_text.strip() in GITIGNORE_EQUIVALENTS:
+            return f"already ignored by `{line_text.strip()}` in .gitignore line {number}"
+    return None
+
+
+def gitignore_plan(target: Path, placement: str) -> dict[str, Any] | None:
+    """Plan the one ignore rule a non-tracked placement needs, or None.
+
+    Marker-fenced and create-only, exactly like the instruction-file block, and
+    for the same reason: a `.gitignore` is full of rules that have nothing to
+    do with us and an install that rewrote one would be a bug however good the
+    intent. Only the region between our two comment markers is ever replaced,
+    and a malformed pair stops the plan rather than being repaired.
+    """
+    if placement not in GITIGNORE_NOTES:
+        return None
+    path = target / GITIGNORE_NAME
+    if path.is_symlink():
+        return {"kind": "conflict", "path": str(path), "reason": ".gitignore is a symlink"}
+    if path.exists() and not path.is_file():
+        return {"kind": "conflict", "path": str(path), "reason": ".gitignore is not a regular file"}
+    original = ""
+    if path.is_file():
+        try:
+            with path.open("r", encoding="utf-8", newline="") as handle:
+                original = handle.read()
+        except UnicodeDecodeError:
+            return {"kind": "conflict", "path": str(path), "reason": ".gitignore is not valid UTF-8"}
+    newline = "\r\n" if original.count("\r\n") and original.count("\n") == original.count("\r\n") else "\n"
+    block = gitignore_block(placement).replace("\n", newline)
+    starts, ends = original.count(GITIGNORE_START), original.count(GITIGNORE_END)
+    if starts != ends or starts > 1:
+        return {
+            "kind": "conflict",
+            "path": str(path),
+            "reason": f"managed ignore markers are malformed or duplicated ({starts} start, {ends} end)",
+        }
+    if starts == 0:
+        already = existing_ignore_rule(target, original)
+        if already:
+            return {"kind": "already_ignored", "path": str(path), "reason": already}
+        separator = "" if not original else (newline if original.endswith(("\n", "\r")) else newline * 2)
+        return {
+            "kind": "append_managed_block",
+            "path": str(path),
+            "content": original + separator + block + newline,
+        }
+    start_index, raw_end_index = original.index(GITIGNORE_START), original.index(GITIGNORE_END)
+    if raw_end_index < start_index:
+        return {
+            "kind": "conflict",
+            "path": str(path),
+            "reason": "managed ignore end marker appears before start marker",
+        }
+    end_index = raw_end_index + len(GITIGNORE_END)
+    if original[start_index:end_index] == block:
+        return {"kind": "unchanged", "path": str(path), "reason": "managed ignore block is current"}
+    return {
+        "kind": "update_managed_block",
+        "path": str(path),
+        "content": original[:start_index] + block + original[end_index:],
+    }
+
+
+def placement_report(placement: str, gitignore: dict[str, Any] | None) -> dict[str, Any]:
+    """What the plan says about the choice, in words a person can act on.
+
+    `private-sibling` needs this most. The name promises a second repository
+    and this command creates none — no `git init`, no remote, no clone — so the
+    plan says so rather than leaving the user to discover that the promise was
+    theirs to keep.
+    """
+    guidance = PLACEMENT_GUIDANCE[placement]
+    return {
+        "value": placement,
+        "tracked": placement == DEFAULT_PLACEMENT,
+        "summary": guidance["summary"],
+        "notes": list(guidance["notes"]),
+        "gitignore": gitignore["path"] if gitignore else None,
+        "manages_remote": False,
     }
 
 
@@ -1229,6 +1446,7 @@ def build_plan(
     repo_type: str = "auto",
     repository_stage: str = "existing",
     install_hooks: bool = False,
+    placement: str = DEFAULT_PLACEMENT,
 ) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
@@ -1255,8 +1473,14 @@ def build_plan(
         add_file_action(
             actions,
             context / MARKER_NAME,
-            metadata_content(target, profile, repository["type"], read_marker(context)),
+            metadata_content(target, profile, repository["type"], read_marker(context), placement),
         )
+    # Before the instruction files, so a reader of the plan meets the
+    # `.gitignore` edit — the one change that decides whether these records ever
+    # reach anybody else — rather than finding it among the harness writes.
+    gitignore = gitignore_plan(target, placement)
+    if gitignore is not None:
+        actions.append(gitignore)
     harnesses = instruction_paths(target)
     actions.extend(instruction_plan(path) for path in harnesses)
     # Both roles, always. `agents.md` satisfies the AGENTS role — the file that
@@ -1282,6 +1506,7 @@ def build_plan(
             "install_skills": install_skills,
             "install_hooks": install_hooks,
             "repository_stage": repository_stage,
+            "placement": placement_report(placement, gitignore),
             "actions": actions,
         }
     )
@@ -1315,6 +1540,7 @@ def apply_plan(report: dict[str, Any]) -> int:
         report["repository"]["type"],
         report["repository_stage"],
         report["install_hooks"],
+        report["placement"]["value"],
     )
     print(json.dumps(public_report(refreshed), indent=2, sort_keys=True))
     return 0
@@ -1385,6 +1611,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--repository-stage",
         choices=("brand-new", "existing"),
         default="existing",
+    )
+    init_parser.add_argument(
+        "--placement",
+        choices=PLACEMENTS,
+        default=DEFAULT_PLACEMENT,
+        help=(
+            "where project-context/ sits relative to version control: tracked in this "
+            "repository (default), created here but gitignored, or gitignored here and "
+            "kept as its own private repository (which this command does not create)"
+        ),
     )
     init_parser.add_argument("--install-skills", action="store_true")
     init_parser.add_argument(
@@ -1493,6 +1729,7 @@ def main(argv: list[str] | None = None) -> int:
         args.repo_type,
         args.repository_stage,
         args.install_hooks,
+        args.placement,
     )
     if args.dry_run:
         print(json.dumps(public_report(report), indent=2, sort_keys=True))

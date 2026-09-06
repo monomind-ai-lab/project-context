@@ -382,6 +382,12 @@ def main() -> int:
     for expected in (
         "Is this a brand-new repository?",
         "What will this repository primarily hold or support?",
+        # Placement is asked, not assumed. The wrong answer here is the one an
+        # install cannot undo — records that were never committed have no
+        # history to recover — so the question and the recommendation that
+        # steers a public repository away from `local-only` are both guarded.
+        "Should these records be committed to this repository?",
+        "recommend `private-sibling` directly",
         "Eliminate add-ons that do not help",
         "If Python is unavailable",
         "Guide secure authentication step by step",
