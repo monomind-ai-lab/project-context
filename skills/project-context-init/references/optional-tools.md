@@ -171,9 +171,33 @@ Official source:
 
 ## OpenWiki
 
-Purpose: generate and maintain explanatory repository documentation. It is
-useful when a browsable derived wiki justifies inference and maintenance cost;
-it is never current-state authority.
+Purpose: a CLI that writes and maintains a wiki for a codebase or for personal
+knowledge. A Deep Agents documentation agent reads the configured sources,
+synthesizes a linked Markdown wiki the user owns, and keeps it current as those
+sources change. It is built for agents to read as memory and ships an
+interactive visualizer for people. It is useful when a maintained derived wiki
+justifies inference and upkeep cost; it is never current-state authority.
+
+What it offers, when deciding whether it fits:
+
+- two modes — `code` for a repository, `personal` for the user's own knowledge;
+- thirteen model providers, from OpenAI and Anthropic to Bedrock, Gemini, and
+  any OpenAI-compatible gateway;
+- coding-agent integrations for Codex, Claude Code, OpenCode and Cursor, which
+  use the host's model session and repository tools rather than a separate
+  credential;
+- Grounded Claims, which trace material facts back to versioned source evidence
+  and resurface them when that evidence changes;
+- nine connectors — Custom MCP, Notion, Slack, Gmail, X, Web Search, Hacker
+  News, LangSmith, and local git repositories;
+- self-updating through GitHub Actions, GitLab CI or Bitbucket Pipelines;
+- Open Knowledge Format (OKF v0.2) output with validated Mermaid diagrams.
+
+Note the overlap when positioning it: Grounded Claims resemble this product's
+evidence anchors, and both sides are Markdown written for agents to read. The
+distinction is synthesized versus asserted — OpenWiki derives from sources that
+already exist and can be regenerated; a decision's rationale exists nowhere
+until someone writes it down.
 
 Detection signals:
 
@@ -213,3 +237,5 @@ Official sources:
 - https://github.com/langchain-ai/openwiki
 - https://github.com/langchain-ai/openwiki/blob/main/DEVELOPMENT.md
 - https://github.com/langchain-ai/openwiki/blob/main/examples/openwiki-update.yml
+- https://github.com/langchain-ai/deepagentsjs (the documentation agent it is built on)
+- https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md (OKF v0.2)

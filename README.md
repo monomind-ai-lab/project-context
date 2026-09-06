@@ -478,12 +478,23 @@ step, and verifies readiness without reading or exposing the secret.
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
 | [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
-| [OpenWiki](https://github.com/langchain-ai/openwiki) | Ongoing generated documentation and navigation | A stable, complex project has a clear audience for a maintained derived wiki |
+| [OpenWiki](https://github.com/langchain-ai/openwiki) | An agent-written wiki that keeps itself current — for a repository, or for personal knowledge | A stable, complex project has a clear audience for a maintained derived wiki |
 
-**Positioning vs. OpenWiki:** Project Context records what the code cannot say—decisions,
-learnings, and the current handoff. OpenWiki regenerates what the code does say—derived
-documentation of its state. They compose: Project Context is the authority layer, a
-generated wiki is an optional derived view.
+**Positioning vs. OpenWiki:** OpenWiki is a CLI that writes and maintains a wiki for a
+codebase or for personal knowledge. A documentation agent reads your sources, synthesizes a
+linked Markdown wiki you own, and keeps it current as those sources change. It ships an
+interactive visualizer, integrates with Codex, Claude Code, OpenCode and Cursor, and emits
+[Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+with validated Mermaid diagrams. Its Grounded Claims trace material facts back to versioned
+source evidence and resurface them when that evidence moves.
+
+The two overlap more than the names suggest—both are Markdown you own, and both are written
+for agents to read—so the line worth drawing is not "docs versus context" but **synthesized
+versus asserted**. OpenWiki derives from sources that already exist; re-run it and it comes
+back. Project Context records what no source contains: why this approach and not the obvious
+one, what was tried and failed, what is in flight right now. Delete it and it is gone,
+because nothing else ever held it. They compose cleanly on that line—Project Context is the
+authority layer, and a generated wiki is an optional derived view over the material it reads.
 
 The initializer filters this list by repository type and observed contents. It
 does not ask writing projects about code analysis or present every add-on as a
