@@ -11,18 +11,24 @@ explicit answer.
 
 ## Repository-type filter
 
+OpenWiki has two modes, and which one applies is what decides its fit: `code`
+writes a wiki for a repository, `personal` writes one over a body of knowledge.
+
 - **Code:** consider GitNexus when meaningful source code needs structural or
-  impact analysis. Consider OpenWiki only for stable, complex projects with a
-  real audience for derived navigation. Graphify becomes relevant when the
-  useful corpus extends beyond code.
-- **Documents:** consider Graphify for a substantial, interlinked corpus and
-  OpenWiki only when collaborators need a maintained generated browse layer.
+  impact analysis, and OpenWiki in `code` mode. Graphify becomes relevant when
+  the useful corpus extends beyond code.
+- **Documents:** consider Graphify for a substantial, interlinked corpus, and
+  OpenWiki in `personal` mode — a document corpus is the body of knowledge that
+  mode is for.
 - **Research:** consider Graphify for cross-source, data, and evidence
-  relationships. Defer OpenWiki until claims and structure are stable.
-- **Writing:** suppress GitNexus and OpenWiki. Consider Graphify only for a
-  large multi-file manuscript, story world, or similarly relational corpus.
-- **Mixed:** scope GitNexus to a meaningful code subtree, consider Graphify
-  across artifact types, and offer OpenWiki only for a clear navigation use.
+  relationships, and OpenWiki in `personal` mode, whose grounded claims trace a
+  fact back to the source that supports it.
+- **Writing:** suppress GitNexus. Consider Graphify only for a large multi-file
+  manuscript, story world, or similarly relational corpus. Defer OpenWiki: a
+  manuscript is read in order rather than browsed, so it fits only a reference
+  corpus behind the writing, such as a story world.
+- **Mixed:** consider Graphify across artifact types, GitNexus when there is
+  enough code for structural analysis to be useful, and OpenWiki in either mode.
 - **General or uncertain:** do not offer an add-on until inspection identifies a
   concrete need.
 

@@ -165,11 +165,11 @@ Eliminate add-ons that do not help the observed repository:
 
 | Repository type | Add-ons worth considering |
 | --- | --- |
-| Code | GitNexus for meaningful code; OpenWiki only for stable, complex projects needing derived navigation |
-| Document | Graphify for a substantial interlinked corpus; OpenWiki only when a generated browse layer has a clear audience |
-| Research | Graphify for cross-source/evidence relationships; defer OpenWiki until claims and structure are stable |
-| Writing | Usually none; Graphify only for a large multi-file manuscript or world-building corpus |
-| Mixed | Graphify across artifact types; GitNexus only for a meaningful code subtree; OpenWiki only with a clear navigation need |
+| Code | GitNexus for meaningful code; OpenWiki as an option — its `code` mode writes and maintains a wiki for the repository |
+| Document | Graphify for a substantial interlinked corpus; OpenWiki as an option — its `personal` mode fits a knowledge corpus |
+| Research | Graphify for cross-source/evidence relationships; OpenWiki as an option — `personal` mode, and its grounded claims track a fact to its source |
+| Writing | Usually none; Graphify only for a large multi-file manuscript or world-building corpus. OpenWiki stays deferred: a manuscript is read in order, not browsed |
+| Mixed | Graphify across artifact types; GitNexus when there is enough code for structural analysis; OpenWiki as an option — either mode applies |
 | General/uncertain | No add-on until a concrete need is identified |
 
 The matrix is an eligibility ceiling, not a prompt checklist. Suppress options

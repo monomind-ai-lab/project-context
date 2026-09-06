@@ -402,6 +402,20 @@ def repository_classification(target: Path, requested: str = "auto") -> dict[str
 
 
 def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Which optional tools to propose, and how strongly, for this repository.
+
+    OpenWiki has two modes and the branches below follow them. `code` writes a
+    wiki for a repository; `personal` writes one over a body of knowledge. So a
+    code-centered repository and a document or research corpus are both places
+    it fits, rather than a navigation nicety to defer until someone asks. It
+    stays deferred where the material is still moving — an early research
+    corpus regenerates a wiki whose claims have not settled — and suppressed
+    for a manuscript, which is prose to be read in order rather than a body of
+    knowledge to be browsed.
+
+    Nothing here installs anything. A `recommended` or `optional` entry becomes
+    a question the user answers; the reason string is what they are answering.
+    """
     repo_type = repository["type"]
     scores = repository.get("scores", {})
     relevance: dict[str, tuple[str, str]] = {}
@@ -409,28 +423,29 @@ def optional_tool_guidance(repository: dict[str, Any], tools: dict[str, dict[str
     if repo_type == "code" and scores.get("code", 0) >= 3:
         relevance = {
             "gitnexus": ("recommended", "The repository is code-centered, so symbol and impact analysis can add value."),
+            "openwiki": ("optional", "OpenWiki's code mode writes and maintains a wiki for a repository this size."),
         }
-        deferred["openwiki"] = "Consider only after a clear audience and stable need for generated navigation are established."
     elif repo_type == "document" and scores.get("document", 0) >= 6:
         relevance = {
             "graphify": ("recommended", "Cross-file concept and evidence relationships fit this repository type."),
+            "openwiki": ("optional", "OpenWiki's personal mode writes and maintains a wiki over a knowledge corpus like this one."),
         }
-        deferred["openwiki"] = "Consider only when the corpus has a clear audience for a maintained generated browse layer."
     elif repo_type == "research" and scores.get("research", 0) >= 6:
         relevance = {
             "graphify": ("recommended", "Cross-source, data, and evidence relationships fit this repository type."),
+            "openwiki": ("optional", "OpenWiki's personal mode fits a research corpus, and its grounded claims track a fact back to the source that supports it."),
         }
-        deferred["openwiki"] = "Defer until claims and structure are stable and generated navigation has a clear audience."
     elif repo_type == "writing" and scores.get("writing", 0) >= 8:
         relevance = {
             "graphify": ("optional", "A relationship graph may help a large multi-file manuscript or story corpus."),
         }
+        deferred["openwiki"] = "A manuscript is read in order rather than browsed; consider it only for a reference corpus behind the writing, such as a story world."
     elif repo_type == "mixed":
         if sum(value > 0 for value in scores.values()) >= 2:
             relevance["graphify"] = ("recommended", "The repository spans artifact types that benefit from cross-file relationships.")
         if repository.get("scores", {}).get("code", 0) >= 3:
             relevance["gitnexus"] = ("optional", "The mixed repository contains enough code for structural analysis to be useful.")
-        deferred["openwiki"] = "Consider only after collaborators demonstrate a need for maintained generated navigation."
+        relevance["openwiki"] = ("optional", "A mixed repository suits either OpenWiki mode: code for the source, personal for the rest.")
 
     entries: dict[str, dict[str, Any]] = {}
     proposal_order: list[str] = []

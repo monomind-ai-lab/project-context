@@ -478,7 +478,7 @@ step, and verifies readiness without reading or exposing the secret.
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | A code or mixed repository contains a meaningful software system |
 | [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | A substantial corpus needs cross-file or cross-format navigation |
-| [OpenWiki](https://github.com/langchain-ai/openwiki) | An agent-written wiki that keeps itself current — for a repository, or for personal knowledge | A stable, complex project has a clear audience for a maintained derived wiki |
+| [OpenWiki](https://github.com/langchain-ai/openwiki) | An agent-written wiki that keeps itself current — for a repository, or for personal knowledge | A codebase, or a body of knowledge such as a document or research corpus, is worth having browsable and kept current |
 
 **Positioning vs. OpenWiki:** OpenWiki is a CLI that writes and maintains a wiki for a
 codebase or for personal knowledge. A documentation agent reads your sources, synthesizes a
