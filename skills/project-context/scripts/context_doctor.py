@@ -42,6 +42,14 @@ INSTRUCTION_NAMES = ("AGENTS.md", "agents.md", "CLAUDE.md", "claude.md")
 # left with rules no Claude session reads. One finding per missing file.
 INSTRUCTION_ROLES = ("AGENTS.md", "CLAUDE.md")
 CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md"}
+# Where `project-context/` sits relative to version control, as the install
+# recorded it. Two of the three are deliberately not tracked in this
+# repository, and neither is a fault: a placement is a decision, and a doctor
+# that reported a decision as breakage would teach people to ignore it. A
+# marker written before the choice existed carries no key and is read as
+# `in-repo`, which is what such an install is.
+PLACEMENTS = ("in-repo", "local-only", "private-sibling")
+DEFAULT_PLACEMENT = "in-repo"
 # Detail records carry frontmatter. Registries stay plain Markdown.
 RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "inbox")
 # Scaffolding inside a record directory, not a record.
@@ -351,6 +359,86 @@ def run_git(target: Path, *args: str) -> subprocess.CompletedProcess[str] | None
         )
     except (OSError, subprocess.SubprocessError):
         return None
+
+
+def own_work_tree(context: Path) -> bool:
+    """Is `project-context/` its own git work tree, rather than part of the one around it?
+
+    `rev-parse --is-inside-work-tree` cannot answer this. Run inside a folder of
+    the surrounding repository it says "true", which is correct and useless —
+    that is exactly the case `private-sibling` exists to be different from. The
+    top level is the question a separate repository answers differently: its own
+    checkout reports itself, a plain subdirectory reports its parent.
+
+    Falls back to the presence of `.git` when git cannot run, which is the same
+    question asked less precisely rather than a guess.
+    """
+    if not context.is_dir() or context.is_symlink():
+        return False
+    top = run_git(context, "rev-parse", "--show-toplevel")
+    if top is None or top.returncode != 0:
+        return (context / ".git").exists()
+    try:
+        return Path(top.stdout.strip()).resolve() == context.resolve()
+    except (OSError, ValueError):
+        return False
+
+
+def placement_issues(context: Path, marker: Any) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Report the placement, and the one honest thing to say about each.
+
+    Nothing here is an error. `local-only` and `private-sibling` are choices a
+    person made at install time with the cost in front of them, and calling a
+    deliberate choice broken is how a health report loses its authority.
+
+    What each earns is different. `local-only` earns a warning every single
+    run, because the cost is ongoing rather than a one-off: these records are
+    not versioned, not shared, not backed up, and the day they matter most is
+    the day somebody clones the repository and finds none of them. Saying it
+    once at install and never again would let that fade.
+
+    `private-sibling` earns no such warning — it keeps the version history, in
+    a different repository. What it earns is a check that the different
+    repository exists, because that is the entire difference between it and
+    `local-only`, and the installer deliberately does not create it.
+    """
+    value = marker.get("placement") if isinstance(marker, dict) else None
+    placement = value if value in PLACEMENTS else DEFAULT_PLACEMENT
+    issues: list[dict[str, str]] = []
+    report: dict[str, Any] = {
+        "placement": placement,
+        "tracked": placement == DEFAULT_PLACEMENT,
+        "declared": value in PLACEMENTS,
+    }
+    if placement == "local-only":
+        issues.append(
+            {
+                "severity": "warning",
+                "code": "context-not-versioned",
+                "path": "project-context",
+                "detail": (
+                    "placement is local-only: these records are ignored by this repository, so they are "
+                    "not versioned, not shared, and not backed up, and a fresh clone starts with none of "
+                    "them — private-sibling keeps them off this history and still versioned"
+                ),
+            }
+        )
+    elif placement == "private-sibling":
+        report["own_work_tree"] = own_work_tree(context)
+        if not report["own_work_tree"]:
+            issues.append(
+                {
+                    "severity": "warning",
+                    "code": "sibling-not-a-repository",
+                    "path": "project-context",
+                    "detail": (
+                        "placement is private-sibling, but project-context/ is not its own git work tree, "
+                        "so these records are versioned nowhere: run `git -C project-context init`, commit, "
+                        "and add the private remote"
+                    ),
+                }
+            )
+    return report, issues
 
 
 def repo_relative(target: Path, path: Path) -> str | None:
@@ -1021,6 +1109,8 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
             )
     evidence, evidence_issues = verify_anchors(target, anchors)
     issues.extend(evidence_issues)
+    placement, placement_findings = placement_issues(context, marker)
+    issues.extend(placement_findings)
     pushed, pushed_issues = pushed_set(context, marker)
     issues.extend(pushed_issues)
     conformance, conformance_issues = plan_conformance(context)
@@ -1038,6 +1128,7 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
         "status": "error" if errors else ("warning" if warnings else "healthy"),
         "summary": {"errors": errors, "warnings": warnings},
         "reachability": delivery,
+        "placement": placement,
         "evidence": evidence,
         "records": records,
         "pushed": pushed,

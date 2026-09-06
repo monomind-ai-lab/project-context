@@ -1320,6 +1320,446 @@ class MarkerTests(unittest.TestCase):
         self.assertEqual(1, source.count("def metadata_content("))
         self.assertNotIn("def merged_marker(", source)
 
+    def test_update_does_not_annotate_a_marker_that_predates_placement(self) -> None:
+        """An install from before the choice existed made no choice.
+
+        Writing `"placement": "in-repo"` into its marker would record a
+        decision nobody took, and would do it during an `update` the user asked
+        for a different reason entirely. Absent means in-repo; absent stays.
+        """
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(
+                module.metadata_content(Path(directory), "core", "code", {"version": "0.5.0"})
+            )
+        self.assertNotIn("placement", carried)
+        self.assertEqual("in-repo", module.marker_placement(carried))
+
+    def test_an_install_records_the_placement_it_chose(self) -> None:
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            fresh = json.loads(
+                module.metadata_content(Path(directory), "core", "code", None, "local-only")
+            )
+        self.assertEqual("local-only", fresh["placement"])
+
+    def test_a_recorded_placement_is_never_overwritten(self) -> None:
+        """Placement joins `profile` and `project_id`: set at install, then carried.
+
+        It is not in `OWNED_MARKER_KEYS` on purpose. Those four are rewritten on
+        every run because they describe this release; placement describes a
+        decision, and a later run has no standing to change it.
+        """
+        module = self.module()
+        with tempfile.TemporaryDirectory() as directory:
+            carried = json.loads(
+                module.metadata_content(
+                    Path(directory), "core", "code", {"placement": "private-sibling"}, "in-repo"
+                )
+            )
+        self.assertEqual("private-sibling", carried["placement"])
+        self.assertNotIn("placement", module.OWNED_MARKER_KEYS)
+
+
+class PlacementTests(unittest.TestCase):
+    """Where `project-context/` sits relative to version control, chosen at install.
+
+    The folder used to be created in the repository and tracked, always. That
+    is right nearly every time, and it was wrong in a way that had no supported
+    answer: a public repository whose records held internal decisions, whose
+    owner's only escape was deleting the folder from git history, ignoring it
+    by hand, and symlinking to a directory outside the checkout. That works on
+    one machine and throws away the version history, the review and the sharing
+    the product exists to provide.
+
+    So it is a choice, made once, recorded in the marker, and reported honestly
+    afterwards — including the part the installer deliberately does not do.
+    """
+
+    def run_script(self, *args: str, expected: int = 0) -> dict:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), *args],
+            check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(expected, result.returncode, result.stderr or result.stdout)
+        return json.loads(result.stdout) if result.stdout.strip() else {}
+
+    def repository(self, gitignore: str | None = None, *, git: bool = True) -> Path:
+        """A throwaway target, a real git repository unless asked otherwise.
+
+        Resolved, because the plan reports resolved paths and a temporary
+        directory is behind a symlink on macOS.
+        """
+        directory = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, directory, True)
+        if git and shutil.which("git"):
+            subprocess.run(["git", "init", "--quiet", str(directory)], check=True)
+        if gitignore is not None:
+            (directory / ".gitignore").write_text(gitignore, encoding="utf-8")
+        return directory
+
+    def gitignore_actions(self, report: dict) -> list[dict]:
+        return [action for action in report["actions"] if action["path"].endswith(".gitignore")]
+
+    def marker(self, target: Path) -> dict:
+        return json.loads((target / "project-context" / MARKER).read_text(encoding="utf-8"))
+
+    def doctor(self, target: Path) -> dict:
+        result = subprocess.run(
+            [sys.executable, str(DOCTOR), "--target", str(target)],
+            check=False, capture_output=True, text=True,
+        )
+        return json.loads(result.stdout)
+
+    def codes(self, report: dict) -> set[str]:
+        return {issue["code"] for issue in report["issues"]}
+
+    # ---- in-repo -------------------------------------------------------
+
+    def test_in_repo_is_the_default_and_touches_no_gitignore(self) -> None:
+        """The product working as designed: tracked, reviewable, shared by cloning.
+
+        Nothing about this path may change because the other two now exist. A
+        user who passes no flag gets exactly what every earlier release gave
+        them, `.gitignore` included — which is to say untouched.
+        """
+        target = self.repository("build/\n")
+        plan = self.run_script("init", "--target", str(target), "--dry-run")
+        self.assertEqual("in-repo", plan["placement"]["value"])
+        self.assertTrue(plan["placement"]["tracked"])
+        self.assertIsNone(plan["placement"]["gitignore"])
+        self.assertEqual([], self.gitignore_actions(plan))
+
+        self.run_script("init", "--target", str(target), "--apply")
+        self.assertEqual("build/\n", (target / ".gitignore").read_text(encoding="utf-8"))
+        self.assertEqual("in-repo", self.marker(target)["placement"])
+
+    # ---- local-only ----------------------------------------------------
+
+    def test_local_only_plans_the_ignore_edit_before_making_it(self) -> None:
+        """A user must see the `.gitignore` edit in the dry run, and see it cost something."""
+        target = self.repository("build/\n")
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+        )
+        self.assertEqual("local-only", plan["placement"]["value"])
+        self.assertFalse(plan["placement"]["tracked"])
+        self.assertEqual(
+            [{"kind": "append_managed_block", "path": str(target / ".gitignore")}],
+            self.gitignore_actions(plan),
+        )
+        joined = " ".join(plan["placement"]["notes"])
+        self.assertIn("no version history", joined)
+        self.assertIn("private-sibling", joined)
+        # Planned, not done.
+        self.assertEqual("build/\n", (target / ".gitignore").read_text(encoding="utf-8"))
+
+    def test_local_only_adds_exactly_one_entry_and_keeps_every_existing_line(self) -> None:
+        """A `.gitignore` is full of rules that are none of our business.
+
+        The managed block is the only region this product may write, and one
+        entry is the whole of what it needs. Anything else in the file is
+        compared byte for byte, because a rule silently reordered or reflowed by
+        an installer is a bug however tidy the result looks.
+        """
+        original = "node_modules/\n*.log\n\n# our own section\n/dist\n"
+        target = self.repository(original)
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        written = (target / ".gitignore").read_text(encoding="utf-8")
+        self.assertTrue(written.startswith(original), written)
+        self.assertEqual(1, written.count("/project-context/"))
+        self.assertEqual(1, written.count("# project-context:start"))
+        self.assertEqual(1, written.count("# project-context:end"))
+        addition = written[len(original):]
+        self.assertEqual(addition.strip().splitlines()[0], "# project-context:start")
+        self.assertEqual(addition.strip().splitlines()[-1], "# project-context:end")
+
+    def test_local_only_creates_a_gitignore_when_the_repository_has_none(self) -> None:
+        target = self.repository()
+        self.assertFalse((target / ".gitignore").exists())
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        written = (target / ".gitignore").read_text(encoding="utf-8")
+        self.assertTrue(written.startswith("# project-context:start"), written)
+        self.assertIn("/project-context/\n", written)
+
+    def test_git_agrees_the_folder_is_ignored(self) -> None:
+        """The rule is only correct if git reads it the way we meant it.
+
+        `/project-context/` is anchored at the root and matches a directory, so
+        it covers the folder this install created and not a same-named folder
+        somewhere deeper in the tree.
+        """
+        if not shutil.which("git"):
+            self.skipTest("git is not available")
+        target = self.repository("build/\n")
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        ignored = subprocess.run(
+            ["git", "check-ignore", "--no-index", "-q", "--", "project-context/NOW.md"],
+            cwd=target, check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(0, ignored.returncode)
+        elsewhere = subprocess.run(
+            ["git", "check-ignore", "--no-index", "-q", "--", "packages/app/project-context/NOW.md"],
+            cwd=target, check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(1, elsewhere.returncode)
+
+    # ---- private-sibling -----------------------------------------------
+
+    def test_private_sibling_ignores_here_and_manages_no_remote(self) -> None:
+        """The honest half of the promise.
+
+        `private-sibling` says the records are versioned somewhere else. This
+        command does not put them there — no `git init`, no remote, no clone —
+        and a tool that quietly created a second repository would be worse than
+        one that does not. So it says so in the plan, and the plan is checked.
+        """
+        target = self.repository("build/\n")
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "private-sibling", "--dry-run"
+        )
+        self.assertFalse(plan["placement"]["tracked"])
+        self.assertFalse(plan["placement"]["manages_remote"])
+        joined = " ".join(plan["placement"]["notes"])
+        self.assertIn("does not run `git init`", joined)
+        self.assertIn("does not add a remote", joined)
+
+        self.run_script(
+            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+        )
+        self.assertIn("/project-context/", (target / ".gitignore").read_text(encoding="utf-8"))
+        self.assertEqual("private-sibling", self.marker(target)["placement"])
+        # Nothing created a second repository.
+        self.assertFalse((target / "project-context" / ".git").exists())
+        remotes = subprocess.run(
+            ["git", "remote"], cwd=target, check=False, capture_output=True, text=True
+        )
+        self.assertEqual("", remotes.stdout.strip())
+
+    def test_the_installer_runs_no_repository_creating_git_command(self) -> None:
+        """Stated in the plan, and true of the code that prints it."""
+        source = SCRIPT.read_text(encoding="utf-8")
+        for forbidden in ('"init"', '"clone"', '"remote"', "git init", "git clone"):
+            self.assertNotIn(f'"git", {forbidden}', source, forbidden)
+        self.assertNotIn("git clone", source)
+
+    # ---- the pre-existing rule -----------------------------------------
+
+    def test_a_rule_that_already_ignores_the_folder_is_reported_not_duplicated(self) -> None:
+        """Two lines saying the same thing is noise in a file nobody wants noise in."""
+        target = self.repository("build/\nproject-context/\n")
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+        )
+        actions = self.gitignore_actions(plan)
+        self.assertEqual(1, len(actions))
+        self.assertEqual("already_ignored", actions[0]["kind"])
+        self.assertIn("project-context/", actions[0]["reason"])
+
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        written = (target / ".gitignore").read_text(encoding="utf-8")
+        self.assertEqual("build/\nproject-context/\n", written)
+
+    def test_a_rule_outside_this_file_is_found_too(self) -> None:
+        """`.git/info/exclude` ignores the folder just as effectively as `.gitignore`.
+
+        Reading only `.gitignore` would miss it and write a duplicate rule into
+        a file that did not need one, which is why git is asked first.
+        """
+        if not shutil.which("git"):
+            self.skipTest("git is not available")
+        target = self.repository("build/\n")
+        exclude = target / ".git" / "info" / "exclude"
+        exclude.parent.mkdir(parents=True, exist_ok=True)
+        exclude.write_text("/project-context/\n", encoding="utf-8")
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+        )
+        actions = self.gitignore_actions(plan)
+        self.assertEqual("already_ignored", actions[0]["kind"])
+        self.assertIn("exclude", actions[0]["reason"])
+
+    # ---- idempotency and safety ----------------------------------------
+
+    def test_re_running_each_placement_changes_nothing(self) -> None:
+        for placement in ("in-repo", "local-only", "private-sibling"):
+            with self.subTest(placement=placement):
+                target = self.repository("build/\n")
+                self.run_script(
+                    "init", "--target", str(target), "--placement", placement, "--apply"
+                )
+                before = {
+                    path: path.read_bytes()
+                    for path in sorted(target.rglob("*"))
+                    if path.is_file() and ".git/" not in path.as_posix()
+                }
+                second = self.run_script(
+                    "init", "--target", str(target), "--placement", placement, "--dry-run"
+                )
+                self.assertEqual({"unchanged"}, set(second["summary"]), second["summary"])
+                after = {
+                    path: path.read_bytes()
+                    for path in sorted(target.rglob("*"))
+                    if path.is_file() and ".git/" not in path.as_posix()
+                }
+                self.assertEqual(before, after)
+
+    def test_malformed_ignore_markers_abort_before_any_write(self) -> None:
+        """Same contract as the instruction block: a broken pair stops the plan.
+
+        Repairing markers we did not write means guessing where somebody else's
+        rules end and ours begin, and guessing wrong deletes a rule.
+        """
+        target = self.repository("build/\n# project-context:start\n/project-context/\n")
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
+        )
+        self.assertTrue(plan["has_conflicts"])
+        self.assertFalse((target / "project-context").exists())
+
+    def test_a_symlinked_gitignore_is_refused(self) -> None:
+        target = self.repository()
+        elsewhere = target / "elsewhere.txt"
+        elsewhere.write_text("build/\n", encoding="utf-8")
+        (target / ".gitignore").symlink_to(elsewhere)
+        plan = self.run_script(
+            "init", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
+        )
+        self.assertTrue(plan["has_conflicts"])
+        self.assertEqual("build/\n", elsewhere.read_text(encoding="utf-8"))
+
+    # ---- an install that predates the choice ---------------------------
+
+    def test_a_marker_with_no_placement_behaves_as_in_repo(self) -> None:
+        """A repository installed before this release keeps working, untouched.
+
+        `update` reads the placement from the marker. A marker with no key is
+        an install that was created in the repository and tracked, because that
+        was the only thing there was — so nothing is planned for `.gitignore`,
+        nothing is written into the marker, and the doctor reports no fault.
+        """
+        target = self.repository("build/\n")
+        self.run_script("init", "--target", str(target), "--apply")
+        marker_path = target / "project-context" / MARKER
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        del marker["placement"]
+        marker_path.write_text(json.dumps(marker, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+        plan = self.run_script("update", "--target", str(target), "--dry-run")
+        self.assertEqual("in-repo", plan["placement"]["value"])
+        self.assertEqual([], self.gitignore_actions(plan))
+
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertNotIn("placement", json.loads(marker_path.read_text(encoding="utf-8")))
+        self.assertEqual("build/\n", (target / ".gitignore").read_text(encoding="utf-8"))
+        self.assertEqual("healthy", self.doctor(target)["status"])
+
+    def test_update_carries_a_local_only_install_forward(self) -> None:
+        """The ignore block is ours, so `update` keeps it current like the rest.
+
+        It is driven by the marker, never by a flag: `update` is not where a
+        placement is chosen or changed.
+        """
+        target = self.repository("build/\n")
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        (target / ".gitignore").write_text("build/\n", encoding="utf-8")
+        plan = self.run_script("update", "--target", str(target), "--dry-run")
+        self.assertEqual("local-only", plan["placement"]["value"])
+        self.assertEqual("append_managed_block", self.gitignore_actions(plan)[0]["kind"])
+        self.run_script("update", "--target", str(target), "--apply")
+        self.assertIn("/project-context/", (target / ".gitignore").read_text(encoding="utf-8"))
+
+    # ---- the doctor -----------------------------------------------------
+
+    def test_the_doctor_calls_no_placement_broken(self) -> None:
+        """A deliberate choice is not a fault, and a report that says otherwise
+        teaches people to stop reading it."""
+        for placement in ("in-repo", "local-only", "private-sibling"):
+            with self.subTest(placement=placement):
+                target = self.repository("build/\n")
+                self.run_script(
+                    "init", "--target", str(target), "--placement", placement, "--apply"
+                )
+                report = self.doctor(target)
+                self.assertEqual(0, report["summary"]["errors"], report["issues"])
+                self.assertEqual(placement, report["placement"]["placement"])
+                self.assertEqual(placement == "in-repo", report["placement"]["tracked"])
+
+    def test_the_doctor_says_the_one_honest_thing_about_local_only(self) -> None:
+        """Every run, not once at install.
+
+        The cost of `local-only` is ongoing, and the day it matters is the day
+        somebody clones the repository and finds none of these records. A
+        warning said once and never again would fade long before then.
+        """
+        target = self.repository("build/\n")
+        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        report = self.doctor(target)
+        self.assertEqual("warning", report["status"])
+        self.assertIn("context-not-versioned", self.codes(report))
+        detail = next(
+            issue["detail"] for issue in report["issues"] if issue["code"] == "context-not-versioned"
+        )
+        self.assertIn("not versioned", detail)
+        self.assertIn("not shared", detail)
+        self.assertIn("private-sibling", detail)
+        # Same warning on the next run, and the one after.
+        self.assertIn("context-not-versioned", self.codes(self.doctor(target)))
+
+    def test_the_doctor_does_not_warn_that_a_private_sibling_is_unversioned(self) -> None:
+        """It is versioned — elsewhere. That is the entire point of the placement."""
+        if not shutil.which("git"):
+            self.skipTest("git is not available")
+        target = self.repository("build/\n")
+        self.run_script(
+            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+        )
+        subprocess.run(
+            ["git", "init", "--quiet", str(target / "project-context")], check=True
+        )
+        report = self.doctor(target)
+        self.assertEqual("healthy", report["status"], report["issues"])
+        self.assertNotIn("context-not-versioned", self.codes(report))
+        self.assertTrue(report["placement"]["own_work_tree"])
+
+    def test_the_doctor_notices_a_private_sibling_that_is_no_repository(self) -> None:
+        """The promise is that the records are versioned somewhere.
+
+        Until `project-context/` is its own work tree they are versioned
+        nowhere: ignored here, and committed to nothing. That is the one gap
+        this placement can have, and the installer deliberately leaves closing
+        it to the user, so the doctor is what tells them it is still open.
+        """
+        target = self.repository("build/\n")
+        self.run_script(
+            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+        )
+        report = self.doctor(target)
+        self.assertEqual("warning", report["status"])
+        self.assertIn("sibling-not-a-repository", self.codes(report))
+        self.assertFalse(report["placement"]["own_work_tree"])
+
+    def test_a_subdirectory_of_the_parent_repository_is_not_its_own_work_tree(self) -> None:
+        """The check that makes `sibling-not-a-repository` mean anything.
+
+        `rev-parse --is-inside-work-tree` answers "true" for any folder inside
+        the surrounding repository, which is exactly the case this placement
+        exists to be different from. The top level is the question that
+        separates them.
+        """
+        if not shutil.which("git"):
+            self.skipTest("git is not available")
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("context_doctor", DOCTOR)
+        doctor = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(doctor)
+        target = self.repository()
+        inside = target / "project-context"
+        inside.mkdir()
+        self.assertFalse(doctor.own_work_tree(inside))
+        subprocess.run(["git", "init", "--quiet", str(inside)], check=True)
+        self.assertTrue(doctor.own_work_tree(inside))
+
 
 if __name__ == "__main__":
     unittest.main()

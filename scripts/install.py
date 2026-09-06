@@ -28,6 +28,15 @@ def main() -> int:
         default="existing",
     )
     parser.add_argument(
+        "--placement",
+        choices=("in-repo", "local-only", "private-sibling"),
+        default="in-repo",
+        help=(
+            "where project-context/ sits relative to version control; the two "
+            "non-tracked choices add /project-context/ to .gitignore"
+        ),
+    )
+    parser.add_argument(
         "--install-hooks",
         action="store_true",
         help="also wire the session trigger hooks into .claude/settings.json",
@@ -48,6 +57,8 @@ def main() -> int:
         args.repo_type,
         "--repository-stage",
         args.repository_stage,
+        "--placement",
+        args.placement,
         "--install-skills",
         *(["--install-hooks"] if args.install_hooks else []),
         "--apply" if args.apply else "--dry-run",
