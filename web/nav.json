@@ -12,6 +12,11 @@
       "i18n": "nav.hub"
     },
     {
+      "href": "/add-ons/",
+      "label": "Add-ons",
+      "i18n": "nav.addons"
+    },
+    {
       "href": "/use-cases",
       "label": "Use cases",
       "i18n": "nav.usecases"
@@ -92,7 +97,7 @@
           "i18n": "nav.usecases"
         },
         {
-          "href": "/#addons",
+          "href": "/add-ons/",
           "label": "Add-ons",
           "i18n": "nav.addons"
         },
@@ -164,11 +169,6 @@
           "href": "/llms.txt",
           "label": "llms.txt",
           "notranslate": true
-        },
-        {
-          "href": "https://monomind.one",
-          "label": "monomind.one",
-          "external": true
         }
       ]
     }
