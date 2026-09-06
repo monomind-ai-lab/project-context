@@ -478,7 +478,7 @@ step, and verifies readiness without reading or exposing the secret.
 | --- | --- | --- |
 | [GitNexus](https://github.com/abhigyanpatwari/GitNexus) | Code symbols, relationships, impact, and execution flows | The repository is classified as code — it is proposed nowhere else |
 | [Graphify](https://github.com/Graphify-Labs/graphify) | Relationships across supported code, documents, research artifacts, and media | Any project type — recommended when it is sizable, optional when it is not |
-| [OpenWiki](https://github.com/langchain-ai/openwiki) | An agent-written wiki that keeps itself current — for a repository, or for personal knowledge | The repository is classified as code, where its `code` mode applies. Its `personal` mode suits a knowledge corpus, but the initializer does not propose it there |
+| [OpenWiki](https://github.com/langchain-ai/openwiki) | An agent-written wiki that keeps itself current — for a repository, or for personal knowledge | A code repository, where its `code` mode applies, or a document or research corpus, where `personal` mode does |
 
 **Positioning vs. OpenWiki:** OpenWiki is a CLI that writes and maintains a wiki for a
 codebase or for personal knowledge. A documentation agent reads your sources, synthesizes a

@@ -166,8 +166,8 @@ Eliminate add-ons that do not help the observed repository:
 | Repository type | Add-ons worth considering |
 | --- | --- |
 | Code | All three. GitNexus for symbols and impact, OpenWiki's `code` mode for the repository's wiki, Graphify for cross-file relationships |
-| Document | Graphify only — recommended for a sizable corpus, optional for a small one |
-| Research | Graphify only — recommended for a sizable corpus, optional for a small one |
+| Document | OpenWiki's `personal` mode over the corpus, and Graphify — recommended when sizable, optional when not |
+| Research | OpenWiki's `personal` mode over the corpus, and Graphify — recommended when sizable, optional when not |
 | Writing | Graphify only — recommended for a sizable manuscript or story world, optional for a small one |
 | Mixed | Graphify only — recommended when sizable, optional when not |
 | General/uncertain | Graphify only, and optional unless the project is sizable |
