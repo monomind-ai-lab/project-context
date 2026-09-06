@@ -11,26 +11,31 @@ explicit answer.
 
 ## Repository-type filter
 
-OpenWiki has two modes, and which one applies is what decides its fit: `code`
-writes a wiki for a repository, `personal` writes one over a body of knowledge.
+Two rules, and one exception to them.
 
-- **Code:** consider GitNexus when meaningful source code needs structural or
-  impact analysis, and OpenWiki in `code` mode. Graphify becomes relevant when
-  the useful corpus extends beyond code.
-- **Documents:** consider Graphify for a substantial, interlinked corpus, and
-  OpenWiki in `personal` mode — a document corpus is the body of knowledge that
-  mode is for.
-- **Research:** consider Graphify for cross-source, data, and evidence
-  relationships, and OpenWiki in `personal` mode, whose grounded claims trace a
-  fact back to the source that supports it.
-- **Writing:** suppress GitNexus. Consider Graphify only for a large multi-file
-  manuscript, story world, or similarly relational corpus. Defer OpenWiki: a
-  manuscript is read in order rather than browsed, so it fits only a reference
-  corpus behind the writing, such as a story world.
-- **Mixed:** consider Graphify across artifact types, GitNexus when there is
-  enough code for structural analysis to be useful, and OpenWiki in either mode.
-- **General or uncertain:** do not offer an add-on until inspection identifies a
-  concrete need.
+**GitNexus and OpenWiki are for code repositories, and are proposed nowhere
+else.** Both read source: GitNexus for symbols, relationships, impact and
+execution flows; OpenWiki in its `code` mode, to write and maintain the
+repository's own wiki. Outside a code repository neither is offered at all —
+not deferred, not conditional.
+
+**Graphify applies to every type, and its strength follows size.** Relationships
+across files are not a property of what those files contain, so a document
+corpus, a research corpus, a manuscript and a mixed tree are all candidates.
+Recommended for a sizable project, optional for a smaller one, where sizable is
+a total across the classifier's weighted scores — see `SIZABLE_TOTAL_SCORE` in
+`project_context_init.py`, which is calibrated against real trees rather than
+chosen.
+
+- **Code:** all three, recommended.
+- **Document, Research, Writing, Mixed, General:** Graphify only, recommended
+  when sizable and optional when not.
+
+OpenWiki's `personal` mode covers a body of knowledge rather than a repository,
+so a document or research corpus is a real fit for the tool. It is deliberately
+not proposed there: this matrix keeps the initializer's offers narrow, and a
+user who wants a wiki over a knowledge corpus can reach for one without being
+asked. Widening it is a one-line change in `optional_tool_guidance`.
 
 A tool on `PATH` is available, not necessarily configured for the repository.
 Offer project configuration rather than reinstallation when appropriate.
