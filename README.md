@@ -197,28 +197,6 @@ setting. A project repository may have collaborators outside the organisation,
 so identity stays with the owner. `GOALS.md`, `RESOURCES.md`, `people/` and
 `agents/` are opt-in per project for the same reason, rather than default.
 
-### Context Hub is superseded
-
-Earlier releases shipped a second product, `skills/context-hub/`, with its own
-records, its own doctor, its own `context-hub/1` schema string, and its own
-version number. It implemented a design that has since been dropped, so it is
-removed rather than migrated. Its architecture note and handoff stay in `docs/`
-as historical record.
-
-One part of it ships forward: the doctor still recognises the old
-`<!-- context-hub:start -->` block and the `context-hub/1` schema string, and
-reports them, so a half-upgraded install is diagnosed instead of quietly
-certified healthy.
-
-Project Hub above is its descendant, not its continuation. The Context Hub tried
-to be a second knowledge base with actors, episodes, entities and relationships;
-Project Hub is a much smaller thing — a global tier, a folder per project, and
-three commands. What survived is not code but four ideas, now part of the one
-record model: the attribution triple, content-addressed receipts, `path@commit`
-anchors, and the safety engineering.
-
-
-
 ---
 
 ## 🤖 Supported Agents & Environments
