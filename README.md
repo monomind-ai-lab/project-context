@@ -59,7 +59,7 @@ project-context init --target . --install-skills --apply
 
 The CLI is deterministic: swap `--apply` for `--dry-run` to preview the exact
 file plan first. Zero runtime dependencies — stdlib Python 3.10+. Subcommands:
-`init`, `update`, `capture`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
+`init`, `update`, `record`, `capture`, `inspect`, `context`, `onboard`, `review`, `consolidate`, `doctor`.
 
 ### Agent-guided install
 
@@ -128,13 +128,15 @@ record can live:
   their own cadences and their numbers do not relate. `TEMPLATE_VERSION` and
   `SCAFFOLD_VERSION` are retired.
 - **Six required frontmatter keys** on a detail record in `decisions/`,
-  `questions/`, `tasks/`, or `inbox/` — `id`, `kind`, `status`, `title`,
+  `questions/`, `tasks/`, `designs/`, `incidents/`, or `inbox/` — `id`, `kind`, `status`, `title`,
   `created`, `asserted_by` — and nothing else required. Registries stay plain
   Markdown.
 - **One lifecycle per kind**, enforced against that record's kind rather than a
   union: `decision`, `learning`, and `capsule` are `proposed` → `accepted` →
   `superseded` | `rejected`; a `question` is `open` → `answered` →
-  `superseded`; a `task` is `proposed` → `active` → `done` | `dropped`.
+  `superseded`; a `task` is `proposed` → `active` → `done` | `dropped`; a
+  `design` follows the decision lifecycle; an `incident` is `open` → `resolved`
+  → `superseded`.
   `candidate` and `approved` are retired everywhere, and the doctor says so
   where it finds them.
 - **One reference grammar**, validated by shape and never by resolving it:
@@ -147,6 +149,7 @@ record can live:
 
 ### Project Hub — the other half, and entirely optional
 
+Context Hub is superseded; Project Hub is the maintained owner-side product.
 The pushed set arrives from **[Project Hub](https://github.com/monomind-ai-lab/project-hub)**,
 the second product in this pair. Nothing here requires it: a repository with no
 Hub has no `global/` and no `blueprint/`, and everything above still works
@@ -316,10 +319,11 @@ primary materials or existing instructions.
 
 - **`project-context` skill** — installed at `.agents/skills/project-context/`,
   reads and maintains durable project-folder context, runs verification checks,
-  and travels with installed repositories. Six scripts: the retrieval assembler
+  and travels with installed repositories. Seven scripts: the retrieval assembler
   (`context_packet.py`), capture (`context_capture.py`), the standing review
   (`context_review.py`), context triggers (`context_triggers.py`), registry
-  indexes (`context_index.py`), and a standalone doctor (`context_doctor.py`).
+  indexes (`context_index.py`), durable record creation (`context_record.py`),
+  and a standalone doctor (`context_doctor.py`).
 - **`project-context-init` installer** — stays upstream (in the scaffold checkout
   or pip package); onboards new or existing projects, suggests safe consolidation,
   initializes the right profile, and validates context health. The `init`
@@ -380,13 +384,24 @@ is cheap.
 
 At a milestone or handoff, the active agent:
 
-1. Updates the active task evidence.
+1. Creates or updates the active task evidence.
 2. Promotes changed current state into `NOW.md`.
 3. Records only decisions that constrain future work.
 4. Promotes only evidence-backed, reusable learnings.
 5. Promotes or drops the capsules in `inbox/`; `project-context review` lists
    what is still waiting on a person.
 6. Supersedes stale knowledge instead of silently rewriting history.
+
+For the full profile, agents persist operational records through one
+deterministic command:
+
+```sh
+project-context record --kind decision|question|task|design|incident \
+  --title "<record title>" --text "<durable evidence>" --actor agent:<name> --apply
+```
+
+The agent makes the semantic judgment; the command supplies the stable ID,
+frontmatter, provenance, filename, and decision/question registry link.
 
 
 
@@ -656,7 +671,7 @@ its authorship demands:
 | Whose it is | What it is | What update does |
 | --- | --- | --- |
 | Ours | `SKILL.md`, the installed skill and its scripts, the managed blocks, the marker's own fields, the generated indexes | Refreshes them — differing from the release is what a stale copy does |
-| The repository's | Every record: `NOW.md`, `PLAN.md`, the registries, `decisions/`, `questions/`, `tasks/`, `inbox/` | Creates a scaffold file this install predates; never touches one that exists |
+| The repository's | Every record: `NOW.md`, `PLAN.md`, the registries, `decisions/`, `questions/`, `tasks/`, `designs/`, `incidents/`, `inbox/` | Creates a scaffold file this install predates; never touches one that exists |
 | The Hub's | `global/` and `blueprint/` | Verifies each copy against its stamp and reports. Never writes — the change belongs in the Hub, and the next push would overwrite it |
 
 It preserves the marker rather than rewriting it, so the push stamps and any
@@ -747,6 +762,8 @@ The doctor checks:
   `template-update-available` names the version you have and the one available;
 - **record conformance** — the six required frontmatter keys, the status
   vocabulary for that record's kind, and the shape of every reference;
+- **writer coverage** — every full-profile operational kind is named by the
+  protocol, and an installed skill still carries `context_record.py`;
 - registry navigability — freshness of `NOW.md`, duplicate decision and
   learning IDs, and broken relative Markdown links;
 - **evidence anchors** — `evidence-drift` where a cited file moved on,
@@ -783,7 +800,8 @@ signal says it is fine.
 
 ### Session hooks (opt-in)
 
-The trigger check runs on its own once wired into the harness:
+The trigger check runs on its own once wired into the harness. It evaluates
+current state, decisions, learnings, questions, tasks, designs, and incidents:
 
 ```sh
 python3 skills/project-context-init/scripts/project_context_init.py init --target /path/to/repository --install-hooks --apply

@@ -60,6 +60,19 @@ handoff, and before ending a session.
   that would repeat; an assumption disproved by an observed result; a tool or
   platform behaving unlike its documentation; a rule that would have prevented a
   review finding. Evidence is required, and it must apply beyond this one task.
+- **`QUESTIONS.md` and `questions/` — work depends on an unresolved answer.** A
+  requirement, constraint, ownership boundary, or outcome is ambiguous; work
+  would otherwise proceed on a silent assumption. Create the question record
+  immediately and link it from the registry.
+- **`tasks/` — substantial work gained a plan, progress, validation, or an
+  outcome.** Create the task when work becomes concrete; update the same record
+  as it advances and at handoff instead of leaving progress in chat.
+- **`designs/` — a proposed structure or interaction needs alternatives and a
+  validation plan.** Create the design before implementation makes the choice
+  implicit; link accepted direction to the decision it produced.
+- **`incidents/` — a failure had material impact or yielded corrective work.**
+  Record impact and evidence when detected, then add root cause, recovery,
+  prevention, and verification as they become known.
 
 ### Before you record a decision
 
@@ -108,8 +121,13 @@ become a standing way to skip one.
 
 ## Maintain
 
-- Use `tasks/` for plans, progress, validation, and outcomes when the full
-  profile is present; otherwise link the repository's existing task system.
+- In a full profile, create durable records with `project-context record` (or
+  `context_record.py`; see Automation), then update that same Markdown record
+  as work advances. Use it whenever a decision, question, task, design, or
+  incident trigger fires. It generates the stable ID, frontmatter, filename,
+  provenance, and decision/question registry link.
+- Use `tasks/` for plans, progress, validation, and outcomes; otherwise link
+  the repository's existing task system.
 - Keep `NOW.md` concise and actionable; remove stale state after linking its
   durable result.
 - Record decisions with stable IDs, status, date, statement, rationale,
@@ -124,8 +142,8 @@ become a standing way to skip one.
   with `context_index.py` (see Automation). They are derived tables that let an
   agent find the entries that constrain a task without reading either registry
   end to end; a stale index is worse than none, because it is trusted.
-- In the full profile, create detailed designs or incident records when their
-  evidence will help future work.
+- Create designs and incidents when their triggers fire; do not make their
+  persistence depend on a separate user request.
 - Preserve completed historical records. Correct interpretation through status
   and supersession links instead of rewriting history.
 
@@ -161,7 +179,7 @@ discovery systems; they do not replace tracked Markdown authority.
 
 ## Automation
 
-Six scripts support this protocol. Where the skill is installed here they live
+Seven scripts support this protocol. Where the skill is installed here they live
 under `.agents/skills/project-context/scripts/`; if the skills are not installed
 in this repository, run the same commands from the Project Context checkout,
 passing this project folder wherever a target is required.
@@ -222,6 +240,20 @@ capsule's `status` to `accepted` with a link to what it became, or `rejected`
 when it belongs nowhere. Leaving it `proposed` is the only outcome that is not
 a resolution.
 
+`context_record.py` writes one durable operational record. It supports
+`decision`, `question`, `task`, `design`, and `incident`; generates the next
+stable ID; records provenance; and links decisions and questions from their
+registries. Agents decide that a trigger fired, then delegate the mechanical
+write instead of improvising five file formats.
+
+    python3 .agents/skills/project-context/scripts/context_record.py \
+        --kind task --title "Ship bounded retries" \
+        --text "Implement and verify the retry cap." --actor agent:<name> --apply
+
+Use `--dry-run` to inspect the exact record and registry addition. Repeating
+the same kind and title is idempotent. In a core-profile repository the command
+refuses rather than silently inventing the missing evidence structure.
+
 `context_review.py` lists what is waiting on a person — proposed records, open
 questions past their window, unpromoted capsules, assumptions nobody confirmed,
 drifted anchors, a stale `NOW.md`, a stale pushed snapshot — oldest first,
@@ -251,12 +283,15 @@ links, and pinned evidence that has drifted, without rewriting content.
     python3 .agents/skills/project-context/scripts/context_doctor.py --target .
 
 It also validates records against the record model: a detail record in
-`decisions/`, `questions/`, `tasks/`, or `inbox/` carries six frontmatter keys —
+`decisions/`, `questions/`, `tasks/`, `designs/`, `incidents/`, or `inbox/`
+carries six frontmatter keys —
 `id`, `kind`, `status`, `title`, `created`, `asserted_by` — and nothing else is
 required. Each kind has exactly one status vocabulary, and a status is checked
 against its own kind's set: a `decision`, `learning`, or `capsule` is `proposed`
 → `accepted` → `superseded` | `rejected`; a `question` is `open` → `answered` →
-`superseded`; a `task` is `proposed` → `active` → `done` | `dropped`. A state
+`superseded`; a `task` is `proposed` → `active` → `done` | `dropped`; a
+`design` follows the decision lifecycle; an `incident` is `open` → `resolved`
+→ `superseded`. A state
 that belongs to another kind is an error, and `candidate` and `approved` are
 retired everywhere. A reference is validated by shape, never by resolving it.
 
@@ -281,6 +316,11 @@ agent. Both `AGENTS.md` and `CLAUDE.md` carry the same managed block, and the
 doctor names whichever is missing it. A `no-delivery-path` error means the
 context files are intact but nothing loads them into a session — fix that before
 trusting the rest.
+
+For a full profile the doctor also reports writer coverage for decisions,
+questions, tasks, designs, and incidents. `missing-record-writer` means an
+installed skill lost `context_record.py`; update it before trusting automatic
+maintenance.
 
 The `project-context-init` skill, which stays in the Project Context checkout
 rather than being installed here, exposes the same check as

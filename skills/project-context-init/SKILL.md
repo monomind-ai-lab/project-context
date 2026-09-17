@@ -269,6 +269,10 @@ configuration and verify presence without printing values.
   repository can also run directly once the skill is installed. Confirm `reachability`
   reports at least one delivery path; a `no-delivery-path` error means the
   context files are intact but nothing will load them into a session.
+- For a full profile, confirm `writer_coverage.complete` is true. The installed
+  agent can then persist each operational kind with `project-context record
+  --kind decision|question|task|design|incident` rather than improvising file
+  formats or waiting for a separate user request.
 - Read `placement` in the same report. A `local-only` install always warns with
   `context-not-versioned` — that is the choice being reported honestly, not a
   fault to repair. A `private-sibling` install warns with

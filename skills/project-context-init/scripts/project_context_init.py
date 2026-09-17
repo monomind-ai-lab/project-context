@@ -48,17 +48,14 @@ read `project-context/NOW.md` and `project-context/PLAN.md` if the CLI is not
 available. Search `DECISIONS.md`, `LEARNINGS.md`, and `QUESTIONS.md` for
 constraints touching the files you are about to change.
 
-When planning, read `project-context/blueprint/` first: `EPIC.md` is the goal,
-`ARCHITECTURE.md` the shape to keep. Every `PLAN.md` item names the epic item
-it serves.
+At milestones and before ending, read `project-context/SKILL.md` and evaluate
+every trigger. Use `project-context record` to create decisions, questions,
+tasks, designs, and incidents; update existing records, `NOW.md`, and registries.
+Use `project-context capture` only when classification can wait; acknowledge
+when nothing fired.
 
-`project-context/global/` and `project-context/blueprint/` are owner-authored
-and read-only here. To change one, run `project-context capture --kind
-proposal` or file the question in `QUESTIONS.md`; it reaches the owner on their
-next pull.
-
-Record decisions, learnings, and questions as they happen — in the registries,
-or with `project-context capture` when the judgement can wait.
+When planning, read `project-context/blueprint/` first. `global/` and
+`blueprint/` are owner-authored and read-only; raise changes as questions.
 <!-- project-context:end -->"""
 
 # What a file we create opens with. An install that had to create `AGENTS.md`
@@ -1596,6 +1593,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     capture_mode = capture_parser.add_mutually_exclusive_group(required=True)
     capture_mode.add_argument("--dry-run", action="store_true")
     capture_mode.add_argument("--apply", action="store_true")
+    record_parser = subparsers.add_parser(
+        "record", help="write a durable decision, question, task, design, or incident"
+    )
+    record_parser.add_argument("--target", default=".", type=Path)
+    record_parser.add_argument("--kind", required=True)
+    record_parser.add_argument("--title", required=True)
+    record_parser.add_argument("--text", required=True)
+    record_parser.add_argument("--status")
+    record_parser.add_argument("--id", dest="record_id")
+    record_parser.add_argument("--evidence", action="append")
+    record_parser.add_argument("--files", default="")
+    record_parser.add_argument("--actor")
+    record_parser.add_argument("--session")
+    record_parser.add_argument("--harness")
+    record_parser.add_argument("--model")
+    record_mode = record_parser.add_mutually_exclusive_group(required=True)
+    record_mode.add_argument("--dry-run", action="store_true")
+    record_mode.add_argument("--apply", action="store_true")
     update_parser = subparsers.add_parser(
         "update", help="carry an installed repository forward; local only, no network"
     )
@@ -1701,6 +1716,29 @@ def main(argv: list[str] | None = None) -> int:
         ]
         for flag in ("title", "files", "actor", "session", "harness", "model"):
             value = getattr(args, flag)
+            if value:
+                forwarded += [f"--{flag}", value]
+        for reference in args.evidence or []:
+            forwarded += ["--evidence", reference]
+        return int(module.main(forwarded))
+    if args.command == "record":
+        module = load_protocol("context_record.py")
+        if module is None:
+            print(f"Cannot load record writer from {protocol_script('context_record.py')}", file=sys.stderr)
+            return 2
+        if args.kind not in module.RECORD_KINDS:
+            print(f"--kind must be one of: {', '.join(module.RECORD_KINDS)}", file=sys.stderr)
+            return 2
+        forwarded = [
+            "--target", str(target), "--kind", args.kind, "--title", args.title,
+            "--text", args.text, "--dry-run" if args.dry_run else "--apply",
+        ]
+        for source, flag in (
+            ("status", "status"), ("record_id", "id"), ("files", "files"),
+            ("actor", "actor"), ("session", "session"), ("harness", "harness"),
+            ("model", "model"),
+        ):
+            value = getattr(args, source)
             if value:
                 forwarded += [f"--{flag}", value]
         for reference in args.evidence or []:

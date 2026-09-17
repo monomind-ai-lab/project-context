@@ -20,10 +20,11 @@ constrain future work, reusable learnings, and linked supporting evidence.
 | `NOW.md` | Current snapshot and handoff | Replace stale state; keep concise |
 | `DECISIONS.md` | Accepted and superseded decisions | Append or supersede; never silently reverse |
 | `LEARNINGS.md` | Verified, reusable lessons | Promote only evidence-backed lessons |
-| `decisions/` | Detailed decision records (full profile) | Link from the registry; preserve status |
-| `designs/` | Designs and alternatives (full profile) | Keep decisions separate from proposals |
-| `incidents/` | Root cause, remediation, prevention (full profile) | Preserve history; promote reusable lessons |
-| `tasks/` | Plans, progress, validation, outcomes (full profile) | Keep completed records immutable |
+| `decisions/` | Durable decision records (full profile) | Agent writes on the decision trigger; link from the registry |
+| `questions/` | Unresolved dependencies and assumptions (full profile) | Agent writes when ambiguity would otherwise stay implicit |
+| `designs/` | Designs and alternatives (full profile) | Agent writes before implementation makes a proposal implicit |
+| `incidents/` | Root cause, remediation, prevention (full profile) | Agent writes on material failure; preserve history |
+| `tasks/` | Plans, progress, validation, outcomes (full profile) | Agent creates and updates the durable work record |
 | `global/`, `blueprint/` | Owner-authored records pushed in from a Project Hub | Read-only here. Never edit; raise a question instead |
 
 `global/` and `blueprint/` are present only when a Project Hub owner has
@@ -40,13 +41,18 @@ manuscript and editorial record. Generated indexes and wikis are auxiliary views
 
 At a meaningful milestone or handoff:
 
-1. Update the active task record with progress and validation evidence.
+1. Create or update the active task record with progress and validation evidence.
 2. Update `NOW.md` when active state, blockers, or next actions changed.
 3. Add a decision only when it constrains future work.
 4. Add a learning only when verified and reusable beyond one task.
 5. Link promoted knowledge to its source task, artifact, citation, review,
    incident, result, or commit.
 6. Mark replaced knowledge `superseded` and link both directions.
+
+Use `project-context record --kind decision|question|task|design|incident` for
+the durable records above. The command supplies IDs, frontmatter, provenance,
+filenames, and decision/question registry links; the agent supplies the
+semantic judgment and evidence.
 
 Do not store raw chat transcripts, credentials, private host paths, sensitive
 customer data, ambient profiles, or unverified speculation here.
