@@ -167,7 +167,7 @@ class RecordModelTests(unittest.TestCase):
             self.assertNotIn("id", detail.split("missing ", 1)[1].split(", "))
 
     def test_every_record_directory_is_validated_and_every_kind_accepted(self) -> None:
-        """`decisions/`, `questions/`, `tasks/`, `inbox/` — one model for all four."""
+        """All six evidence directories use one record model."""
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.install(target)
@@ -184,6 +184,16 @@ class RecordModelTests(unittest.TestCase):
                     "title: Rework the retry loop\ncreated: 2026-01-01\n"
                     "asserted_by: agent:claude\n---\n"
                 ),
+                "designs/DS-003.md": (
+                    "---\nid: DS-003\nkind: design\nstatus: proposed\n"
+                    "title: Queue topology\ncreated: 2026-01-01\n"
+                    "asserted_by: agent:claude\n---\n"
+                ),
+                "incidents/I-004.md": (
+                    "---\nid: I-004\nkind: incident\nstatus: open\n"
+                    "title: Queue stalled\ncreated: 2026-01-01\n"
+                    "asserted_by: agent:claude\n---\n"
+                ),
                 "inbox/C-2026-01-01-a1b2.md": (
                     "---\nid: C-2026-01-01-a1b2\nkind: capsule\nstatus: proposed\n"
                     "title: The timeout is upstream\ncreated: 2026-01-01\n"
@@ -196,7 +206,7 @@ class RecordModelTests(unittest.TestCase):
                 path.write_text(body, encoding="utf-8")
             report = self.run_doctor(target)
             self.assertEqual("healthy", report["status"], report["issues"])
-            self.assertEqual(4, report["records"])
+            self.assertEqual(6, report["records"])
 
     def test_a_capsule_id_of_the_wrong_shape_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -228,6 +238,25 @@ class RecordModelTests(unittest.TestCase):
             report = self.run_doctor(target)
             self.assertEqual("healthy", report["status"], report["issues"])
             self.assertEqual(0, report["records"])
+
+    def test_doctor_reports_writer_coverage_for_every_operational_kind(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.install(target, "--profile", "full", "--install-skills")
+            report = self.run_doctor(target)
+            expected = {"decision", "question", "task", "design", "incident"}
+            self.assertEqual(expected, set(report["writer_coverage"]["required"]))
+            self.assertEqual(expected, set(report["writer_coverage"]["covered"]))
+            self.assertTrue(report["writer_coverage"]["complete"])
+
+    def test_doctor_errors_when_an_installed_skill_lost_its_record_writer(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.install(target, "--profile", "full", "--install-skills")
+            (target / ".agents/skills/project-context/scripts/context_record.py").unlink()
+            report = self.run_doctor(target, expected=1)
+            self.assertIn("missing-record-writer", self.codes(report))
+            self.assertFalse(report["writer_coverage"]["complete"])
 
     def test_a_retired_field_is_reported_without_being_rewritten(self) -> None:
         """Absent means absent; a required-but-empty field is noise."""
@@ -293,6 +322,8 @@ class RecordModelTests(unittest.TestCase):
         "capsule": ("proposed", "accepted", "superseded", "rejected"),
         "question": ("open", "answered", "superseded"),
         "task": ("proposed", "active", "done", "dropped"),
+        "design": ("proposed", "accepted", "superseded", "rejected"),
+        "incident": ("open", "resolved", "superseded"),
     }
 
     def kind_record(self, kind: str, status: str) -> str:
@@ -325,6 +356,8 @@ class RecordModelTests(unittest.TestCase):
             ("decision", "done"),
             ("learning", "open"),
             ("task", "accepted"),
+            ("design", "open"),
+            ("incident", "accepted"),
             ("capsule", "active"),
         )
         with tempfile.TemporaryDirectory() as directory:

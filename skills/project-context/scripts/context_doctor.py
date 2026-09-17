@@ -51,7 +51,7 @@ CORE_TEMPLATE_PATHS = {"README.md", "SKILL.md", "NOW.md", "DECISIONS.md", "LEARN
 PLACEMENTS = ("in-repo", "local-only", "private-sibling")
 DEFAULT_PLACEMENT = "in-repo"
 # Detail records carry frontmatter. Registries stay plain Markdown.
-RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "inbox")
+RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "designs", "incidents", "inbox")
 # Scaffolding inside a record directory, not a record.
 NON_RECORD_NAMES = {"README.md", "TEMPLATE.md", "INDEX.md"}
 # `owners_window/` is the owner's own space in a Hub: never pushed, never
@@ -72,9 +72,11 @@ OPTIONAL_KEYS = (
 # Required-but-empty fields the three-block metadata format demanded. Absent
 # means absent now, so carrying one forward is noise a reader has to skip.
 RETIRED_KEYS = ("generated_at", "generated_by", "confidence", "aliases")
-KINDS = ("decision", "learning", "question", "task", "capsule")
+KINDS = ("decision", "learning", "question", "task", "design", "incident", "capsule")
+WRITER_KINDS = ("decision", "question", "task", "design", "incident")
+WRITER_SCRIPT_RELATIVE = Path(".agents/skills/project-context/scripts/context_record.py")
 # One vocabulary per kind, and the doctor enforces *that* kind's set. A
-# permissive union across all three would let two people write questions two
+# permissive union across all kinds would let two people write questions two
 # different ways with nothing to catch it, which is the failure a single
 # vocabulary exists to prevent. A question is not an assertion and a task is
 # not a claim, so they do not share the assertion states.
@@ -84,6 +86,8 @@ LIFECYCLES = {
     "capsule": ("proposed", "accepted", "superseded", "rejected"),
     "question": ("open", "answered", "superseded"),
     "task": ("proposed", "active", "done", "dropped"),
+    "design": ("proposed", "accepted", "superseded", "rejected"),
+    "incident": ("open", "resolved", "superseded"),
 }
 # `candidate → approved → superseded` is retired everywhere, whatever the kind.
 RETIRED_STATUSES = {"candidate": "proposed", "approved": "accepted"}
@@ -110,7 +114,7 @@ EPIC_REFERENCE_PATTERN = re.compile(r"\bE-\d{3,}\b")
 # A dropped item is work that is not happening. Holding it to the epic would
 # report a gap that closing the item already resolved.
 UNANCHORED_EXEMPT_STATUSES = {"dropped"}
-ID_PATTERN = re.compile(r"^(?:[DLQT]-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+)$")
+ID_PATTERN = re.compile(r"^(?:[DLQTI]-\d{3,}|DS-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+)$")
 ACTOR_PATTERN = re.compile(r"^(?:person|agent):[^\s:][^\s]*$")
 DATE_ONLY_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 STATUS_LINE_PATTERN = re.compile(r"^\s*-\s+Status:\s*`?([A-Za-z][A-Za-z-]*)`?\s*$")
@@ -335,6 +339,60 @@ def reachability(target: Path) -> tuple[dict[str, Any], list[dict[str, str]]]:
             "instruction_blocks": sorted(blocks),
             "harness_pointers": sorted(pointers),
             "hooks": sorted(set(hooks)),
+        },
+        issues,
+    )
+
+
+def writer_coverage(
+    target: Path, context: Path, marker: dict[str, Any]
+) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    """Report whether a full-profile install can persist every operational kind.
+
+    Reachability proves that an agent can read the protocol. It does not prove
+    that the protocol names every record kind or that an installed skill still
+    carries the deterministic writer the instructions tell the agent to use.
+    """
+    issues: list[dict[str, str]] = []
+    full = marker.get("profile") == "full" or any(
+        (context / name).is_dir() for name in ("questions", "tasks", "designs", "incidents")
+    )
+    protocol = context / "SKILL.md"
+    protocol_text = protocol.read_text(encoding="utf-8", errors="replace") if protocol.is_file() else ""
+    contract_tokens = ("context_record.py",) + tuple(f"{kind}s/" for kind in WRITER_KINDS)
+    # `questions`, `tasks`, and so on pluralise regularly; `decision` does too.
+    contract_missing = [token for token in contract_tokens if token not in protocol_text]
+    local_skill = target / ".agents" / "skills" / "project-context"
+    local_writer = target / WRITER_SCRIPT_RELATIVE
+
+    if full and protocol.is_file() and contract_missing:
+        issues.append(
+            {
+                "severity": "error",
+                "code": "record-writer-contract-incomplete",
+                "path": str(protocol.relative_to(target)),
+                "detail": "the operating protocol does not cover " + ", ".join(contract_missing),
+            }
+        )
+    if full and local_skill.is_dir() and not local_writer.is_file():
+        issues.append(
+            {
+                "severity": "error",
+                "code": "missing-record-writer",
+                "path": str(WRITER_SCRIPT_RELATIVE),
+                "detail": "the installed skill cannot create durable records; run `project-context update --apply`",
+            }
+        )
+    covered = list(WRITER_KINDS) if not contract_missing else [
+        kind for kind in WRITER_KINDS if f"{kind}s/" in protocol_text
+    ]
+    return (
+        {
+            "required": list(WRITER_KINDS) if full else [],
+            "covered": covered if full else [],
+            "protocol": str(protocol.relative_to(target)) if protocol.is_file() else None,
+            "local_writer": str(WRITER_SCRIPT_RELATIVE) if local_writer.is_file() else None,
+            "complete": not full or (not contract_missing and (not local_skill.is_dir() or local_writer.is_file())),
         },
         issues,
     )
@@ -1118,6 +1176,8 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     issues.extend(legacy_hub_issues(target, marker))
     delivery, delivery_issues = reachability(target)
     issues.extend(delivery_issues)
+    writers, writer_issues = writer_coverage(target, context, marker)
+    issues.extend(writer_issues)
     errors = sum(issue["severity"] == "error" for issue in issues)
     warnings = sum(issue["severity"] == "warning" for issue in issues)
     return {
@@ -1128,6 +1188,7 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
         "status": "error" if errors else ("warning" if warnings else "healthy"),
         "summary": {"errors": errors, "warnings": warnings},
         "reachability": delivery,
+        "writer_coverage": writers,
         "placement": placement,
         "evidence": evidence,
         "records": records,

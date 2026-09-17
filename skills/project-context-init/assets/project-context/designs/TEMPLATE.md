@@ -1,7 +1,14 @@
-# Design: Title
+---
+id: DS-001
+kind: design
+status: proposed
+title: Design title
+created: 2026-01-01
+asserted_by: person:name
+---
 
-- Status: `draft`
-- Date: YYYY-MM-DD
+# DS-001: Design title
+
 - Related task: Link
 - Related decisions: Link or `none`
 

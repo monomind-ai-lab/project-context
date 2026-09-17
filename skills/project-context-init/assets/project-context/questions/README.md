@@ -1,9 +1,9 @@
 # Detailed questions
 
-Use this directory for a question that needs more room than the registry gives
-it — a decision blocked on several unknowns, or a proposal to the Project Hub
-owner that carries its own context. Name records `Q-NNN-short-topic.md`, assign
-a stable question ID, and link them from `../QUESTIONS.md`.
+Use this directory whenever work depends on an unresolved answer — including a
+decision blocked on unknowns or a proposal to the Project Hub owner. Agents
+create records with `project-context record --kind question`; it assigns the
+stable ID and links the detail from `../QUESTIONS.md`.
 
 Every record here carries the six required frontmatter keys — `id`, `kind`,
 `status`, `title`, `created`, `asserted_by` — as `TEMPLATE.md` shows. A

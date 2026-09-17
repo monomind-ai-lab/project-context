@@ -51,7 +51,7 @@ NOW.md — the state a next contributor would act on changed:
   work landed that changes what happens next; an initiative started, finished,
   or changed status; a blocker appeared or cleared; a recorded next action was
   done; the session is ending with work in flight.
-DECISIONS.md — a choice now constrains future work:
+DECISIONS.md and decisions/ — a choice now constrains future work:
   one option was taken over a viable alternative; a convention, boundary,
   interface, format, dependency, or tool was fixed; the user stated a standing
   rule; something was deliberately ruled out of scope; an earlier decision was
@@ -61,7 +61,19 @@ LEARNINGS.md — evidence changed what is believed, and it will recur:
   that would repeat; an assumption disproved by an observed result; a tool,
   API, or platform behaving unlike its documentation; a rule that would have
   prevented a review finding or incident. Evidence required, and it must apply
-  beyond this one task."""
+  beyond this one task.
+QUESTIONS.md and questions/ — work depends on an unresolved answer:
+  a requirement, constraint, ownership boundary, or outcome is ambiguous; work
+  would otherwise proceed on a silent assumption.
+tasks/ — substantial work gained a plan, progress, validation, or outcome:
+  create the task when work becomes concrete; update it as work advances and
+  at handoff instead of leaving progress in chat.
+designs/ — a proposal needs alternatives, mechanics, and a validation plan:
+  create the design before implementation makes the choice implicit; link any
+  accepted direction to the decision it produced.
+incidents/ — a failure had material impact or yielded corrective work:
+  record impact and evidence when detected, then root cause, recovery,
+  prevention, and verification as they become known."""
 
 
 def run(args: list[str], cwd: Path) -> str:
@@ -162,7 +174,13 @@ def evaluate(target: Path) -> dict:
 
 def reasons_for(state: dict) -> list[str]:
     """Why the window is open, before any acknowledgement is applied."""
-    if not state["installed"] or state["context_touched"]:
+    if not state["installed"]:
+        return []
+    # A context edit proves only that *something* was maintained. It must not
+    # hide fresh work outside project-context/ that the edit may never have
+    # evaluated. When no outside work remains, the context touch still closes
+    # the window exactly as before.
+    if state["context_touched"] and not state["work_commits"] and not state["dirty_paths"]:
         return []
     reasons: list[str] = []
     if state["placeholders"]:
@@ -446,9 +464,17 @@ def command_gate(hook: dict, target: Path, how: str) -> int:
             "",
             TRIGGER_TABLE,
             "",
-            "Where a trigger fired, update the document — set NOW.md's",
-            "`Last reviewed` to today and make the snapshot, active work, and",
-            "blockers match the repository.",
+            "Where a record trigger fired, create its durable record with the",
+            "writer below, or update the existing Markdown record. The writer",
+            "supplies IDs, frontmatter, provenance, filenames, and registry links:",
+            "",
+            "  python3 .agents/skills/project-context/scripts/context_record.py \\",
+            "      --kind decision|question|task|design|incident \\",
+            "      --title \"<record title>\" --text \"<durable evidence>\" \\",
+            "      --actor agent:<name> --apply",
+            "",
+            "Also set NOW.md's `Last reviewed` to today when current state",
+            "changed, and keep its snapshot, active work, and blockers current.",
             "",
             "Where something surfaced that is worth keeping but is not yet a",
             "registry entry — a choice you are unsure constrains anything, a",

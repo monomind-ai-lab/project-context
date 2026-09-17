@@ -152,6 +152,19 @@ class TriggerTests(unittest.TestCase):
             self.assertIn("update due", reopened.stdout)
             self.assertIn("brand_new.txt", reopened.stdout)
 
+    def test_a_context_edit_does_not_hide_fresh_uncommitted_work(self) -> None:
+        """One context touch is not proof that every record trigger was handled."""
+        import contextlib
+
+        with contextlib.ExitStack() as stack:
+            target, script = self.repository(stack)
+            now = target / "project-context" / "NOW.md"
+            now.write_text(now.read_text(encoding="utf-8") + "\nUpdated.\n", encoding="utf-8")
+            (target / "brand_new.txt").write_text("uncommitted\n", encoding="utf-8")
+            result = self.run_script(script, "status", cwd=target)
+            self.assertIn("update due", result.stdout)
+            self.assertIn("brand_new.txt", result.stdout)
+
     def test_state_file_is_bookkeeping_not_work(self) -> None:
         """Writing an ack must not immediately invalidate that ack.
 
@@ -241,6 +254,9 @@ class TriggerTests(unittest.TestCase):
             self.assertIn("context_capture.py", reason)
             self.assertIn("--kind", reason)
             self.assertIn("200 words", reason)
+            self.assertIn("context_record.py", reason)
+            for folder in ("questions/", "tasks/", "designs/", "incidents/"):
+                self.assertIn(folder, reason)
             # All three ways out, still.
             self.assertIn("Last reviewed", reason)
             self.assertIn("ack --note", reason)
