@@ -27,16 +27,17 @@ they disagree, the plan is right and this file is a bug.
 
 ## 2. Frontmatter: at most 8 required keys
 
-Detail records (`decisions/`, `questions/`, `tasks/`, `inbox/`) carry YAML
-frontmatter. Registries (`DECISIONS.md`, `LEARNINGS.md`, `QUESTIONS.md`,
-`NOW.md`, `PLAN.md`) do not — they stay plain Markdown, as they are today.
+Detail records (`decisions/`, `questions/`, `tasks/`, `designs/`, `incidents/`,
+`inbox/`) carry YAML frontmatter. Registries (`DECISIONS.md`, `LEARNINGS.md`,
+`QUESTIONS.md`, `NOW.md`, `PLAN.md`) do not — they stay plain Markdown, as
+they are today.
 
 Required, and nothing else is required:
 
 | Key | Value |
 | --- | --- |
-| `id` | Stable ID: `D-001`, `L-003`, `Q-002`, `T-012`, `C-2026-09-03-a1b2` |
-| `kind` | `decision` \| `learning` \| `question` \| `task` \| `capsule` |
+| `id` | Stable ID: `D-001`, `L-003`, `Q-002`, `T-012`, `DS-004`, `I-005`, `C-2026-09-03-a1b2` |
+| `kind` | `decision` \| `learning` \| `question` \| `task` \| `design` \| `incident` \| `capsule` |
 | `status` | See the lifecycle below |
 | `title` | One line, no trailing period |
 | `created` | `YYYY-MM-DD` |
@@ -72,9 +73,10 @@ different ways with nothing to catch it.
 
 | Kind | States |
 | --- | --- |
-| `decision`, `learning`, `capsule` | `proposed → accepted → superseded \| rejected` |
+| `decision`, `learning`, `design`, `capsule` | `proposed → accepted → superseded \| rejected` |
 | `question` | `open → answered → superseded` |
 | `task` | `proposed → active → done \| dropped` |
+| `incident` | `open → resolved → superseded` |
 
 `candidate → approved → superseded` is retired everywhere. Where existing text
 says `candidate`, read `proposed`; where it says `approved`, read `accepted`.
@@ -112,7 +114,8 @@ In a project repository:
 
 - **Authored** — `SUMMARY.md`, `NOW.md`, `PLAN.md`, `tasks/`, `DECISIONS.md`,
   `decisions/`, `LEARNINGS.md`, `QUESTIONS.md`, `questions/`, `inbox/`,
-  `indexes/`. Builders write these. `/hub-pull` collects them.
+  `designs/`, `incidents/`, `indexes/`. Builders write these. `/hub-pull`
+  collects them.
 - **Pushed** — `global/` and `blueprint/` (which holds `EPIC.md` and
   `ARCHITECTURE.md`). Owner-authored in the Hub, read-only in the repo.
 - **Never in Git** — `sessions/`.
