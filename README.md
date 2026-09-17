@@ -273,6 +273,23 @@ project-context/
 └── inbox/          (Capsules from `capture`, waiting to be promoted or dropped)
 ```
 
+Those five operational directories are writer-backed, not empty filing
+cabinets. The installed protocol tells agents when each kind is earned, and
+`project-context record` supplies its stable ID, frontmatter, provenance,
+filename, and registry link:
+
+| Directory | The agent writes when… |
+| --- | --- |
+| `decisions/` | One viable option wins and constrains future work |
+| `questions/` | Work depends on an unresolved answer rather than a silent assumption |
+| `tasks/` | Substantial work gains a plan, progress, validation, or an outcome |
+| `designs/` | A proposal needs alternatives, mechanics, and a validation plan before implementation |
+| `incidents/` | A failure has material impact or produces corrective work |
+
+Project Hub **0.2.1 or later** pulls all five kinds into the owner's private
+Hub. Project Hub 0.2.0 omitted `designs/` and `incidents/` from that pull
+boundary even though Project Context could already write them.
+
 Installation also places the `project-context` skill under
 `.agents/skills/project-context/`, writes a pointer under
 `.claude/skills/project-context/SKILL.md` so Claude Code can discover it, and

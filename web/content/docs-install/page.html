@@ -46,7 +46,7 @@
       </article>
       <article class="check reveal">
         <h3 data-i18n="prom.c6.title">A small, inspectable footprint</h3>
-        <p data-i18n="prom.c6.body">18 files. One skill. Zero runtime dependencies — stdlib Python 3.10+. The installer itself is never copied into your repo.</p>
+        <p data-i18n="prom.c6.body">19 files. One skill. Zero runtime dependencies — stdlib Python 3.10+. The installer itself is never copied into your repo.</p>
       </article>
     </div>
   </div>
@@ -96,7 +96,7 @@
 
       <div class="cmd" data-cmd>
         <div class="cmd-head">
-          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once and the whole CLI stays on your path — init, update, capture, inspect, context, onboard, review, consolidate, doctor</span>
+          <span class="cmd-label" data-i18n="inst.pipx">prefer pipx · install once and the whole CLI stays on your path — init, update, record, capture, inspect, context, onboard, review, consolidate, doctor</span>
           <span class="cmd-hint" data-scrollhint hidden data-i18n="cta.scroll">scroll →</span>
         </div>
         <div class="cmd-body">
@@ -143,9 +143,8 @@
           <p class="h2"><span class="hash" aria-hidden="true">##</span> Project Context</p>
           <p class="blk"><b>Managed region.</b> <span class="tick">`project-context update`</span> rewrites everything between these markers and nothing outside them — the rest of the file is yours. Leave both markers in place; a broken pair stops the update rather than being repaired.</p>
           <p class="blk">Before substantial work, run <span class="tick">`project-context context --task "&lt;one line&gt;"`</span>, or read <span class="tick">`project-context/NOW.md`</span> and <span class="tick">`project-context/PLAN.md`</span> if the CLI is not available. Search <span class="tick">`DECISIONS.md`</span>, <span class="tick">`LEARNINGS.md`</span>, and <span class="tick">`QUESTIONS.md`</span> for constraints touching the files you are about to change.</p>
-          <p class="blk">When planning, read <span class="tick">`project-context/blueprint/`</span> first: <span class="tick">`EPIC.md`</span> is the goal, <span class="tick">`ARCHITECTURE.md`</span> the shape to keep. Every <span class="tick">`PLAN.md`</span> item names the epic item it serves.</p>
-          <p class="blk"><span class="tick">`project-context/global/`</span> and <span class="tick">`project-context/blueprint/`</span> are owner-authored and read-only here. To change one, run <span class="tick">`project-context capture --kind proposal`</span> or file the question in <span class="tick">`QUESTIONS.md`</span>; it reaches the owner on their next pull.</p>
-          <p class="blk">Record decisions, learnings, and questions as they happen — in the registries, or with <span class="tick">`project-context capture`</span> when the judgement can wait.</p>
+          <p class="blk">At milestones and before ending, read <span class="tick">`project-context/SKILL.md`</span> and evaluate every trigger. Use <span class="tick">`project-context record`</span> to create decisions, questions, tasks, designs, and incidents; update existing records, <span class="tick">`NOW.md`</span>, and registries. Use <span class="tick">`project-context capture`</span> only when classification can wait; acknowledge when nothing fired.</p>
+          <p class="blk">When planning, read <span class="tick">`project-context/blueprint/`</span> first. <span class="tick">`global/`</span> and <span class="tick">`blueprint/`</span> are owner-authored and read-only; raise changes as questions.</p>
           <p class="marker">&lt;!-- project-context:end --&gt;</p>
         </div>
         <p class="panel-foot" data-i18n="har.blockfoot">everything outside these two markers is never touched — where install had to create the file, even the short header above the block sits outside them, yours to rewrite</p>
@@ -346,11 +345,11 @@
     <div class="cta-inner reveal">
       <div>
         <span class="eyebrow"><span data-i18n="next.eyebrow">next</span></span>
-        <h2 class="section-title" id="next-title" style="margin-top:14px" data-i18n="next.title">You have three new files. Now meet them.</h2>
+        <h2 class="section-title" id="next-title" style="margin-top:14px" data-i18n="next.title">You have three core summaries. Now meet them.</h2>
         <p class="section-lede" data-i18n="next.lede">The moment after install is where adoption is usually lost. The records page walks each file — what it answers, what does not belong in it, and what a good entry looks like next to a bad one.</p>
       </div>
       <div class="cta-actions">
-        <a class="btn btn-primary" href="/docs/records/" data-i18n="next.cta">The three records, annotated</a>
+        <a class="btn btn-primary" href="/docs/records/" data-i18n="next.cta">Core and operational records</a>
         <a class="btn btn-secondary" href="/docs/operate/" data-i18n="next.cta2">The session loop</a>
         <a class="btn btn-secondary" href="/project-hub/" data-i18n="next.cta3">Running several repositories? → Project Hub</a>
       </div>

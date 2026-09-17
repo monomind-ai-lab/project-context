@@ -42,7 +42,7 @@
       </article>
       <article class="check reveal">
         <h3 data-i18n="operate.loop.s2.title">During work — trigger detection watches for durable records</h3>
-        <p data-i18n="operate.loop.s2.body">The trigger script detects the <em>window</em>: work has landed since project context was last updated. Judging what fired stays with the agent, against three triggers — the state a next contributor would act on changed, a choice now constrains future work, or evidence changed what is believed and it will recur. The agent proposes the entry; when nothing fired, <code>ack</code> records that honest outcome instead.</p>
+        <p data-i18n="operate.loop.s2.body">The trigger script detects the <em>window</em>: work has landed since project context was last updated. The agent evaluates seven trigger families — current state, decisions, learnings, unresolved questions, task progress, design proposals, and incidents. When one fires, <code>project-context record</code> creates the durable operational entry; when nothing fired, <code>ack</code> records that honest outcome instead.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="operate.loop.s3.title">At the end — the record is brought up to date</h3>
@@ -64,7 +64,7 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">02</span> <span data-i18n="operate.trig.eyebrow">trigger detection, worked</span></span>
       <h2 class="section-title" id="trig-title" data-i18n="operate.trig.title">One session where a trigger fires, one where nothing does</h2>
-      <p class="section-lede" data-i18n="operate.trig.lede">The script can only detect that work has landed since the context was last updated. Whether a decision or a learning actually fired is a judgement, and the judgement stays with the agent reading the protocol.</p>
+      <p class="section-lede" data-i18n="operate.trig.lede">The script can only detect that work has landed since the context was last updated. Whether any of the seven trigger families actually fired is a judgement, and the judgement stays with the agent reading the protocol.</p>
     </div>
 
     <div class="worked reveal">
@@ -85,7 +85,7 @@
 
     <div class="worked reveal">
       <h3 class="worked-title" data-i18n="operate.trig.w2.title">Session one — a trigger fires</h3>
-      <p class="worked-body" data-i18n="operate.trig.w2.body">The session capped API retries at three with backoff, after unbounded retries took staging down. The window is open, and the agent walks the triggers: a choice was taken over a viable alternative — that constrains future work. It proposes a decision entry with the rationale and the evidence; you approve; <code>D-002</code> lands in <code>DECISIONS.md</code> and <code>NOW.md</code> is updated. Updating the record is what closes the window — no <code>ack</code> involved.</p>
+      <p class="worked-body" data-i18n="operate.trig.w2.body">The session capped API retries at three with backoff, after unbounded retries took staging down. The window is open, and the agent walks all seven trigger families. A choice was taken over a viable alternative, so it runs <code>project-context record --kind decision</code> with the rationale and evidence. <code>D-002</code> lands in <code>decisions/</code>, its registry link lands in <code>DECISIONS.md</code>, and <code>NOW.md</code> is updated. Writing the earned record closes the window — no <code>ack</code> involved.</p>
     </div>
 
     <div class="worked reveal">
@@ -118,7 +118,7 @@
   <div class="container">
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">03</span> <span data-i18n="operate.doc.eyebrow">the doctor, in brief</span></span>
-      <h2 class="section-title" id="doctor-title" data-i18n="operate.doc.title">Eight families of checks, all read-only</h2>
+      <h2 class="section-title" id="doctor-title" data-i18n="operate.doc.title">Nine families of checks, all read-only</h2>
       <p class="section-lede"><span data-i18n="operate.doc.lede">Run it when context looks stale, contradictory, or hard to navigate. Every check by name with its severity, the JSON shape, the exit codes and the CI wiring are settled and written down.</span> <a href="/docs/builders-guide/" data-i18n="operate.doc.moreLink">The builder&#39;s guide →</a></p>
     </div>
 
@@ -130,6 +130,10 @@
       <article class="check reveal">
         <h3 data-i18n="operate.doc.cRec.title">Records conform</h3>
         <p data-i18n="operate.doc.cRec.body">A detail record carries six required frontmatter keys and nothing else required. Status is checked against that record&#39;s own kind rather than a union of every vocabulary, so a learning cannot borrow a task&#39;s status. References are parsed, not trusted: <code>session:</code>, <code>commit:</code> and <code>pr:</code> must be shaped the way the grammar says.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="operate.doc.cWriter.title">Every operational kind has a writer</h3>
+        <p data-i18n="operate.doc.cWriter.body">A full install must carry <code>context_record.py</code>, the safe writer for decisions, questions, tasks, designs, and incidents. <code>missing-record-writer</code> means the folders exist but agents have lost their supported write path; update before trusting automatic maintenance.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="operate.doc.cNav.title">The registries stay navigable</h3>
