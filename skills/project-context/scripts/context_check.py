@@ -80,7 +80,8 @@ def check(root, count, base=None, excludes=(), history_commits=100):
                 finding = f'project-context/DECISIONS.md:{number}: {key} statement changed; supersede it instead'
                 if finding not in findings:
                     findings.append(finding)
-    if in_git and git(root, 'rev-parse', '--verify', 'HEAD'):
+    shallow = git(root, 'rev-parse', '--is-shallow-repository').strip()
+    if in_git and git(root, 'rev-parse', '--verify', 'HEAD') and shallow == 'false':
         if base:
             compare(git(root, 'show', f'{base}:project-context/DECISIONS.md'), text)
         else:
@@ -101,6 +102,30 @@ def check(root, count, base=None, excludes=(), history_commits=100):
                 findings.append(f'{now}:1: unchanged across {count} merged PRs while decisions or learnings changed')
     return findings
 
+def history_unverifiable(root, count):
+    """Explain history checks that cannot establish their result."""
+    inside = git(root, 'rev-parse', '--is-inside-work-tree').strip() == 'true'
+    if not inside:
+        return [('project-context/DECISIONS.md:1', 'decision history', 'no Git repository'),
+                ('project-context/NOW.md:1', 'PR freshness', 'no Git repository')]
+    if not git(root, 'rev-parse', '--verify', 'HEAD'):
+        return [('project-context/DECISIONS.md:1', 'decision history', 'no commits available'),
+                ('project-context/NOW.md:1', 'PR freshness', 'no commits available')]
+    shallow = git(root, 'rev-parse', '--is-shallow-repository').strip()
+    if shallow != 'false':
+        reason = 'shallow Git history' if shallow == 'true' else 'Git history status unavailable'
+        return [('project-context/DECISIONS.md:1', 'decision history', reason),
+                ('project-context/NOW.md:1', 'PR freshness', reason)]
+    commits = git(root, 'log', '--first-parent', '--format=%H%x09%s').splitlines()
+    if not commits:
+        return [('project-context/DECISIONS.md:1', 'decision history', 'Git history unavailable'),
+                ('project-context/NOW.md:1', 'PR freshness', 'Git history unavailable')]
+    prs = [line for line in commits if re.search(r'(?:Merge pull request #\d+|\(#\d+\))', line)]
+    if len(prs) < count:
+        return [('project-context/NOW.md:1', 'PR freshness',
+                 f'only {len(prs)} recognizable merged PRs available; need {count}')]
+    return []
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', type=Path, default=Path('.'))
@@ -108,6 +133,7 @@ def main(argv=None):
     parser.add_argument('--base', help='compare decision statements with this Git revision')
     parser.add_argument('--history-commits', type=int, default=100, help='number of first-parent revisions to inspect (default 100)')
     parser.add_argument('--exclude', action='append', default=[], help='exclude a repository-relative glob containing examples')
+    parser.add_argument('--allow-shallow', action='store_true', help='warn instead of failing when history checks cannot be verified')
     args = parser.parse_args(argv)
     if args.merged_prs < 1 or args.history_commits < 1:
         parser.error('--merged-prs and --history-commits must be positive')
@@ -117,11 +143,13 @@ def main(argv=None):
     except ValueError as error:
         print(f'project-context/DECISIONS.md:1: {error}', file=sys.stderr)
         return 2
-    if git(root, 'rev-parse', '--is-shallow-repository').strip() == 'true':
-        print('project-context/DECISIONS.md:1: shallow Git history; earlier decision edits and PRs may be unavailable', file=sys.stderr)
+    unavailable = history_unverifiable(root, args.merged_prs)
+    for path, rule, reason in unavailable:
+        label = 'warning: ' if args.allow_shallow else ''
+        print(f'{path}: {label}{rule} not verifiable: {reason}', file=sys.stderr)
     for finding in findings:
         print(finding)
-    return bool(findings)
+    return bool(findings or (unavailable and not args.allow_shallow))
 
 if __name__ == '__main__':
     raise SystemExit(main())

@@ -1639,6 +1639,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     check_parser.add_argument("--base")
     check_parser.add_argument("--history-commits", type=int, default=100)
     check_parser.add_argument("--exclude", action="append", default=[])
+    check_parser.add_argument("--allow-shallow", action="store_true")
     doctor_parser = subparsers.add_parser("doctor", help="validate project-context health")
     doctor_parser.add_argument("--target", default=".", type=Path)
     doctor_parser.add_argument("--stale-days", default=30, type=int)
@@ -1839,6 +1840,8 @@ def main(argv: list[str] | None = None) -> int:
         forwarded = ["--target", str(target), "--merged-prs", str(args.merged_prs), "--history-commits", str(args.history_commits)]
         if args.base:
             forwarded.extend(["--base", args.base])
+        if args.allow_shallow:
+            forwarded.append("--allow-shallow")
         for pattern in args.exclude:
             forwarded.extend(["--exclude", pattern])
         return int(module.main(forwarded))

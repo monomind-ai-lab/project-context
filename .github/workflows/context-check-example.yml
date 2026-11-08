@@ -8,10 +8,16 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Find the common ancestor
+        id: merge_base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: echo "sha=$(git merge-base "$BASE_SHA" "$HEAD_SHA")" >> "$GITHUB_OUTPUT"
       # These files contain demonstration IDs, not this repository's decisions.
       - run: >-
           python skills/project-context/scripts/context_check.py --target .
-          --base ${{ github.event.pull_request.base.sha }}
+          --base ${{ steps.merge_base.outputs.sha }}
           --exclude "tests/test_context_check.py"
           --exclude "tests/test_context_index.py"
           --exclude "tests/test_context_packet.py"

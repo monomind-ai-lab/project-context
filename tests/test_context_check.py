@@ -100,11 +100,75 @@ class ContextCheckTests(unittest.TestCase):
         self.commit("unrelated")
         self.assertTrue(any("DECISIONS.md:7:" in item and "statement changed" in item for item in module.check(self.root, 5)))
 
-    def test_shallow_history_is_diagnosed(self):
-        """A shallow boundary must be visible to anyone relying on history."""
+    def test_real_shallow_clone_fails_or_warns_with_explicit_opt_in(self):
+        """Incomplete history must not certify either history rule as healthy."""
         self.commit("initial")
-        result = subprocess.run(["git", "-C", str(self.root), "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
-        (self.root / ".git" / "shallow").write_text(result.stdout)
-        check = subprocess.run(["python3", str(SCRIPT), "--target", str(self.root)], capture_output=True, text=True)
-        self.assertEqual(0, check.returncode)
-        self.assertIn("shallow Git history", check.stderr)
+        (self.root / "note.txt").write_text("one\n")
+        self.commit("another change")
+        with tempfile.TemporaryDirectory() as temporary:
+            clone = Path(temporary) / "clone"
+            subprocess.run(["git", "clone", "--quiet", "--depth", "1", self.root.as_uri(), str(clone)], check=True)
+            command = ["python3", str(SCRIPT), "--target", str(clone)]
+            strict = subprocess.run(command, capture_output=True, text=True)
+            self.assertNotEqual(0, strict.returncode)
+            self.assertIn("decision history not verifiable: shallow Git history", strict.stderr)
+            self.assertIn("PR freshness not verifiable: shallow Git history", strict.stderr)
+            allowed = subprocess.run(command + ["--allow-shallow"], capture_output=True, text=True)
+            self.assertEqual(0, allowed.returncode)
+            self.assertIn("warning: decision history not verifiable", allowed.stderr)
+            self.assertIn("warning: PR freshness not verifiable", allowed.stderr)
+            (clone / "defect.go").write_text("// D-999\n")
+            defect = subprocess.run(command + ["--allow-shallow"], capture_output=True, text=True)
+            self.assertNotEqual(0, defect.returncode)
+            self.assertIn("defect.go:1:", defect.stdout)
+
+    def test_incomplete_pr_history_is_not_verifiable(self):
+        """A short PR history cannot support a freshness conclusion."""
+        self.commit("initial")
+        command = ["python3", str(SCRIPT), "--target", str(self.root)]
+        strict = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, strict.returncode)
+        self.assertIn("PR freshness not verifiable", strict.stderr)
+        allowed = subprocess.run(command + ["--allow-shallow"], capture_output=True, text=True)
+        self.assertEqual(0, allowed.returncode)
+        self.assertIn("warning: PR freshness not verifiable", allowed.stderr)
+
+    def test_merge_base_avoids_false_deleted_decision_on_diverged_branch(self):
+        """A decision added on the base after branching is not deleted by the PR."""
+        self.commit("common")
+        self.git("branch", "feature")
+        self.registry.write_text(self.registry.read_text() + "\n## D-002: Base only\n\n- Statement: Base decision.\n")
+        self.commit("base adds decision")
+        base = subprocess.run(["git", "-C", str(self.root), "rev-parse", "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+        self.git("checkout", "-q", "feature")
+        (self.root / "feature.txt").write_text("feature\n")
+        self.commit("feature work")
+        merge_base = subprocess.run(["git", "-C", str(self.root), "merge-base", base, "HEAD"], check=True, capture_output=True, text=True).stdout.strip()
+        self.assertFalse(any("statement changed" in item for item in module.check(self.root, 5, merge_base)))
+        workflow = (SCRIPT.parents[3] / ".github/workflows/context-check-example.yml").read_text()
+        self.assertIn("git merge-base", workflow)
+        self.assertIn("--base ${{ steps.merge_base.outputs.sha }}", workflow)
+
+    def test_plain_folder_reports_both_history_checks(self):
+        """Static checks still run but cannot certify Git-dependent rules."""
+        import shutil
+        shutil.rmtree(self.root / ".git")
+        command = ["python3", str(SCRIPT), "--target", str(self.root)]
+        strict = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, strict.returncode)
+        self.assertIn("decision history not verifiable: no Git repository", strict.stderr)
+        self.assertIn("PR freshness not verifiable: no Git repository", strict.stderr)
+        allowed = subprocess.run(command + ["--allow-shallow"], capture_output=True, text=True)
+        self.assertEqual(0, allowed.returncode)
+
+    def test_initializer_forwards_opt_in_and_invalid_base_remains_error(self):
+        """The public CLI must honor the override without masking bad revisions."""
+        self.commit("initial")
+        initializer = SCRIPT.parents[2] / "project-context-init/scripts/project_context_init.py"
+        command = ["python3", str(initializer), "check", "--target", str(self.root), "--allow-shallow"]
+        allowed = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(0, allowed.returncode)
+        self.assertIn("warning: PR freshness not verifiable", allowed.stderr)
+        bad_base = subprocess.run(command + ["--base", "DOES_NOT_EXIST"], capture_output=True, text=True)
+        self.assertEqual(2, bad_base.returncode)
+        self.assertIn("cannot resolve Git base", bad_base.stderr)
