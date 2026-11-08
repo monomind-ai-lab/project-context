@@ -1,3 +1,17 @@
+# Markdown-first Project Context
+
+Project Context keeps current state, decisions, and learnings in readable Markdown. Start with `project-context/README.md`, then read NOW and search decisions and learnings. The optional `project-context check --target .` checks references and history; healthy output is silent.
+
+`project-context init --target . --dry-run` previews initialization; replace `--dry-run` with `--apply` to write. Existing legacy managed regions can be replaced with `project-context migrate --target . --dry-run` and then `--apply`. Ordinary updates to markerless repositories write nothing. The `--profile full`, non-default `--placement`, `--install-skills`, and `--install-hooks` options require `--legacy`; default initialization rejects these options instead of ignoring them.
+
+The history check recognizes first-parent merge commits and squash commits whose subjects include a pull request number. It needs enough local Git history; shallow clones, insufficient recognizable PRs, and other merge conventions prevent a staleness finding. By default, decision statements are compared across the latest 100 first-parent Git revisions (configurable with `--history-commits`); changes older than that window cannot be detected. Pass `--base` to compare with a particular revision, such as a pull request base. An invalid explicit base is an error. A shallow clone reports that earlier history is unavailable; a plain folder still gets reference and link checks.
+
+Decision IDs in examples are indistinguishable from references to the checker. Use repeatable `--exclude` repository-relative glob patterns for example and fixture files; the example workflow excludes this repository’s own examples. Excluded files are not checked.
+
+A GitHub Actions example is in [the check workflow](.github/workflows/context-check-example.yml).
+
+---
+
 # Project Context
 
 <p align="left">

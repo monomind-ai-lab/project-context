@@ -79,6 +79,8 @@ REQUIRED = (
     "skills/project-context/scripts/context_triggers.py",
     "skills/project-context/scripts/context_index.py",
     "skills/project-context/scripts/context_doctor.py",
+    "skills/project-context/scripts/context_check.py",
+    "tests/test_context_check.py",
     "skills/project-context-init/SKILL.md",
     "skills/project-context-init/agents/openai.yaml",
     "skills/project-context-init/scripts/project_context_init.py",
@@ -396,7 +398,7 @@ def main() -> int:
             errors.append(f"initializer skill missing onboarding behavior: {expected}")
 
     trigger_expectations = {
-        "skills/project-context/SKILL.md": ("description: \"Use when", "contains project-context/"),
+        "skills/project-context/SKILL.md": ("description: \"Use when", "asked about Project Context"),
         "skills/project-context-init/SKILL.md": ("description: Use when", "install, initialize, adopt"),
     }
     for relative, expected_values in trigger_expectations.items():
@@ -409,7 +411,7 @@ def main() -> int:
         "skills/project-context-init/agents/openai.yaml",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8") if (ROOT / relative).exists() else ""
-        if "allow_implicit_invocation: true" not in content:
+        if ("allow_implicit_invocation: false" if relative == "skills/project-context/agents/openai.yaml" else "allow_implicit_invocation: true") not in content:
             errors.append(f"{relative}: implicit skill discovery is not enabled")
 
     if errors:

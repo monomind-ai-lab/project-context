@@ -1,3 +1,7 @@
+# Amendment, 2026-11-08
+
+The Markdown-first decision in [project-context/DECISIONS.md](../project-context/DECISIONS.md) supersedes the mandatory managed blocks, installed protocol, and CLI ritual described below for new installs. The earlier design remains history and guides legacy support.
+
 # Project Context and Project Hub — review of `strategy` and a design proposal
 
 Status: proposal, written 2026-09-02 against `strategy` at `083572d` (0.6.0).

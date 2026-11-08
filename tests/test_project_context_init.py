@@ -41,11 +41,11 @@ class InitializerTests(unittest.TestCase):
         """The default install: core files only, nothing left to propose after."""
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            dry, _ = self.run_script("init", "--target", directory, "--dry-run")
+            dry, _ = self.run_script("init", "--legacy", "--target", directory, "--dry-run")
             self.assertGreater(dry["summary"]["create"], 5)
             self.assertFalse((target / "project-context").exists())
 
-            self.run_script("init", "--target", directory, "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--apply")
             for relative in (
                 "README.md",
                 "SKILL.md",
@@ -66,13 +66,13 @@ class InitializerTests(unittest.TestCase):
             doctor, _ = self.run_script("doctor", "--target", directory)
             self.assertEqual("healthy", doctor["status"])
 
-            second, _ = self.run_script("init", "--target", directory, "--dry-run")
+            second, _ = self.run_script("init", "--legacy", "--target", directory, "--dry-run")
             self.assertEqual({"unchanged"}, set(second["summary"]))
 
     def test_full_profile_adds_the_evidence_folders(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--profile", "full", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--profile", "full", "--apply")
             for relative in (
                 "README.md",
                 "SKILL.md",
@@ -93,7 +93,7 @@ class InitializerTests(unittest.TestCase):
             self.assertEqual("healthy", doctor["status"])
 
             second, _ = self.run_script(
-                "init", "--target", directory, "--profile", "full", "--dry-run"
+                "init", "--legacy", "--target", directory, "--profile", "full", "--dry-run"
             )
             self.assertEqual({"unchanged"}, set(second["summary"]))
 
@@ -101,7 +101,7 @@ class InitializerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.run_script(
-                "init", "--target", directory, "--profile", "core", "--apply"
+                "init", "--legacy", "--target", directory, "--profile", "core", "--apply"
             )
             context = target / "project-context"
             self.assertFalse((context / "tasks").exists())
@@ -145,7 +145,7 @@ class InitializerTests(unittest.TestCase):
             )
             self.assertEqual(0, result.returncode, result.stderr or result.stdout)
             target = Path(directory)
-            self.assertTrue((target / ".agents/skills/project-context/SKILL.md").is_file())
+            self.assertFalse((target / ".agents/skills/project-context/SKILL.md").exists())
             self.assertTrue((target / "project-context/NOW.md").is_file())
             # The installer stays upstream. Shipping it into every consuming
             # repository dragged a second copy of the whole template tree with
@@ -162,7 +162,7 @@ class InitializerTests(unittest.TestCase):
         """
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             pointer = target / ".claude" / "skills" / "project-context" / "SKILL.md"
             self.assertTrue(pointer.is_file())
             text = pointer.read_text(encoding="utf-8")
@@ -190,9 +190,9 @@ class InitializerTests(unittest.TestCase):
     def test_harness_pointer_is_idempotent_and_symlink_safe(self) -> None:
         with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as external:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             second, _ = self.run_script(
-                "init", "--target", directory, "--install-skills", "--dry-run"
+                "init", "--legacy", "--target", directory, "--install-skills", "--dry-run"
             )
             for mutation in ("create", "append_managed_block", "update_managed_block"):
                 self.assertEqual(0, second["summary"].get(mutation, 0), mutation)
@@ -202,7 +202,7 @@ class InitializerTests(unittest.TestCase):
             external_path = Path(external)
             (target / ".claude").symlink_to(external_path, target_is_directory=True)
             report, _ = self.run_script(
-                "init",
+                "init", "--legacy",
                 "--target",
                 directory,
                 "--install-skills",
@@ -219,10 +219,10 @@ class InitializerTests(unittest.TestCase):
         contradictory context has no advertised route to being checked.
         """
         with tempfile.TemporaryDirectory() as directory:
-            self.run_script("init", "--target", directory, "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--apply")
             text = (Path(directory) / "project-context" / "SKILL.md").read_text(encoding="utf-8")
-            self.assertIn("## Health", text)
-            self.assertIn("doctor", text)
+            self.assertIn("project-context check", text)
+            self.assertIn("optional", text)
 
     def test_installed_instance_is_the_same_text_as_the_skill(self) -> None:
         """Two positions, one protocol.
@@ -232,7 +232,7 @@ class InitializerTests(unittest.TestCase):
         """
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             instance = (target / "project-context" / "SKILL.md").read_text(encoding="utf-8")
             installed = (
                 target / ".agents/skills/project-context/SKILL.md"
@@ -246,7 +246,7 @@ class InitializerTests(unittest.TestCase):
     def test_doctor_runs_standalone_from_the_installed_skill(self) -> None:
         """The doctor has to work in a repository that never had the installer."""
         with tempfile.TemporaryDirectory() as directory:
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             direct = subprocess.run(
                 [sys.executable, str(DOCTOR), "--target", directory],
                 check=False, capture_output=True, text=True,
@@ -260,7 +260,7 @@ class InitializerTests(unittest.TestCase):
 
     def test_doctor_reports_the_routes_that_deliver_the_protocol(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             report, _ = self.run_script("doctor", "--target", directory)
             self.assertEqual("healthy", report["status"])
             self.assertTrue(report["reachability"]["delivers"])
@@ -278,7 +278,7 @@ class InitializerTests(unittest.TestCase):
         """
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             shutil.rmtree(target / ".claude")
             for name in ("AGENTS.md", "CLAUDE.md"):
                 (target / name).write_text("# Repo\n", encoding="utf-8")
@@ -302,7 +302,7 @@ class InitializerTests(unittest.TestCase):
     def test_doctor_flags_dangling_pointer_and_unresolved_hook(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             # The pointer under .claude/ survives while the skill it redirects
             # to is gone, and with it the hook script — the reported case, where
             # the hook is declared but silently never runs.
@@ -334,7 +334,7 @@ class InitializerTests(unittest.TestCase):
     def test_doctor_ignores_hooks_belonging_to_other_tooling(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-skills", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-skills", "--apply")
             (target / ".claude" / "settings.json").write_text(
                 json.dumps(
                     {
@@ -374,7 +374,7 @@ class InitializerTests(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
-            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-hooks", "--apply")
             settings = json.loads((target / ".claude" / "settings.json").read_text(encoding="utf-8"))
             self.assertEqual(["Bash(npm test)"], settings["permissions"]["allow"])
             commands = [
@@ -412,11 +412,11 @@ class InitializerTests(unittest.TestCase):
     def test_install_hooks_is_idempotent_and_self_heals(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-hooks", "--apply")
             settings = target / ".claude" / "settings.json"
             first = settings.read_text(encoding="utf-8")
             second, _ = self.run_script(
-                "init", "--target", directory, "--install-hooks", "--dry-run"
+                "init", "--legacy", "--target", directory, "--install-hooks", "--dry-run"
             )
             self.assertEqual(0, second["summary"].get("create", 0))
             self.assertEqual(0, second["summary"].get("update_hooks", 0))
@@ -427,7 +427,7 @@ class InitializerTests(unittest.TestCase):
                 {"hooks": [{"type": "command", "command": "python3 context_triggers.py report"}]}
             )
             settings.write_text(json.dumps(payload), encoding="utf-8")
-            self.run_script("init", "--target", directory, "--install-hooks", "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--install-hooks", "--apply")
             self.assertEqual(first, settings.read_text(encoding="utf-8"))
 
     def test_unparseable_hook_settings_abort_before_any_write(self) -> None:
@@ -436,7 +436,7 @@ class InitializerTests(unittest.TestCase):
             (target / ".claude").mkdir()
             (target / ".claude" / "settings.json").write_text("{ not json", encoding="utf-8")
             report, _ = self.run_script(
-                "init", "--target", directory, "--install-hooks", "--apply", expected=2
+                "init", "--legacy", "--target", directory, "--install-hooks", "--apply", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertFalse((target / "project-context").exists())
@@ -463,7 +463,7 @@ class InitializerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.run_script(
-                "init", "--target", directory, "--profile", "core", "--apply"
+                "init", "--legacy", "--target", directory, "--profile", "core", "--apply"
             )
             context = target / "project-context"
             (context / "NOW.md").write_text(
@@ -494,7 +494,7 @@ class InitializerTests(unittest.TestCase):
             original = "# Existing rules\n\nKeep this exact sentence.\n"
             (target / "AGENTS.md").write_text(original, encoding="utf-8")
             (target / "AGENTS.md").chmod(0o640)
-            self.run_script("init", "--target", directory, "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--apply")
             updated = (target / "AGENTS.md").read_text(encoding="utf-8")
             self.assertTrue(updated.startswith(original))
             self.assertEqual(1, updated.count("<!-- project-context:start -->"))
@@ -505,7 +505,7 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             original = b"# Existing rules\r\n\r\nKeep this exact sentence.\r\n"
             (target / "AGENTS.md").write_bytes(original)
-            self.run_script("init", "--target", directory, "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--apply")
             updated = (target / "AGENTS.md").read_bytes()
             self.assertTrue(updated.startswith(original))
             self.assertNotIn(b"\n", updated.replace(b"\r\n", b""))
@@ -515,7 +515,7 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             for name in ("agents.md", "CLAUDE.md"):
                 (target / name).write_text(f"before-{name}\nafter-{name}\n", encoding="utf-8")
-            self.run_script("init", "--target", directory, "--apply")
+            self.run_script("init", "--legacy", "--target", directory, "--apply")
             self.assertNotIn("AGENTS.md", {path.name for path in target.iterdir()})
             for name in ("agents.md", "CLAUDE.md"):
                 content = (target / name).read_text(encoding="utf-8")
@@ -529,7 +529,7 @@ class InitializerTests(unittest.TestCase):
             context.mkdir()
             custom = "# My current state\nNever overwrite this.\n"
             (context / "NOW.md").write_text(custom, encoding="utf-8")
-            report, _ = self.run_script("init", "--target", directory, "--apply")
+            report, _ = self.run_script("init", "--legacy", "--target", directory, "--apply")
             self.assertEqual(custom, (context / "NOW.md").read_text(encoding="utf-8"))
             self.assertGreater(report["summary"].get("preserve_existing", 0), 0)
 
@@ -550,7 +550,7 @@ class InitializerTests(unittest.TestCase):
                 "rules\n<!-- project-context:start -->\nbroken\n", encoding="utf-8"
             )
             report, _ = self.run_script(
-                "init", "--target", directory, "--apply", expected=2
+                "init", "--legacy", "--target", directory, "--apply", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertFalse((target / "project-context").exists())
@@ -563,7 +563,7 @@ class InitializerTests(unittest.TestCase):
                 encoding="utf-8",
             )
             report, _ = self.run_script(
-                "init", "--target", directory, "--apply", expected=2
+                "init", "--legacy", "--target", directory, "--apply", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertFalse((target / "project-context").exists())
@@ -573,7 +573,7 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             (target / "AGENTS.md").mkdir()
             report, _ = self.run_script(
-                "init", "--target", directory, "--apply", expected=2
+                "init", "--legacy", "--target", directory, "--apply", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertFalse((target / "project-context").exists())
@@ -583,7 +583,7 @@ class InitializerTests(unittest.TestCase):
             target = Path(directory)
             (target / "AGENTS.md").write_bytes(b"\xff\xfeinvalid")
             report, _ = self.run_script(
-                "init", "--target", directory, "--dry-run", expected=2
+                "init", "--legacy", "--target", directory, "--dry-run", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertFalse((target / "project-context").exists())
@@ -594,7 +594,7 @@ class InitializerTests(unittest.TestCase):
             external_path = Path(external)
             (target / "project-context").symlink_to(external_path, target_is_directory=True)
             report, _ = self.run_script(
-                "init", "--target", directory, "--apply", expected=2
+                "init", "--legacy", "--target", directory, "--apply", expected=2
             )
             self.assertTrue(report["has_conflicts"])
             self.assertEqual("conflict_symlink", report["project_context"]["state"])
@@ -607,7 +607,7 @@ class InitializerTests(unittest.TestCase):
             external_path = Path(external)
             (target / ".agents").symlink_to(external_path, target_is_directory=True)
             report, _ = self.run_script(
-                "init",
+                "init", "--legacy",
                 "--target",
                 directory,
                 "--profile",
@@ -671,7 +671,7 @@ class InitializerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             report, _ = self.run_script(
-                "init",
+                "init", "--legacy",
                 "--target",
                 directory,
                 "--profile",
@@ -977,7 +977,7 @@ class ManagedBlockTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             subprocess.run(
-                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                [sys.executable, str(SCRIPT), "init", "--legacy", "--target", directory, "--apply"],
                 check=True, capture_output=True, text=True,
             )
             for name in ("AGENTS.md", "CLAUDE.md"):
@@ -991,7 +991,7 @@ class ManagedBlockTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             subprocess.run(
-                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                [sys.executable, str(SCRIPT), "init", "--legacy", "--target", directory, "--apply"],
                 check=True, capture_output=True, text=True,
             )
             agents = target / "AGENTS.md"
@@ -1000,7 +1000,7 @@ class ManagedBlockTests(unittest.TestCase):
             )
             agents.write_text(rewritten, encoding="utf-8")
             subprocess.run(
-                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                [sys.executable, str(SCRIPT), "init", "--legacy", "--target", directory, "--apply"],
                 check=True, capture_output=True, text=True,
             )
             after = agents.read_text(encoding="utf-8")
@@ -1017,7 +1017,7 @@ class ManagedBlockTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             subprocess.run(
-                [sys.executable, str(SCRIPT), "init", "--target", directory, "--apply"],
+                [sys.executable, str(SCRIPT), "init", "--legacy", "--target", directory, "--apply"],
                 check=True, capture_output=True, text=True,
             )
             block = self.module().MANAGED_BLOCK
@@ -1045,7 +1045,7 @@ class UpdateTests(unittest.TestCase):
     def installed(self, *, skills: bool = True) -> Path:
         directory = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, directory, True)
-        args = ["init", "--target", str(directory), "--profile", "full", "--apply"]
+        args = ["init", "--legacy", "--target", str(directory), "--profile", "full", "--apply"]
         if skills:
             args.insert(-1, "--install-skills")
         self.run_script(*args)
@@ -1399,7 +1399,8 @@ class PlacementTests(unittest.TestCase):
         return directory
 
     def gitignore_actions(self, report: dict) -> list[dict]:
-        return [action for action in report["actions"] if action["path"].endswith(".gitignore")]
+        return [{key: value for key, value in action.items() if key != "content"}
+                for action in report["actions"] if action["path"].endswith(".gitignore")]
 
     def marker(self, target: Path) -> dict:
         return json.loads((target / "project-context" / MARKER).read_text(encoding="utf-8"))
@@ -1424,13 +1425,13 @@ class PlacementTests(unittest.TestCase):
         them, `.gitignore` included — which is to say untouched.
         """
         target = self.repository("build/\n")
-        plan = self.run_script("init", "--target", str(target), "--dry-run")
+        plan = self.run_script("init", "--legacy", "--target", str(target), "--dry-run")
         self.assertEqual("in-repo", plan["placement"]["value"])
         self.assertTrue(plan["placement"]["tracked"])
         self.assertIsNone(plan["placement"]["gitignore"])
         self.assertEqual([], self.gitignore_actions(plan))
 
-        self.run_script("init", "--target", str(target), "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--apply")
         self.assertEqual("build/\n", (target / ".gitignore").read_text(encoding="utf-8"))
         self.assertEqual("in-repo", self.marker(target)["placement"])
 
@@ -1440,10 +1441,11 @@ class PlacementTests(unittest.TestCase):
         """A user must see the `.gitignore` edit in the dry run, and see it cost something."""
         target = self.repository("build/\n")
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+            "init", "--legacy", "--target", str(target), "--placement", "local-only", "--dry-run"
         )
         self.assertEqual("local-only", plan["placement"]["value"])
         self.assertFalse(plan["placement"]["tracked"])
+        self.assertIn("project-context:start", next(a["content"] for a in plan["actions"] if a["path"].endswith(".gitignore")))
         self.assertEqual(
             [{"kind": "append_managed_block", "path": str(target / ".gitignore")}],
             self.gitignore_actions(plan),
@@ -1464,7 +1466,7 @@ class PlacementTests(unittest.TestCase):
         """
         original = "node_modules/\n*.log\n\n# our own section\n/dist\n"
         target = self.repository(original)
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         written = (target / ".gitignore").read_text(encoding="utf-8")
         self.assertTrue(written.startswith(original), written)
         self.assertEqual(1, written.count("/project-context/"))
@@ -1477,7 +1479,7 @@ class PlacementTests(unittest.TestCase):
     def test_local_only_creates_a_gitignore_when_the_repository_has_none(self) -> None:
         target = self.repository()
         self.assertFalse((target / ".gitignore").exists())
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         written = (target / ".gitignore").read_text(encoding="utf-8")
         self.assertTrue(written.startswith("# project-context:start"), written)
         self.assertIn("/project-context/\n", written)
@@ -1492,7 +1494,7 @@ class PlacementTests(unittest.TestCase):
         if not shutil.which("git"):
             self.skipTest("git is not available")
         target = self.repository("build/\n")
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         ignored = subprocess.run(
             ["git", "check-ignore", "--no-index", "-q", "--", "project-context/NOW.md"],
             cwd=target, check=False, capture_output=True, text=True,
@@ -1516,7 +1518,7 @@ class PlacementTests(unittest.TestCase):
         """
         target = self.repository("build/\n")
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "private-sibling", "--dry-run"
+            "init", "--legacy", "--target", str(target), "--placement", "private-sibling", "--dry-run"
         )
         self.assertFalse(plan["placement"]["tracked"])
         self.assertFalse(plan["placement"]["manages_remote"])
@@ -1525,7 +1527,7 @@ class PlacementTests(unittest.TestCase):
         self.assertIn("does not add a remote", joined)
 
         self.run_script(
-            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+            "init", "--legacy", "--target", str(target), "--placement", "private-sibling", "--apply"
         )
         self.assertIn("/project-context/", (target / ".gitignore").read_text(encoding="utf-8"))
         self.assertEqual("private-sibling", self.marker(target)["placement"])
@@ -1549,14 +1551,14 @@ class PlacementTests(unittest.TestCase):
         """Two lines saying the same thing is noise in a file nobody wants noise in."""
         target = self.repository("build/\nproject-context/\n")
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+            "init", "--legacy", "--target", str(target), "--placement", "local-only", "--dry-run"
         )
         actions = self.gitignore_actions(plan)
         self.assertEqual(1, len(actions))
         self.assertEqual("already_ignored", actions[0]["kind"])
         self.assertIn("project-context/", actions[0]["reason"])
 
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         written = (target / ".gitignore").read_text(encoding="utf-8")
         self.assertEqual("build/\nproject-context/\n", written)
 
@@ -1573,7 +1575,7 @@ class PlacementTests(unittest.TestCase):
         exclude.parent.mkdir(parents=True, exist_ok=True)
         exclude.write_text("/project-context/\n", encoding="utf-8")
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "local-only", "--dry-run"
+            "init", "--legacy", "--target", str(target), "--placement", "local-only", "--dry-run"
         )
         actions = self.gitignore_actions(plan)
         self.assertEqual("already_ignored", actions[0]["kind"])
@@ -1586,7 +1588,7 @@ class PlacementTests(unittest.TestCase):
             with self.subTest(placement=placement):
                 target = self.repository("build/\n")
                 self.run_script(
-                    "init", "--target", str(target), "--placement", placement, "--apply"
+                    "init", "--legacy", "--target", str(target), "--placement", placement, "--apply"
                 )
                 before = {
                     path: path.read_bytes()
@@ -1594,7 +1596,7 @@ class PlacementTests(unittest.TestCase):
                     if path.is_file() and ".git/" not in path.as_posix()
                 }
                 second = self.run_script(
-                    "init", "--target", str(target), "--placement", placement, "--dry-run"
+                    "init", "--legacy", "--target", str(target), "--placement", placement, "--dry-run"
                 )
                 self.assertEqual({"unchanged"}, set(second["summary"]), second["summary"])
                 after = {
@@ -1612,7 +1614,7 @@ class PlacementTests(unittest.TestCase):
         """
         target = self.repository("build/\n# project-context:start\n/project-context/\n")
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
+            "init", "--legacy", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
         )
         self.assertTrue(plan["has_conflicts"])
         self.assertFalse((target / "project-context").exists())
@@ -1623,7 +1625,7 @@ class PlacementTests(unittest.TestCase):
         elsewhere.write_text("build/\n", encoding="utf-8")
         (target / ".gitignore").symlink_to(elsewhere)
         plan = self.run_script(
-            "init", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
+            "init", "--legacy", "--target", str(target), "--placement", "local-only", "--dry-run", expected=2
         )
         self.assertTrue(plan["has_conflicts"])
         self.assertEqual("build/\n", elsewhere.read_text(encoding="utf-8"))
@@ -1639,7 +1641,7 @@ class PlacementTests(unittest.TestCase):
         nothing is written into the marker, and the doctor reports no fault.
         """
         target = self.repository("build/\n")
-        self.run_script("init", "--target", str(target), "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--apply")
         marker_path = target / "project-context" / MARKER
         marker = json.loads(marker_path.read_text(encoding="utf-8"))
         del marker["placement"]
@@ -1661,7 +1663,7 @@ class PlacementTests(unittest.TestCase):
         placement is chosen or changed.
         """
         target = self.repository("build/\n")
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         (target / ".gitignore").write_text("build/\n", encoding="utf-8")
         plan = self.run_script("update", "--target", str(target), "--dry-run")
         self.assertEqual("local-only", plan["placement"]["value"])
@@ -1678,7 +1680,7 @@ class PlacementTests(unittest.TestCase):
             with self.subTest(placement=placement):
                 target = self.repository("build/\n")
                 self.run_script(
-                    "init", "--target", str(target), "--placement", placement, "--apply"
+                    "init", "--legacy", "--target", str(target), "--placement", placement, "--apply"
                 )
                 report = self.doctor(target)
                 self.assertEqual(0, report["summary"]["errors"], report["issues"])
@@ -1693,7 +1695,7 @@ class PlacementTests(unittest.TestCase):
         warning said once and never again would fade long before then.
         """
         target = self.repository("build/\n")
-        self.run_script("init", "--target", str(target), "--placement", "local-only", "--apply")
+        self.run_script("init", "--legacy", "--target", str(target), "--placement", "local-only", "--apply")
         report = self.doctor(target)
         self.assertEqual("warning", report["status"])
         self.assertIn("context-not-versioned", self.codes(report))
@@ -1712,7 +1714,7 @@ class PlacementTests(unittest.TestCase):
             self.skipTest("git is not available")
         target = self.repository("build/\n")
         self.run_script(
-            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+            "init", "--legacy", "--target", str(target), "--placement", "private-sibling", "--apply"
         )
         subprocess.run(
             ["git", "init", "--quiet", str(target / "project-context")], check=True
@@ -1732,7 +1734,7 @@ class PlacementTests(unittest.TestCase):
         """
         target = self.repository("build/\n")
         self.run_script(
-            "init", "--target", str(target), "--placement", "private-sibling", "--apply"
+            "init", "--legacy", "--target", str(target), "--placement", "private-sibling", "--apply"
         )
         report = self.doctor(target)
         self.assertEqual("warning", report["status"])

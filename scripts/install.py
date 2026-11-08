@@ -41,6 +41,7 @@ def main() -> int:
         action="store_true",
         help="also wire the session trigger hooks into .claude/settings.json",
     )
+    parser.add_argument("--legacy", action="store_true", help="install the legacy managed format and skill")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
@@ -59,7 +60,7 @@ def main() -> int:
         args.repository_stage,
         "--placement",
         args.placement,
-        "--install-skills",
+        *(["--legacy", "--install-skills"] if args.legacy else []),
         *(["--install-hooks"] if args.install_hooks else []),
         "--apply" if args.apply else "--dry-run",
     ]

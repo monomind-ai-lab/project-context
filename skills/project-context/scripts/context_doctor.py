@@ -998,15 +998,14 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     target = target.resolve()
     context = target / "project-context"
     issues: list[dict[str, str]] = []
-    for relative in sorted(CORE_TEMPLATE_PATHS):
+    markdown_first = not (context / MARKER_NAME).exists()
+    for relative in sorted(CORE_TEMPLATE_PATHS - ({"SKILL.md"} if markdown_first else set())):
         if not (context / relative).is_file():
             issues.append({"severity": "error", "code": "missing-core-file", "path": relative})
     available = package_version()
     marker: Any = None
     metadata = context / MARKER_NAME
-    if not metadata.is_file():
-        issues.append({"severity": "warning", "code": "missing-version-metadata", "path": str(metadata)})
-    else:
+    if metadata.is_file():
         try:
             marker = json.loads(metadata.read_text(encoding="utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
@@ -1117,7 +1116,8 @@ def doctor(target: Path, stale_days: int = 30) -> dict[str, Any]:
     issues.extend(conformance_issues)
     issues.extend(legacy_hub_issues(target, marker))
     delivery, delivery_issues = reachability(target)
-    issues.extend(delivery_issues)
+    if not markdown_first:
+        issues.extend(delivery_issues)
     errors = sum(issue["severity"] == "error" for issue in issues)
     warnings = sum(issue["severity"] == "warning" for issue in issues)
     return {

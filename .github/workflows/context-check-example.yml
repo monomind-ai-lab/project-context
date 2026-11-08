@@ -1,0 +1,28 @@
+name: Context check example
+on: [pull_request]
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      # These files contain demonstration IDs, not this repository's decisions.
+      - run: >-
+          python skills/project-context/scripts/context_check.py --target .
+          --base ${{ github.event.pull_request.base.sha }}
+          --exclude "tests/test_context_check.py"
+          --exclude "tests/test_context_index.py"
+          --exclude "tests/test_context_packet.py"
+          --exclude "tests/test_context_review.py"
+          --exclude "tests/test_project_context_init.py"
+          --exclude "tests/test_record_model.py"
+          --exclude "docs/builders-guide.md"
+          --exclude "skills/project-context/scripts/context_review.py"
+          --exclude "skills/project-context/scripts/context_triggers.py"
+          --exclude "web/content/docs-builders/page.html"
+          --exclude "web/content/docs-operate/i18n.js"
+          --exclude "web/content/docs-operate/page.html"
+          --exclude "web/content/docs-records/page.html"
+          --exclude "web/content/index/page.html"

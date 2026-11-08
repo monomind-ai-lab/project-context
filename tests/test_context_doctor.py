@@ -43,7 +43,7 @@ class EvidenceAnchorTests(unittest.TestCase):
 
     def install(self, target: Path) -> None:
         subprocess.run(
-            [sys.executable, str(INIT), "init", "--target", str(target), "--install-skills", "--apply"],
+            [sys.executable, str(INIT), "init", "--legacy", "--target", str(target), "--install-skills", "--apply"],
             check=True, capture_output=True, text=True,
         )
 
@@ -278,7 +278,7 @@ class PlanConformanceTests(unittest.TestCase):
         directory = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, directory, True)
         subprocess.run(
-            [sys.executable, str(INIT), "init", "--target", str(directory), "--apply"],
+            [sys.executable, str(INIT), "init", "--legacy", "--target", str(directory), "--apply"],
             check=True, capture_output=True, text=True,
         )
         context = directory / "project-context"
