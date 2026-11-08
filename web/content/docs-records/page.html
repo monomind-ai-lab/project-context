@@ -6,9 +6,9 @@
   <div class="container hero-inner">
     <p class="hero-badge"><span class="dot" aria-hidden="true"></span><span data-i18n="records.badge">Docs · The records</span></p>
 
-    <h1 class="hero-title" id="page-title" data-i18n="records.hero.title">Three files, each answering <b>one question</b>.</h1>
+    <h1 class="hero-title" id="page-title" data-i18n="records.hero.title">Three core summaries, each answering <b>one question</b>.</h1>
 
-    <p class="hero-sub" data-i18n="records.hero.sub">The moment after install is where adoption is usually lost: you have three Markdown files and no feel for them. This page is a tour of what goes in each, what stays out, and how each one changes over time — with real entries, not a schema.</p>
+    <p class="hero-sub" data-i18n="records.hero.sub">The core profile starts with three Markdown summaries. The full profile adds five writer-backed operational kinds: decisions, questions, tasks, designs, and incidents. This page shows what belongs in each layer and how agents keep it current.</p>
 
     <ul class="hero-chips">
       <li class="chip notranslate" translate="no">NOW.md</li>
@@ -25,15 +25,15 @@
   <div class="container">
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">01</span> <span data-i18n="records.tree.eyebrow">what a stock install lands</span></span>
-      <h2 class="section-title" id="tree-title" data-i18n="records.tree.title">Eighteen files, three of which you will ever edit</h2>
-      <p class="section-lede" data-i18n="records.tree.lede">A core install adds one readable directory, the protocol that maintains it, and the wiring that delivers the protocol into a session. The three records at the top are the whole point; everything below them exists so agents keep the records honest.</p>
+      <h2 class="section-title" id="tree-title" data-i18n="records.tree.title">Nineteen files, three core summaries you can read at a glance</h2>
+      <p class="section-lede" data-i18n="records.tree.lede">A core install adds one readable directory, the protocol that maintains it, and the wiring that delivers the protocol into a session. The three summaries at the top are the starting point; the writer and checks below keep them and the full profile&#39;s operational records honest.</p>
     </div>
 
     <article class="panel card reveal">
       <div class="panel-bar">
         <span class="panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="panel-file notranslate" translate="no">your-project/</span>
-        <span class="chip" style="margin-inline-start:auto" data-i18n="records.tree.chip">18 files</span>
+        <span class="chip" style="margin-inline-start:auto" data-i18n="records.tree.chip">19 files</span>
       </div>
       <div class="panel-body treewrap">
 <pre class="tree notranslate" translate="no" aria-label="File tree of a stock core install"><span class="tr-dir">your-project/</span>
@@ -53,6 +53,7 @@
 │   └── <span class="tr-dir">scripts/</span>
 │       ├── <span class="tr-file">context_packet.py</span>        <span class="tr-note" data-i18n="records.tree.s1">← assembles the packet an agent reads first</span>
 │       ├── <span class="tr-file">context_capture.py</span>       <span class="tr-note" data-i18n="records.tree.s2">← writes one capsule into inbox/, nothing else</span>
+│       ├── <span class="tr-file">context_record.py</span>        <span class="tr-note" data-i18n="records.tree.sRec">← safely writes decisions, questions, tasks, designs, and incidents</span>
 │       ├── <span class="tr-file">context_review.py</span>        <span class="tr-note" data-i18n="records.tree.s3">← lists what is waiting on a person</span>
 │       ├── <span class="tr-file">context_triggers.py</span>      <span class="tr-note" data-i18n="records.tree.s4">← detects the window where a record is owed</span>
 │       ├── <span class="tr-file">context_index.py</span>         <span class="tr-note" data-i18n="records.tree.s5">← regenerates the derived registry indexes</span>
@@ -63,7 +64,7 @@
       <p class="panel-foot" data-i18n="records.tree.foot">core profile · zero runtime dependencies · stdlib Python 3.10+</p>
     </article>
 
-    <p class="treenote reveal"><span data-i18n="records.tree.note">The full profile adds <code>PLAN.md</code> and <code>QUESTIONS.md</code>, and the <code>decisions/</code>, <code>questions/</code>, <code>tasks/</code>, <code>inbox/</code>, <code>designs/</code> and <code>incidents/</code> subfolders, each with a README and a template — thirty-two files in all. <code>inbox/</code> is where <code>capture</code> parks capsules waiting to be promoted or dropped. The three records stay the same either way.</span> <span data-i18n="records.tree.pushed">Two more folders appear only when an owner pushes to you — <code>global/</code> and <code>blueprint/</code>, the read-only pushed set, authored elsewhere and never edited here.</span> <a href="/project-hub/" data-i18n="records.tree.hubLink">Project Hub →</a></p>
+    <p class="treenote reveal"><span data-i18n="records.tree.note">The full profile adds <code>PLAN.md</code> and <code>QUESTIONS.md</code>, and the <code>decisions/</code>, <code>questions/</code>, <code>tasks/</code>, <code>inbox/</code>, <code>designs/</code> and <code>incidents/</code> subfolders, each with a README and a template — thirty-three files in all. Agents use <code>project-context record</code> to create the five operational kinds with stable IDs and provenance; <code>inbox/</code> holds capsules whose classification can wait. The three core summaries stay the same either way.</span> <span data-i18n="records.tree.pushed">Two more folders appear only when an owner pushes to you — <code>global/</code> and <code>blueprint/</code>, the read-only pushed set, authored elsewhere and never edited here.</span> <a href="/project-hub/" data-i18n="records.tree.hubLink">Project Hub →</a></p>
   </div>
 </section>
 
@@ -297,12 +298,53 @@
 
 <hr class="hairline">
 
-<!-- ====================== 05 CAPTURE AND THE INBOX ====================== -->
+<!-- ====================== 05 OPERATIONAL RECORDS ====================== -->
+<section class="section" id="operational" aria-labelledby="operational-title">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="records.ops.eyebrow">writer-backed operational records</span></span>
+      <h2 class="section-title" id="operational-title" data-i18n="records.ops.title">Five kinds agents write when the work earns them</h2>
+      <p class="section-lede" data-i18n="records.ops.lede">These are not empty filing cabinets people must remember to fill. The installed protocol names seven trigger families, and <code>project-context record</code> handles stable IDs, frontmatter, provenance, filenames, and registry links for every operational kind.</p>
+    </div>
+
+    <div class="checks">
+      <article class="check reveal">
+        <h3 data-i18n="records.ops.decision.title">decisions/ — a choice constrains future work</h3>
+        <p data-i18n="records.ops.decision.body">Written when one viable option wins over another. The writer also adds the durable link to <code>DECISIONS.md</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="records.ops.question.title">questions/ — work depends on an unresolved answer</h3>
+        <p data-i18n="records.ops.question.body">Written before a silent assumption turns into implementation. The writer also adds the question to <code>QUESTIONS.md</code>.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="records.ops.task.title">tasks/ — substantial work has a lifecycle</h3>
+        <p data-i18n="records.ops.task.body">Created when work gains a plan, progress, validation, or outcome, then updated through <code>proposed</code>, <code>active</code>, and a terminal state.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="records.ops.design.title">designs/ — a proposal needs alternatives and validation</h3>
+        <p data-i18n="records.ops.design.body">Written before implementation makes a structure or interaction implicit, with the accepted direction linked to the decision it produced.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="records.ops.incident.title">incidents/ — a material failure needs correction</h3>
+        <p data-i18n="records.ops.incident.body">Starts with impact and evidence, then accumulates root cause, recovery, prevention, and verification as they become known.</p>
+      </article>
+    </div>
+
+    <div class="callout reveal">
+      <span class="callout-label" data-i18n="records.ops.callout.label">one supported write path</span>
+      <p data-i18n="records.ops.callout.body"><code>project-context record --kind decision|question|task|design|incident</code> is what agents call after a trigger fires. The command is create-only and idempotent; the doctor reports <code>missing-record-writer</code> if a full install has these folders but lost the writer.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline">
+
+<!-- ====================== 06 CAPTURE AND THE INBOX ====================== -->
 <section class="section" id="inbox" aria-labelledby="inbox-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">05</span> <span data-i18n="records.cap.eyebrow">capture and the inbox</span></span>
-      <h2 class="section-title" id="inbox-title" data-i18n="records.cap.title">When you are not yet sure which of the three it is</h2>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="records.cap.eyebrow">capture and the inbox</span></span>
+      <h2 class="section-title" id="inbox-title" data-i18n="records.cap.title">When classification can wait</h2>
       <p class="section-lede" data-i18n="records.cap.lede">A choice worth recording almost always surfaces mid-task, and stopping to write an entry with an ID, a rationale and consequences is exactly the interruption a person declines. So <code>project-context capture</code> writes one short, dated note into <code>project-context/inbox/</code> and stops. Deciding what it is happens at promotion, where it is cheap.</p>
     </div>
 
@@ -340,11 +382,11 @@
 
 <hr class="hairline">
 
-<!-- ======================= 06 EVIDENCE ANCHORS ======================= -->
+<!-- ======================= 07 EVIDENCE ANCHORS ======================= -->
 <section class="section" id="anchors" aria-labelledby="anchor-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">06</span> <span data-i18n="records.anc.eyebrow">evidence anchors</span></span>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="records.anc.eyebrow">evidence anchors</span></span>
       <h2 class="section-title" id="anchor-title" data-i18n="records.anc.title">Pinning a citation to a point in history</h2>
       <p class="section-lede" data-i18n="records.anc.lede">Decisions and learnings cite evidence. When that evidence lives in the repository, the citation can be pinned to the exact commit it was verified at — so a later session can tell whether the justification still holds.</p>
     </div>
@@ -370,9 +412,9 @@
 <section class="section" id="next" aria-labelledby="next-title">
   <div class="container">
     <div class="sec-head reveal">
-      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">07</span> <span data-i18n="records.next.eyebrow">next</span></span>
+      <span class="eyebrow"><span class="eyebrow-num notranslate" translate="no">08</span> <span data-i18n="records.next.eyebrow">next</span></span>
       <h2 class="section-title" id="next-title" data-i18n="records.next.title">Now make it a habit</h2>
-      <p class="section-lede" data-i18n="records.next.lede">You know what the three files hold. The next page is the day-2 ritual: what agents read before work, what triggers a durable record, and the five things worth having written down by the end of week one.</p>
+      <p class="section-lede" data-i18n="records.next.lede">You know what the three core summaries hold and where the five operational kinds live. The next page is the day-2 ritual: what agents read, which triggers create durable records, and what should exist by the end of week one.</p>
     </div>
     <div class="next-grid reveal">
       <a class="card next-card" href="/docs/operate/">

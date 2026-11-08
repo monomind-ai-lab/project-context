@@ -58,7 +58,7 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="what.index">01</span></span>
       <h2 class="section-title" id="what-title" data-i18n="what.title">What Project Context actually is</h2>
-      <p class="section-lede" data-i18n="what.lede">A handful of small Markdown records that live beside one project. They hold current state, constraining decisions, and verified learnings. The agents doing the work maintain them; the next agent — or person — reads them first. An organisation running several projects can add a private Project Hub; a single repository needs nothing but this.</p>
+      <p class="section-lede" data-i18n="what.lede">Three core Markdown summaries live beside one project: current state, constraining decisions, and verified learnings. A full profile adds five operational kinds that agents write when their triggers fire — decisions, questions, tasks, designs, and incidents. An organisation running several projects can add a private Project Hub; one repository needs nothing else.</p>
     </div>
 
     <div class="cards-grid">
@@ -106,12 +106,12 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="record.index">02</span></span>
       <h2 class="section-title" id="record-title" data-i18n="record.title">What actually gets written down</h2>
-      <p class="section-lede" data-i18n="record.lede">Not a transcript, and not a summary of the chat. Each file answers one question a returning session really asks: where does this stand, what is already settled, and what did we learn the expensive way.</p>
+      <p class="section-lede" data-i18n="record.lede">Not a transcript, and not a summary of the chat. The three core summaries answer what a returning session asks first; five writer-backed operational kinds preserve the detailed work that earned a durable record.</p>
     </div>
 
     <ol class="flow reveal">
       <li><span class="flow-label" data-i18n="record.step1">work stops for the day</span></li>
-      <li class="is-on"><span class="flow-label" data-i18n="record.step2">the three files are brought up to date</span></li>
+      <li class="is-on"><span class="flow-label" data-i18n="record.step2">the three core summaries and any triggered records are brought up to date</span></li>
       <li><span class="flow-label" data-i18n="record.step3">the next session opens with the state in hand</span></li>
     </ol>
 
@@ -244,7 +244,7 @@
 
       <article class="card icard reveal">
         <span class="card-tag notranslate" translate="no">pipx</span>
-        <p class="body" data-i18n="install.pipx.body">Keeps all nine subcommands on your path: <code>init</code>, <code>update</code>, <code>capture</code>, <code>inspect</code>, <code>context</code>, <code>onboard</code>, <code>review</code>, <code>consolidate</code> and <code>doctor</code>.</p>
+        <p class="body" data-i18n="install.pipx.body">Keeps all ten subcommands on your path: <code>init</code>, <code>update</code>, <code>record</code>, <code>capture</code>, <code>inspect</code>, <code>context</code>, <code>onboard</code>, <code>review</code>, <code>consolidate</code> and <code>doctor</code>.</p>
         <div class="cmd cmd-sm" data-cmd>
           <div class="cmd-head"><span class="cmd-hint" data-scrollhint hidden data-i18n="hero.scroll">scroll →</span></div>
           <div class="cmd-body">
@@ -272,7 +272,7 @@
 
     <ul class="proof reveal">
       <li data-i18n="install.proof1">zero runtime dependencies · stdlib Python 3.10+</li>
-      <li data-i18n="install.proof2">a stock install lands 18 files</li>
+      <li data-i18n="install.proof2">a stock install lands 19 files</li>
       <li data-i18n="install.proof3">the installer is never copied into your repo</li>
     </ul>
   </div>
@@ -310,7 +310,7 @@
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="eyebrow-num" data-i18n="doctor.index">05</span></span>
       <h2 class="section-title" id="doctor-title" data-i18n="doctor.title">How it stays true</h2>
-      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor runs eight families of checks and writes nothing. Some are silent on a repository that has no Hub — a standalone install is a complete product, not a broken one.</p>
+      <p class="section-lede" data-i18n="doctor.sub">A read-only doctor runs nine families of checks and writes nothing. Some are silent on a repository that has no Hub — a standalone install is a complete product, not a broken one.</p>
     </div>
 
     <div class="checks">
@@ -321,6 +321,10 @@
       <article class="check reveal">
         <h3 data-i18n="doctor.c4.title">Record conformance</h3>
         <p data-i18n="doctor.c4.body">Each detail record carries the six required frontmatter keys, a status drawn from its own kind's vocabulary, and references whose shape matches the one reference grammar — validated by shape, never by resolving them.</p>
+      </article>
+      <article class="check reveal">
+        <h3 data-i18n="doctor.cWriter.title">Operational writer coverage</h3>
+        <p data-i18n="doctor.cWriter.body">A full profile must carry the supported writer for decisions, questions, tasks, designs, and incidents. <code>missing-record-writer</code> catches folders that exist but no agent can safely fill.</p>
       </article>
       <article class="check reveal">
         <h3 data-i18n="doctor.c5.title">Freshness, duplicate IDs, broken links</h3>

@@ -5,7 +5,7 @@ Context installed. If you administer a Project Hub instead, you want the
 [owner's guide](https://github.com/monomind-ai-lab/project-hub) in that
 repository.
 
-Written against **0.10.0**. Everything here is built and tested unless it appears
+Written against **0.11.0**. Everything here is built and tested unless it appears
 under [Not built yet](#not-built-yet), which is honest about the gaps rather
 than quiet about them.
 
@@ -46,7 +46,7 @@ Read what it plans. Then swap `--dry-run` for `--apply`.
 
 | Flag | Does |
 | --- | --- |
-| `--profile core` (default) | `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, `LEARNINGS.md` — the three registries and the protocol, and no subfolders. Enough for most repositories. |
+| `--profile core` (default) | `README.md`, `SKILL.md`, `NOW.md`, `DECISIONS.md`, `LEARNINGS.md` — three core summaries and the protocol, with no operational subfolders. Enough for most repositories. |
 | `--profile full` | Adds `PLAN.md` and `QUESTIONS.md`, and the `decisions/`, `questions/`, `tasks/`, `inbox/`, `designs/` and `incidents/` subfolders. Take this when the project already has that much going on. |
 | `--repo-type` | `auto` by default. Also `code`, `document`, `research`, `writing`, `mixed`, `general`. |
 | `--install-skills` | Installs the protocol skill so agents in this repo can find it. |
@@ -135,6 +135,9 @@ links, so you can see they exist without being told they are settled.
 | You learned something that generalises past this task | A learning in `LEARNINGS.md` |
 | The state of play changed | `NOW.md` — keep it under 400 words; it is read every session |
 | You are unsure and the answer changes the work | A question in `QUESTIONS.md`. Ask it before implementing, not after |
+| Substantial work gained a plan, progress, validation or outcome | A task record in `tasks/` |
+| A proposed structure needs alternatives and a validation plan | A design record in `designs/`, before implementation makes the choice implicit |
+| A failure had material impact or produced corrective work | An incident record in `incidents/`, updated through recovery and prevention |
 | Something is worth keeping but you cannot yet say what it is | `project-context capture`. It lands in `inbox/` and the judgement waits |
 
 The test for a decision is not "was this hard" but **"would someone six months
@@ -143,8 +146,15 @@ better: the folder is read on every session and you pay for it every time.
 
 ### Records and their shape
 
-Detail records in `decisions/`, `questions/`, `tasks/` and `inbox/` carry YAML
-frontmatter with six required keys and no more:
+Detail records in `decisions/`, `questions/`, `tasks/`, `designs/`, `incidents/`
+and `inbox/` carry YAML frontmatter with six required keys and no more. Agents
+create the five operational kinds with `project-context record` so IDs,
+provenance, filenames and registry links are not improvised:
+
+```bash
+project-context record --kind design --title "Bounded retry flow" \
+  --text "Compare queue and inline retry mechanics; validate under load." --apply
+```
 
 ```yaml
 ---
@@ -165,9 +175,10 @@ assertion and a task is not a claim:
 
 | Kind | States |
 | --- | --- |
-| `decision`, `learning`, `capsule` | `proposed` → `accepted` → `superseded` \| `rejected` |
+| `decision`, `learning`, `design`, `capsule` | `proposed` → `accepted` → `superseded` \| `rejected` |
 | `question` | `open` → `answered` → `superseded` |
 | `task` | `proposed` → `active` → `done` \| `dropped` |
+| `incident` | `open` → `resolved` → `superseded` |
 
 The doctor checks a status against its own kind and names the right vocabulary
 when you get it wrong. `accepted` on a question is an error.
@@ -282,6 +293,8 @@ What it catches, among others:
   the block.
 - `pushed-file-modified` — you edited a file the Hub owns.
 - `missing-required-key`, `invalid-status`, `invalid-reference` — record shape.
+- `missing-record-writer` — a full profile has operational folders but lost
+  the safe writer that agents use to fill them.
 - `legacy-context-hub-marker` — a half-upgraded install from the retired
   Context Hub.
 - Staleness — `NOW.md` untouched while work landed.
@@ -293,9 +306,11 @@ python3 .agents/skills/project-context/scripts/context_triggers.py status
 ```
 
 It detects that work has landed since project context was last touched, and nags
-once per session. It does **not** decide what to write — only you know whether a
-choice constrained future work. When you have genuinely evaluated and there is
-nothing to record:
+once per session. It does **not** decide what to write. The agent evaluates seven
+trigger families: current state, decisions, learnings, unresolved questions,
+task progress, design proposals and incidents. When one fires, it uses
+`project-context record` for the durable operational entry. When all seven have
+been genuinely evaluated and there is nothing to record:
 
 ```bash
 python3 .agents/skills/project-context/scripts/context_triggers.py ack --note "reviewed; nothing constraining"

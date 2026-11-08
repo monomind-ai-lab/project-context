@@ -163,6 +163,32 @@ class PacketTests(unittest.TestCase):
         self.assertEqual("path", matched["D-001"]["reason"])
         self.assertEqual("topic", matched["D-002"]["reason"])
         self.assertGreater(matched["D-001"]["score"], matched["D-002"]["score"])
+
+    def test_designs_and_incidents_are_retrievable_records(self) -> None:
+        target = self.target()
+        context = target / "project-context"
+        records = {
+            "designs/DS-001-queue.md": (
+                "---\nid: DS-001\nkind: design\nstatus: accepted\n"
+                "title: Queue topology\ncreated: 2026-01-01\nasserted_by: agent:codex\n"
+                "files:\n  - src/api/gateway.py\n---\n\nOne queue per tenant.\n"
+            ),
+            "incidents/I-001-stall.md": (
+                "---\nid: I-001\nkind: incident\nstatus: resolved\n"
+                "title: Queue stall\ncreated: 2026-01-01\nasserted_by: agent:codex\n"
+                "files:\n  - src/api/gateway.py\n---\n\nA blocked consumer stalled the queue.\n"
+            ),
+        }
+        for relative, body in records.items():
+            path = context / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(body, encoding="utf-8")
+        packet = self.packet(
+            target, "context", "--task", "repair the queue", "--files", "src/api/gateway.py"
+        )
+        matched = {item["id"]: item for item in packet["matched"]}
+        self.assertEqual("path", matched["DS-001"]["reason"])
+        self.assertEqual("path", matched["I-001"]["reason"])
         self.assertLess(self.sources(packet).index("DECISIONS.md"), len(packet["sections"]))
 
     def test_a_directory_prefix_does_not_match_a_similarly_named_sibling(self) -> None:

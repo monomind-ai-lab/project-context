@@ -1,7 +1,14 @@
-# Incident: Title
+---
+id: I-001
+kind: incident
+status: open
+title: Incident title
+created: 2026-01-01
+asserted_by: person:name
+---
 
-- Status: `open`
-- Date detected: YYYY-MM-DD
+# I-001: Incident title
+
 - Severity: Describe impact without inventing a scale.
 - Related task: Link
 

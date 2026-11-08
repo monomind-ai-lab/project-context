@@ -34,7 +34,7 @@ from typing import Any
 CONTEXT_DIRNAME = "project-context"
 INBOX_DIRNAME = "inbox"
 # The capsule's own type, from 2.6. It is not the record `kind` — that is
-# `capsule` for everything here, because the record model has five kinds and a
+# `capsule` for everything here, because the record model has seven kinds and a
 # capsule is one of them. This says what the note is *about*, which is what a
 # person needs in order to promote it later, and what `assumption` needs in
 # order to be findable at all: an assumption is not a record kind and never

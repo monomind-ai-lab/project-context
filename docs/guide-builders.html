@@ -1250,7 +1250,7 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
       <p class="lead">One small folder that keeps builders and agents on the same page over time. Don't work in moments — work in continuity: the state, the decisions and the lessons stay in the repository, in plain Markdown, long after the chat that produced them is gone.</p>
     </div>
     <div class="cover-meta">
-      <span>v0.10.0</span>
+      <span>v0.11.0</span>
       <span>What it is · What you get · How it works · How to use it</span>
       <span class="notranslate" translate="no">github.com/monomind-ai-lab/project-context</span>
     </div>
@@ -1361,8 +1361,8 @@ html.translated-ltr .nt-term, html.translated-rtl .nt-term { margin-inline: 0.15
     </div>
   </section>
 
-  <section class="slide dark dg-slide dg-center" data-screen-label="06 The three records"
-           role="group" aria-label="Slide 06 The three records">
+  <section class="slide dark dg-slide dg-center" data-screen-label="06 The three core summaries"
+           role="group" aria-label="Slide 06 The three core summaries">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 3 · What you get</p>
     <h2 class="h-md">Three files, one question each.</h2>
@@ -1516,7 +1516,7 @@ question. Show me the proposed plan and wait for my approval before making chang
         </div>
         <div>
           <p class="dg-phase-label">At the end of the session</p>
-          <div class="dg-step"><span class="nb-circle">4</span><div><h4>Evaluate the three triggers</h4><p>Did the state a next contributor acts on change? Did a choice constrain future work? Did evidence change what is believed, in a way that will recur?</p></div></div>
+          <div class="dg-step"><span class="nb-circle">4</span><div><h4>Evaluate seven trigger families</h4><p>Current state, decisions, learnings, unresolved questions, task progress, design proposals, and incidents. Use <span class="notranslate" translate="no">project-context record</span> when an operational record is earned.</p></div></div>
           <div class="dg-step"><span class="nb-circle">5</span><div><h4>Write only what fired</h4><p>Replace stale state in NOW.md and set its review date. Supersede rather than rewrite. Padding the registries is the exact failure they exist to prevent.</p></div></div>
           <div class="dg-step"><span class="nb-circle">6</span><div><h4>Say so when nothing fired</h4><p>context_triggers.py ack --note "…" records an honest evaluation against the current commit — and the window reopens on the next one.</p></div></div>
         </div>
@@ -1585,7 +1585,7 @@ question. Show me the proposed plan and wait for my approval before making chang
            role="group" aria-label="Slide 14 Checking your work">
     <a class="brand-mark" href="https://monomind.one/?ref=deck-mark" target="_blank" rel="noopener noreferrer" aria-label="MonoMind AI Lab — opens monomind.one in a new tab"></a>
     <p class="eyebrow">Part 7 · Keeping it honest</p>
-    <h2 class="h-md">Eight families of checks, all read-only.</h2>
+    <h2 class="h-md">Nine families of checks, all read-only.</h2>
     <p class="lead"><span class="notranslate" translate="no">python3 .agents/skills/project-context/scripts/context_doctor.py --target .</span> — it exits 1 on any error and 0 otherwise, so CI and a git hook can both use the exit status. Anchor findings are warnings; a modified pushed file is an error.</p>
     <div class="dg-canvas">
       <div class="dg-frame is-accent">
@@ -1938,7 +1938,7 @@ question. Show me the proposed plan and wait for my approval before making chang
   {
     "slide": 1,
     "label": "01 Cover",
-    "note": "Open by naming the audience: this deck is for people working inside a repository that has Project Context installed, not for whoever administers a Hub. Say the version out loud — everything shown is built and tested at 0.10.0 — and promise the arc: what it is, what you get, how it works, how to use it."
+    "note": "Open by naming the audience: this deck is for people working inside a repository that has Project Context installed, not for whoever administers a Hub. Say the version out loud — everything shown is built and tested at 0.11.0 — and promise the arc: what it is, what you get, how it works, how to use it."
   },
   {
     "slide": 2,
@@ -1962,7 +1962,7 @@ question. Show me the proposed plan and wait for my approval before making chang
   },
   {
     "slide": 6,
-    "label": "06 The three records",
+    "label": "06 The three core summaries",
     "note": "Take the third column slowly: the trigger, not a schedule, is what makes someone write. The decision test at the bottom is the line worth repeating — would someone six months from now redo this badly without knowing? Say plainly that less is better, because every record is paid for on every session."
   },
   {
@@ -2003,7 +2003,7 @@ question. Show me the proposed plan and wait for my approval before making chang
   {
     "slide": 14,
     "label": "14 Checking your work",
-    "note": "Everything here is read-only, and the exit code is the whole integration story for CI and git hooks — run it from the installed path, .agents/skills/..., not from a checkout of the product. Do not read all eight families aloud; name the count, then dwell on the two a builder actually meets: no-delivery-path, because a perfect record set that no session loads is worth nothing, and pushed-file-modified, the one error you cause by editing a file the Hub handed you. Evidence warnings stay warnings on purpose — drift is a prompt to re-verify, not a build failure."
+    "note": "Everything here is read-only, and the exit code is the whole integration story for CI and git hooks — run it from the installed path, .agents/skills/..., not from a checkout of the product. Do not read all nine families aloud; name the count, then dwell on the three a builder actually meets: no-delivery-path, because a perfect record set that no session loads is worth nothing; missing-record-writer, because folders without a supported writer stay empty; and pushed-file-modified, the error caused by editing a file the Hub handed you. Evidence warnings stay warnings on purpose — drift is a prompt to re-verify, not a build failure."
   },
   {
     "slide": 15,

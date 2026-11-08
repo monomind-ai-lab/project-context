@@ -63,16 +63,18 @@ DEFAULT_OPEN_DAYS = 14
 DEFAULT_SNAPSHOT_DAYS = 90
 
 REGISTRIES = {"DECISIONS.md": "decision", "LEARNINGS.md": "learning", "QUESTIONS.md": "question"}
-RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "inbox")
+RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "designs", "incidents", "inbox")
 NON_RECORD_NAMES = {"README.md", "TEMPLATE.md", "INDEX.md"}
-# What "needs a human" means per kind. A proposed assertion needs accepting or
-# rejecting; an open question needs answering; a capsule needs promoting into a
-# durable record or dropping. A task is somebody's work, not a decision
-# waiting, so an active task is not a finding.
+# What "needs a human" means per kind. A proposed assertion or design needs
+# accepting or rejecting; an open question needs answering; an open incident
+# needs resolution; a capsule needs promotion or rejection. An active task is
+# somebody's work, not a decision waiting, so it is not a finding.
 PENDING_STATUSES = {
     "decision": {"proposed"},
     "learning": {"proposed"},
     "question": {"open"},
+    "design": {"proposed"},
+    "incident": {"open"},
     "capsule": {"proposed"},
 }
 ENTRY_HEADING = re.compile(r"^##\s+([A-Z]-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+):\s*(.+)$", re.M)

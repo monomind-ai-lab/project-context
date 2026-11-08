@@ -1112,10 +1112,12 @@ class UpdateTests(unittest.TestCase):
         (target / "project-context" / "SKILL.md").write_text("# stale\n", encoding="utf-8")
         scripts = target / ".agents" / "skills" / "project-context" / "scripts"
         (scripts / "context_packet.py").unlink()
+        (scripts / "context_record.py").unlink()
         (scripts / "context_doctor.py").write_text("# stale\n", encoding="utf-8")
         self.run_script("update", "--target", str(target), "--apply")
         self.assertTrue((target / "project-context" / "SKILL.md").read_text(encoding="utf-8").startswith("---"))
         self.assertTrue((scripts / "context_packet.py").is_file())
+        self.assertTrue((scripts / "context_record.py").is_file())
         self.assertNotEqual("# stale\n", (scripts / "context_doctor.py").read_text(encoding="utf-8"))
 
     def test_it_does_not_install_skills_into_a_repository_that_declined_them(self) -> None:

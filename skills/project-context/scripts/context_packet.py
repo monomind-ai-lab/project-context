@@ -65,12 +65,12 @@ REGISTRIES = {
     "LEARNINGS.md": "learning",
     "QUESTIONS.md": "question",
 }
-RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "inbox")
+RECORD_DIRECTORIES = ("decisions", "questions", "tasks", "designs", "incidents", "inbox")
 NON_RECORD_NAMES = {"README.md", "TEMPLATE.md", "INDEX.md"}
-# "Verified" per 2.5. A question is verified once it has an answer; an
-# assertion once it is accepted. Everything else is proposed, and shows in its
-# own labelled section rather than mixed in with what the project settled.
-VERIFIED_STATUSES = {"accepted", "answered", "done", "active"}
+# "Verified" per 2.5. A question is verified once answered, an assertion once
+# accepted, an incident once resolved, and active or completed tasks are usable
+# work evidence. Everything else is proposed and stays labelled as such.
+VERIFIED_STATUSES = {"accepted", "answered", "done", "active", "resolved"}
 
 ENTRY_HEADING = re.compile(r"^##\s+([A-Z]-\d{3,}|C-\d{4}-\d{2}-\d{2}-[0-9a-z]+):\s*(.+)$", re.M)
 STATUS_LINE = re.compile(r"^\s*-\s+Status:\s*`?([A-Za-z][A-Za-z-]*)`?\s*$", re.M)
@@ -221,6 +221,11 @@ def entries(context: Path) -> list[dict[str, Any]]:
                 front, _ = doctor.parse_frontmatter(text)
             front = front if isinstance(front, dict) else {}
             body = re.sub(r"^---\n.*?\n---\n", "", text, count=1, flags=re.S).strip()
+            paths = anchor_paths(text)
+            front_files = front.get("files", [])
+            for item in front_files if isinstance(front_files, list) else [front_files]:
+                if isinstance(item, str) and item.strip():
+                    paths.add(item.strip().strip("/").split("@", 1)[0])
             found.append(
                 {
                     "id": str(front.get("id") or path.stem),
@@ -229,7 +234,7 @@ def entries(context: Path) -> list[dict[str, Any]]:
                     "status": str(front.get("status") or "proposed").lower(),
                     "source": path.relative_to(context).as_posix(),
                     "body": body,
-                    "paths": anchor_paths(text),
+                    "paths": paths,
                     "tokens": tokens_of(str(front.get("title", "")) + " " + body),
                 }
             )
@@ -350,10 +355,12 @@ def build_packet(
             entry["score"] = (10 if by_path else 0) + len(overlap)
             entry["matched_paths"] = sorted(by_path)
             matched.append(entry)
-    # Decisions before learnings before questions, and inside a kind the
-    # strongest match first. `implement` leads with the decisions whose anchors
-    # overlap the task's paths (2.6), which is what this ordering produces.
-    rank = {"decision": 0, "learning": 1, "question": 2, "task": 3, "capsule": 4}
+    # Durable constraints and findings lead supporting designs, incidents, and
+    # tasks; inside a kind the strongest path-backed match comes first.
+    rank = {
+        "decision": 0, "learning": 1, "question": 2, "design": 3,
+        "incident": 4, "task": 5, "capsule": 6,
+    }
     matched.sort(key=lambda item: (rank.get(item["kind"], 9), -item["score"], item["id"]))
 
     verified = [item for item in matched if item["status"] in VERIFIED_STATUSES]

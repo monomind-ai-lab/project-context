@@ -105,6 +105,7 @@ REQUIRED = (
     "skills/project-context/scripts/context_packet.py",
     "skills/project-context/scripts/context_review.py",
     "skills/project-context/scripts/context_capture.py",
+    "skills/project-context/scripts/context_record.py",
     "skills/project-context-init/assets/project-context/PLAN.md",
     "skills/project-context-init/assets/project-context/QUESTIONS.md",
     "skills/project-context-init/assets/project-context/questions/TEMPLATE.md",
@@ -115,6 +116,7 @@ REQUIRED = (
     "tests/test_context_packet.py",
     "tests/test_context_review.py",
     "tests/test_context_capture.py",
+    "tests/test_context_record.py",
 )
 
 # Host pointer files. A pointer that restates a rule from `AGENTS.md` is how the
