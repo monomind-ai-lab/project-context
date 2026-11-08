@@ -47,7 +47,7 @@ class CaptureTests(unittest.TestCase):
             git(directory, "commit", "-qm", "first")
         if installed:
             subprocess.run(
-                [sys.executable, str(INIT), "init", "--target", str(directory),
+                [sys.executable, str(INIT), "init", "--legacy", "--target", str(directory),
                  "--profile", "full", "--apply"],
                 check=True, capture_output=True, text=True,
             )

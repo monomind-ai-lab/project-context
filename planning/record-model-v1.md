@@ -1,3 +1,7 @@
+# Amendment, 2026-11-08
+
+The Markdown-first decision in [project-context/DECISIONS.md](../project-context/DECISIONS.md) supersedes the mandatory managed instruction blocks and marker for new installs. Legacy records retain this model.
+
 # Record model v1 — the shared contract
 
 Status: build contract, written 2026-09-03. This is the concrete specification

@@ -165,7 +165,7 @@ class ReviewTests(unittest.TestCase):
         self.addCleanup(shutil.rmtree, directory, True)
         init = ROOT / "skills" / "project-context-init" / "scripts" / "project_context_init.py"
         subprocess.run(
-            [sys.executable, str(init), "init", "--target", str(directory),
+            [sys.executable, str(init), "init", "--legacy", "--target", str(directory),
              "--profile", "full", "--apply"],
             check=True, capture_output=True, text=True,
         )

@@ -134,11 +134,26 @@ def records(context: Path) -> list[tuple[Path, dict[str, str]]]:
     return found
 
 
+def registry_ids(context: Path) -> set[str]:
+    """Registry-only decisions and questions reserve their stable IDs too."""
+    found: set[str] = set()
+    for name in ("DECISIONS.md", "QUESTIONS.md"):
+        path = context / name
+        if path.is_file() and not path.is_symlink():
+            text = path.read_text(encoding="utf-8")
+            found.update(re.findall(r"^#{1,6}\s+((?:D|Q)-\d{3,})\b", text, re.MULTILINE))
+    return found
+
+
 def next_id(context: Path, prefix: str, existing: list[tuple[Path, dict[str, str]]]) -> str:
     pattern = re.compile(rf"^{re.escape(prefix)}-(\d+)$")
     numbers = []
     for _path, fields in existing:
         match = pattern.match(fields.get("id", ""))
+        if match:
+            numbers.append(int(match.group(1)))
+    for record_id in registry_ids(context):
+        match = pattern.match(record_id)
         if match:
             numbers.append(int(match.group(1)))
     return f"{prefix}-{max(numbers, default=0) + 1:03d}"
@@ -236,7 +251,7 @@ def build(target: Path, args: argparse.Namespace) -> dict[str, Any]:
             "status": "refused",
             "reason": f"--id {record_id!r} must match {spec['prefix']}-NNN for a {args.kind}",
         }
-    if any(fields.get("id") == record_id for _path, fields in existing):
+    if record_id in registry_ids(context) or any(fields.get("id") == record_id for _path, fields in existing):
         return {"status": "refused", "reason": f"record ID {record_id} already exists"}
 
     today = date.today().isoformat()
@@ -256,12 +271,14 @@ def build(target: Path, args: argparse.Namespace) -> dict[str, Any]:
         if not registry.is_file() or registry.is_symlink():
             return {"status": "refused", "reason": f"required registry {registry} is missing or unsafe"}
         addition = registry_entry(record, destination, context, text)
-        updated = registry.read_text(encoding="utf-8").rstrip() + "\n\n" + addition
+        original = registry.read_bytes().decode("utf-8")
+        separator = "" if not original else ("\n" if original.endswith("\n") else "\n\n")
+        updated = original + separator + addition
         report.update(
             {
                 "registry_path": str(registry),
                 "registry_addition": addition,
-                "registry_content": refresh_index(registry, updated),
+                "registry_content": updated,
             }
         )
     return report
@@ -310,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
             handle.write(report["content"])
         created = True
         if report.get("registry_path"):
-            Path(report["registry_path"]).write_text(report["registry_content"], encoding="utf-8")
+            Path(report["registry_path"]).write_bytes(report["registry_content"].encode("utf-8"))
     except OSError as error:
         if created and destination.is_file() and report.get("registry_path"):
             try:

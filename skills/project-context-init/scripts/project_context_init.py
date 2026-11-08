@@ -670,6 +670,9 @@ def atomic_write(path: Path, content: str) -> None:
 
 
 def add_file_action(actions: list[dict[str, Any]], destination: Path, content: str) -> None:
+    if destination.is_symlink():
+        actions.append({"kind": "conflict", "path": str(destination), "reason": "destination is a symlink"})
+        return
     if not destination.exists():
         actions.append({"kind": "create", "path": str(destination), "content": content})
         return
@@ -767,6 +770,12 @@ def build_update_plan(target: Path) -> dict[str, Any]:
     context = target / "project-context"
     actions: list[dict[str, Any]] = []
     marker_path = context / MARKER_NAME
+
+    instruction_texts = [p.read_text(encoding="utf-8", errors="replace") for p in instruction_paths(target) if p.is_file() and not p.is_symlink()]
+    legacy_blocks = any(START in text or END in text for text in instruction_texts)
+    migrated = not legacy_blocks and any("supersede instead of editing an old one." in text for text in instruction_texts)
+    if context.is_dir() and not context.is_symlink() and (not marker_path.exists() or migrated):
+        return {"target": str(target), "actions": [], "summary": {}, "has_conflicts": False, "zero_ritual": True}
 
     if not context.is_dir() or context.is_symlink() or not marker_path.is_file():
         return {
@@ -875,6 +884,9 @@ def apply_update(report: dict[str, Any]) -> int:
         print(json.dumps(public_report(report), indent=2, sort_keys=True))
         print("Refusing to write because the plan contains conflicts.", file=sys.stderr)
         return 2
+    if report.get("zero_ritual"):
+        print(json.dumps(public_report(report), indent=2, sort_keys=True))
+        return 0
     for action in report["actions"]:
         if action["kind"] in {"create", "refresh", "regenerate_index", "append_managed_block", "update_managed_block"}:
             atomic_write(Path(action["path"]), action["content"])
@@ -1449,6 +1461,64 @@ def build_plan(
     context = target / "project-context"
     actions: list[dict[str, Any]] = []
     repository = repository_classification(target, repo_type)
+    if context.is_symlink() or (context.exists() and not context.is_dir()):
+        actions.append({"kind": "conflict", "path": str(context), "reason": "project-context is not a regular directory"})
+    else:
+        for directory in (context / "decisions", context / "incidents"):
+            if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+                actions.append({"kind": "conflict", "path": str(directory), "reason": "record directory is not a regular directory"})
+        for relative in ("README.md", "NOW.md", "DECISIONS.md", "LEARNINGS.md", "decisions/README.md", "incidents/README.md"):
+            source = template_root() / relative
+            content = source.read_text(encoding="utf-8")
+            if relative == "NOW.md":
+                content = content.replace("YYYY-MM-DD", date.today().isoformat(), 1)
+            add_file_action(actions, context / relative, content)
+    instruction = target / "CLAUDE.md"
+    paragraph = "Search project-context/DECISIONS.md before changing security, identity, upstream-sync or credential behaviour; add a decision with a stable ID, date, statement, rationale and evidence; supersede instead of editing an old one."
+    if not instruction.exists():
+        add_file_action(actions, instruction, "# Agent instructions\n\n" + paragraph + "\n")
+    elif instruction.is_symlink() or not instruction.is_file():
+        actions.append({"kind": "conflict", "path": str(instruction), "reason": "instruction file is not a regular file"})
+    else:
+        with instruction.open("r", encoding="utf-8", newline="") as handle:
+            original = handle.read()
+        if paragraph not in original:
+            newline = "\r\n" if "\r\n" in original and original.count("\n") == original.count("\r\n") else "\n"
+            separator = "" if not original else (newline if original.endswith("\n") else newline * 2)
+            actions.append({"kind": "append_managed_block", "path": str(instruction), "content": original + separator + paragraph + newline})
+    gitignore = None
+    report = inspect(target, repo_type)
+    report.update(
+        {
+            "profile": profile,
+            "install_skills": install_skills,
+            "install_hooks": install_hooks,
+            "repository_stage": repository_stage,
+            "placement": placement_report(placement, gitignore),
+            "actions": actions,
+        }
+    )
+    report["summary"] = {
+        kind: sum(action["kind"] == kind for action in actions)
+        for kind in sorted({action["kind"] for action in actions})
+    }
+    report["has_conflicts"] = any(action["kind"] == "conflict" for action in actions)
+    return report
+
+
+def build_legacy_plan(
+    target: Path,
+    profile: str = "full",
+    install_skills: bool = False,
+    repo_type: str = "auto",
+    repository_stage: str = "existing",
+    install_hooks: bool = False,
+    placement: str = DEFAULT_PLACEMENT,
+) -> dict[str, Any]:
+    target = target.resolve()
+    context = target / "project-context"
+    actions: list[dict[str, Any]] = []
+    repository = repository_classification(target, repo_type)
     if context.is_symlink():
         actions.append({"kind": "conflict", "path": str(context), "reason": "project-context is a symlink"})
     elif context.exists() and not context.is_dir():
@@ -1511,8 +1581,10 @@ def build_plan(
         kind: sum(action["kind"] == kind for action in actions)
         for kind in sorted({action["kind"] for action in actions})
     }
+    report["legacy"] = True
     report["has_conflicts"] = any(action["kind"] == "conflict" for action in actions)
     return report
+
 
 
 def public_report(report: dict[str, Any]) -> dict[str, Any]:
@@ -1530,7 +1602,7 @@ def apply_plan(report: dict[str, Any]) -> int:
     for action in report["actions"]:
         if action["kind"] in {"create", "append_managed_block", "update_managed_block", "update_hooks"}:
             atomic_write(Path(action["path"]), action["content"])
-    refreshed = build_plan(
+    refreshed = (build_legacy_plan if report.get("legacy") else build_plan)(
         Path(report["target"]),
         report["profile"],
         report["install_skills"],
@@ -1558,6 +1630,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         subparser = subparsers.add_parser(name, help=help_text)
         subparser.add_argument("--target", default=".", type=Path)
         subparser.add_argument("--repo-type", choices=REPOSITORY_TYPES, default="auto")
+    check_parser = subparsers.add_parser("check", help="check Markdown context for defects")
+    check_parser.add_argument("--target", default=".", type=Path)
+    check_parser.add_argument("--merged-prs", default=5, type=int)
+    check_parser.add_argument("--base")
+    check_parser.add_argument("--history-commits", type=int, default=100)
+    check_parser.add_argument("--exclude", action="append", default=[])
+    check_parser.add_argument("--allow-shallow", action="store_true")
     doctor_parser = subparsers.add_parser("doctor", help="validate project-context health")
     doctor_parser.add_argument("--target", default=".", type=Path)
     doctor_parser.add_argument("--stale-days", default=30, type=int)
@@ -1593,6 +1672,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     capture_mode = capture_parser.add_mutually_exclusive_group(required=True)
     capture_mode.add_argument("--dry-run", action="store_true")
     capture_mode.add_argument("--apply", action="store_true")
+    migrate_parser = subparsers.add_parser("migrate", help="replace legacy managed instructions")
+    migrate_parser.add_argument("--target", default=".", type=Path)
+    migrate_mode = migrate_parser.add_mutually_exclusive_group(required=True)
+    migrate_mode.add_argument("--dry-run", action="store_true")
+    migrate_mode.add_argument("--apply", action="store_true")
     record_parser = subparsers.add_parser(
         "record", help="write a durable decision, question, task, design, or incident"
     )
@@ -1637,6 +1721,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "kept as its own private repository (which this command does not create)"
         ),
     )
+    init_parser.add_argument("--legacy", action="store_true", help="initialize the legacy managed format")
     init_parser.add_argument("--install-skills", action="store_true")
     init_parser.add_argument(
         "--install-hooks",
@@ -1721,6 +1806,42 @@ def main(argv: list[str] | None = None) -> int:
         for reference in args.evidence or []:
             forwarded += ["--evidence", reference]
         return int(module.main(forwarded))
+    if args.command == "migrate":
+        actions = []
+        paragraph = "Search project-context/DECISIONS.md before changing security, identity, upstream-sync or credential behaviour; add a decision with a stable ID, date, statement, rationale and evidence; supersede instead of editing an old one."
+        for path in instruction_paths(target):
+            plan = instruction_plan(path)
+            if plan["kind"] == "conflict":
+                actions.append(plan)
+                continue
+            with path.open("r", encoding="utf-8", newline="") as handle:
+                original = handle.read()
+            if START in original:
+                begin, end = original.index(START), original.index(END) + len(END)
+                replacement = paragraph if path.name.casefold() == "claude.md" else ""
+                actions.append({"kind": "refresh", "path": str(path), "content": original[:begin] + replacement + original[end:]})
+        claude = target / "CLAUDE.md"
+        existing_claude = next((p for p in instruction_paths(target) if p.name.casefold() == "claude.md"), None)
+        if existing_claude is None:
+            actions.append({"kind": "refresh", "path": str(claude), "content": "# Agent instructions\n\n" + paragraph + "\n"})
+        elif not any(a["path"] == str(existing_claude) for a in actions):
+            if existing_claude.is_symlink():
+                actions.append({"kind": "conflict", "path": str(existing_claude), "reason": "instruction file is a symlink"})
+            else:
+                with existing_claude.open("r", encoding="utf-8", newline="") as handle:
+                    original = handle.read()
+                if paragraph not in original:
+                    newline = "\r\n" if "\r\n" in original and original.count("\n") == original.count("\r\n") else "\n"
+                    separator = "" if not original else (newline if original.endswith("\n") else newline * 2)
+                    actions.append({"kind": "refresh", "path": str(existing_claude), "content": original + separator + paragraph + newline})
+        report = {"target": str(target), "actions": actions, "has_conflicts": any(a["kind"] == "conflict" for a in actions)}
+        if report["has_conflicts"] or args.dry_run:
+            print(json.dumps(report, indent=2, sort_keys=True))
+            return 2 if report["has_conflicts"] else 0
+        for action in actions:
+            atomic_write(Path(action["path"]), action["content"])
+        print(json.dumps(public_report(report), indent=2, sort_keys=True))
+        return 0
     if args.command == "record":
         module = load_protocol("context_record.py")
         if module is None:
@@ -1746,10 +1867,22 @@ def main(argv: list[str] | None = None) -> int:
         return int(module.main(forwarded))
     if args.command == "update":
         report = build_update_plan(target)
+        if not report.get("zero_ritual"):
+            print("Consider migrating to Markdown-first context with migrate.", file=sys.stderr)
         if args.dry_run:
-            print(json.dumps(public_report(report), indent=2, sort_keys=True))
+            print(json.dumps(report, indent=2, sort_keys=True))
             return 2 if report["has_conflicts"] else 0
         return apply_update(report)
+    if args.command == "check":
+        module = load_protocol("context_check.py")
+        forwarded = ["--target", str(target), "--merged-prs", str(args.merged_prs), "--history-commits", str(args.history_commits)]
+        if args.base:
+            forwarded.extend(["--base", args.base])
+        if args.allow_shallow:
+            forwarded.append("--allow-shallow")
+        for pattern in args.exclude:
+            forwarded.extend(["--exclude", pattern])
+        return int(module.main(forwarded))
     if args.command == "doctor":
         module = load_doctor()
         if module is None:
@@ -1758,7 +1891,10 @@ def main(argv: list[str] | None = None) -> int:
         report = module.doctor(target, args.stale_days)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 1 if report["summary"]["errors"] else 0
-    report = build_plan(
+    if not args.legacy and (args.install_skills or args.install_hooks or args.placement != DEFAULT_PLACEMENT or args.profile != "core"):
+        print("The requested profile, placement, skills or hooks require --legacy; default init creates only Markdown context.", file=sys.stderr)
+        return 2
+    report = (build_legacy_plan if args.legacy else build_plan)(
         target,
         args.profile,
         # Hooks call the installed trigger script, so wiring them without
@@ -1770,7 +1906,7 @@ def main(argv: list[str] | None = None) -> int:
         args.placement,
     )
     if args.dry_run:
-        print(json.dumps(public_report(report), indent=2, sort_keys=True))
+        print(json.dumps(report, indent=2, sort_keys=True))
         return 2 if report["has_conflicts"] else 0
     return apply_plan(report)
 

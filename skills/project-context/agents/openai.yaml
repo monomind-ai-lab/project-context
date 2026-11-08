@@ -3,4 +3,4 @@ interface:
   short_description: "Shared context for repo-bound projects"
   default_prompt: "Use $project-context to recover this project's current truth before work and update its shared context at handoff."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

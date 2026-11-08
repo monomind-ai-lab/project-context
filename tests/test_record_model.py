@@ -36,7 +36,7 @@ asserted_by: person:name
 class RecordModelTests(unittest.TestCase):
     def install(self, target: Path, *extra: str) -> None:
         subprocess.run(
-            [sys.executable, str(INIT), "init", "--target", str(target), "--apply", *extra],
+            [sys.executable, str(INIT), "init", "--legacy", "--target", str(target), "--apply", *extra],
             check=True, capture_output=True, text=True,
         )
 
@@ -698,7 +698,7 @@ class RepositoryInstructionTests(unittest.TestCase):
         There is no `project-context/` here, so a managed block would promise a
         protocol that no file in this tree delivers.
         """
-        self.assertFalse((self.ROOT / "project-context").exists())
+        self.assertTrue((self.ROOT / "project-context" / "DECISIONS.md").is_file())
         # A block's markers sit on their own lines, which is how the installer
         # writes them and how it finds them again. Naming a marker inside a
         # sentence — as the contract does when it explains what we own — is

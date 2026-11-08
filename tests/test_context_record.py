@@ -36,7 +36,7 @@ class RecordWriterTests(unittest.TestCase):
         git(target, "config", "user.name", "Daren Example")
         git(target, "config", "user.email", "d@example.invalid")
         subprocess.run(
-            [sys.executable, str(INIT), "init", "--target", str(target),
+            [sys.executable, str(INIT), "init", "--legacy", "--target", str(target),
              "--profile", profile, "--install-skills", "--apply"],
             check=True, capture_output=True, text=True,
         )
@@ -140,6 +140,32 @@ class RecordWriterTests(unittest.TestCase):
         )
         self.assertEqual(0, result.returncode, result.stderr or result.stdout)
         self.assertTrue(any((target / "project-context" / "designs").glob("DS-*.md")))
+
+    def test_markdown_first_decision_writer_and_doctor(self) -> None:
+        """Optional writing works with plain context without requiring a protocol."""
+        target = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, target, True)
+        subprocess.run([sys.executable, str(INIT), "init", "--target", str(target), "--apply"], check=True, capture_output=True, text=True)
+        registry = target / "project-context" / "DECISIONS.md"
+        registry.write_text("# Decisions\n\n## D-001: Prior\n\n- Statement: Keep this.\n", encoding="utf-8")
+        self.record(target, "--kind", "decision", "--title", "Next", "--text", "Next choice.", "--apply")
+        self.assertIn("## D-002: Next", registry.read_text(encoding="utf-8"))
+        result = subprocess.run([sys.executable, str(DOCTOR), "--target", str(target)], capture_output=True, text=True)
+        report = json.loads(result.stdout)
+        self.assertEqual(0, result.returncode, report["issues"])
+        self.assertFalse(report["writer_coverage"]["required"])
+
+    def test_registry_only_ids_are_reserved_and_bytes_preserved(self) -> None:
+        """A registry entry without a detail file must keep its ID and exact bytes."""
+        target = self.repository()
+        registry = target / "project-context" / "DECISIONS.md"
+        original = b"# Decisions\r\n\r\n## D-001: Existing\r\n\r\n- Statement: Keep this.\r\n\r\n  "
+        registry.write_bytes(original)
+        output = self.record(target, "--kind", "decision", "--title", "New choice", "--text", "New evidence.", "--apply")
+        self.assertIn("D-002", output)
+        self.assertTrue(registry.read_bytes().startswith(original))
+        output = self.record(target, "--kind", "decision", "--title", "Other choice", "--text", "More evidence.", "--id", "D-001", "--apply", expected=2)
+        self.assertIn("already exists", output)
 
     def test_it_reaches_no_network(self) -> None:
         source = SCRIPT.read_text(encoding="utf-8")

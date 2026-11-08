@@ -1,3 +1,17 @@
+# Markdown-first Project Context
+
+Project Context keeps current state, decisions, and learnings in readable Markdown. Start with `project-context/README.md`, then read NOW and search decisions and learnings. The optional `project-context check --target .` checks references and history; healthy output is silent.
+
+`project-context init --target . --dry-run` previews initialization; replace `--dry-run` with `--apply` to write. Existing legacy managed regions can be replaced with `project-context migrate --target . --dry-run` and then `--apply`. Ordinary updates to markerless repositories write nothing. The `--profile full`, non-default `--placement`, `--install-skills`, and `--install-hooks` options require `--legacy`; default initialization rejects these options instead of ignoring them.
+
+The history check recognizes first-parent merge commits and squash commits whose subjects include a pull request number. It needs enough local Git history; shallow clones, insufficient recognizable PRs, and other merge conventions prevent a staleness finding. By default, decision statements are compared across the latest 100 first-parent Git revisions (configurable with `--history-commits`); changes older than that window cannot be detected. Pass `--base` to compare with a particular revision, such as a pull request base. An invalid explicit base is an error. A shallow clone, a plain folder without Git, or insufficient recognizable PRs reports each history check that is not verifiable and exits nonzero. Use `--allow-shallow` to treat those history limitations as warnings; actual defects still fail. Static reference and link checks still run in a plain folder. The PR workflow compares against the merge base.
+
+Decision IDs in examples are indistinguishable from references to the checker. Use repeatable `--exclude` repository-relative glob patterns for example and fixture files; the example workflow excludes this repository’s own examples. Excluded files are not checked.
+
+A GitHub Actions example is in [the check workflow](.github/workflows/context-check-example.yml).
+
+---
+
 # Project Context
 
 <p align="left">
@@ -395,9 +409,9 @@ At the start of meaningful work, the active agent:
 4. Confirms important claims against current primary artifacts and evidence.
 
 During the work, whenever something surfaces that is worth keeping but is not
-yet a registry entry, the agent runs `project-context capture` rather than
-stopping to decide what it is. The judgement is deferred to promotion, where it
-is cheap.
+yet a registry entry, the agent may use `project-context capture` when an
+`inbox/` is present, or record it directly in Markdown. The judgment of what
+to keep remains with the agent.
 
 At a milestone or handoff, the active agent:
 
@@ -405,12 +419,12 @@ At a milestone or handoff, the active agent:
 2. Promotes changed current state into `NOW.md`.
 3. Records only decisions that constrain future work.
 4. Promotes only evidence-backed, reusable learnings.
-5. Promotes or drops the capsules in `inbox/`; `project-context review` lists
-   what is still waiting on a person.
+5. When an `inbox/` is in use, promotes or drops its capsules; optional
+   `project-context review` lists what is waiting on a person.
 6. Supersedes stale knowledge instead of silently rewriting history.
 
-For the full profile, agents persist operational records through one
-deterministic command:
+For the legacy full profile, agents can optionally create operational records
+with a deterministic command:
 
 ```sh
 project-context record --kind decision|question|task|design|incident \
@@ -593,11 +607,9 @@ It then applies the approved plan:
 python3 scripts/install.py --target /path/to/repository --profile core --repo-type auto --repository-stage existing --apply
 ```
 
-This installs the `project-context` skill under `.agents/skills/project-context/`
-with a harness pointer under `.claude/skills/project-context/SKILL.md`, creates
-the selected `project-context/` profile, preserves custom files, and adds or
-refreshes only the managed Project Context block in existing root agent
-instructions.
+This creates the Markdown-first `project-context/` files and a short
+`CLAUDE.md` instruction while preserving existing files. The optional `--legacy`
+mode installs the skill and managed instruction blocks for older workflows.
 
 For a brand-new repository, the agent derives the primary type from the user's
 purpose and uses `--repository-stage brand-new --repo-type TYPE`. The CLI never

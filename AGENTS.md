@@ -8,9 +8,8 @@ this file. A pointer says where the contract is; it never restates a rule from
 here. If a pointer and this file disagree, this file is right and the pointer is
 the bug.
 
-This repository is not itself a Project Context install. There is no
-`project-context/` folder here and no records to maintain — what follows are the
-rules of the product's own source tree.
+This repository maintains its own `project-context/` records. The Markdown-first
+decision there supersedes the older managed-install direction in the design.
 
 ## What this repository is
 
@@ -57,7 +56,7 @@ context, never as current direction.
 
 ## The rules
 
-1. **One protocol text.** `skills/project-context/SKILL.md` is the only copy.
+1. **Legacy protocol text.** `skills/project-context/SKILL.md` is the only copy.
    It is installed twice — as the harness skill and as the repository's own
    instance — and `project_context_init.py` reads that file for both. Never add
    a second copy under `assets/`; that is the drift this rule exists to
@@ -76,13 +75,13 @@ context, never as current direction.
    validator checks this for the Hub's CLI and the discipline is the same here:
    a repository adopting this product must not acquire a dependency by doing so.
 
-5. **We own our markers and nothing outside them.** The managed block between
+5. **Legacy markers only.** The managed block between
    `<!-- project-context:start -->` and `<!-- project-context:end -->` is ours.
    The rest of a `CLAUDE.md` or `AGENTS.md` in a consuming repository is none of
    our business — it is full of things that have nothing to do with us, and an
    install that rewrites them is a bug however good the intent.
 
-6. **Both instruction files, always.** An install ensures `AGENTS.md` *and*
+6. **Legacy instruction delivery.** A legacy install ensured `AGENTS.md` *and*
    `CLAUDE.md` carry the block, creating whichever is missing. Updating only the
    files that happened to exist left a Claude-only repository with rules no
    Claude session ever read; the doctor's `no-delivery-path` check names
@@ -124,3 +123,5 @@ cross-project query is slow. See the SQLite note in Part 4 of the design.
 Do not build governance into the tool. `OWNERS.md` is a record, not an
 enforcement mechanism; the Git host's repository permissions are the whole
 model (D3).
+
+The Markdown-first decision in `project-context/DECISIONS.md` supersedes rules 1, 5, and 6 for new installs. Legacy update and migration preserve owner-authored text.

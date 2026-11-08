@@ -31,7 +31,7 @@ def git(target: Path, *args: str) -> str:
 class TriggerTests(unittest.TestCase):
     def install(self, target: Path) -> Path:
         subprocess.run(
-            [sys.executable, str(INIT), "init", "--target", str(target), "--install-skills", "--apply"],
+            [sys.executable, str(INIT), "init", "--legacy", "--target", str(target), "--install-skills", "--apply"],
             check=True, capture_output=True, text=True,
         )
         return target / ".agents/skills/project-context/scripts/context_triggers.py"
@@ -86,7 +86,7 @@ class TriggerTests(unittest.TestCase):
             other = target.parent / "other"
             other.mkdir()
             subprocess.run(
-                [sys.executable, str(INIT), "init", "--target", str(other), "--apply"],
+                [sys.executable, str(INIT), "init", "--legacy", "--target", str(other), "--apply"],
                 check=True, capture_output=True, text=True,
             )
             result = subprocess.run(
